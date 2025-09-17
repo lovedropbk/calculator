@@ -1,0 +1,90 @@
+2025/09/17 17:21:12.466022 startup: begin
+2025/09/17 17:21:12.467643 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=all
+2025/09/17 17:21:12.467643 step: InitCommonControlsEx begin
+2025/09/17 17:21:12.484318 error: InitCommonControlsEx failed; dwICC=0x000087ff
+2025/09/17 17:32:53.270667 startup: begin
+2025/09/17 17:32:53.271744 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=all
+2025/09/17 17:32:53.271744 step: InitCommonControlsEx begin
+2025/09/17 17:32:53.284696 warn: InitCommonControlsEx failed (broad set); dwICC=0x000087ff
+2025/09/17 17:32:53.285207 step: InitCommonControlsEx success (conservative set); dwICC=0x000001ff
+2025/09/17 17:32:53.285207 step: MainWindow.Create begin
+2025/09/17 17:32:53.319342 step: MainWindow.Create end; duration=34.1346ms
+2025/09/17 17:32:53.319342 error: MainWindow.Create failed: TTM_ADDTOOL failed
+
+Stack:
+goroutine 1 [running, locked to thread]:
+runtime/debug.Stack()
+	C:/Program Files/Go/src/runtime/debug/stack.go:26 +0x5e
+github.com/lxn/walk.newErr(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:81
+github.com/lxn/walk.newError({0x1180577, 0x12})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:85 +0x25
+github.com/lxn/walk.(*ToolTip).addTool(0x28?, 0x12092c8?, 0x8?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:184 +0x96
+github.com/lxn/walk.(*ToolTip).AddTool(0xc0001ac008, {0x12092c8?, 0xc000198708?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:160 +0x34
+github.com/lxn/walk.(*WidgetBase).init(0xc000198708, {0x116e740?, 0x1185dd8?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:137 +0x117
+github.com/lxn/walk.initWindowWithCfg(0xc0000bfbe0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:670 +0x60e
+github.com/lxn/walk.InitWindow(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:538
+github.com/lxn/walk.InitWidget({0x12092c8, 0xc000198708}, {0x1202f88, 0xc000004408}, {0x1185dd8?, 0x1c?}, 0x50000000?, 0x10000?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:110 +0x105
+github.com/lxn/walk.NewCompositeWithStyle({0x1202f88, 0xc000004408}, 0x0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:30 +0xbc
+github.com/lxn/walk.NewComposite(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:45
+github.com/lxn/walk.(*FormBase).init(0xc000004408, {0x1209918, 0xc000004408})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/form.go:107 +0x69
+github.com/lxn/walk.initWindowWithCfg(0xc0000bfec8)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:662 +0x56e
+github.com/lxn/walk.NewMainWindowWithCfg(0xc0000c01f0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/mainwindow.go:48 +0x134
+github.com/lxn/walk/declarative.MainWindow.Create({{{0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, ...}, ...})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/declarative/mainwindow.go:64 +0xee
+main.main()
+	C:/Users/PATKRAN/Python/07_controlling/financial_calculator/walk/cmd/fc-walk/main.go:562 +0x447d
+2025/09/17 17:41:14.504234 startup: begin
+2025/09/17 17:41:14.506952 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=all
+2025/09/17 17:41:14.507509 step: InitCommonControlsEx begin
+2025/09/17 17:41:14.527946 warn: InitCommonControlsEx failed (broad set); dwICC=0x000087ff
+2025/09/17 17:41:14.528235 step: InitCommonControlsEx success (conservative set); dwICC=0x000001ff
+2025/09/17 17:41:14.528235 step: MainWindow.Create begin
+2025/09/17 17:41:14.578680 step: MainWindow.Create end; duration=50.4441ms
+2025/09/17 17:41:14.579338 error: MainWindow.Create failed: TTM_ADDTOOL failed
+
+Stack:
+goroutine 1 [running, locked to thread]:
+runtime/debug.Stack()
+	C:/Program Files/Go/src/runtime/debug/stack.go:26 +0x5e
+github.com/lxn/walk.newErr(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:81
+github.com/lxn/walk.newError({0x1170577, 0x12})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:85 +0x25
+github.com/lxn/walk.(*ToolTip).addTool(0x28?, 0x11f92c8?, 0x8?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:184 +0x96
+github.com/lxn/walk.(*ToolTip).AddTool(0xc0001e0008, {0x11f92c8?, 0xc0001c0708?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:160 +0x34
+github.com/lxn/walk.(*WidgetBase).init(0xc0001c0708, {0x115e740?, 0x1175dd8?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:137 +0x117
+github.com/lxn/walk.initWindowWithCfg(0xc000189be0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:670 +0x60e
+github.com/lxn/walk.InitWindow(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:538
+github.com/lxn/walk.InitWidget({0x11f92c8, 0xc0001c0708}, {0x11f2f88, 0xc000004408}, {0x1175dd8?, 0x1c?}, 0x50000000?, 0x10000?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:110 +0x105
+github.com/lxn/walk.NewCompositeWithStyle({0x11f2f88, 0xc000004408}, 0x0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:30 +0xbc
+github.com/lxn/walk.NewComposite(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:45
+github.com/lxn/walk.(*FormBase).init(0xc000004408, {0x11f9918, 0xc000004408})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/form.go:107 +0x69
+github.com/lxn/walk.initWindowWithCfg(0xc000189ec8)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:662 +0x56e
+github.com/lxn/walk.NewMainWindowWithCfg(0xc00018a1f0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/mainwindow.go:48 +0x134
+github.com/lxn/walk/declarative.MainWindow.Create({{{0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, ...}, ...})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/declarative/mainwindow.go:64 +0xee
+main.main()
+	C:/Users/PATKRAN/Python/07_controlling/financial_calculator/walk/cmd/fc-walk/main.go:562 +0x447d
