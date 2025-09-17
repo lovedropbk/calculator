@@ -421,3 +421,130 @@ Appendix B: Waterfall line mapping
 - IDC subsidies and fees periodic → net add
 - Net EBIT Margin → subtotal
 - Economic Capital and Acquisition RoRAC → final KPI
+
+---
+
+## 14. Walk UI migration — native Windows split-pane design (WIP)
+
+Purpose
+- Replace the current Wails/React shell with a native Windows UI using Walk, per stakeholder request.
+- Preserve all calculation functionality by wiring UI events directly into the Go engines via existing application services.
+- Deliver a modern, robust, non-overlapping split-pane layout with inputs on the left and outputs on the right.
+
+Scope and status
+- Walk entrypoint added behind build tag: [main.go](main.go:1) is disabled when building with walk tag.
+- New Windows-native entrypoint: [main.main()](walk_main.go:1) created (build tag `walkui`).
+- Uses existing backend app/service: [NewApp()](app.go:27) and [App.CalculateQuote()](app.go:198) to compute results with pinned ParameterSet version.
+
+Build targets and switching UIs
+- Wails UI (default): `go run .` or `wails dev` (still available).
+- Walk UI: `go run -tags walkui .` (native, no webview).
+- Build tags:
+  - Wails entrypoint has build constraint [!walkui](main.go:1).
+  - Walk entrypoint has build constraints `//go:build walkui` and `// +build walkui` in [walk_main.go](walk_main.go:1).
+
+High-level layout (Walk)
+- MainWindow
+  - Root layout: VBox
+  - Body: HSplitter (two panes)
+    1) Left/Inputs (VBox)
+       - GroupBox “Deal Inputs” (Grid 2 columns)
+         - Product ComboBox: HP, mySTAR, FinanceLease, OperatingLease
+         - Price (THB) LineEdit
+         - Down payment percent LineEdit
+         - Down payment amount LineEdit
+         - Lock mode (RadioButton “Percent” / “Amount”)
+         - Term months LineEdit
+         - Timing ComboBox: Arrears/Advance
+         - Balloon percent LineEdit
+       - GroupBox “Rate Mode”
+         - Radio “Fixed Rate” → enable Customer rate (% p.a.)
+         - Radio “Target Installment” → enable Target installment (THB)
+         - Customer rate (% p.a.) LineEdit
+         - Target installment (THB) LineEdit
+       - Calculate button
+    2) Right/Outputs (VBox)
+       - GroupBox “Key Metrics”
+         - Monthly Installment
+         - Customer Rate Nominal
+         - Customer Rate Effective
+         - Acquisition RoRAC
+         - Financed Amount
+       - GroupBox “Metadata”
+         - Parameter Version
+         - Calculated timestamp
+- Initial window size 1280×860, minimum 1100×700; splitter resizable; no overlap.
+
+Event and data flow
+- All inputs write to in-memory UI state. The “lock” semantics maintain two-way binding between down payment percent and amount.
+- On any EditingFinished/Selection change, call [App.CalculateQuote()](app.go:198). The function arguments mirror the existing React flow, including rate mode and IDC items (IDC UI is deferred; pass empty JSON for now).
+- The JSON result is decoded to [QuoteResult](app.go:426) and displayed on the right panel (monthly installment, rates, RoRAC, financed amount, version, timestamp).
+
+Rounding and invariants
+- Display formatting:
+  - Currency: use fixed 2 decimals with thousand separators.
+  - Percent: use fixed 2 decimals with % sign.
+- Two-way down payment lock:
+  - When locked on percent, amount = price × percent/100
+  - When locked on amount, percent = amount/price × 100
+  - Guard against division by zero.
+- Validate minimum sane value ranges in UI (e.g., term ≥ 1, price ≥ 0). Failing constraints still trigger calculation but clamp to defaults.
+
+Compatibility notes and known issues (current blockers)
+- Runtime crash observed on Windows 11/Go 1.23 with `TTM_ADDTOOL failed` originating from Walk’s tooltip handling during widget initialization:
+  - Stack trace shows failure inside `walk.(*ToolTip).addTool` called by `WidgetBase.init`.
+  - This appears to be a compatibility regression in `github.com/lxn/walk` (archived) with newer Windows/Go/ComCtl stacks.
+- Mitigation plan:
+  1) Attempt to disable any implicit tooltip creation:
+     - Avoid declarative properties that might set ToolTipText (none are set today).
+     - Evaluate creating the MainWindow with minimal styles and no tooltip associations.
+     - If feasible, fork Walk and guard tooltip creation when text is empty (skip `TTM_ADDTOOL`).
+  2) Ensure proper Common Controls v6 activation:
+     - Embed a manifest enabling ComCtl32 v6 for “go build” artifacts (not effective for `go run`).
+     - Integrate a manifest pipeline (e.g., goversioninfo) and test if it stabilizes tooltip behavior.
+  3) Evaluate maintained forks (community forks that addressed tooltip/ComCtl changes).
+  4) If Walk cannot be reliably stabilized, re-evaluate alternate native toolkits (WinUI3 via CGo bridge, Fyne, Gio) while preserving the split-pane UX and keeping the engines unchanged.
+
+Build & run instructions
+- Prereqs: Windows, Go toolchain, MSVC runtime (as required by engines); no NPM needed for Walk build.
+- Run Walk UI (native):
+  - Development: `go run -tags walkui .`
+  - Build: `go build -tags walkui -o financial-calculator-walk.exe .`
+- Switch back to Wails UI:
+  - `wails dev` or `go run .` (Wails is compiled only when `walkui` tag is absent).
+
+Mapping from React components to Walk controls
+- Input panel (React) → “Deal Inputs” + “Rate Mode” group boxes on left pane:
+  - Product selector: React ToggleGroup/Select → Walk ComboBox
+  - Price, down payment fields, balloon: React NumberInput → Walk LineEdit with numeric parsing
+  - Lock semantics: React local state → Walk RadioButtons + SetChecked() initialization
+  - Timing: React Select → Walk ComboBox
+  - Rate mode and fields: React radio + inputs → Walk RadioButtons + enable/disable LineEdits
+- Results panel (React) → “Key Metrics” group box on right pane:
+  - Monthly installment, rates, RoRAC, financed amount
+  - Metadata version and timestamp
+
+Extensibility (next phases)
+- Add IDC dialog/table on Walk side mirroring the React Advanced Drawer behavior:
+  - IDC items (type, timing, financed, amount, tax, payer)
+  - Add/Update/Remove; pass serialized IDC list to [App.CalculateQuote()](app.go:198)
+- Add details waterfall (deal IRR, cost of debt matched funded, gross/net margins, risk, opex, EBIT, RoRAC) in an expandable group.
+- Export and scenario save:
+  - Reuse JSON export format created in the React UI and bound Go methods for scenario IO.
+
+Acceptance criteria for Walk UI
+- No overlapping controls at minimum and common sizes; splitter allows comfortable resizing.
+- All inputs cause deterministic recalculation within sub-300ms in typical cases.
+- Metric values match Wails UI for identical inputs (numeric parity within 0.01 THB / 1 bp where applicable).
+- Display is stable under rapid edits (no panic, no crash).
+- Clearly visible ParameterSet version and calculation timestamp.
+
+Files added/changed
+- New entrypoint [walk_main.go](walk_main.go:1) with `//go:build walkui` and legacy build tag for compatibility.
+- Build exclusion tag added at top of [main.go](main.go:1) to disable Wails when `walkui` is used.
+
+Open issues tracker (Walk)
+- [ ] Fix TTM_ADDTOOL crash by disabling tooltip creation or applying a manifest/controls fix.
+- [ ] Evaluate maintained forks for Walk; vendor if necessary.
+- [ ] Implement IDC UI and Details waterfall after baseline UI stabilization.
+- [ ] Add unit tests for input parsing/locking and output formatting at the UI boundary.
