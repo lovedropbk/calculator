@@ -1,0 +1,22 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Financial Calculator",
+  "outputfilename": "FinancialCalculator",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "debounceMS": 100,
+  "startHidden": false,
+  "author": {
+    "name": "Financial Calculator Team",
+    "email": "support@financialcalculator.com"
+  },
+  "info": {
+    "companyName": "Financial Calculator",
+    "productName": "Financial Calculator",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright 2024 Financial Calculator",
+    "description": "A comprehensive financial calculation and analysis tool with loan amortization, pricing strategies, campaign management, cashflow projections, and profitability analysis."
+  }
+}
