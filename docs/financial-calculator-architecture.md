@@ -7,7 +7,7 @@ Scope confirmed by business:
 - Geography and currency: Thailand, THB
 - Campaigns: Subdown, Subinterest, Free Insurance, Free MBSP, Cash Discount
 - Parameters: Average parameter set for MVP, seeded from current reporting
-- Tech stack: Cross-platform desktop app built with Wails v2 framework; React + TypeScript frontend with Tailwind CSS; Go calculation and profitability engines with direct in-process integration. Optional local HTTP facade for future multi-client support.
+- Tech stack: Native Windows desktop app built with Walk framework; Go calculation and profitability engines with direct in-process integration. Optional local HTTP facade for future multi-client support.
 
 Contents
 1. Executive summary
@@ -44,19 +44,18 @@ flowchart LR
 Key principles: single source of parameters; deterministic outputs; versioning of configs; exports with signatures for audit.
 
 ## 3. Component responsibilities
-- Desktop app (Wails v2): Cross-platform native application with React frontend and TypeScript; modern UI with Tailwind CSS styling, guided forms, inline validation, numeric controls, and adaptive theming; orchestrates calculations and displays results. No business math in the UI layer.
-- Engines (in-process Go libraries): Pricing, Campaign rules, Cashflow and IRR, Profitability and RoRAC. Deterministic and versioned; callable directly from the app via Wails runtime bindings.
+- Desktop app (Walk): Native Windows application using Walk framework; native Windows controls with split-pane layout, guided forms, inline validation, numeric controls; orchestrates calculations and displays results. No business math in the UI layer.
+- Engines (in-process Go libraries): Pricing, Campaign rules, Cashflow and IRR, Profitability and RoRAC. Deterministic and versioned; callable directly from the app via direct Go function calls.
 - Config service (local cache with sync): Versioned parameters stored locally; background sync over HTTPS from the publisher backend; each calculation pins to a specific version id for reproducibility.
 - Scenario and audit store: Local scenario persistence and immutable audit log; export to PDF/XLSX; optional BI feed or server upload.
 
-### 3.1 Wails frontend implementation notes
-- Application framework: Wails v2 providing native desktop wrapper with embedded web view; React 18+ for component-based UI architecture; TypeScript for type safety and better IDE support; direct Go backend integration through Wails runtime bindings enabling seamless function calls from frontend to backend.
-- Modern UI with Tailwind CSS: Tailwind CSS for utility-first styling with custom design system; glassmorphism effects with backdrop blur for depth and hierarchy; CSS variables for dynamic light/dark theme switching; smooth transitions and micro-interactions; custom components matching modern financial application patterns.
-- React architecture: Functional components with React hooks for state management; Context API for global state (theme, user preferences, parameter versions); Custom hooks for business logic encapsulation; React Query for async state management and caching; Component composition for reusable UI patterns.
-- UI components: Custom number input with formatting, validation, and currency display; Toggle switches and segmented controls for options; Collapsible panels with smooth animations for Details section; Modern date pickers and select dropdowns; Loading states and error boundaries for resilience.
-- Cross-platform capabilities: Single codebase runs on Windows (primary), macOS, and Linux; Platform-specific styling adjustments via CSS; Native file dialogs through Wails runtime; System tray integration and notifications; Keyboard shortcuts with platform-appropriate key bindings.
-- Frontend-backend integration: Wails bindings auto-generate TypeScript types from Go structs; Direct function calls from React to Go without HTTP overhead; Structured error handling with typed responses; Event system for backend-to-frontend push updates; Efficient binary data transfer for large datasets.
-- State management: React state for UI-specific data (form inputs, UI toggles); Go backend maintains authoritative calculation state; Optimistic UI updates with rollback on errors; Session persistence via browser storage APIs; Undo/redo capability for user actions.
+### 3.1 Walk desktop implementation notes
+- Application framework: Walk providing native Windows GUI toolkit; Direct Go integration without IPC overhead; Native Windows controls for optimal performance and OS integration; Split-pane layout with non-overlapping inputs (left) and outputs (right).
+- UI architecture: Model-View binding pattern with Walk's declarative syntax; Direct event handlers for user interactions; Synchronous calculation updates without async complexity; Native Windows message loop handling.
+- UI components: Native Windows LineEdit controls for numeric input with validation; ComboBox for product and timing selection; RadioButton groups for rate mode selection; GroupBox for logical section organization; HSplitter for resizable panes.
+- Windows-specific capabilities: Native Windows dialogs for file operations; System-native number formatting; Standard Windows keyboard shortcuts; DPI-aware rendering with manifest configuration; Common Controls v6 activation for modern appearance.
+- Frontend-backend integration: Direct Go function calls without marshaling overhead; Shared structs between UI and engines; Immediate synchronous responses; No serialization/deserialization required for internal calls.
+- State management: UI state maintained in Go structs; Direct binding to Windows controls; Calculation state owned by engines; Two-way binding for linked inputs (e.g., down payment amount/percent).
 
 ## 4. Data and configuration model
 Entities
@@ -311,32 +310,29 @@ This MVP will be delivered as four larger subprojects executed in parallel with 
   - Performance benchmarks on representative cases; fail CI if p95 exceeds target by more than 20 percent.
   - Determinism tests: repeated runs produce byte-identical serialized outputs (excluding approved volatile fields like timestamp where applicable).
 
-13.2 Desktop app (Wails v2) — cross-platform UI and orchestration
+13.2 Desktop app (Walk) — native Windows UI and orchestration
 - Scope
-  - Cross-platform desktop app built with Wails v2, React, TypeScript, and Tailwind CSS with the UI, layout, and interaction patterns described in section 3.1 and wireframes in section 9.
-  - Modern design system with glassmorphism effects, smooth animations, and adaptive light/dark themes.
-  - React component architecture with hooks, Context API, and proper separation of concerns.
-  - No business math in the UI: all computations delegated to the Go engine libraries via Wails runtime bindings with pinned ParameterSet version id displayed in header.
-  - Offline-first operation with last cached ParameterSet; background async operations with proper state management.
+  - Native Windows desktop app built with Walk framework with the UI, layout, and interaction patterns described in section 3.1 and wireframes in section 9.
+  - Standard Windows controls with clean split-pane layout.
+  - Native Windows event handling and control binding.
+  - No business math in the UI: all computations delegated to the Go engine libraries via direct function calls with pinned ParameterSet version id displayed in header.
+  - Offline-first operation with last cached ParameterSet.
 - Deliverables
-  - React components: App shell with navigation and layout management; Input panel with form controls and validation; Results panel with dynamic metric display; Collapsible Details component for profitability waterfall; Reusable UI primitives (NumberInput, Select, Toggle, DatePicker); Theme provider for light/dark mode switching.
-  - TypeScript types and interfaces: Auto-generated types from Go structs via Wails; Frontend models matching backend entities (Deal, Campaign, IDC); Type-safe props and component interfaces; Validation schemas using Zod or similar; Error and response type definitions.
-  - Tailwind CSS styling: Custom design tokens for colors, spacing, typography; Component-specific styles with utility classes; Responsive breakpoints for different screen sizes; Animation classes for transitions and micro-interactions; Dark mode variants using CSS variables.
-  - Wails integration: Go struct bindings exposed to frontend; Direct function calls without HTTP overhead; Event listeners for backend push updates; File dialog integration for imports/exports; System tray and notification support.
-  - Application packaging: Wails build for Windows (NSIS installer), macOS (DMG), Linux (AppImage); Code signing for Windows and macOS; Auto-update mechanism using GitHub releases or custom server; Single-instance application support; Custom application icon and metadata.
-  - Modern UI features: Glassmorphism with backdrop-filter effects; Smooth scroll and parallax effects where appropriate; Skeleton loaders during async operations; Toast notifications for user feedback; Keyboard shortcuts with visual indicators; Responsive design adapting to window size.
+  - Walk UI components: MainWindow with HSplitter layout; Input panel (left pane) with GroupBox sections and form controls; Results panel (right pane) with metric display; Native controls (LineEdit, ComboBox, RadioButton, PushButton).
+  - Go structs and bindings: Direct struct definitions for UI state; Event handlers for control interactions; Calculation orchestration logic; Validation and formatting helpers.
+  - Windows resources: Application manifest for Common Controls v6 and DPI awareness; Version information resource; Application icon; Native file dialogs for import/export.
+  - Application packaging: Executable with embedded resources via goversioninfo; Windows GUI subsystem (-H=windowsgui); Optional NSIS installer for distribution; Code signing support.
 - Interfaces and integration
-  - Engine invocation through Wails runtime with Promise-based API; React Query for caching and state synchronization; Optimistic updates with error rollback.
-  - Parameter service client for versioned fetch and cache; local scenario store and audit log writer using Wails file system APIs.
-- Accessibility, usability, and localization
-  - ARIA attributes for screen reader support; keyboard navigation with visible focus indicators; semantic HTML structure; color contrast meeting WCAG AA standards; THB formatting using Intl.NumberFormat; React-i18n for future localization support; responsive design for various screen sizes.
+  - Direct engine invocation through Go function calls; Synchronous execution model; No serialization overhead.
+  - Parameter service client for versioned fetch and cache; local scenario store and audit log writer using native file APIs.
+- Accessibility and usability
+  - Standard Windows keyboard navigation; Native control focus indicators; Windows accessibility features support; THB formatting using Go's decimal package; Windows-native number input handling.
 - Testing (required)
-  - React Testing Library tests for component behavior and user interactions (e.g., baseline HP quote flow; mySTAR with balloon; campaign selection; collapsible panel state).
-  - Component unit tests: Input validation for 0–80 percent down payment range with whole THB rounding; two-way binding and lock behavior for dual inputs; conditional rendering based on product selection.
-  - Visual regression tests using Playwright or Cypress for key UI states across different themes and screen sizes.
-  - Integration tests: React components tested against mocked Wails runtime with fixed responses; verify correct data flow and display values matching expected outputs.
-  - Offline-first tests: simulate offline mode; verify app uses cached ParameterSet and computes quotes; verify version id display in header.
-  - Build and packaging tests: verify executables run without external dependencies; test installer flows on target platforms; validate auto-update mechanism; test file export functionality (PDF/XLSX).
+  - Unit tests for calculation orchestration and validation logic.
+  - Manual testing checklist: Baseline HP quote flow; mySTAR with balloon; Down payment dual-input synchronization; Rate mode switching.
+  - Integration tests: UI state to engine parameter mapping; Correct result display formatting; Parameter version handling.
+  - Offline-first tests: verify app uses cached ParameterSet and computes quotes; verify version id display in header.
+  - Build and packaging tests: verify executable runs without external dependencies; test manifest and resource embedding; validate file export functionality.
 
 13.3 Parameter service and publisher — versioned parameters, cache, and sync
 - Scope
@@ -392,17 +388,22 @@ This MVP will be delivered as four larger subprojects executed in parallel with 
   - Scenario/audit/exports: golden exports validated; deterministic hashing; audit integrity verified; scenario compare renders correctly.
 
 13.6 Technology Migration Notes
-- Previous considerations: Earlier architecture iterations considered WinUI 3 for Windows-native implementation and a Windigo-based approach. These explorations informed the current architecture but were superseded by the Wails solution.
-- Current implementation: The Wails v2 framework was selected as the optimal solution, combining native desktop performance with modern web technologies.
-- Rationale for Wails v2 adoption:
-  - Cross-platform capability: Single codebase runs natively on Windows (primary target), macOS, and Linux, enabling future market expansion without rewriting.
-  - Modern web stack: Leverages React ecosystem, TypeScript type safety, and Tailwind CSS for rapid UI development with extensive component libraries and tooling.
-  - Direct Go integration: Eliminates IPC overhead through direct bindings between React frontend and Go backend, maintaining sub-300ms calculation performance targets.
-  - Smaller binary size: Wails produces compact executables (typically 10-15MB) compared to Electron alternatives (100MB+), important for distribution in bandwidth-constrained regions.
-  - Native OS integration: Access to native file dialogs, system tray, notifications, and OS-specific features while maintaining cross-platform compatibility.
-  - Developer productivity: Hot reload during development, excellent debugging tools, and familiar web development patterns reduce time-to-market.
-  - Future flexibility: Web-based UI can be easily adapted for future web deployment or mobile apps using React Native, protecting technology investment.
-- Implementation approach: The functional requirements, calculation engines, and business logic remain unchanged. The Wails framework provides the optimal balance of native performance, modern UI capabilities, and cross-platform support while maintaining direct integration with the existing Go calculation engines.
+- Previous considerations: Earlier architecture iterations considered WinUI 3 for Windows-native implementation, a Windigo-based approach, and Wails v2 with React. These explorations informed the current architecture.
+- Current implementation: The Walk framework was selected as the optimal solution for Windows-native desktop development.
+- Rationale for Walk adoption:
+  - True native Windows performance: No web view overhead, direct Windows API calls, optimal resource usage.
+  - Simpler architecture: Eliminates the complexity of web technologies (React, TypeScript, bundlers), reducing maintenance burden.
+  - Direct Go integration: No IPC, no marshaling, no async complexity - direct function calls maintain sub-300ms calculation performance targets.
+  - Smaller binary size: Walk produces very compact executables (typically 5-10MB), important for distribution.
+  - Native Windows integration: Direct access to Windows controls, dialogs, and OS features without abstraction layers.
+  - Reduced dependencies: No npm packages, no JavaScript runtime, no web framework updates to manage.
+  - Better debugging: Standard Go debugging tools, no browser DevTools required, simpler stack traces.
+- Migration from Wails to Walk:
+  - The Wails/React UI remains in the repository under /frontend for reference but is not maintained.
+  - Walk UI is the canonical implementation going forward.
+  - All new development should target the Walk UI.
+  - The calculation engines remain unchanged and are shared between both UIs.
+- Implementation approach: The functional requirements, calculation engines, and business logic remain unchanged. The Walk framework provides optimal Windows-native performance and simplified maintenance while maintaining direct integration with the existing Go calculation engines.
 
 Appendix A: Display formulas for reference
 - Amortizing payment Pmt = r * PV / (1 − (1 + r)^{−n}) where r is periodic nominal rate.
@@ -424,24 +425,24 @@ Appendix B: Waterfall line mapping
 
 ---
 
-## 14. Walk UI migration — native Windows split-pane design (WIP)
+## 14. Walk UI — native Windows split-pane design (CURRENT)
 
 Purpose
-- Replace the current Wails/React shell with a native Windows UI using Walk, per stakeholder request.
-- Preserve all calculation functionality by wiring UI events directly into the Go engines via existing application services.
-- Deliver a modern, robust, non-overlapping split-pane layout with inputs on the left and outputs on the right.
+- Native Windows UI using Walk framework for optimal performance and simplified maintenance.
+- Direct integration with Go engines without serialization overhead.
+- Modern, robust, non-overlapping split-pane layout with inputs on the left and outputs on the right.
 
 Scope and status
-- Walk entrypoint added behind build tag: [main.go](main.go:1) is disabled when building with walk tag.
-- New Windows-native entrypoint: [main.main()](walk_main.go:1) created (build tag `walkui`).
-- Uses existing backend app/service: [NewApp()](app.go:27) and [App.CalculateQuote()](app.go:198) to compute results with pinned ParameterSet version.
+- Walk is the canonical UI implementation; Wails/React UI is legacy and unmaintained.
+- Walk entrypoint: Compiled with build tag `walkui`.
+- Direct engine integration: Uses calculation engines directly without HTTP or IPC overhead.
 
-Build targets and switching UIs
-- Wails UI (default): `go run .` or `wails dev` (still available).
-- Walk UI: `go run -tags walkui .` (native, no webview).
-- Build tags:
-  - Wails entrypoint has build constraint [!walkui](main.go:1).
-  - Walk entrypoint has build constraints `//go:build walkui` and `// +build walkui` in [walk_main.go](walk_main.go:1).
+Build and execution
+- Development mode: `go run -tags walkui .`
+- Production build:
+  1. Generate resources: `goversioninfo`
+  2. Build: `go build -tags walkui -ldflags "-H=windowsgui" -o walk/bin/fc-walk.exe .`
+- The Walk UI is the only supported UI going forward.
 
 High-level layout (Walk)
 - MainWindow
@@ -490,14 +491,18 @@ Rounding and invariants
   - Guard against division by zero.
 - Validate minimum sane value ranges in UI (e.g., term ≥ 1, price ≥ 0). Failing constraints still trigger calculation but clamp to defaults.
 
-Compatibility notes and known issues (current blockers)
-- Runtime crash observed on Windows 11/Go 1.23 with `TTM_ADDTOOL failed` originating from Walk’s tooltip handling during widget initialization:
-  - Stack trace shows failure inside `walk.(*ToolTip).addTool` called by `WidgetBase.init`.
-  - This appears to be a compatibility regression in `github.com/lxn/walk` (archived) with newer Windows/Go/ComCtl stacks.
-- Mitigation plan:
-  1) Attempt to disable any implicit tooltip creation:
-     - Avoid declarative properties that might set ToolTipText (none are set today).
-     - Evaluate creating the MainWindow with minimal styles and no tooltip associations.
+Implementation status
+- ✅ Core UI with split-pane layout
+- ✅ Input controls for basic deal parameters
+- ✅ Output display for key metrics
+- ✅ Down payment dual-input with lock mechanism
+- ✅ Rate mode switching (fixed rate vs target installment)
+- ✅ Direct engine integration
+- ⚠️ Campaign selection UI (TODO)
+- ⚠️ IDC editor (TODO)
+- ⚠️ Waterfall details view (TODO)
+- ⚠️ Scenario save/export (TODO)
+- ⚠️ Parameter service integration (TODO)
      - If feasible, fork Walk and guard tooltip creation when text is empty (skip `TTM_ADDTOOL`).
   2) Ensure proper Common Controls v6 activation:
      - Embed a manifest enabling ComCtl32 v6 for “go build” artifacts (not effective for `go run`).

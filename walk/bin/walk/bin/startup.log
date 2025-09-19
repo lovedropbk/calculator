@@ -88,3 +88,17 @@ github.com/lxn/walk/declarative.MainWindow.Create({{{0x0, 0x0}, {0x0, 0x0}, {0x0
 	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/declarative/mainwindow.go:64 +0xee
 main.main()
 	C:/Users/PATKRAN/Python/07_controlling/financial_calculator/walk/cmd/fc-walk/main.go:562 +0x447d
+2025/09/18 14:42:23.490824 startup: begin
+2025/09/18 14:42:23.492440 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/18 14:42:23.492440 step: InitCommonControlsEx begin
+2025/09/18 14:42:23.509202 warn: InitCommonControlsEx failed (broad set); dwICC=0x000087ff
+2025/09/18 14:42:23.509710 step: InitCommonControlsEx success (conservative set); dwICC=0x000001ff
+2025/09/18 14:42:23.510776 step: MainWindow.Create begin
+2025/09/19 14:47:43.226228 startup: begin
+2025/09/19 14:47:43.227284 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/19 14:47:43.227284 step: InitCommonControlsEx begin
+2025/09/19 14:47:43.236604 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/19 14:47:43.236604 step: MainWindow.Create begin
+2025/09/19 14:47:46.052379 step: MainWindow.Create end; duration=2.8157561s
+2025/09/19 14:47:46.052379 step: mw.Run begin
+2025/09/19 14:47:46.148518 post-create: defaults applied and initial recalc completed
