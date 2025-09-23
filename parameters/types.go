@@ -28,6 +28,9 @@ type ParameterSet struct {
 	RoundingRules      RoundingParams         `json:"rounding_rules"`       // Rounding configuration
 	CampaignCatalog    []CampaignDefinition   `json:"campaign_catalog"`     // Available campaigns
 	DayCountConvention string                 `json:"day_count_convention"` // e.g., "ACT/365"
+
+	// Commission policy: product-level commission percentages
+	CommissionPolicy    CommissionPolicy      `json:"commissionPolicy,omitempty"` // See docs/financial-calculator-architecture.md (policy section)
 }
 
 // PDLGDParams represents Probability of Default and Loss Given Default parameters
@@ -55,6 +58,23 @@ type RoundingParams struct {
 	Method        string `json:"method"`         // Rounding method (bank, floor, ceil)
 	DisplayRate   int    `json:"display_rate"`   // Decimal places for rate display
 	InstallmentTo int    `json:"installment_to"` // Round installment to nearest N
+}
+
+// CommissionPolicy defines commission percentages by product.
+// JSON shape aligns with docs/financial-calculator-architecture.md policy examples.
+//
+// Example JSON:
+// {
+//   "commissionPolicy": {
+//     "version": "2025-09-draft",
+//     "byProductPct": { "HP": 0.01, "mySTAR": 0.0125 },
+//     "notes": "Illustrative only"
+//   }
+// }
+type CommissionPolicy struct {
+	ByProductPct map[string]float64 `json:"byProductPct"` // Product code -> commission percent (0..1). Missing means 0%.
+	Version      string             `json:"version"`      // Semantic/date version tag for the policy set
+	Notes        string             `json:"notes,omitempty"`
 }
 
 // CampaignDefinition defines a campaign in the catalog

@@ -102,3 +102,5 @@ main.main()
 2025/09/19 14:47:46.052379 step: MainWindow.Create end; duration=2.8157561s
 2025/09/19 14:47:46.052379 step: mw.Run begin
 2025/09/19 14:47:46.148518 post-create: defaults applied and initial recalc completed
+2025/09/19 15:16:51.052035 step: mw.Run end; duration=29m4.9835115s
+2025/09/19 15:16:51.052035 shutdown: normal exit

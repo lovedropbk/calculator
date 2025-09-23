@@ -3,6 +3,7 @@ package campaigns
 import (
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 
 	"github.com/financial-calculator/engines/types"
@@ -12,6 +13,9 @@ import (
 // Engine handles campaign application and stacking
 type Engine struct {
 	parameterSet types.ParameterSet
+	// commission provides percent lookup by product for Dealer Commission auto mode.
+	// It matches the minimal method of calculator.CommissionLookup without importing that package to avoid module cycles.
+	commission commissionLookup
 }
 
 // NewEngine creates a new campaign engine
@@ -19,6 +23,13 @@ func NewEngine(params types.ParameterSet) *Engine {
 	return &Engine{
 		parameterSet: params,
 	}
+}
+
+// SetCommissionLookup injects a CommissionLookup provider used to resolve Dealer Commission in auto mode.
+// The interface matches calculator.CommissionLookup (method-only) to avoid importing calculator and creating a module cycle.
+func (e *Engine) SetCommissionLookup(l commissionLookup) *Engine {
+	e.commission = l
+	return e
 }
 
 // ApplyCampaigns applies campaigns in the correct stacking order
@@ -413,4 +424,109 @@ func (e *Engine) ValidateCampaignEligibility(deal types.Deal, campaign types.Cam
 	}
 
 	return true
+}
+
+// commissionLookup is the minimal dependency campaigns needs; compatible with calculator.CommissionLookup without importing it.
+type commissionLookup interface {
+	CommissionPercentByProduct(product string) float64
+}
+
+// isCashDiscount reports whether the given campaign type is Cash Discount.
+func isCashDiscount(t types.CampaignType) bool {
+	return t == types.CampaignCashDiscount
+}
+
+// GenerateCampaignSummaries computes per-option Dealer Commission (THB and percent) for UI tiles.
+// - Cash Discount options are forced to 0 THB (0%).
+// - Finance options use override precedence (Amt > Pct > Auto) per Dealer Commission Policy.
+// - Auto mode uses commission percent by product from the injected provider.
+// - Financed base prefers deal.FinancedAmount; otherwise PriceExTax - DownPaymentAmount; clamped to >= 0 and amounts are rounded to nearest THB.
+func (e *Engine) GenerateCampaignSummaries(deal types.Deal, state types.DealState, campaigns []types.Campaign) []types.CampaignSummary {
+	// Sort for deterministic tile order (same as stacking)
+	sorted := e.sortCampaigns(campaigns)
+	summaries := make([]types.CampaignSummary, 0, len(sorted))
+
+	// Determine financed base
+	var financedBase float64
+	if !deal.FinancedAmount.IsZero() {
+		financedBase = deal.FinancedAmount.InexactFloat64()
+	} else {
+		financedBase = deal.PriceExTax.Sub(deal.DownPaymentAmount).InexactFloat64()
+	}
+	if financedBase < 0 {
+		financedBase = 0
+	}
+
+	product := string(deal.Product)
+
+	for _, c := range sorted {
+		var amt float64
+		var pct float64
+
+		if isCashDiscount(c.Type) {
+			amt = 0
+			pct = 0
+		} else {
+			// Override -> Auto precedence
+			if state.DealerCommission.Mode == types.DealerCommissionModeOverride {
+				if state.DealerCommission.Amt != nil {
+					// Amount override takes precedence
+					a := *state.DealerCommission.Amt
+					if a < 0 {
+						a = 0
+					}
+					amt = math.Round(a)
+					pct = 0
+				} else if state.DealerCommission.Pct != nil {
+					// Percent override
+					p := *state.DealerCommission.Pct
+					if p < 0 {
+						p = 0
+					}
+					pct = p
+					amt = math.Round(math.Max(financedBase, 0) * pct)
+					if amt < 0 {
+						amt = 0
+					}
+				} else {
+					// Override mode without values -> treat as auto
+					if e.commission != nil {
+						pct = e.commission.CommissionPercentByProduct(product)
+						if pct < 0 {
+							pct = 0
+						}
+					} else {
+						pct = 0
+					}
+					amt = math.Round(math.Max(financedBase, 0) * pct)
+					if amt < 0 {
+						amt = 0
+					}
+				}
+			} else {
+				// Auto mode
+				if e.commission != nil {
+					pct = e.commission.CommissionPercentByProduct(product)
+					if pct < 0 {
+						pct = 0
+					}
+				} else {
+					pct = 0
+				}
+				amt = math.Round(math.Max(financedBase, 0) * pct)
+				if amt < 0 {
+					amt = 0
+				}
+			}
+		}
+
+		summaries = append(summaries, types.CampaignSummary{
+			CampaignID:          c.ID,
+			CampaignType:        c.Type,
+			DealerCommissionAmt: amt,
+			DealerCommissionPct: pct,
+		})
+	}
+
+	return summaries
 }
