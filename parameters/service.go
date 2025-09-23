@@ -571,3 +571,48 @@ func (s *Service) GetStatus() map[string]interface{} {
 		"storage_path":       s.storage.basePath,
 	}
 }
+
+// CommissionPercentByProduct returns the commission percent for the given product.
+// See docs/financial-calculator-architecture.md (policy section). JSON shape matches:
+// { "commissionPolicy": { "version": "...", "byProductPct": {"HP": 0.01}, "notes": "..." } }
+// Fallback behavior: if no policy or missing product key, return 0.0. Negative values are clamped to 0.0.
+// Case-sensitive lookup; no key transformation is performed.
+func (s *Service) CommissionPercentByProduct(product string) float64 {
+	if product == "" {
+		return 0.0
+	}
+
+	s.mu.RLock()
+	params := s.cache[s.currentID]
+	s.mu.RUnlock()
+
+	if params == nil {
+		return 0.0
+	}
+
+	if params.CommissionPolicy.ByProductPct == nil {
+		return 0.0
+	}
+
+	if v, ok := params.CommissionPolicy.ByProductPct[product]; ok {
+		if v < 0 {
+			return 0.0
+		}
+		return v
+	}
+
+	return 0.0
+}
+
+// CommissionPolicyVersion returns the configured commission policy version.
+// If the policy is missing or version is empty, returns the empty string.
+func (s *Service) CommissionPolicyVersion() string {
+	s.mu.RLock()
+	params := s.cache[s.currentID]
+	s.mu.RUnlock()
+
+	if params == nil {
+		return ""
+	}
+	return params.CommissionPolicy.Version
+}

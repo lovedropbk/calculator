@@ -126,6 +126,78 @@ Categories
 Flags
 - Revenue or cost; financed or withheld; taxable; disclosure class.
 
+### 8.1 Dealer Commission Policy — end-to-end behavior
+
+Policy drivers and storage
+- Commission is determined by product-level percentage (HP, Finance Lease, Balloon HP, etc.). The model is designed to be extensible later to include additional drivers such as term, down payment percent, timing (arrears vs advance), channel, or segment.
+- Storage: under the versioned parameters service as part of the ParameterSet. Policy lives at key commissionPolicy with the following shape. Values shown are EXAMPLES ONLY and must be replaced via parameter sync.
+```json
+{
+  "commissionPolicy": {
+    "byProductPct": {
+      "HP": 0.015,
+      "FinanceLease": 0.0125,
+      "BalloonHP": 0.016
+    },
+    "version": "2025.09",
+    "notes": "Example defaults; replace via parameter sync"
+  }
+}
+```
+- Fallbacks: if the product is not found in byProductPct or the commissionPolicy block is missing, default Commission percent = 0%.
+
+Calculation definition
+- Commission base amount = Financed Amount used by engines for dealer disbursement: Vehicle Price (after any Cash Discount) − Down Payment. Financed IDCs are excluded from the commission base.
+- Commission percent = policy lookup by product (unless an override percent is provided in the deal).
+- Resolved Commission Amount = round(Commission base × Commission percent) to the nearest THB using the global rounding convention (see section 5).
+
+Override model and behavior
+- Mode: auto or override.
+- Override may specify a percent (pct) or an amount (amt). The resolved amount reflects whichever override is active; if both pct and amt are provided, amount takes precedence.
+- Reset to auto restores the policy-based calculation (clears overrides).
+- Overrides persist for the session (and in saved scenarios) until explicitly reset.
+
+Integration with deal state
+- Extend the conceptual DealState with:
+  - DealerCommission: { mode: auto | override, pct?: number, amt?: number, resolvedAmt: number }
+  - IDC_Other: { value: number, userEdited: boolean }
+- IDC Total = Dealer Commission (resolvedAmt) + IDC Other (unchanged).
+
+Campaigns engine outputs
+- Campaign summaries must include a per-option Dealer Commission value for tile display:
+  - For finance options (e.g., Subdown, Subinterest, Free Insurance, Free MBSP): use the resolved Dealer Commission amount (typically equal across options for a given deal because it is product- and deal-driven).
+  - For Cash Discount: force Dealer Commission to 0 (0%).
+- Note: Even if equal across finance options, surfacing Dealer Commission underscores the value difference versus Cash Discount.
+
+UI wiring and display
+- Top section: keep the pill “IDCs - Dealer Commissions” showing “auto: Y% (THB X)”, with override editor (percent or amount) and a “Reset to auto” action.
+- Campaign Options grid: add “Dealer Comm.: THB X (Y%)” to the visible value prop line for each tile. For Cash Discount, display “THB 0 (0%)”.
+- Right pane metrics: ensure IDC Total remains the sum of Dealer Commission and Other; show both components explicitly.
+
+Data flow updates
+- On product/term/downpayment/timing changes, recompute the auto Dealer Commission resolved amount.
+- On campaign fetch, include the per-option Dealer Commission for display; selecting a campaign still maps “Subsidy” to IDC Other per the redesign spec.
+
+Edge cases and guardrails
+- Unknown product or missing parameter: default Commission percent = 0%, display a non-blocking warning badge in the UI.
+- Rounding: nearest THB; negative values disallowed.
+- Cash Discount: always 0 (0%) regardless of overrides.
+
+Acceptance criteria
+- Calculation correctness:
+  - Given product P and commission base B, auto resolved commission = round(B × byProductPct[P]) THB; if P missing, resolved commission = 0 THB.
+  - Rounding to nearest THB matches global conventions.
+- Override behavior:
+  - Percent override: resolvedAmt = round(B × pct).
+  - Amount override: resolvedAmt = amt (amount takes precedence if both provided).
+  - “Reset to auto” clears overrides and restores policy-based result.
+- Tile display:
+  - Campaign summaries include Dealer Commission per option; finance options display resolved value; Cash Discount displays THB 0 (0%).
+- IDC totals:
+  - IDC Total equals Dealer Commission (resolvedAmt) + IDC Other and is shown explicitly in the right pane.
+- Recompute triggers:
+  - Auto commission recomputes on product/term/downpayment/timing changes; overrides persist until reset.
+
 ## 9. UI wireframes (ASCII)
 9.1 Quote screen
 

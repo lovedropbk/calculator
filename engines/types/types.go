@@ -256,6 +256,16 @@ type CampaignAuditEntry struct {
 	TransformationDetails map[string]interface{} `json:"transformation_details,omitempty"`
 }
 
+// CampaignSummary is a lightweight per-option summary for the campaigns engine.
+// DealerCommissionAmt and DealerCommissionPct are computed per-option per the Dealer Commission Policy
+// (see architecture doc). Cash Discount options are forced to 0 THB (0%).
+type CampaignSummary struct {
+	CampaignID          string       `json:"campaign_id"`
+	CampaignType        CampaignType `json:"campaign_type"`
+	DealerCommissionAmt float64      `json:"dealerCommissionAmt"`
+	DealerCommissionPct float64      `json:"dealerCommissionPct"`
+}
+
 // CalculationRequest represents the main API input
 type CalculationRequest struct {
 	Deal         Deal                   `json:"deal"`
@@ -347,4 +357,59 @@ func AddMonths(date time.Time, months int) time.Time {
 	return time.Date(year, time.Month(monthResult), day,
 		date.Hour(), date.Minute(), date.Second(),
 		date.Nanosecond(), date.Location())
+}
+
+// DealerCommissionMode represents how Dealer Commission is determined for a deal.
+//
+// Mode semantics:
+//   - "auto": engine will determine the dealer commission per policy/parameters.
+//   - "override": user provides override values.
+//
+// See docs/financial-calculator-architecture.md, section "8.1 Dealer Commission Policy — end-to-end behavior".
+type DealerCommissionMode string
+
+const (
+	// DealerCommissionModeAuto selects automatic policy-driven determination.
+	DealerCommissionModeAuto DealerCommissionMode = "auto"
+	// DealerCommissionModeOverride indicates user-provided override values.
+	DealerCommissionModeOverride DealerCommissionMode = "override"
+)
+
+// DealerCommission captures override inputs and the resolved amount for Dealer Commission.
+//
+// Override precedence:
+//   - Amt (THB) takes precedence when provided.
+//   - Otherwise Pct (fraction, e.g., 0.015) may be used.
+//
+// ResolvedAmt is the authoritative THB amount for the current deal context.
+// Calculation of ResolvedAmt is performed elsewhere.
+type DealerCommission struct {
+	Mode        DealerCommissionMode `json:"mode"`          // "auto" or "override"
+	Pct         *float64             `json:"pct,omitempty"` // optional override as fraction (e.g., 0.015)
+	Amt         *float64             `json:"amt,omitempty"` // optional override amount in THB; takes precedence if set
+	ResolvedAmt float64              `json:"resolvedAmt"`   // computed/authoritative THB for current deal context
+}
+
+// IDCOther tracks other IDC fees that may be user-edited (e.g., campaign fees).
+//
+// When UserEdited is true, UI or engines should not auto-fill/override this value
+// upon selection changes.
+// Note: IDC Total will be computed later as:
+//
+//	DealerCommission.ResolvedAmt + IDCOther.Value
+//
+// (calculation performed elsewhere).
+type IDCOther struct {
+	Value      float64 `json:"value"`      // THB amount for other IDCs (campaign fees etc.)
+	UserEdited bool    `json:"userEdited"` // true if user modified; controls auto-fill on selection
+}
+
+// DealState is a UI-oriented state container for an in-progress deal.
+//
+// This subtask extends DealState with DealerCommission and IDCOther.
+// No calculation logic is implemented here.
+// See docs/financial-calculator-architecture.md, "8.1 Dealer Commission Policy — end-to-end behavior".
+type DealState struct {
+	DealerCommission DealerCommission `json:"dealerCommission"`
+	IDCOther         IDCOther         `json:"idcOther"`
 }
