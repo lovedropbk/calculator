@@ -9,6 +9,11 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// Temporary MVP: CoR fixed at 0.25 percent nominal per annum (no PD×LGD).
+// Nominal basis is aligned with other interest lines per spec.
+// TODO: Remove this override and reinstate PD×LGD-based CoR once risk calibration is finalized.
+const fixedCoRAnnualNominal = 0.0025
+
 // Engine handles profitability calculations and waterfall generation
 type Engine struct {
 	parameterSet types.ParameterSet
@@ -22,6 +27,8 @@ func NewEngine(params types.ParameterSet) *Engine {
 }
 
 // CalculateWaterfall generates the complete profitability waterfall to RoRAC
+// Temporary MVP: CoR fixed at 0.25 percent nominal per annum (no PD×LGD).
+// Basis alignment: interest and risk lines are compared on nominal annual basis per spec.
 func (e *Engine) CalculateWaterfall(
 	deal types.Deal,
 	dealIRR decimal.Decimal,
@@ -56,8 +63,9 @@ func (e *Engine) CalculateWaterfall(
 	// 5. Net Interest Margin = Gross Interest Margin + Capital Advantage
 	waterfall.NetInterestMargin = waterfall.GrossInterestMargin.Add(capitalAdvantage)
 
-	// 6. Cost of Credit Risk (PD * LGD)
-	creditRisk := e.calculateCreditRisk(deal)
+	// 6. Cost of Credit Risk — TEMPORARY MVP override: fixed 0.25% nominal p.a., ignore PD×LGD.
+	// TODO: Reinstate PD×LGD-based computation in calculateCreditRisk() once risk calibration is finalized.
+	creditRisk := decimal.NewFromFloat(fixedCoRAnnualNominal)
 	waterfall.CostOfCreditRisk = creditRisk
 
 	// 7. OPEX
@@ -125,7 +133,7 @@ func (e *Engine) getCostOfDebt(termMonths int) (decimal.Decimal, error) {
 }
 
 // calculateCapitalAdvantage calculates the total capital advantage
-func (e *Engine) calculateCapitalAdvantage(deal types.Deal) decimal.Decimal {
+func (e *Engine) calculateCapitalAdvantage(_ types.Deal) decimal.Decimal {
 	params := e.parameterSet.EconomicCapitalParams
 
 	totalAdvantage := params.CapitalAdvantage.
@@ -134,21 +142,6 @@ func (e *Engine) calculateCapitalAdvantage(deal types.Deal) decimal.Decimal {
 		Add(params.OtherAdvantage)
 
 	return totalAdvantage
-}
-
-// calculateCreditRisk calculates PD * LGD for the deal
-func (e *Engine) calculateCreditRisk(deal types.Deal) decimal.Decimal {
-	// Look up PD and LGD for the product
-	key := fmt.Sprintf("%s_default", string(deal.Product))
-	if pdlgd, exists := e.parameterSet.PDLGD[key]; exists {
-		return pdlgd.PD.Mul(pdlgd.LGD)
-	}
-
-	// Default values if not found
-	defaultPD := decimal.NewFromFloat(0.02)  // 2% PD
-	defaultLGD := decimal.NewFromFloat(0.45) // 45% LGD
-
-	return defaultPD.Mul(defaultLGD)
 }
 
 // calculateOPEX calculates operating expenses for the deal
@@ -164,7 +157,7 @@ func (e *Engine) calculateOPEX(deal types.Deal) decimal.Decimal {
 }
 
 // calculateEconomicCapital calculates the economic capital requirement
-func (e *Engine) calculateEconomicCapital(deal types.Deal) decimal.Decimal {
+func (e *Engine) calculateEconomicCapital(_ types.Deal) decimal.Decimal {
 	baseCapitalRatio := e.parameterSet.EconomicCapitalParams.BaseCapitalRatio
 
 	if baseCapitalRatio.IsZero() {
