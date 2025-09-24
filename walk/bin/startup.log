@@ -136,3 +136,52 @@ main.main()
 2025/09/19 14:40:49.668951 step: InitCommonControlsEx begin
 2025/09/19 14:40:49.680007 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
 2025/09/19 14:40:49.680007 step: MainWindow.Create begin
+2025/09/23 18:31:49.946947 startup: begin
+2025/09/23 18:31:49.952801 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/23 18:31:49.952801 step: InitCommonControlsEx begin
+2025/09/23 18:31:49.978922 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/23 18:31:49.979911 step: MainWindow.Create begin
+2025/09/23 18:33:45.041280 step: MainWindow.Create end; duration=1m55.0613689s
+2025/09/23 18:33:45.041280 step: mw.Run begin
+2025/09/23 18:33:45.197569 post-create: defaults applied and initial recalc completed
+2025/09/23 23:31:08.169734 step: mw.Run end; duration=4h57m23.1284539s
+2025/09/23 23:31:08.170418 shutdown: normal exit
+2025/09/24 09:45:08.534129 startup: begin
+2025/09/24 09:45:08.537753 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 09:45:08.537753 step: InitCommonControlsEx begin
+2025/09/24 09:45:08.555322 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 09:45:08.559227 step: MainWindow.Create begin
+2025/09/24 10:03:53.735868 step: MainWindow.Create end; duration=18m45.1826196s
+2025/09/24 10:03:53.735868 step: mw.Run begin
+2025/09/24 10:03:53.910628 post-create: defaults applied and initial recalc completed
+2025/09/24 10:08:01.814842 step: mw.Run end; duration=4m8.0778513s
+2025/09/24 10:08:01.814842 shutdown: normal exit
+2025/09/24 10:58:34.692594 startup: begin
+2025/09/24 10:58:34.693769 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 10:58:34.693769 step: InitCommonControlsEx begin
+2025/09/24 10:58:34.706706 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 10:58:34.710500 step: MainWindow.Create begin
+2025/09/24 10:58:34.916034 step: MainWindow.Create end; duration=205.5358ms
+2025/09/24 10:58:34.916034 step: mw.Run begin
+2025/09/24 10:58:34.982754 post-create: window initialized; awaiting user input
+2025/09/24 13:28:32.496033 startup: begin
+2025/09/24 13:28:32.498150 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 13:28:32.498682 step: InitCommonControlsEx begin
+2025/09/24 13:28:32.510501 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 13:28:32.512064 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/24 13:28:32.512596 step: MainWindow.Create begin
+2025/09/24 13:28:32.806076 step: MainWindow.Create end; duration=293.4851ms
+2025/09/24 13:28:32.806076 step: mw.Run begin
+2025/09/24 13:28:32.935230 post-create: window initialized; awaiting user input
+2025/09/24 13:28:38.162433 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:28:38.376309 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:28:42.552910 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:28:43.806392 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:28:45.040679 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:29:02.029129 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:29:40.409697 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:29:42.188679 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:29:42.620272 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:29:48.638433 compute ok: version=2025-09-sample installment=THB 21,226 rorac=117.13%
+2025/09/24 13:30:01.445500 step: mw.Run end; duration=1m28.6409661s
+2025/09/24 13:30:01.446336 shutdown: normal exit

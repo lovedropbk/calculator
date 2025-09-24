@@ -578,6 +578,7 @@ func (s *Service) GetStatus() map[string]interface{} {
 // Fallback behavior: if no policy or missing product key, return 0.0. Negative values are clamped to 0.0.
 // Case-sensitive lookup; no key transformation is performed.
 func (s *Service) CommissionPercentByProduct(product string) float64 {
+	// Empty product → no default
 	if product == "" {
 		return 0.0
 	}
@@ -586,22 +587,31 @@ func (s *Service) CommissionPercentByProduct(product string) float64 {
 	params := s.cache[s.currentID]
 	s.mu.RUnlock()
 
-	if params == nil {
-		return 0.0
-	}
-
-	if params.CommissionPolicy.ByProductPct == nil {
-		return 0.0
-	}
-
-	if v, ok := params.CommissionPolicy.ByProductPct[product]; ok {
-		if v < 0 {
-			return 0.0
+	// Try policy lookups with key synonyms first (clamp negatives to 0)
+	if params != nil && params.CommissionPolicy.ByProductPct != nil {
+		for _, key := range commissionKeysFor(product) {
+			if v, ok := params.CommissionPolicy.ByProductPct[key]; ok {
+				if v < 0 {
+					return 0.0
+				}
+				return v
+			}
 		}
-		return v
 	}
 
-	return 0.0
+	// Fallback defaults when policy missing or product key not present
+	switch product {
+	case "HP", "HirePurchase":
+		return 0.03
+	case "mySTAR", "BalloonHP", "Balloon":
+		return 0.07
+	case "F-Lease", "FinanceLease", "Finance Lease", "FLease", "F Lease":
+		return 0.07
+	case "Op-Lease", "OperatingLease", "Operating Lease", "OpLease", "Op Lease":
+		return 0.07
+	default:
+		return 0.0
+	}
 }
 
 // CommissionPolicyVersion returns the configured commission policy version.
@@ -615,4 +625,20 @@ func (s *Service) CommissionPolicyVersion() string {
 		return ""
 	}
 	return params.CommissionPolicy.Version
+}
+
+// commissionKeysFor returns known key synonyms for a product for commission policy lookup.
+func commissionKeysFor(product string) []string {
+	switch product {
+	case "HP", "HirePurchase", "Hire Purchase", "hp", "Hp":
+		return []string{"HP", "HirePurchase", "Hire Purchase"}
+	case "mySTAR", "mystar", "MySTAR", "BalloonHP", "Balloon":
+		return []string{"mySTAR", "BalloonHP", "Balloon"}
+	case "F-Lease", "FinanceLease", "Finance Lease", "FLease", "F Lease", "Financing Lease":
+		return []string{"F-Lease", "FinanceLease", "Finance Lease", "FLease", "F Lease", "Financing Lease"}
+	case "Op-Lease", "OperatingLease", "Operating Lease", "OpLease", "Op Lease":
+		return []string{"Op-Lease", "OperatingLease", "Operating Lease", "OpLease", "Op Lease"}
+	default:
+		return []string{product}
+	}
 }

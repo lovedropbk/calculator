@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -13,7 +14,10 @@ import (
 	"time"
 	"unsafe"
 
+	"financial-calculator/parameters"
+
 	"github.com/financial-calculator/engines/calculator"
+	"github.com/financial-calculator/engines/campaigns"
 	"github.com/financial-calculator/engines/types"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
@@ -97,6 +101,7 @@ func main() {
 			win.ICC_DATE_CLASSES
 		if win.InitCommonControlsEx(&icex) {
 			logger.Printf("step: InitCommonControlsEx success (conservative set); dwICC=0x%08x", icex.DwICC)
+			logger.Printf("step: InitCommonControlsEx fallback: conservative")
 			initOK = true
 		} else {
 			logger.Printf("warn: InitCommonControlsEx failed (conservative set); dwICC=0x%08x", icex.DwICC)
@@ -110,15 +115,60 @@ func main() {
 
 	var mw *walk.MainWindow
 
-	// Engines orchestrator with an explicit default ParameterSet
-	ps := defaultParameterSet()
-	calc := calculator.New(ps)
+	// Engines orchestrator with YAML-loaded ParameterSet (discover at startup)
+	var (
+		enginePS      types.ParameterSet
+		calc          *calculator.Calculator
+		campEng       *campaigns.Engine
+		paramsReady   bool
+		paramsVersion string
+		paramsErr     string
+		paramsSource  string
+		autoLookup    staticCommissionLookup
+	)
+
+	// Discover and load YAML ParameterSet at startup
+	if psYaml, src, err := parameters.DiscoverAndLoadParameterSet(); err == nil && psYaml != nil {
+		enginePS = convertParametersToEngine(psYaml)
+		calc = calculator.New(enginePS)
+		campEng = campaigns.NewEngine(enginePS)
+		// Commission lookup wired to YAML policy with defaults fallback
+		autoLookup = staticCommissionLookup{by: psYaml.CommissionPolicy.ByProductPct}
+		campEng.SetCommissionLookup(autoLookup)
+		paramsReady = true
+		paramsVersion = psYaml.ID
+		paramsSource = src
+		logger.Printf("params loaded: version=%s source=%s", paramsVersion, paramsSource)
+	} else {
+		// Minimal fallback: use built-in defaults so UI computes even without external YAML
+		if err != nil {
+			paramsErr = err.Error()
+		} else {
+			paramsErr = "unknown error"
+		}
+		enginePS = defaultParameterSet()
+		calc = calculator.New(enginePS)
+		campEng = campaigns.NewEngine(enginePS)
+		// No YAML policy available; rely on static defaults inside lookup
+		autoLookup = staticCommissionLookup{by: map[string]float64{}}
+		campEng.SetCommissionLookup(autoLookup)
+		paramsReady = true
+		paramsVersion = enginePS.Version
+		paramsSource = "defaults"
+		logger.Printf("params load failed: %v; using built-in defaults version=%s", err, paramsVersion)
+	}
 
 	// UI state
 	product := "HP"          // engines/types constants expect "HP", "mySTAR", "F-Lease", "Op-Lease"
 	timing := "arrears"      // "arrears" | "advance"
 	dpLock := "percent"      // "percent" | "amount"
 	rateMode := "fixed_rate" // "fixed_rate" | "target_installment"
+
+	// DealState for UI wiring (Phase 2 - auto by default)
+	dealState := types.DealState{
+		DealerCommission: types.DealerCommission{Mode: types.DealerCommissionModeAuto},
+		IDCOther:         types.IDCOther{Value: 0, UserEdited: false},
+	}
 
 	// Widgets
 	var productCB *walk.ComboBox
@@ -129,15 +179,76 @@ func main() {
 
 	var monthlyLbl, custNominalLbl, custEffLbl, roracLbl *walk.Label
 	var financedLbl, metaVersionLbl, metaCalcTimeLbl *walk.Label
+	var validationLbl *walk.Label
+
+	// New UI controls (Phase 1 placeholders)
+	var subsidyBudgetEd, idcOtherEd *walk.NumberEdit
+	var dealerCommissionPill *walk.PushButton
+	var campaignTV *walk.TableView
+	var idcTotalLbl, idcDealerLbl, idcOtherLbl *walk.Label
+	var tip *walk.ToolTip
+	var campaignModel *CampaignTableModel
 
 	var headerMonthlyLbl, headerRoRacLbl *walk.Label
 	// Campaign toggles
+	// Profitability details controls (toggle and labels)
+	var detailsTogglePB *walk.PushButton
+	var wfPanel *walk.Composite
+	var wfDealIRREffLbl, wfDealIRRNomLbl *walk.Label
+	var wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl *walk.Label
+	var wfRiskLbl, wfOpexLbl, wfIDCUpLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label
 	var subdown bool
 	var subinterest bool
 	var freeInsurance bool
 	var freeMBSP bool
 	var cashDiscount bool
+	// Persistent selected row index for Campaign grid
+	var selectedCampaignIdx int
+	var creatingUI bool
+	computeMode := "implicit"
 	recalc := func() {
+		if creatingUI {
+			return
+		}
+		// Gate on parameters load/validation
+		if !paramsReady {
+			if validationLbl != nil {
+				_ = validationLbl.SetText(fmt.Sprintf("Parameters not loaded: %s", paramsErr))
+			}
+			// Placeholders for results
+			if headerMonthlyLbl != nil {
+				headerMonthlyLbl.SetText("—")
+			}
+			if headerRoRacLbl != nil {
+				headerRoRacLbl.SetText("—")
+			}
+			if monthlyLbl != nil {
+				monthlyLbl.SetText("—")
+			}
+			if custNominalLbl != nil {
+				custNominalLbl.SetText("—")
+			}
+			if custEffLbl != nil {
+				custEffLbl.SetText("—")
+			}
+			if roracLbl != nil {
+				roracLbl.SetText("—")
+			}
+			if financedLbl != nil {
+				financedLbl.SetText("—")
+			}
+			if idcTotalLbl != nil {
+				idcTotalLbl.SetText("—")
+			}
+			if idcDealerLbl != nil {
+				idcDealerLbl.SetText("—")
+			}
+			if idcOtherLbl != nil {
+				idcOtherLbl.SetText("—")
+			}
+			logger.Printf("compute skipped: parameters not loaded: %s", paramsErr)
+			return
+		}
 		price := parseFloat(priceEdit)
 		dpPercent := parseFloat(dpPercentEdit)
 		dpAmount := parseFloat(dpAmountEdit)
@@ -145,6 +256,105 @@ func main() {
 		balloon := parseFloat(balloonEdit)
 		nominal := parseFloat(nominalRateEdit)
 		targetInstall := parseFloat(targetInstallmentEdit)
+
+		// Validate inputs via orchestrator helper before any compute
+		uiState := UIState{
+			Product:    product,
+			PriceExTax: price,
+			TermMonths: term,
+			BalloonPct: balloon,
+		}
+		if err := validateInputs(uiState); err != nil {
+			// Inline indicator, placeholders, and logging; modal only on explicit action
+			if validationLbl != nil {
+				_ = validationLbl.SetText(fmt.Sprintf("Invalid inputs: %s", err.Error()))
+			}
+			// Placeholders for results
+			if headerMonthlyLbl != nil {
+				headerMonthlyLbl.SetText("—")
+			}
+			if headerRoRacLbl != nil {
+				headerRoRacLbl.SetText("—")
+			}
+			if monthlyLbl != nil {
+				monthlyLbl.SetText("—")
+			}
+			if custNominalLbl != nil {
+				custNominalLbl.SetText("—")
+			}
+			if custEffLbl != nil {
+				custEffLbl.SetText("—")
+			}
+			if roracLbl != nil {
+				roracLbl.SetText("—")
+			}
+			if financedLbl != nil {
+				financedLbl.SetText("—")
+			}
+			if idcTotalLbl != nil {
+				idcTotalLbl.SetText("—")
+			}
+			if idcDealerLbl != nil {
+				idcDealerLbl.SetText("—")
+			}
+			if idcOtherLbl != nil {
+				idcOtherLbl.SetText("—")
+			}
+			// Profitability details placeholders if panel exists
+			if wfPanel != nil {
+				if wfDealIRREffLbl != nil {
+					wfDealIRREffLbl.SetText("—")
+				}
+				if wfDealIRRNomLbl != nil {
+					wfDealIRRNomLbl.SetText("—")
+				}
+				if wfCostDebtLbl != nil {
+					wfCostDebtLbl.SetText("—")
+				}
+				if wfMFSpreadLbl != nil {
+					wfMFSpreadLbl.SetText("—")
+				}
+				if wfGIMLbl != nil {
+					wfGIMLbl.SetText("—")
+				}
+				if wfCapAdvLbl != nil {
+					wfCapAdvLbl.SetText("—")
+				}
+				if wfNIMLbl != nil {
+					wfNIMLbl.SetText("—")
+				}
+				if wfRiskLbl != nil {
+					wfRiskLbl.SetText("—")
+				}
+				if wfOpexLbl != nil {
+					wfOpexLbl.SetText("—")
+				}
+				if wfIDCUpLbl != nil {
+					wfIDCUpLbl.SetText("—")
+				}
+				if wfIDCPeLbl != nil {
+					wfIDCPeLbl.SetText("—")
+				}
+				if wfNetEbitLbl != nil {
+					wfNetEbitLbl.SetText("—")
+				}
+				if wfEconCapLbl != nil {
+					wfEconCapLbl.SetText("—")
+				}
+				if wfAcqRoRacDetailLbl != nil {
+					wfAcqRoRacDetailLbl.SetText("—")
+				}
+			}
+			logger.Printf("compute skipped: invalid inputs: %s", err.Error())
+			if computeMode == "explicit" {
+				walk.MsgBox(mw, "Invalid Inputs", err.Error(), walk.MsgBoxIconWarning)
+			}
+			return
+		} else {
+			if validationLbl != nil {
+				_ = validationLbl.SetText("")
+			}
+		}
 
 		if price < 0 {
 			price = 0
@@ -168,26 +378,12 @@ func main() {
 			}
 		}
 
-		// Build engines/types.Deal
-		deal := types.Deal{
-			Market:              "TH",
-			Currency:            "THB",
-			Product:             types.Product(product),
-			PriceExTax:          types.NewDecimal(price),
-			DownPaymentAmount:   types.NewDecimal(dpAmount),
-			DownPaymentPercent:  types.NewDecimal(dpPercent / 100.0), // fraction
-			DownPaymentLocked:   dpLock,
-			FinancedAmount:      types.NewDecimal(0),
-			TermMonths:          term,
-			BalloonPercent:      types.NewDecimal(balloon / 100.0), // fraction
-			BalloonAmount:       types.NewDecimal(0),
-			Timing:              types.PaymentTiming(timing),
-			PayoutDate:          time.Now(),
-			FirstPaymentOffset:  0,
-			RateMode:            rateMode,
-			CustomerNominalRate: types.NewDecimal(nominal / 100.0), // annual fraction
-			TargetInstallment:   types.NewDecimal(targetInstall),
-		}
+		// Build engines/types.Deal via pure helper
+		deal := buildDealFromControls(
+			product, timing, dpLock, rateMode,
+			price, dpPercent, dpAmount,
+			term, balloon, nominal, targetInstall,
+		)
 
 		// Build campaigns from UI toggles
 		buildCampaigns := func() []types.Campaign {
@@ -246,16 +442,16 @@ func main() {
 			return cams
 		}
 		campaigns := buildCampaigns()
+		// For display only: populate the grid with default options when none are selected.
+		// Do NOT apply these defaults to the computation path.
+		displayCampaigns := campaigns
+		if len(displayCampaigns) == 0 {
+			displayCampaigns = defaultCampaignsForUI()
+		}
 		idcItems := []types.IDCItem{}
 
-		// Run engines pipeline using explicit ParameterSet to match engine instances
-		req := types.CalculationRequest{
-			Deal:         deal,
-			Campaigns:    campaigns,
-			IDCItems:     idcItems,
-			ParameterSet: ps,
-		}
-		result, err := calc.Calculate(req)
+		// Run engines pipeline (centralized)
+		result, err := computeQuote(calc, enginePS, deal, campaigns, idcItems)
 		if err != nil || result == nil || !result.Success {
 			msg := "calculation failed"
 			if err != nil {
@@ -268,37 +464,195 @@ func main() {
 		}
 
 		q := result.Quote
-		// Update UI labels
-		if monthlyLbl != nil {
-			monthlyLbl.SetText(fmt.Sprintf("THB %s", formatCurrency(q.MonthlyInstallment.InexactFloat64())))
+
+		// Unified results update for key metrics
+		updateResultsUI(
+			q,
+			monthlyLbl, headerMonthlyLbl,
+			custNominalLbl, custEffLbl,
+			roracLbl, headerRoRacLbl,
+		)
+
+		// Success log for compute
+		logger.Printf("compute ok: version=%v installment=THB %s rorac=%.2f%%",
+			result.Metadata["parameter_set_version"],
+			FormatTHB(q.MonthlyInstallment.InexactFloat64()),
+			q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64(),
+		)
+
+		// Populate Profitability Details panel if present
+		if wfPanel != nil {
+			if wfDealIRREffLbl != nil {
+				wfDealIRREffLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.DealIRREffective.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfDealIRRNomLbl != nil {
+				wfDealIRRNomLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.DealIRRNominal.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfCostDebtLbl != nil {
+				wfCostDebtLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CostOfDebtMatched.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfMFSpreadLbl != nil {
+				wfMFSpreadLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.MatchedFundedSpread.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfGIMLbl != nil {
+				wfGIMLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.GrossInterestMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfCapAdvLbl != nil {
+				wfCapAdvLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CapitalAdvantage.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfNIMLbl != nil {
+				wfNIMLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.NetInterestMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfRiskLbl != nil {
+				wfRiskLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CostOfCreditRisk.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfOpexLbl != nil {
+				wfOpexLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.OPEX.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfIDCUpLbl != nil {
+				wfIDCUpLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.IDCSubsidiesFeesUpfront.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfIDCPeLbl != nil {
+				wfIDCPeLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.IDCSubsidiesFeesPeriodic.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfNetEbitLbl != nil {
+				wfNetEbitLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.NetEBITMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfEconCapLbl != nil {
+				wfEconCapLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.EconomicCapital.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
+			if wfAcqRoRacDetailLbl != nil {
+				wfAcqRoRacDetailLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
+			}
 		}
-		if headerMonthlyLbl != nil {
-			headerMonthlyLbl.SetText(fmt.Sprintf("THB %s", formatCurrency(q.MonthlyInstallment.InexactFloat64())))
-		}
-		if custNominalLbl != nil {
-			custNominalLbl.SetText(fmt.Sprintf("%.2f%%", q.CustomerRateNominal.Mul(types.NewDecimal(100)).InexactFloat64()))
-		}
-		if custEffLbl != nil {
-			custEffLbl.SetText(fmt.Sprintf("%.2f%%", q.CustomerRateEffective.Mul(types.NewDecimal(100)).InexactFloat64()))
-		}
-		if roracLbl != nil {
-			roracLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
-		}
-		if headerRoRacLbl != nil {
-			headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
-		}
+
 		if financedLbl != nil {
 			financedVal := price - dpAmount
 			if financedVal < 0 {
 				financedVal = 0
 			}
-			financedLbl.SetText(fmt.Sprintf("THB %s", formatCurrency(financedVal)))
+			financedLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(financedVal)))
 		}
+
+		// Compute Dealer Commission (resolved) for pill and IDC labels
+		var dealerPct float64
+		var dealerAmt float64
+		financedBase := price - dpAmount
+		if financedBase < 0 {
+			financedBase = 0
+		}
+		if dealState.DealerCommission.Mode == types.DealerCommissionModeOverride {
+			if dealState.DealerCommission.Amt != nil {
+				a := *dealState.DealerCommission.Amt
+				if a < 0 {
+					a = 0
+				}
+				dealerAmt = math.Round(a)
+				dealerPct = 0
+			} else if dealState.DealerCommission.Pct != nil {
+				p := *dealState.DealerCommission.Pct
+				if p < 0 {
+					p = 0
+				}
+				dealerPct = p
+				dealerAmt = math.Round(financedBase * dealerPct)
+				if dealerAmt < 0 {
+					dealerAmt = 0
+				}
+			} else {
+				// override mode without values -> auto
+				dealerPct = autoLookup.CommissionPercentByProduct(product)
+				if dealerPct < 0 {
+					dealerPct = 0
+				}
+				dealerAmt = math.Round(financedBase * dealerPct)
+			}
+		} else {
+			// auto mode
+			dealerPct = autoLookup.CommissionPercentByProduct(product)
+			if dealerPct < 0 {
+				dealerPct = 0
+			}
+			dealerAmt = math.Round(financedBase * dealerPct)
+			if dealerAmt < 0 {
+				dealerAmt = 0
+			}
+		}
+
+		if dealerCommissionPill != nil {
+			if dealState.DealerCommission.Mode == types.DealerCommissionModeOverride {
+				if dealState.DealerCommission.Amt != nil {
+					dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: override (THB %s)", FormatTHB(dealerAmt)))
+				} else {
+					dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: override %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
+				}
+			} else {
+				dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: auto %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
+			}
+		}
+
+		// Update IDC labels
+		var otherIDC float64
+		if idcOtherEd != nil {
+			otherIDC = idcOtherEd.Value()
+		} else {
+			otherIDC = dealState.IDCOther.Value
+		}
+		if idcDealerLbl != nil {
+			idcDealerLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(dealerAmt)))
+		}
+		if idcOtherLbl != nil {
+			idcOtherLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(otherIDC)))
+		}
+		if idcTotalLbl != nil {
+			idcTotalLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(dealerAmt+otherIDC)))
+		}
+
+		// Populate Campaign Options grid from campaigns engine summaries (includes Dealer Comm per option)
+		if campaignTV != nil && campEng != nil {
+			// Use displayCampaigns for the grid; compute path uses only explicitly selected campaigns
+			summaries := campEng.GenerateCampaignSummaries(deal, dealState, displayCampaigns)
+			rows := make([]CampaignRow, 0, len(summaries))
+
+			// Clamp selected index
+			if selectedCampaignIdx < 0 || selectedCampaignIdx >= len(summaries) {
+				selectedCampaignIdx = 0
+			}
+
+			// Subsidy budget baseline for each row
+			var subsidyBudget float64
+			if subsidyBudgetEd != nil {
+				subsidyBudget = subsidyBudgetEd.Value()
+			}
+
+			for i, s := range summaries {
+				row := CampaignRow{
+					Selected:      i == selectedCampaignIdx,
+					Campaign:      campaignTypeDisplayName(s.CampaignType),
+					Monthly:       "Monthly —",
+					Downpayment:   fmt.Sprintf("%.0f%%", dpPercent),
+					SubsidyRorac:  fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudget)),
+					DealerComm:    FormatDealerCommission(s.DealerCommissionAmt, s.DealerCommissionPct),
+					DealerCommAmt: s.DealerCommissionAmt,
+					DealerCommPct: s.DealerCommissionPct,
+					SubsidyValue:  subsidyBudget,
+					Notes:         "",
+				}
+				rows = append(rows, row)
+			}
+			if campaignModel == nil {
+				campaignModel = &CampaignTableModel{rows: rows}
+				_ = campaignTV.SetModel(campaignModel)
+			} else {
+				campaignModel.ReplaceRows(rows)
+			}
+		}
+
 		if metaVersionLbl != nil {
 			if v, ok := result.Metadata["parameter_set_version"].(string); ok {
 				metaVersionLbl.SetText(v)
 			} else {
-				metaVersionLbl.SetText(ps.Version)
+				metaVersionLbl.SetText(enginePS.Version)
 			}
 		}
 		if metaCalcTimeLbl != nil {
@@ -307,6 +661,8 @@ func main() {
 			}
 		}
 	}
+
+	creatingUI = true
 
 	createStart := time.Now()
 	logger.Printf("step: MainWindow.Create begin")
@@ -354,10 +710,15 @@ func main() {
 									Label{Text: "Product:"},
 									ComboBox{
 										AssignTo:     &productCB,
-										Model:        []string{"HP", "mySTAR", "F-Lease", "Op-Lease"},
+										Model:        []string{"HP", "mySTAR", "Financing Lease", "Operating Lease"},
 										CurrentIndex: 0,
 										OnCurrentIndexChanged: func() {
-											product = productCB.Text()
+											if p, err := MapProductDisplayToEnum(productCB.Text()); err == nil {
+												product = string(p)
+											} else {
+												product = "HP"
+											}
+											recalc()
 										},
 									},
 									Label{Text: "Price ex tax (THB):"},
@@ -482,50 +843,14 @@ func main() {
 									},
 								},
 							},
-							GroupBox{
-								Title:  "Campaigns",
-								Layout: Grid{Columns: 2, Spacing: 6},
-								Children: []Widget{
-									CheckBox{
-										Text: "Subdown",
-										OnClicked: func() {
-											subdown = !subdown
-											recalc()
-										},
-									},
-									CheckBox{
-										Text: "Subinterest",
-										OnClicked: func() {
-											subinterest = !subinterest
-											recalc()
-										},
-									},
-									CheckBox{
-										Text: "Free Insurance",
-										OnClicked: func() {
-											freeInsurance = !freeInsurance
-											recalc()
-										},
-									},
-									CheckBox{
-										Text: "Free MBSP",
-										OnClicked: func() {
-											freeMBSP = !freeMBSP
-											recalc()
-										},
-									},
-									CheckBox{
-										Text: "Cash Discount",
-										OnClicked: func() {
-											cashDiscount = !cashDiscount
-											recalc()
-										},
-									},
-								},
-							},
+							// Campaign checkboxes removed in Phase 1; replaced by Campaign Options grid in right pane.
 							PushButton{
-								Text:      "Calculate",
-								OnClicked: recalc,
+								Text: "Calculate",
+								OnClicked: func() {
+									computeMode = "explicit"
+									recalc()
+									computeMode = "implicit"
+								},
 							},
 						},
 					},
@@ -534,26 +859,144 @@ func main() {
 						StretchFactor: 1,
 						Layout:        VBox{Margins: Margins{Left: 6, Top: 12, Right: 12, Bottom: 12}, Spacing: 8},
 						Children: []Widget{
+							// Product & Subsidy section (top)
 							GroupBox{
-								Title:  "Key Metrics",
+								Title:  "Product & Subsidy",
 								Layout: Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
-									Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
-									Label{Text: "Customer Rate Nominal:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
-									Label{Text: "Customer Rate Effective:"}, Label{AssignTo: &custEffLbl, Text: "-"},
-									Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
-									Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
+									Label{Text: "Subsidy budget (THB):"},
+									NumberEdit{
+										AssignTo:    &subsidyBudgetEd,
+										Decimals:    0,
+										MinValue:    0,
+										Value:       0,
+										ToolTipText: "Budget available for subsidies (placeholder)",
+									},
+									// Dealer commission pill as disabled placeholder
+									Label{Text: ""},
+									PushButton{
+										AssignTo:    &dealerCommissionPill,
+										Text:        "IDCs - Dealer Commissions: auto",
+										Enabled:     true,
+										ToolTipText: "Auto-calculated from product policy; click to override or reset",
+										OnClicked: func() {
+											// Open editor; if accepted, trigger recompute
+											if editDealerCommission(mw, &dealState) {
+												recalc()
+											}
+										},
+									},
+									Label{Text: "IDCs - Other (THB):"},
+									NumberEdit{
+										AssignTo: &idcOtherEd,
+										Decimals: 0,
+										MinValue: 0,
+										Value:    0,
+										OnValueChanged: func() {
+											// Mark user-edited and recalc to refresh IDC totals and grid
+											dealState.IDCOther.Value = idcOtherEd.Value()
+											dealState.IDCOther.UserEdited = true
+											recalc()
+										},
+									},
 								},
 							},
-							GroupBox{
-								Title:  "Metadata",
-								Layout: Grid{Columns: 2, Spacing: 6},
+
+							// Campaign Options (grid) - single selection
+							TableView{
+								AssignTo:       &campaignTV,
+								StretchFactor:  1,
+								MultiSelection: false,
+								Columns: []TableViewColumn{
+									{Title: "Select", Width: 70},
+									{Title: "Campaign", Width: 220},
+									{Title: "Monthly Installment", Width: 180},
+									{Title: "Downpayment", Width: 120},
+									{Title: "Subsidy / Acq.RoRAC", Width: 180},
+									{Title: "Dealer Comm.", Width: 160},
+									{Title: "Notes", Width: 220},
+								},
+							},
+
+							// Bottom splitter: Campaign Details | Key Metrics & Summary
+							HSplitter{
 								Children: []Widget{
-									Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
-									Label{Text: "Calc time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
+									GroupBox{
+										Title:  "Campaign Details",
+										Layout: Grid{Columns: 2, Spacing: 6},
+										Children: []Widget{
+											Label{Text: "Campaign:"}, Label{Text: "-"},
+											Label{Text: "Type:"}, Label{Text: "-"},
+											Label{Text: "Funder:"}, Label{Text: "-"},
+											Label{Text: "Stacking:"}, Label{Text: "-"},
+											Label{Text: "Description:"}, Label{Text: "-"},
+										},
+									},
+									GroupBox{
+										Title:  "Key Metrics & Summary",
+										Layout: Grid{Columns: 2, Spacing: 6},
+										Children: []Widget{
+											Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
+											Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
+											Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
+											Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
+											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
+											Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
+											Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
+											Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
+											// Profitability Details (toggle)
+											GroupBox{
+												Title:  "Profitability Details",
+												Layout: Grid{Columns: 2, Spacing: 6},
+												Children: []Widget{
+													PushButton{
+														AssignTo:   &detailsTogglePB,
+														Text:       "Details ▼",
+														ColumnSpan: 2,
+														OnClicked: func() {
+															if wfPanel != nil {
+																vis := wfPanel.Visible()
+																wfPanel.SetVisible(!vis)
+																if detailsTogglePB != nil {
+																	if vis {
+																		detailsTogglePB.SetText("Details ▼")
+																	} else {
+																		detailsTogglePB.SetText("Details ▲")
+																	}
+																}
+															}
+														},
+													},
+													Composite{
+														AssignTo:   &wfPanel,
+														Visible:    false,
+														ColumnSpan: 2,
+														Layout:     Grid{Columns: 2, Spacing: 6},
+														Children: []Widget{
+															Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
+															Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+															Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
+															Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
+															Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
+															Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
+															Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
+															Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
+															Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
+															Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+															Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
+															Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
+															Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
+															Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+														},
+													},
+												},
+											},
+											Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
+											Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
+										},
+									},
 								},
 							},
-							VSpacer{},
 						},
 					},
 				},
@@ -582,8 +1025,96 @@ func main() {
 		if targetInstallmentEdit != nil {
 			targetInstallmentEdit.SetEnabled(false)
 		}
-		recalc()
-		logger.Printf("post-create: defaults applied and initial recalc completed")
+
+		// Initialize Campaign Options model (static placeholder rows)
+		if campaignTV != nil {
+			campaignModel = NewCampaignTableModel()
+			if err := campaignTV.SetModel(campaignModel); err != nil {
+				logger.Printf("warn: campaign table model set failed: %v", err)
+			}
+			campaignTV.SetMultiSelection(false)
+
+			// Selection behavior: sync IDCs - Other from selected campaign's Subsidy
+			campaignTV.CurrentIndexChanged().Attach(func() {
+				if campaignTV == nil || campaignModel == nil {
+					return
+				}
+				idx := campaignTV.CurrentIndex()
+				if idx < 0 || idx >= campaignModel.RowCount() {
+					return
+				}
+
+				// Update persistent selected index
+				selectedCampaignIdx = idx
+
+				// Reflect "radio dot" selection
+				for i := range campaignModel.rows {
+					campaignModel.rows[i].Selected = (i == idx)
+				}
+				campaignModel.PublishRowsReset()
+
+				// Compute new Subsidy from selected row (fallback to budget)
+				newSubsidy := 0.0
+				if idx >= 0 && idx < len(campaignModel.rows) {
+					newSubsidy = campaignModel.rows[idx].SubsidyValue
+				}
+				if newSubsidy <= 0 && subsidyBudgetEd != nil {
+					newSubsidy = subsidyBudgetEd.Value()
+				}
+
+				// Respect user-edited flag and prompt to replace
+				if dealState.IDCOther.UserEdited {
+					ret := walk.MsgBox(mw, "Replace IDCs - Other?", fmt.Sprintf("Replace IDCs - Other with THB %s from selected campaign?", FormatTHB(newSubsidy)), walk.MsgBoxYesNo|walk.MsgBoxIconQuestion)
+					if ret == walk.DlgCmdYes {
+						if idcOtherEd != nil {
+							idcOtherEd.SetValue(newSubsidy)
+						}
+						dealState.IDCOther.Value = newSubsidy
+						dealState.IDCOther.UserEdited = false
+					}
+				} else {
+					if idcOtherEd != nil {
+						idcOtherEd.SetValue(newSubsidy)
+					}
+					dealState.IDCOther.Value = newSubsidy
+				}
+
+				// Refresh IDC labels and headline
+				recalc()
+			})
+		}
+
+		// Create ToolTips after window initialization
+		creatingUI = false
+		if t, err := walk.NewToolTip(); err != nil {
+			logger.Printf("warn: ToolTip Create failed: %v", err)
+		} else {
+			tip = t
+			if subsidyBudgetEd != nil {
+				_ = subsidyBudgetEd.SetToolTipText("Budget available for subsidies (placeholder)")
+				if err := tip.AddTool(subsidyBudgetEd); err != nil {
+					logger.Printf("warn: ToolTip AddTool failed for subsidyBudgetEd: %v", err)
+				}
+			}
+			if dealerCommissionPill != nil {
+				_ = dealerCommissionPill.SetToolTipText("Auto-calculated from product policy; click to override or reset")
+				if err := tip.AddTool(dealerCommissionPill); err != nil {
+					logger.Printf("warn: ToolTip AddTool failed for dealerCommissionPill: %v", err)
+				}
+			}
+		}
+		// Update version/status on startup
+		if metaVersionLbl != nil {
+			if paramsReady {
+				metaVersionLbl.SetText(paramsVersion)
+			} else {
+				metaVersionLbl.SetText("—")
+			}
+		}
+		if !paramsReady && validationLbl != nil {
+			_ = validationLbl.SetText(fmt.Sprintf("Parameters not loaded: %s", paramsErr))
+		}
+		logger.Printf("post-create: window initialized; awaiting user input")
 	})
 
 	runStart := time.Now()
@@ -611,26 +1142,6 @@ func parseInt(le *walk.LineEdit) int {
 	s = strings.ReplaceAll(s, ",", "")
 	i, _ := strconv.Atoi(s)
 	return i
-}
-
-func formatCurrency(v float64) string {
-	s := fmt.Sprintf("%.2f", v)
-	n := s
-	dec := ""
-	if idx := strings.LastIndex(s, "."); idx != -1 {
-		n = s[:idx]
-		dec = s[idx:]
-	}
-	var b []byte
-	count := 0
-	for i := len(n) - 1; i >= 0; i-- {
-		b = append([]byte{n[i]}, b...)
-		count++
-		if count%3 == 0 && i != 0 {
-			b = append([]byte{','}, b...)
-		}
-	}
-	return string(b) + dec
 }
 
 func defaultParameterSet() types.ParameterSet {
@@ -676,5 +1187,343 @@ func defaultParameterSet() types.ParameterSet {
 			Method:      "bank",
 			DisplayRate: 4,
 		},
+	}
+}
+
+// --- Phase 1 UI placeholders: Campaign Options table model (unwired) ---
+
+type CampaignRow struct {
+	Selected     bool
+	Campaign     string
+	Monthly      string
+	Downpayment  string
+	SubsidyRorac string
+	DealerComm   string
+	Notes        string
+
+	DealerCommAmt float64
+	DealerCommPct float64
+	SubsidyValue  float64
+}
+
+type CampaignTableModel struct {
+	walk.TableModelBase
+	rows []CampaignRow
+}
+
+func NewCampaignTableModel() *CampaignTableModel {
+	return &CampaignTableModel{
+		rows: []CampaignRow{
+			{
+				Selected:     true,
+				Campaign:     "Standard (No Campaign)",
+				Monthly:      "Monthly —",
+				Downpayment:  "20% / THB 200,000",
+				SubsidyRorac: "- / -",
+				Notes:        "Baseline (placeholder)",
+			},
+			{
+				Selected:     false,
+				Campaign:     "Subinterest 2.99%",
+				Monthly:      "Monthly —",
+				Downpayment:  "20%",
+				SubsidyRorac: "THB 0 / 8.5%",
+				Notes:        "Static row (Phase 1)",
+			},
+			{
+				Selected:     false,
+				Campaign:     "Subdown 5%",
+				Monthly:      "Monthly —",
+				Downpayment:  "15%",
+				SubsidyRorac: "THB 50,000 / 6.8%",
+				Notes:        "Static row (Phase 1)",
+			},
+			{
+				Selected:     false,
+				Campaign:     "Free Insurance",
+				Monthly:      "Monthly —",
+				Downpayment:  "20%",
+				SubsidyRorac: "THB 15,000 / 7.2%",
+				Notes:        "Static row (Phase 1)",
+			},
+		},
+	}
+}
+
+// ReplaceRows replaces the table model rows and refreshes the view.
+func (m *CampaignTableModel) ReplaceRows(rows []CampaignRow) {
+	m.rows = rows
+	m.PublishRowsReset()
+}
+
+func (m *CampaignTableModel) RowCount() int {
+	return len(m.rows)
+}
+
+func (m *CampaignTableModel) Value(row, col int) interface{} {
+	if row < 0 || row >= len(m.rows) {
+		return ""
+	}
+	r := m.rows[row]
+	switch col {
+	case 0:
+		if r.Selected {
+			return "●" // filled to simulate radio selected
+		}
+		return "○" // empty to simulate not selected
+	case 1:
+		return r.Campaign
+	case 2:
+		return r.Monthly
+	case 3:
+		return r.Downpayment
+	case 4:
+		return r.SubsidyRorac
+	case 5:
+		return r.DealerComm
+	case 6:
+		return r.Notes
+	default:
+		return ""
+	}
+}
+
+// Map engine campaign type to display name for the grid.
+func campaignTypeDisplayName(t types.CampaignType) string {
+	switch t {
+	case types.CampaignSubdown:
+		return "Subdown"
+	case types.CampaignSubinterest:
+		return "Subinterest"
+	case types.CampaignFreeInsurance:
+		return "Free Insurance"
+	case types.CampaignFreeMBSP:
+		return "Free MBSP"
+	case types.CampaignCashDiscount:
+		return "Cash Discount"
+	default:
+		return string(t)
+	}
+}
+
+// editDealerCommission opens a small dialog to set auto/override values.
+// Returns true if state was updated.
+func editDealerCommission(mw *walk.MainWindow, state *types.DealState) bool {
+	if state == nil || mw == nil {
+		return false
+	}
+	var dlg *walk.Dialog
+	var modeCB *walk.ComboBox
+	var amtEd, pctEd *walk.LineEdit
+	accepted := false
+
+	// Initialize fields from current state
+	modeIndex := 0 // auto
+	if state.DealerCommission.Mode == types.DealerCommissionModeOverride {
+		if state.DealerCommission.Amt != nil {
+			modeIndex = 1 // override amount
+		} else if state.DealerCommission.Pct != nil {
+			modeIndex = 2 // override percent
+		} else {
+			modeIndex = 0
+		}
+	}
+	amtText := ""
+	if state.DealerCommission.Amt != nil {
+		amtText = fmt.Sprintf("%.0f", *state.DealerCommission.Amt)
+	}
+	pctText := ""
+	if state.DealerCommission.Pct != nil {
+		pctText = fmt.Sprintf("%.2f", *state.DealerCommission.Pct*100)
+	}
+
+	_, _ = (Dialog{
+		AssignTo: &dlg,
+		Title:    "Dealer Commission",
+		MinSize:  Size{Width: 420, Height: 220},
+		Layout:   Grid{Columns: 2, Spacing: 6},
+		Children: []Widget{
+			Label{Text: "Mode:"},
+			ComboBox{
+				AssignTo:     &modeCB,
+				Model:        []string{"auto", "override: amount", "override: percent"},
+				CurrentIndex: modeIndex,
+			},
+			Label{Text: "Amount (THB):"},
+			LineEdit{AssignTo: &amtEd, Text: amtText},
+			Label{Text: "Percent (%):"},
+			LineEdit{AssignTo: &pctEd, Text: pctText},
+			Composite{
+				ColumnSpan: 2,
+				Layout:     HBox{Spacing: 6},
+				Children: []Widget{
+					PushButton{
+						Text: "Reset to auto",
+						OnClicked: func() {
+							state.DealerCommission.Mode = types.DealerCommissionModeAuto
+							state.DealerCommission.Amt = nil
+							state.DealerCommission.Pct = nil
+							accepted = true
+							dlg.Accept()
+						},
+					},
+					HSpacer{},
+					PushButton{
+						Text:      "Cancel",
+						OnClicked: func() { dlg.Cancel() },
+					},
+					PushButton{
+						Text: "OK",
+						OnClicked: func() {
+							switch modeCB.CurrentIndex() {
+							case 0: // auto
+								state.DealerCommission.Mode = types.DealerCommissionModeAuto
+								state.DealerCommission.Amt = nil
+								state.DealerCommission.Pct = nil
+							case 1: // override amount
+								state.DealerCommission.Mode = types.DealerCommissionModeOverride
+								// parse amount
+								if v, err := strconv.ParseFloat(strings.ReplaceAll(strings.TrimSpace(amtEd.Text()), ",", ""), 64); err == nil {
+									if v < 0 {
+										v = 0
+									}
+									state.DealerCommission.Amt = &v
+									state.DealerCommission.Pct = nil
+								}
+							case 2: // override percent
+								state.DealerCommission.Mode = types.DealerCommissionModeOverride
+								if v, err := strconv.ParseFloat(strings.ReplaceAll(strings.TrimSpace(pctEd.Text()), ",", ""), 64); err == nil {
+									// convert percent -> fraction
+									v = v / 100.0
+									if v < 0 {
+										v = 0
+									}
+									state.DealerCommission.Pct = &v
+									state.DealerCommission.Amt = nil
+								}
+							}
+							accepted = true
+							dlg.Accept()
+						},
+					},
+				},
+			},
+		},
+	}).Run(mw)
+
+	return accepted
+}
+
+// defaultCampaignsForUI returns a deterministic set of campaign options for the grid
+// when no explicit selections are provided. These align with the docs' illustrative defaults.
+func defaultCampaignsForUI() []types.Campaign {
+	return []types.Campaign{
+		{
+			ID:             "SUBDOWN-5",
+			Type:           types.CampaignSubdown,
+			SubsidyPercent: types.NewDecimal(0.05),
+			Funder:         "Dealer",
+			Stacking:       1,
+		},
+		{
+			ID:         "SUBINT-299",
+			Type:       types.CampaignSubinterest,
+			TargetRate: types.NewDecimal(0.0299),
+			Funder:     "Manufacturer",
+			Stacking:   2,
+		},
+		{
+			ID:            "FREE-INS",
+			Type:          types.CampaignFreeInsurance,
+			InsuranceCost: types.NewDecimal(15000),
+			Funder:        "Insurance Partner",
+			Stacking:      3,
+		},
+		{
+			ID:       "FREE-MBSP",
+			Type:     types.CampaignFreeMBSP,
+			MBSPCost: types.NewDecimal(5000),
+			Funder:   "Manufacturer",
+			Stacking: 4,
+		},
+		{
+			ID:              "CASH-DISC-2",
+			Type:            types.CampaignCashDiscount,
+			DiscountPercent: types.NewDecimal(0.02),
+			Funder:          "Dealer",
+			Stacking:        5,
+		},
+	}
+}
+
+// buildDealFromControls constructs types.Deal from primitive control values (pure helper).
+func buildDealFromControls(
+	product, timing, dpLock, rateMode string,
+	price, dpPercent, dpAmount float64,
+	term int,
+	balloonPct, nominalRatePct, targetInstallment float64,
+) types.Deal {
+	return types.Deal{
+		Market:              "TH",
+		Currency:            "THB",
+		Product:             types.Product(product),
+		PriceExTax:          types.NewDecimal(price),
+		DownPaymentAmount:   types.NewDecimal(dpAmount),
+		DownPaymentPercent:  types.NewDecimal(dpPercent / 100.0), // fraction
+		DownPaymentLocked:   dpLock,
+		FinancedAmount:      types.NewDecimal(0),
+		TermMonths:          term,
+		BalloonPercent:      types.NewDecimal(balloonPct / 100.0), // fraction
+		BalloonAmount:       types.NewDecimal(0),
+		Timing:              types.PaymentTiming(timing),
+		PayoutDate:          time.Now(),
+		FirstPaymentOffset:  0,
+		RateMode:            rateMode,
+		CustomerNominalRate: types.NewDecimal(nominalRatePct / 100.0), // annual fraction
+		TargetInstallment:   types.NewDecimal(targetInstallment),
+	}
+}
+
+// computeQuote centralizes the call to the calculator entrypoint.
+func computeQuote(
+	calc *calculator.Calculator,
+	ps types.ParameterSet,
+	deal types.Deal,
+	campaigns []types.Campaign,
+	idcItems []types.IDCItem,
+) (*types.CalculationResult, error) {
+	req := types.CalculationRequest{
+		Deal:         deal,
+		Campaigns:    campaigns,
+		IDCItems:     idcItems,
+		ParameterSet: ps,
+	}
+	return calc.Calculate(req)
+}
+
+// updateResultsUI updates the headline result labels in one cohesive call.
+func updateResultsUI(
+	q types.Quote,
+	monthlyLbl, headerMonthlyLbl *walk.Label,
+	custNominalLbl, custEffLbl *walk.Label,
+	roracLbl, headerRoRacLbl *walk.Label,
+) {
+	if monthlyLbl != nil {
+		monthlyLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(q.MonthlyInstallment.InexactFloat64())))
+	}
+	if headerMonthlyLbl != nil {
+		headerMonthlyLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(q.MonthlyInstallment.InexactFloat64())))
+	}
+	if custNominalLbl != nil {
+		custNominalLbl.SetText(fmt.Sprintf("%.2f%%", q.CustomerRateNominal.Mul(types.NewDecimal(100)).InexactFloat64()))
+	}
+	if custEffLbl != nil {
+		custEffLbl.SetText(fmt.Sprintf("%.2f%%", q.CustomerRateEffective.Mul(types.NewDecimal(100)).InexactFloat64()))
+	}
+	if roracLbl != nil {
+		roracLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
+	}
+	if headerRoRacLbl != nil {
+		headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
 	}
 }

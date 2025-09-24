@@ -104,3 +104,266 @@ main.main()
 2025/09/19 14:47:46.148518 post-create: defaults applied and initial recalc completed
 2025/09/19 15:16:51.052035 step: mw.Run end; duration=29m4.9835115s
 2025/09/19 15:16:51.052035 shutdown: normal exit
+2025/09/23 18:20:10.048233 startup: begin
+2025/09/23 18:20:10.050678 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/23 18:20:10.050734 step: InitCommonControlsEx begin
+2025/09/23 18:20:10.064890 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/23 18:20:10.064890 step: MainWindow.Create begin
+2025/09/23 18:20:12.786092 step: MainWindow.Create end; duration=2.721202s
+2025/09/23 18:20:12.786092 step: mw.Run begin
+2025/09/23 18:20:13.192543 post-create: defaults applied and initial recalc completed
+2025/09/23 18:20:26.577496 step: mw.Run end; duration=13.7914048s
+2025/09/23 18:20:26.578055 shutdown: normal exit
+2025/09/24 09:14:50.756678 startup: begin
+2025/09/24 09:14:50.760947 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 09:14:50.760947 step: InitCommonControlsEx begin
+2025/09/24 09:14:50.793797 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 09:14:50.895837 step: MainWindow.Create begin
+2025/09/24 09:14:54.898344 step: MainWindow.Create end; duration=4.0110766s
+2025/09/24 09:14:54.898344 step: mw.Run begin
+2025/09/24 09:14:55.185240 post-create: defaults applied and initial recalc completed
+2025/09/24 09:15:35.485927 step: mw.Run end; duration=40.6744807s
+2025/09/24 09:15:35.486458 shutdown: normal exit
+2025/09/24 09:17:48.500272 startup: begin
+2025/09/24 09:17:48.506374 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 09:17:48.507904 step: InitCommonControlsEx begin
+2025/09/24 09:17:48.535381 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 09:17:48.547411 step: MainWindow.Create begin
+2025/09/24 09:17:49.879169 startup: begin
+2025/09/24 09:17:49.881903 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 09:17:49.882453 step: InitCommonControlsEx begin
+2025/09/24 09:17:49.907725 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 09:17:49.914853 step: MainWindow.Create begin
+2025/09/24 09:17:52.949396 step: MainWindow.Create end; duration=3.0410408s
+2025/09/24 09:17:52.950435 step: mw.Run begin
+2025/09/24 09:17:53.147428 post-create: defaults applied and initial recalc completed
+2025/09/24 10:04:49.138405 startup: begin
+2025/09/24 10:04:49.139499 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 10:04:49.139499 step: InitCommonControlsEx begin
+2025/09/24 10:04:49.155233 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 10:04:49.189316 step: MainWindow.Create begin
+2025/09/24 13:00:38.833149 startup: begin
+2025/09/24 13:00:38.842937 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 13:00:38.843469 step: InitCommonControlsEx begin
+2025/09/24 13:00:38.899694 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 13:00:38.900629 params load failed: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:00:38.900769 step: MainWindow.Create begin
+2025/09/24 13:00:40.742036 step: MainWindow.Create end; duration=1.8412805s
+2025/09/24 13:00:40.743830 step: mw.Run begin
+2025/09/24 13:00:41.416738 post-create: window initialized; awaiting user input
+2025/09/24 13:00:47.947078 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:00:55.181174 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:00:55.555741 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:00:56.050828 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:00:56.598656 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:01.289013 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:06.893419 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:09.116876 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:09.281843 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:09.903183 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:13.699211 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:15.757843 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:16.792155 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:20.468048 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:22.099676 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:25.290601 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:25.929190 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:46.958310 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:47.469130 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:53.553141 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:53.866793 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:01:54.168566 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:05:53.023338 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:09:46.619874 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:09:47.302815 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:09:48.834539 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:09:50.201809 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:10:10.787284 step: mw.Run end; duration=9m30.041196s
+2025/09/24 13:10:10.787284 shutdown: normal exit
+2025/09/24 13:18:08.564086 startup: begin
+2025/09/24 13:18:08.569461 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 13:18:08.569461 step: InitCommonControlsEx begin
+2025/09/24 13:18:08.587437 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 13:18:08.587437 params load failed: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:08.587980 step: MainWindow.Create begin
+2025/09/24 13:18:08.892081 step: MainWindow.Create end; duration=304.0963ms
+2025/09/24 13:18:08.892081 step: mw.Run begin
+2025/09/24 13:18:09.066735 post-create: window initialized; awaiting user input
+2025/09/24 13:18:13.259250 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:13.670239 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:14.899184 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:16.338260 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:18.374906 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:18.807610 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:19.119743 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:42.693358 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:43.110174 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:43.514333 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:44.923880 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:46.896911 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:47.694266 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:48.168035 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:50.262004 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:18:50.618945 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:03.404049 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:04.615061 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:05.060949 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:05.429049 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:06.558746 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:07.266638 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:07.627407 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:07.940326 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:08.750125 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:09.131710 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:09.626612 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:09.983593 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:11.339120 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:12.054422 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:12.415307 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:14.772253 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:15.347205 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:15.706152 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:16.053292 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:18.219237 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:18.705028 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:22.217529 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:22.998327 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:25.516557 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:29.487587 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:29.637402 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:30.090624 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:30.353557 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:30.609844 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:31.854772 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:32.298135 compute skipped: parameters not loaded: no config.yaml found; tried FC_CONFIG, exe dir, and current dir
+2025/09/24 13:19:33.959143 step: mw.Run end; duration=1m25.0658115s
+2025/09/24 13:19:33.959143 shutdown: normal exit
+2025/09/24 13:34:52.256287 startup: begin
+2025/09/24 13:34:52.257380 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 13:34:52.257380 step: InitCommonControlsEx begin
+2025/09/24 13:34:52.269706 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 13:34:52.270214 params load failed: no config.yaml found; tried FC_CONFIG, exe dir, and current dir; using built-in defaults version=2025.08
+2025/09/24 13:34:52.270214 step: MainWindow.Create begin
+2025/09/24 13:34:52.621713 step: MainWindow.Create end; duration=351.5016ms
+2025/09/24 13:34:52.621713 step: mw.Run begin
+2025/09/24 13:34:52.746574 post-create: window initialized; awaiting user input
+2025/09/24 13:35:32.556414 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:33.614559 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:34.161167 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:35.253336 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:35.743856 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:36.117653 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:37.341628 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:37.788547 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:38.287854 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:35:43.732588 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:45.886263 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:46.297312 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:49.742322 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:50.305348 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:51.350616 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:51.654958 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:51.867490 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:53.448472 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:54.040177 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:54.872707 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:55.485970 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:56.295875 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:56.785794 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:57.162112 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:35:58.131264 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:00.705940 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:01.216209 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:06.676722 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:13.033292 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:13.037858 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:19.434379 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:20.656136 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:21.461032 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:22.112692 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:22.578039 compute ok: version=2025.08 installment=THB 21,226 rorac=77.17%
+2025/09/24 13:36:32.692687 step: mw.Run end; duration=1m40.0709082s
+2025/09/24 13:36:32.692764 shutdown: normal exit
+2025/09/24 13:49:22.317648 startup: begin
+2025/09/24 13:49:22.318742 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 13:49:22.318742 step: InitCommonControlsEx begin
+2025/09/24 13:49:22.327824 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 13:49:22.327824 params load failed: no config.yaml found; tried FC_CONFIG, exe dir, and current dir; using built-in defaults version=2025.08
+2025/09/24 13:49:22.327824 step: MainWindow.Create begin
+2025/09/24 13:49:22.563386 step: MainWindow.Create end; duration=235.5593ms
+2025/09/24 13:49:22.563386 step: mw.Run begin
+2025/09/24 13:49:22.713440 post-create: window initialized; awaiting user input
+2025/09/24 13:54:39.562742 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:40.450504 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:40.941685 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:41.391234 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:41.867686 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:42.378317 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:42.761684 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:43.176917 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:43.691351 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:44.103642 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:44.497547 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:44.893854 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:45.367991 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:45.741837 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:46.045642 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:47.768264 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:48.187831 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:48.630370 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:48.997817 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:49.478812 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:50.059940 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:53.875357 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:54.377721 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:54.804655 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:55.599719 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:56.006382 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:56.461896 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:57.162376 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:58.036774 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:54:58.627971 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:55:05.825383 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:44.203847 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:44.208851 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:47.180223 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:51.552436 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:52.497531 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:56:53.248426 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:57:02.938067 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:57:04.999968 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:57:10.258514 compute ok: version=2025.08 installment=THB 21,226 rorac=78.00%
+2025/09/24 13:57:10.364102 step: mw.Run end; duration=7m47.7936392s
+2025/09/24 13:57:10.364370 shutdown: normal exit
+2025/09/24 14:48:24.451933 startup: begin
+2025/09/24 14:48:24.452475 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 14:48:24.452475 step: InitCommonControlsEx begin
+2025/09/24 14:48:24.466243 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 14:48:24.466816 params load failed: no config.yaml found; tried FC_CONFIG, exe dir, and current dir; using built-in defaults version=2025.08
+2025/09/24 14:48:24.466816 step: MainWindow.Create begin
+2025/09/24 14:48:24.766958 step: MainWindow.Create end; duration=300.1357ms
+2025/09/24 14:48:24.767808 step: mw.Run begin
+2025/09/24 14:48:24.936470 post-create: window initialized; awaiting user input
+2025/09/24 14:48:28.237439 step: mw.Run end; duration=3.4695622s
+2025/09/24 14:48:28.237439 shutdown: normal exit
+2025/09/24 18:04:09.608184 startup: begin
+2025/09/24 18:04:09.611480 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/24 18:04:09.611480 step: InitCommonControlsEx begin
+2025/09/24 18:04:09.646837 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/24 18:04:09.690668 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/24 18:04:09.690668 step: MainWindow.Create begin
+2025/09/24 18:04:10.165835 step: MainWindow.Create end; duration=475.1608ms
+2025/09/24 18:04:10.165835 step: mw.Run begin
+2025/09/24 18:04:10.554942 post-create: window initialized; awaiting user input
+2025/09/24 18:04:19.432578 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:07:18.276939 compute ok: version=2025-09-sample installment=THB 23,616 rorac=7.73%
+2025/09/24 18:07:19.454676 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:07:42.779344 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:07:59.260095 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:00.208931 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:31.756713 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:37.408612 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:43.542661 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:46.958240 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
+2025/09/24 18:08:55.593284 step: mw.Run end; duration=4m45.4237962s
+2025/09/24 18:08:55.593284 shutdown: normal exit
