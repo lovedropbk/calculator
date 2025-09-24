@@ -7,6 +7,7 @@ require (
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/shopspring/decimal v1.3.1
 	github.com/wailsapp/wails/v2 v2.10.2
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 replace github.com/financial-calculator/engines => ./engines

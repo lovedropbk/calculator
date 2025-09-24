@@ -446,13 +446,8 @@ func (e *Engine) GenerateCampaignSummaries(deal types.Deal, state types.DealStat
 	sorted := e.sortCampaigns(campaigns)
 	summaries := make([]types.CampaignSummary, 0, len(sorted))
 
-	// Determine financed base
-	var financedBase float64
-	if !deal.FinancedAmount.IsZero() {
-		financedBase = deal.FinancedAmount.InexactFloat64()
-	} else {
-		financedBase = deal.PriceExTax.Sub(deal.DownPaymentAmount).InexactFloat64()
-	}
+	// Determine financed base (exclude financed IDCs): always PriceExTax - DownPaymentAmount
+	financedBase := deal.PriceExTax.Sub(deal.DownPaymentAmount).InexactFloat64()
 	if financedBase < 0 {
 		financedBase = 0
 	}

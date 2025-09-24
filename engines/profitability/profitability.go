@@ -3,6 +3,7 @@ package profitability
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/financial-calculator/engines/types"
 	"github.com/shopspring/decimal"
@@ -44,8 +45,9 @@ func (e *Engine) CalculateWaterfall(
 	// 2. Matched Funded Spread
 	waterfall.MatchedFundedSpread = e.parameterSet.MatchedFundedSpread
 
-	// 3. Gross Interest Margin = Deal IRR - Cost of Debt - MF Spread
-	waterfall.GrossInterestMargin = dealIRR.Sub(costOfDebt).Sub(waterfall.MatchedFundedSpread)
+	// 3. Gross Interest Margin = Deal IRR (nominal) - Cost of Debt (nominal) - MF Spread
+	// Per spec, interest lines should be on nominal annual basis for comparability.
+	waterfall.GrossInterestMargin = waterfall.DealIRRNominal.Sub(costOfDebt).Sub(waterfall.MatchedFundedSpread)
 
 	// 4. Capital Advantage
 	capitalAdvantage := e.calculateCapitalAdvantage(deal)
@@ -180,25 +182,10 @@ func (e *Engine) effectiveToNominal(effectiveRate decimal.Decimal, compoundingPe
 	if compoundingPeriods <= 0 {
 		return effectiveRate
 	}
-
-	// Nominal = n * ((1 + effective)^(1/n) - 1)
+	// Exact formula: Nominal = n * ((1 + effective)^(1/n) - 1)
 	onePlusEffective := decimal.NewFromFloat(1).Add(effectiveRate)
-	periodicRate := decimal.NewFromFloat(1).Div(decimal.NewFromInt(int64(compoundingPeriods)))
-
-	// Use approximation for small rates
-	if effectiveRate.LessThan(decimal.NewFromFloat(0.5)) {
-		// For small rates, use approximation to avoid precision issues
-		nominal := effectiveRate.Mul(decimal.NewFromInt(int64(compoundingPeriods))).
-			Div(decimal.NewFromInt(int64(compoundingPeriods)).Add(
-				effectiveRate.Mul(decimal.NewFromInt(int64(compoundingPeriods - 1))).Div(decimal.NewFromInt(2)),
-			))
-		return nominal
-	}
-
-	// For larger rates, use exact formula
-	periodicFactor := onePlusEffective.Pow(periodicRate).Sub(decimal.NewFromFloat(1))
-	nominal := periodicFactor.Mul(decimal.NewFromInt(int64(compoundingPeriods)))
-
+	periodic := decimal.NewFromFloat(math.Pow(onePlusEffective.InexactFloat64(), 1.0/float64(compoundingPeriods)) - 1)
+	nominal := periodic.Mul(decimal.NewFromInt(int64(compoundingPeriods)))
 	return nominal
 }
 

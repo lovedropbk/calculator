@@ -1,0 +1,35 @@
+version: "2025-09-sample"
+costOfFundsCurve:
+  - termMonths: 12
+    rate: 0.0148
+  - termMonths: 24
+    rate: 0.0165
+  - termMonths: 36
+    rate: 0.0175
+  - termMonths: 48
+    rate: 0.0185
+  - termMonths: 60
+    rate: 0.0195
+matchedFundedSpread: 0.0025
+risk:
+  costOfRiskPct: 0.0200
+economicCapital:
+  ratio: 0.08
+opex:
+  byProductPct:
+    HP: 0.0068
+    mySTAR: 0.0072
+    FinanceLease: 0.0065
+    OperatingLease: 0.0070
+commissionPolicy:
+  byProductPct:
+    HP: 0.03
+    mySTAR: 0.07
+    FinanceLease: 0.07
+    OperatingLease: 0.07
+rounding:
+  currency: THB
+  minorUnits: 0
+  method: bank
+  displayRate: 4
+daycount: ACT/365

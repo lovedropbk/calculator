@@ -13,6 +13,23 @@ type CommissionLookup interface {
 	CommissionPercentByProduct(product string) float64
 }
 
+// defaultCommissionPercent returns fallback defaults by product when policy is missing or key not present.
+// HP: 3%; FinanceLease/F-Lease: 7%; OperatingLease/Op-Lease: 7%; mySTAR/BalloonHP: 7%
+func defaultCommissionPercent(product string) float64 {
+	switch product {
+	case "HP", "HirePurchase":
+		return 0.03
+	case "mySTAR", "BalloonHP", "Balloon":
+		return 0.07
+	case "F-Lease", "FinanceLease", "Finance Lease", "FLease", "F Lease":
+		return 0.07
+	case "Op-Lease", "OperatingLease", "Operating Lease", "OpLease", "Op Lease":
+		return 0.07
+	default:
+		return 0
+	}
+}
+
 // ResolveDealerCommissionAuto resolves dealer commission automatically from parameters for a given product and financed amount.
 // - pct is read via params.CommissionPercentByProduct(product) (negative values already clamped to 0 by accessor).
 // - amountTHB is rounded to nearest THB. Base is clamped at 0.
@@ -24,6 +41,12 @@ func ResolveDealerCommissionAuto(params CommissionLookup, product string, financ
 	}
 
 	pct = params.CommissionPercentByProduct(product) // accessor clamps negatives to 0
+	if pct == 0 {
+		// Fallback to defaults when policy missing or key not present
+		if d := defaultCommissionPercent(product); d > 0 {
+			pct = d
+		}
+	}
 	base := math.Max(financedAmt, 0)
 	amountTHB = math.Round(base * pct)
 	if amountTHB < 0 {

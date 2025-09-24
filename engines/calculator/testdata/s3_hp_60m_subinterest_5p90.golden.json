@@ -1,0 +1,24 @@
+{
+  "name": "s3_hp_60m_subinterest_5p90",
+  "version": "2025-09-sample",
+  "product": "HP",
+  "term_months": 60,
+  "balloon_percent": "0.0000",
+  "monthly_installment_thb": "25698.00",
+  "customer_rate_nominal": "0.0590",
+  "customer_rate_effective": "0.0606",
+  "acquisition_rorac": "0.4263",
+  "schedule_len": 60,
+  "first_payment_date": "2025-09-04",
+  "campaigns": [
+    {
+      "id": "SUBINT-TO-5P90",
+      "type": "subinterest",
+      "applied": true,
+      "t0_flow_thb": "33870.00",
+      "desc": "Subinterest from 6.40% to 5.90%, subsidy THB 33870.00"
+    }
+  ],
+  "parameter_set_version": "2025-09-sample",
+  "matched_funded_spread": "0.0025"
+}

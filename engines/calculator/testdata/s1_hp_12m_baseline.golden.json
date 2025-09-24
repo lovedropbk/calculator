@@ -1,0 +1,15 @@
+{
+  "name": "s1_hp_12m_baseline",
+  "version": "2025-09-sample",
+  "product": "HP",
+  "term_months": 12,
+  "balloon_percent": "0.0000",
+  "monthly_installment_thb": "114950.00",
+  "customer_rate_nominal": "0.0644",
+  "customer_rate_effective": "0.0663",
+  "acquisition_rorac": "0.4213",
+  "schedule_len": 12,
+  "first_payment_date": "2025-09-04",
+  "parameter_set_version": "2025-09-sample",
+  "matched_funded_spread": "0.0025"
+}
