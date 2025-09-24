@@ -678,15 +678,6 @@ func main() {
 				Layout: HBox{Margins: Margins{Left: 12, Top: 8, Right: 12, Bottom: 0}, Spacing: 12},
 				Children: []Widget{
 					GroupBox{
-						Title:  "Headline",
-						Layout: Grid{Columns: 2, Spacing: 6},
-						Children: []Widget{
-							Label{Text: "Monthly Installment:"}, Label{AssignTo: &headerMonthlyLbl, Text: "-"},
-							Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &headerRoRacLbl, Text: "-"},
-						},
-					},
-					HSpacer{},
-					GroupBox{
 						Title:  "Version",
 						Layout: Grid{Columns: 2, Spacing: 6},
 						Children: []Widget{
@@ -707,6 +698,7 @@ func main() {
 								Title:  "Deal Inputs",
 								Layout: Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
+									// Basic inputs
 									Label{Text: "Product:"},
 									ComboBox{
 										AssignTo:     &productCB,
@@ -795,38 +787,40 @@ func main() {
 										Text:              "0",
 										OnEditingFinished: recalc,
 									},
-								},
-							},
-							GroupBox{
-								Title:  "Rate Mode",
-								Layout: Grid{Columns: 2, Spacing: 6},
-								Children: []Widget{
-									RadioButton{
-										AssignTo: &fixedRateRB,
-										Text:     "Fixed Rate",
-										OnClicked: func() {
-											rateMode = "fixed_rate"
-											if nominalRateEdit != nil {
-												nominalRateEdit.SetEnabled(true)
-											}
-											if targetInstallmentEdit != nil {
-												targetInstallmentEdit.SetEnabled(false)
-											}
-											recalc()
-										},
-									},
-									RadioButton{
-										AssignTo: &targetInstallmentRB,
-										Text:     "Target Installment",
-										OnClicked: func() {
-											rateMode = "target_installment"
-											if nominalRateEdit != nil {
-												nominalRateEdit.SetEnabled(false)
-											}
-											if targetInstallmentEdit != nil {
-												targetInstallmentEdit.SetEnabled(true)
-											}
-											recalc()
+
+									// Integrated Rate Mode controls
+									Label{Text: "Rate mode:"},
+									Composite{
+										Layout: HBox{Spacing: 6},
+										Children: []Widget{
+											RadioButton{
+												AssignTo: &fixedRateRB,
+												Text:     "Fixed Rate",
+												OnClicked: func() {
+													rateMode = "fixed_rate"
+													if nominalRateEdit != nil {
+														nominalRateEdit.SetEnabled(true)
+													}
+													if targetInstallmentEdit != nil {
+														targetInstallmentEdit.SetEnabled(false)
+													}
+													recalc()
+												},
+											},
+											RadioButton{
+												AssignTo: &targetInstallmentRB,
+												Text:     "Target Installment",
+												OnClicked: func() {
+													rateMode = "target_installment"
+													if nominalRateEdit != nil {
+														nominalRateEdit.SetEnabled(false)
+													}
+													if targetInstallmentEdit != nil {
+														targetInstallmentEdit.SetEnabled(true)
+													}
+													recalc()
+												},
+											},
 										},
 									},
 									Label{Text: "Customer rate (% p.a.):"},
@@ -840,6 +834,17 @@ func main() {
 										AssignTo:          &targetInstallmentEdit,
 										Text:              "0",
 										OnEditingFinished: recalc,
+									},
+
+									// Small Key Metrics group (beneath inputs)
+									GroupBox{
+										Title:      "Key Metrics",
+										ColumnSpan: 2,
+										Layout:     Grid{Columns: 2, Spacing: 6},
+										Children: []Widget{
+											Label{Text: "Monthly Installment:"}, Label{AssignTo: &headerMonthlyLbl, Text: "-"},
+											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &headerRoRacLbl, Text: "-"},
+										},
 									},
 								},
 							},

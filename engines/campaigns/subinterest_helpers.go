@@ -2,6 +2,7 @@ package campaigns
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/financial-calculator/engines/cashflow"
 	"github.com/financial-calculator/engines/pricing"
@@ -38,39 +39,44 @@ func resolveBasePricing(pEng *pricing.Engine, deal types.Deal) (nominalRate deci
 	}
 }
 
-// pvOfSchedule is a convenience wrapper that discounts at the provided nominal annual rate.
-func pvOfSchedule(schedule []types.Cashflow, nominalRate decimal.Decimal) decimal.Decimal {
-	return pvOfScheduleAtRate(schedule, nominalRate)
-}
-
 // pvOfScheduleAtRate computes PV from the rounded schedule Amounts using monthly compounding
 // at the given nominal annual discount rate. Periods are 1..N in order of the schedule entries that are inflows.
-// Includes balloon entries as inflows too.
+// Includes balloon entries as inflows too. Uses float64 internally for stable pow.
 func pvOfScheduleAtRate(schedule []types.Cashflow, discountNominalRate decimal.Decimal) decimal.Decimal {
 	if len(schedule) == 0 {
 		return decimal.Zero
 	}
-	monthly := discountNominalRate.Div(decimal.NewFromInt(12))
-	onePlus := decimal.NewFromInt(1).Add(monthly)
+	// Convert to monthly rate in float64
+	rMonthly := discountNominalRate.Div(decimal.NewFromInt(12)).InexactFloat64()
 
-	pv := decimal.Zero
-	pow := decimal.NewFromInt(1) // (1+r_m)^0
+	pv := 0.0
+	period := 0
 	for _, cf := range schedule {
-		// Consider periodic inflows only (principal installments and balloon)
+		// Periodic inflows only (installment amounts and balloon)
 		if cf.Direction != "in" {
 			continue
 		}
 		if cf.Type != types.CashflowPrincipal && cf.Type != types.CashflowBalloon {
 			continue
 		}
-		// advance power to next period
-		pow = pow.Mul(onePlus) // (1+r_m)^(i)
-		if pow.IsZero() {
+		period++
+		amt := toFloat(cf.Amount)
+		disc := math.Pow(1.0+rMonthly, float64(period))
+		if disc == 0 || math.IsNaN(disc) || math.IsInf(disc, 0) {
 			continue
 		}
-		pv = pv.Add(cf.Amount.Div(pow))
+		pv += amt / disc
 	}
-	return pv
+
+	if math.IsNaN(pv) || math.IsInf(pv, 0) {
+		return decimal.Zero
+	}
+	return decimal.NewFromFloat(pv)
+}
+
+// toFloat converts a decimal.Decimal amount to float64 for PV math.
+func toFloat(d decimal.Decimal) float64 {
+	return d.InexactFloat64()
 }
 
 // solveRateForBudget performs a bisection search for the nominal rate r in [lo, hi] such that
@@ -117,14 +123,13 @@ func solveRateForBudget(
 
 	for i := 0; i < maxIter; i++ {
 		mid = lo.Add(hi).Div(decimal.NewFromInt(2))
-		fMid, sMid := f(mid)
+		fMid, _ := f(mid)
 		absMid := fMid.Abs()
 
-		// Track best
+		// Track best (by absolute objective), but defer schedule rebuild to final rounded rate
 		if absMid.LessThan(bestAbs) {
 			bestAbs = absMid
 			bestR = mid
-			sched = sMid
 		}
 
 		// Convergence checks
@@ -146,10 +151,6 @@ func solveRateForBudget(
 		}
 	}
 
-	// Fallback to best after max iterations
-	if sched == nil {
-		_, sched = f(bestR)
-	}
 	// Round and rebuild schedule at rounded rate for consistency
 	rate = types.RoundBasisPoints(bestR)
 	sOut, _ := pEng.BuildAmortizationSchedule(deal, rate)

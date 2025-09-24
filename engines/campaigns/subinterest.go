@@ -30,7 +30,6 @@ package campaigns
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/financial-calculator/engines/cashflow"
 	"github.com/financial-calculator/engines/pricing"
@@ -183,12 +182,19 @@ func SubinterestByBudget(input types.CampaignBudgetInput) (types.CampaignResult,
 		return out, convErr
 	}
 
-	// Build cashflows and profitability at solution
+	// Clamp used subsidy to budget to satisfy public API contract (never exceed budget)
+	usedClamped := usedSubsidy
+	if usedClamped.GreaterThan(input.BudgetTHB) {
+		usedClamped = input.BudgetTHB
+	}
+	usedRounded := types.RoundTHB(usedClamped)
+
+	// Build cashflows and profitability at solution (using rounded, clamped T0 subsidy)
 	t0 := []types.Cashflow{{
 		Date:      input.Deal.PayoutDate,
 		Direction: "in",
 		Type:      types.CashflowSubsidy,
-		Amount:    types.RoundTHB(usedSubsidy),
+		Amount:    usedRounded,
 		Memo:      "Subinterest subsidy",
 	}}
 	t0 = cfEng.ConstructT0Flows(input.Deal, t0, nil)
@@ -197,12 +203,11 @@ func SubinterestByBudget(input types.CampaignBudgetInput) (types.CampaignResult,
 	wf, _ := prof.CalculateWaterfall(input.Deal, dealIRR, decimal.Zero, decimal.Zero)
 
 	out.Metrics = types.CampaignMetrics{
-		CustomerNominalRate:   types.RoundBasisPoints(targetRate),
-		CustomerEffectiveRate: pEng.CalculateEffectiveRate(targetRate, 12),
-		MonthlyInstallment:    tInst,
-		// For budget solver, expose the exact PV difference as SubsidyUsedTHB to meet 0.01 THB PV tolerance in tests.
-		SubsidyUsedTHB:              usedSubsidy,
-		RequiredSubsidyTHB:          usedSubsidy,
+		CustomerNominalRate:         types.RoundBasisPoints(targetRate),
+		CustomerEffectiveRate:       pEng.CalculateEffectiveRate(targetRate, 12),
+		MonthlyInstallment:          tInst,
+		SubsidyUsedTHB:              usedRounded,
+		RequiredSubsidyTHB:          usedRounded,
 		ExceedTHB:                   decimal.Zero,
 		OverBudget:                  false,
 		DealerCommissionResolvedTHB: decimal.Zero,
@@ -252,16 +257,12 @@ func SubinterestByTarget(input types.CampaignRateInput) (types.CampaignResult, e
 	var targetInstallment decimal.Decimal
 
 	rateCapsMin := decimal.NewFromFloat(0.0001)
-	rateCapsMax := decimal.NewFromFloat(math.Max(baseRate.InexactFloat64(), 0))
-	if input.RateCaps != nil {
-		if input.RateCaps.MinNominal.GreaterThan(decimal.Zero) {
-			rateCapsMin = input.RateCaps.MinNominal
-		}
-		if input.RateCaps.MaxNominal.GreaterThan(decimal.Zero) && input.RateCaps.MaxNominal.LessThan(baseRate) {
-			rateCapsMax = input.RateCaps.MaxNominal
-		} else {
-			rateCapsMax = baseRate
-		}
+	if input.RateCaps != nil && input.RateCaps.MinNominal.GreaterThan(decimal.Zero) {
+		rateCapsMin = input.RateCaps.MinNominal
+	}
+	var rateCapsMax decimal.Decimal
+	if input.RateCaps != nil && input.RateCaps.MaxNominal.GreaterThan(decimal.Zero) && input.RateCaps.MaxNominal.LessThan(baseRate) {
+		rateCapsMax = input.RateCaps.MaxNominal
 	} else {
 		rateCapsMax = baseRate
 	}

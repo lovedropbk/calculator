@@ -367,3 +367,25 @@ main.main()
 2025/09/24 18:08:46.958240 compute ok: version=2025-09-sample installment=THB 23,616 rorac=4.72%
 2025/09/24 18:08:55.593284 step: mw.Run end; duration=4m45.4237962s
 2025/09/24 18:08:55.593284 shutdown: normal exit
+2025/09/25 06:37:51.298032 startup: begin
+2025/09/25 06:37:51.299099 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 06:37:51.299631 step: InitCommonControlsEx begin
+2025/09/25 06:37:51.307725 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 06:37:51.309513 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 06:37:51.309513 step: MainWindow.Create begin
+2025/09/25 06:37:51.445607 step: MainWindow.Create end; duration=136.0937ms
+2025/09/25 06:37:51.446116 step: mw.Run begin
+2025/09/25 06:37:51.547726 post-create: window initialized; awaiting user input
+2025/09/25 06:38:16.835858 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:28.294278 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:28.876954 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:29.435041 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:30.621225 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:31.845716 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:34.941759 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:48.803550 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:48.805231 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:38:51.683609 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:39:01.104985 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:39:03.411829 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 06:39:04.264844 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
