@@ -608,43 +608,42 @@ func main() {
 			idcTotalLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(dealerAmt+otherIDC)))
 		}
 
-		// Populate Campaign Options grid from campaigns engine summaries (includes Dealer Comm per option)
+		// Compute and bind Campaign Options grid with per-row metrics
 		if campaignTV != nil && campEng != nil {
-			// Use displayCampaigns for the grid; compute path uses only explicitly selected campaigns
-			summaries := campEng.GenerateCampaignSummaries(deal, dealState, displayCampaigns)
-			rows := make([]CampaignRow, 0, len(summaries))
-
-			// Clamp selected index
-			if selectedCampaignIdx < 0 || selectedCampaignIdx >= len(summaries) {
-				selectedCampaignIdx = 0
-			}
-
 			// Subsidy budget baseline for each row
 			var subsidyBudget float64
 			if subsidyBudgetEd != nil {
 				subsidyBudget = subsidyBudgetEd.Value()
 			}
+			rows, idx := computeCampaignRows(
+				enginePS,
+				calc,
+				campEng,
+				deal,
+				dealState,
+				displayCampaigns,
+				subsidyBudget,
+				dpPercent,
+				selectedCampaignIdx,
+			)
+			selectedCampaignIdx = idx
 
-			for i, s := range summaries {
-				row := CampaignRow{
-					Selected:      i == selectedCampaignIdx,
-					Campaign:      campaignTypeDisplayName(s.CampaignType),
-					Monthly:       "Monthly —",
-					Downpayment:   fmt.Sprintf("%.0f%%", dpPercent),
-					SubsidyRorac:  fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudget)),
-					DealerComm:    FormatDealerCommission(s.DealerCommissionAmt, s.DealerCommissionPct),
-					DealerCommAmt: s.DealerCommissionAmt,
-					DealerCommPct: s.DealerCommissionPct,
-					SubsidyValue:  subsidyBudget,
-					Notes:         "",
-				}
-				rows = append(rows, row)
-			}
 			if campaignModel == nil {
 				campaignModel = &CampaignTableModel{rows: rows}
 				_ = campaignTV.SetModel(campaignModel)
 			} else {
 				campaignModel.ReplaceRows(rows)
+			}
+
+			// Update Key Metrics Summary and header from selected row
+			if selectedCampaignIdx >= 0 && selectedCampaignIdx < len(rows) {
+				sel := rows[selectedCampaignIdx]
+				updateSummaryFromRow(
+					sel,
+					monthlyLbl, headerMonthlyLbl,
+					custNominalLbl, custEffLbl,
+					roracLbl, headerRoRacLbl,
+				)
 			}
 		}
 
@@ -674,19 +673,6 @@ func main() {
 		Size:     Size{Width: 1280, Height: 860},
 		Layout:   VBox{},
 		Children: []Widget{
-			Composite{
-				Layout: HBox{Margins: Margins{Left: 12, Top: 8, Right: 12, Bottom: 0}, Spacing: 12},
-				Children: []Widget{
-					GroupBox{
-						Title:  "Version",
-						Layout: Grid{Columns: 2, Spacing: 6},
-						Children: []Widget{
-							Label{Text: "Param Ver:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
-							Label{Text: "Calc time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
-						},
-					},
-				},
-			},
 			HSplitter{
 				Children: []Widget{
 					// Left: Inputs
@@ -876,6 +862,10 @@ func main() {
 										MinValue:    0,
 										Value:       0,
 										ToolTipText: "Budget available for subsidies (placeholder)",
+										OnValueChanged: func() {
+											// Recompute grid metrics when subsidy budget changes
+											recalc()
+										},
 									},
 									// Dealer commission pill as disabled placeholder
 									Label{Text: ""},
@@ -923,83 +913,68 @@ func main() {
 								},
 							},
 
-							// Bottom splitter: Campaign Details | Key Metrics & Summary
-							HSplitter{
+							// Bottom: Key Metrics & Summary (expanded)
+							GroupBox{
+								Title:  "Key Metrics & Summary",
+								Layout: Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
+									Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
+									Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
+									Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
+									Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
+									Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
+									Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
+									Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
+									Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
+									// Profitability Details (toggle)
 									GroupBox{
-										Title:  "Campaign Details",
+										Title:  "Profitability Details",
 										Layout: Grid{Columns: 2, Spacing: 6},
 										Children: []Widget{
-											Label{Text: "Campaign:"}, Label{Text: "-"},
-											Label{Text: "Type:"}, Label{Text: "-"},
-											Label{Text: "Funder:"}, Label{Text: "-"},
-											Label{Text: "Stacking:"}, Label{Text: "-"},
-											Label{Text: "Description:"}, Label{Text: "-"},
-										},
-									},
-									GroupBox{
-										Title:  "Key Metrics & Summary",
-										Layout: Grid{Columns: 2, Spacing: 6},
-										Children: []Widget{
-											Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
-											Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
-											Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
-											Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
-											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
-											Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
-											Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
-											Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
-											// Profitability Details (toggle)
-											GroupBox{
-												Title:  "Profitability Details",
-												Layout: Grid{Columns: 2, Spacing: 6},
-												Children: []Widget{
-													PushButton{
-														AssignTo:   &detailsTogglePB,
-														Text:       "Details ▼",
-														ColumnSpan: 2,
-														OnClicked: func() {
-															if wfPanel != nil {
-																vis := wfPanel.Visible()
-																wfPanel.SetVisible(!vis)
-																if detailsTogglePB != nil {
-																	if vis {
-																		detailsTogglePB.SetText("Details ▼")
-																	} else {
-																		detailsTogglePB.SetText("Details ▲")
-																	}
-																}
+											PushButton{
+												AssignTo:   &detailsTogglePB,
+												Text:       "Details ▼",
+												ColumnSpan: 2,
+												OnClicked: func() {
+													if wfPanel != nil {
+														vis := wfPanel.Visible()
+														wfPanel.SetVisible(!vis)
+														if detailsTogglePB != nil {
+															if vis {
+																detailsTogglePB.SetText("Details ▼")
+															} else {
+																detailsTogglePB.SetText("Details ▲")
 															}
-														},
-													},
-													Composite{
-														AssignTo:   &wfPanel,
-														Visible:    false,
-														ColumnSpan: 2,
-														Layout:     Grid{Columns: 2, Spacing: 6},
-														Children: []Widget{
-															Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
-															Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
-															Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
-															Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
-															Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
-															Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
-															Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
-															Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
-															Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
-															Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
-															Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
-															Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
-															Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
-															Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
-														},
-													},
+														}
+													}
 												},
 											},
-											Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
-											Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
+											Composite{
+												AssignTo:   &wfPanel,
+												Visible:    false,
+												ColumnSpan: 2,
+												Layout:     Grid{Columns: 2, Spacing: 6},
+												Children: []Widget{
+													Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
+													Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+													Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
+													Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
+													Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
+													Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
+													Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
+													Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
+													Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
+													Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+													Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
+													Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
+													Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
+													Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+												},
+											},
 										},
 									},
+									Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
+									Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
 								},
 							},
 						},
@@ -1084,7 +1059,15 @@ func main() {
 					dealState.IDCOther.Value = newSubsidy
 				}
 
-				// Refresh IDC labels and headline
+				// Update summary immediately from selection, then refresh IDC labels and headline
+				if idx >= 0 && idx < len(campaignModel.rows) {
+					updateSummaryFromRow(
+						campaignModel.rows[idx],
+						monthlyLbl, headerMonthlyLbl,
+						custNominalLbl, custEffLbl,
+						roracLbl, headerRoRacLbl,
+					)
+				}
 				recalc()
 			})
 		}
@@ -1119,6 +1102,8 @@ func main() {
 		if !paramsReady && validationLbl != nil {
 			_ = validationLbl.SetText(fmt.Sprintf("Parameters not loaded: %s", paramsErr))
 		}
+		// Initial compute to populate campaign grid and summary
+		recalc()
 		logger.Printf("post-create: window initialized; awaiting user input")
 	})
 
@@ -1198,14 +1183,28 @@ func defaultParameterSet() types.ParameterSet {
 // --- Phase 1 UI placeholders: Campaign Options table model (unwired) ---
 
 type CampaignRow struct {
-	Selected     bool
-	Campaign     string
-	Monthly      string
-	Downpayment  string
-	SubsidyRorac string
-	DealerComm   string
-	Notes        string
+	Selected bool
 
+	// Display fields (stringified for grid bindings)
+	Name                  string // campaign display name
+	MonthlyInstallmentStr string // e.g., "22,198.61"
+	DownpaymentStr        string // e.g., "20%"
+	NominalRateStr        string // e.g., "3.99 percent"
+	EffectiveRateStr      string // e.g., "4.05 percent"
+	AcqRoRacStr           string // e.g., "8.50 percent"
+	SubsidyRorac          string // combined: "THB X / Y%"
+	DealerComm            string
+	Notes                 string
+
+	// Numeric metrics to drive the summary panel
+	MonthlyInstallment float64 // THB
+	NominalRate        float64 // fractional, e.g., 0.0399
+	EffectiveRate      float64 // fractional
+	AcqRoRac           float64 // fractional
+	IDCDealerTHB       float64
+	IDCOtherTHB        float64
+
+	// Additional values used elsewhere
 	DealerCommAmt float64
 	DealerCommPct float64
 	SubsidyValue  float64
@@ -1220,36 +1219,36 @@ func NewCampaignTableModel() *CampaignTableModel {
 	return &CampaignTableModel{
 		rows: []CampaignRow{
 			{
-				Selected:     true,
-				Campaign:     "Standard (No Campaign)",
-				Monthly:      "Monthly —",
-				Downpayment:  "20% / THB 200,000",
-				SubsidyRorac: "- / -",
-				Notes:        "Baseline (placeholder)",
+				Selected:              true,
+				Name:                  "Standard (No Campaign)",
+				MonthlyInstallmentStr: "", // will render as "Monthly —"
+				DownpaymentStr:        "20% / THB 200,000",
+				SubsidyRorac:          "- / -",
+				Notes:                 "Baseline (placeholder)",
 			},
 			{
-				Selected:     false,
-				Campaign:     "Subinterest 2.99%",
-				Monthly:      "Monthly —",
-				Downpayment:  "20%",
-				SubsidyRorac: "THB 0 / 8.5%",
-				Notes:        "Static row (Phase 1)",
+				Selected:              false,
+				Name:                  "Subinterest 2.99%",
+				MonthlyInstallmentStr: "",
+				DownpaymentStr:        "20%",
+				SubsidyRorac:          "THB 0 / 8.5%",
+				Notes:                 "Static row (Phase 1)",
 			},
 			{
-				Selected:     false,
-				Campaign:     "Subdown 5%",
-				Monthly:      "Monthly —",
-				Downpayment:  "15%",
-				SubsidyRorac: "THB 50,000 / 6.8%",
-				Notes:        "Static row (Phase 1)",
+				Selected:              false,
+				Name:                  "Subdown 5%",
+				MonthlyInstallmentStr: "",
+				DownpaymentStr:        "15%",
+				SubsidyRorac:          "THB 50,000 / 6.8%",
+				Notes:                 "Static row (Phase 1)",
 			},
 			{
-				Selected:     false,
-				Campaign:     "Free Insurance",
-				Monthly:      "Monthly —",
-				Downpayment:  "20%",
-				SubsidyRorac: "THB 15,000 / 7.2%",
-				Notes:        "Static row (Phase 1)",
+				Selected:              false,
+				Name:                  "Free Insurance",
+				MonthlyInstallmentStr: "",
+				DownpaymentStr:        "20%",
+				SubsidyRorac:          "THB 15,000 / 7.2%",
+				Notes:                 "Static row (Phase 1)",
 			},
 		},
 	}
@@ -1277,11 +1276,17 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 		}
 		return "○" // empty to simulate not selected
 	case 1:
-		return r.Campaign
+		return r.Name
 	case 2:
-		return r.Monthly
+		if r.MonthlyInstallmentStr == "" {
+			return "Monthly —"
+		}
+		return "THB " + r.MonthlyInstallmentStr
 	case 3:
-		return r.Downpayment
+		if r.DownpaymentStr == "" {
+			return "—"
+		}
+		return r.DownpaymentStr
 	case 4:
 		return r.SubsidyRorac
 	case 5:
@@ -1530,5 +1535,57 @@ func updateResultsUI(
 	}
 	if headerRoRacLbl != nil {
 		headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
+	}
+}
+
+func updateSummaryFromRow(row CampaignRow, monthlyLbl, headerMonthlyLbl *walk.Label, custNominalLbl, custEffLbl *walk.Label, roracLbl, headerRoRacLbl *walk.Label) {
+	// Monthly installment
+	if monthlyLbl != nil {
+		if row.MonthlyInstallmentStr != "" {
+			monthlyLbl.SetText("THB " + row.MonthlyInstallmentStr)
+		} else {
+			monthlyLbl.SetText("—")
+		}
+	}
+	if headerMonthlyLbl != nil {
+		if row.MonthlyInstallmentStr != "" {
+			headerMonthlyLbl.SetText("THB " + row.MonthlyInstallmentStr)
+		} else {
+			headerMonthlyLbl.SetText("—")
+		}
+	}
+
+	// Nominal rate
+	if custNominalLbl != nil {
+		if row.NominalRate > 0 {
+			custNominalLbl.SetText(fmt.Sprintf("%.2f%%", row.NominalRate*100.0))
+		} else {
+			custNominalLbl.SetText("—")
+		}
+	}
+
+	// Effective rate
+	if custEffLbl != nil {
+		if row.EffectiveRate > 0 {
+			custEffLbl.SetText(fmt.Sprintf("%.2f%%", row.EffectiveRate*100.0))
+		} else {
+			custEffLbl.SetText("—")
+		}
+	}
+
+	// Acquisition RoRAC
+	if roracLbl != nil {
+		if row.AcqRoRac > 0 {
+			roracLbl.SetText(fmt.Sprintf("%.2f%%", row.AcqRoRac*100.0))
+		} else {
+			roracLbl.SetText("—")
+		}
+	}
+	if headerRoRacLbl != nil {
+		if row.AcqRoRac > 0 {
+			headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", row.AcqRoRac*100.0))
+		} else {
+			headerRoRacLbl.SetText("—")
+		}
 	}
 }

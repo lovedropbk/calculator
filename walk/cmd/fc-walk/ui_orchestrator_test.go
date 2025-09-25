@@ -2,7 +2,13 @@
 
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/financial-calculator/engines/calculator"
+	"github.com/financial-calculator/engines/campaigns"
+	"github.com/financial-calculator/engines/types"
+)
 
 func TestValidateInputs_DefaultState_ErrorPrice(t *testing.T) {
 	// Empty/default state -> expect "price must be positive"
@@ -88,5 +94,51 @@ func TestMapProductDisplayToEnum_FinanceLease(t *testing.T) {
 	}
 	if string(p) != "F-Lease" {
 		t.Fatalf("expected product 'F-Lease', got %q", string(p))
+	}
+}
+
+// Minimal orchestrator test: ensure Subinterest row populates Monthly strings (not "—")
+func TestComputeCampaignRows_SubinterestBudget_PopulatesMonthly(t *testing.T) {
+	// Parameter set and engines
+	ps := defaultParameterSet()
+	calc := calculator.New(ps)
+	campEng := campaigns.NewEngine(ps)
+	// Commission lookup for auto mode (empty map falls back to 0 in summaries for non-cash rows)
+	campEng.SetCommissionLookup(staticCommissionLookup{by: map[string]float64{}})
+
+	// Base deal from helpers (36m, 1,000,000 THB, 20% down, fixed rate 3.99%)
+	deal := buildDealFromControls(
+		"HP", "arrears", "percent", "fixed_rate",
+		1_000_000, 20, 0,
+		36, 0, 3.99, 0,
+	)
+
+	// Display campaigns includes a Subinterest option
+	display := []types.Campaign{{
+		ID:         "SUBINT-TEST",
+		Type:       types.CampaignSubinterest,
+		TargetRate: types.NewDecimal(0.0299),
+		Funder:     "Manufacturer",
+		Stacking:   2,
+	}}
+
+	state := types.DealState{
+		DealerCommission: types.DealerCommission{Mode: types.DealerCommissionModeAuto},
+		IDCOther:         types.IDCOther{Value: 0, UserEdited: false},
+	}
+
+	rows, idx := computeCampaignRows(ps, calc, campEng, deal, state, display, 15000 /*budget THB*/, 20 /*dp%*/, 0)
+	if idx != 0 {
+		t.Fatalf("expected selected index 0, got %d", idx)
+	}
+	if len(rows) == 0 {
+		t.Fatalf("expected at least one campaign row")
+	}
+	s := rows[0].MonthlyInstallmentStr
+	if s == "" {
+		t.Fatalf("expected MonthlyInstallmentStr to be populated")
+	}
+	if rows[0].MonthlyInstallment <= 0 {
+		t.Fatalf("expected positive MonthlyInstallment, got %f", rows[0].MonthlyInstallment)
 	}
 }
