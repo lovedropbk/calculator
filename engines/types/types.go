@@ -28,6 +28,11 @@ const (
 type CampaignType string
 
 const (
+	// Benchmark/base rows for UI comparison
+	CampaignBaseNoSubsidy CampaignType = "base_no_subsidy"
+	CampaignBaseSubsidy   CampaignType = "base_subsidy"
+
+	// Financing/campaign rows
 	CampaignSubdown       CampaignType = "subdown"
 	CampaignSubinterest   CampaignType = "subinterest"
 	CampaignFreeInsurance CampaignType = "free_insurance"
@@ -230,9 +235,17 @@ type ProfitabilityWaterfall struct {
 	CapitalAdvantage  decimal.Decimal `json:"capital_advantage"`
 	NetInterestMargin decimal.Decimal `json:"net_interest_margin"`
 
-	// Risk and costs
-	CostOfCreditRisk         decimal.Decimal `json:"cost_of_credit_risk"`
-	OPEX                     decimal.Decimal `json:"opex"`
+	// Risk and costs (all on annualized basis)
+	CostOfCreditRisk decimal.Decimal `json:"cost_of_credit_risk"`
+	OPEX             decimal.Decimal `json:"opex"`
+
+	// Separated IDC/Subsidy components (preferred for UI)
+	IDCUpfrontCostPct  decimal.Decimal `json:"idc_upfront_cost_pct,omitempty"`
+	IDCPeriodicCostPct decimal.Decimal `json:"idc_periodic_cost_pct,omitempty"`
+	SubsidyUpfrontPct  decimal.Decimal `json:"subsidy_upfront_pct,omitempty"`
+	SubsidyPeriodicPct decimal.Decimal `json:"subsidy_periodic_pct,omitempty"`
+
+	// Backward-compatible net fields (IDC + Subsidy combined)
 	IDCSubsidiesFeesUpfront  decimal.Decimal `json:"idc_subsidies_fees_upfront"`
 	IDCSubsidiesFeesPeriodic decimal.Decimal `json:"idc_subsidies_fees_periodic"`
 

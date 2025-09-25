@@ -93,7 +93,18 @@ func doExportXLSX(mw *walk.MainWindow, summary map[string]string, cfRows []Cashf
 	const shCF = "CashflowSchedule"
 	f.NewSheet(shCF)
 	// headers
-	headers := []string{"Period", "Date", "Principal", "Interest", "IDCs", "Subsidy", "Installment"}
+	headers := []string{
+		"Period",
+		"Date",
+		"Principal Outflow",
+		"Downpayment Inflow",
+		"Balloon Inflow",
+		"Principal Amortization",
+		"Interest",
+		"IDCs",
+		"Subsidy",
+		"Installment",
+	}
 	for i, h := range headers {
 		col := fmt.Sprintf("%c", 'A'+i)
 		cell := fmt.Sprintf("%s1", col)
@@ -103,11 +114,14 @@ func doExportXLSX(mw *walk.MainWindow, summary map[string]string, cfRows []Cashf
 		rn := i + 2
 		_ = f.SetCellValue(shCF, fmt.Sprintf("A%d", rn), r.Period)
 		_ = f.SetCellValue(shCF, fmt.Sprintf("B%d", rn), r.Date.Format("2006-01-02"))
-		_ = f.SetCellValue(shCF, fmt.Sprintf("C%d", rn), r.Principal)
-		_ = f.SetCellValue(shCF, fmt.Sprintf("D%d", rn), r.Interest)
-		_ = f.SetCellValue(shCF, fmt.Sprintf("E%d", rn), r.IDCs)
-		_ = f.SetCellValue(shCF, fmt.Sprintf("F%d", rn), r.Subsidy)
-		_ = f.SetCellValue(shCF, fmt.Sprintf("G%d", rn), r.Installment)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("C%d", rn), r.PrincipalOutflow)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("D%d", rn), r.DownpaymentInflow)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("E%d", rn), r.BalloonInflow)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("F%d", rn), r.PrincipalAmortization)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("G%d", rn), r.Interest)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("H%d", rn), r.IDCs)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("I%d", rn), r.Subsidy)
+		_ = f.SetCellValue(shCF, fmt.Sprintf("J%d", rn), r.Installment)
 	}
 
 	// Make Summary the first active sheet

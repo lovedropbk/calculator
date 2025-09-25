@@ -80,14 +80,16 @@ func (e *Engine) ApplyCampaigns(deal types.Deal, campaigns []types.Campaign) (*C
 
 // sortCampaigns sorts campaigns by their stacking order
 func (e *Engine) sortCampaigns(campaigns []types.Campaign) []types.Campaign {
-	// Define stacking order as per spec:
-	// Subdown → Subinterest → Free Insurance → Free MBSP → Cash Discount
+	// Define stacking order as per spec (with new base/benchmark rows at the top):
+	// Base (no subsidy) → Base (subsidy included) → Subdown → Subinterest → Free Insurance → Free MBSP → Cash Discount
 	stackingOrder := map[types.CampaignType]int{
-		types.CampaignSubdown:       1,
-		types.CampaignSubinterest:   2,
-		types.CampaignFreeInsurance: 3,
-		types.CampaignFreeMBSP:      4,
-		types.CampaignCashDiscount:  5,
+		types.CampaignBaseNoSubsidy: 0,
+		types.CampaignBaseSubsidy:   1,
+		types.CampaignSubdown:       2,
+		types.CampaignSubinterest:   3,
+		types.CampaignFreeInsurance: 4,
+		types.CampaignFreeMBSP:      5,
+		types.CampaignCashDiscount:  6,
 	}
 
 	sorted := make([]types.Campaign, len(campaigns))
@@ -114,6 +116,29 @@ func (e *Engine) applySingleCampaign(deal *types.Deal, campaign types.Campaign) 
 	}
 
 	switch campaign.Type {
+	case types.CampaignBaseNoSubsidy:
+		// Benchmark row: do nothing to deal; no T0 flow.
+		auditEntry.Applied = true
+		auditEntry.Description = "Benchmark: Base (no subsidy)"
+		return auditEntry, nil
+
+	case types.CampaignBaseSubsidy:
+		// Benchmark row: inject T0 subsidy equal to SubsidyAmount or derived from SubsidyPercent of price.
+		auditEntry.Applied = true
+		amt := campaign.SubsidyAmount
+		if amt.IsZero() && campaign.SubsidyPercent.GreaterThan(decimal.Zero) {
+			amt = deal.PriceExTax.Mul(campaign.SubsidyPercent)
+		}
+		amt = types.RoundTHB(amt)
+		if amt.GreaterThan(decimal.Zero) {
+			auditEntry.Impact = amt
+			auditEntry.T0Flow = amt
+			auditEntry.Description = fmt.Sprintf("Benchmark: Base (subsidy included) THB %s", amt.StringFixed(0))
+		} else {
+			auditEntry.Description = "Benchmark: Base (subsidy included) with THB 0"
+		}
+		return auditEntry, nil
+
 	case types.CampaignSubdown:
 		return e.applySubdown(deal, campaign)
 
