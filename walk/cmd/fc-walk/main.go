@@ -202,7 +202,7 @@ func main() {
 	var wfPanel *walk.Composite
 	var wfDealIRREffLbl, wfDealIRRNomLbl *walk.Label
 	var wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl *walk.Label
-	var wfRiskLbl, wfOpexLbl, wfIDCUpLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label
+	var wfRiskLbl, wfOpexLbl, wfIDCUpLbl, wfSubUpLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label
 	var subdown bool
 	var subinterest bool
 	var freeInsurance bool
@@ -510,51 +510,7 @@ func main() {
 			q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64(),
 		)
 
-		// Populate Profitability Details panel if present
-		if wfPanel != nil {
-			if wfDealIRREffLbl != nil {
-				wfDealIRREffLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.DealIRREffective.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfDealIRRNomLbl != nil {
-				wfDealIRRNomLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.DealIRRNominal.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfCostDebtLbl != nil {
-				wfCostDebtLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CostOfDebtMatched.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfMFSpreadLbl != nil {
-				wfMFSpreadLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.MatchedFundedSpread.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfGIMLbl != nil {
-				wfGIMLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.GrossInterestMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfCapAdvLbl != nil {
-				wfCapAdvLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CapitalAdvantage.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfNIMLbl != nil {
-				wfNIMLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.NetInterestMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfRiskLbl != nil {
-				wfRiskLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.CostOfCreditRisk.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfOpexLbl != nil {
-				wfOpexLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.OPEX.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfIDCUpLbl != nil {
-				wfIDCUpLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.IDCSubsidiesFeesUpfront.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfIDCPeLbl != nil {
-				wfIDCPeLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.IDCSubsidiesFeesPeriodic.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfNetEbitLbl != nil {
-				wfNetEbitLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.NetEBITMargin.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfEconCapLbl != nil {
-				wfEconCapLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.EconomicCapital.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-			if wfAcqRoRacDetailLbl != nil {
-				wfAcqRoRacDetailLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
-			}
-		}
+		// Profitability Details panel is driven by the selected CampaignRow snapshot via updateSummaryFromRow.
 
 		if financedLbl != nil {
 			financedVal := price - dpAmount
@@ -612,12 +568,12 @@ func main() {
 		if dealerCommissionPill != nil {
 			if dealState.DealerCommission.Mode == types.DealerCommissionModeOverride {
 				if dealState.DealerCommission.Amt != nil {
-					dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: override (THB %s)", FormatTHB(dealerAmt)))
+					dealerCommissionPill.SetText(fmt.Sprintf("override (THB %s)", FormatTHB(dealerAmt)))
 				} else {
-					dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: override %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
+					dealerCommissionPill.SetText(fmt.Sprintf("override %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
 				}
 			} else {
-				dealerCommissionPill.SetText(fmt.Sprintf("IDCs - Dealer Commissions: auto %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
+				dealerCommissionPill.SetText(fmt.Sprintf("auto %.2f%% (THB %s)", dealerPct*100, FormatTHB(dealerAmt)))
 			}
 		}
 
@@ -673,6 +629,7 @@ func main() {
 					monthlyLbl, headerMonthlyLbl,
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
+					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
 				)
 				if cashflowTV != nil {
 					refreshCashflowTable(cashflowTV, sel.Cashflows)
@@ -774,33 +731,40 @@ func main() {
 									},
 									Label{Text: "Down payment:"},
 									Composite{
-										Layout: HBox{Spacing: 6},
+										Layout: Grid{Columns: 3, Spacing: 6},
 										Children: []Widget{
 											NumberEdit{
 												AssignTo: &dpValueEd,
 												Decimals: 2,
 												MinValue: 0,
 												Value:    20,
-
 												OnValueChanged: func() {
-													// Update pretty label when in THB
-													if dpShadowLbl != nil && dpUnitCmb != nil && dpUnitCmb.Text() == "THB" {
-														dpShadowLbl.SetText("(" + FormatWithThousandSep(dpValueEd.Value(), 0) + ")")
+													// Update suffix label with percent annotation
+													if dpShadowLbl != nil {
+														unit := "%"
+														if dpUnitCmb != nil {
+															unit = dpUnitCmb.Text()
+														}
+														pct := dpValueEd.Value()
+														price := parseFloat(priceEdit)
+														if unit == "THB" && price > 0 {
+															pct = RoundTo((dpValueEd.Value()/price)*100.0, 2)
+														}
+														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
 													}
 												},
 											},
 											ComboBox{
 												AssignTo:     &dpUnitCmb,
 												Model:        []string{"THB", "%"},
-												CurrentIndex: 1, // default to %
-												MaxSize:      Size{Width: 70},
+												CurrentIndex: 1,
+												MaxSize:      Size{Width: 64},
 												OnCurrentIndexChanged: func() {
 													price := parseFloat(priceEdit)
 													if dpValueEd == nil || dpUnitCmb == nil {
 														return
 													}
 													newUnit := dpUnitCmb.Text()
-													// Convert existing value across units when toggled
 													if newUnit == "%" && dpLock != "percent" {
 														// THB -> %
 														thb := dpValueEd.Value()
@@ -811,9 +775,6 @@ func main() {
 														_ = dpValueEd.SetDecimals(2)
 														_ = dpValueEd.SetValue(pct)
 														dpLock = "percent"
-														if dpShadowLbl != nil {
-															dpShadowLbl.SetText("")
-														}
 													} else if newUnit == "THB" && dpLock != "amount" {
 														// % -> THB
 														pct := dpValueEd.Value()
@@ -821,16 +782,23 @@ func main() {
 														_ = dpValueEd.SetDecimals(0)
 														_ = dpValueEd.SetValue(thb)
 														dpLock = "amount"
-														if dpShadowLbl != nil {
-															dpShadowLbl.SetText("(" + FormatWithThousandSep(thb, 0) + ")")
+													}
+													// Refresh suffix text
+													if dpShadowLbl != nil {
+														pval := dpValueEd.Value()
+														pct := pval
+														if newUnit == "THB" && price > 0 {
+															pct = RoundTo((pval/price)*100.0, 2)
 														}
+														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
 													}
 													recalc()
 												},
 											},
 											Label{
 												AssignTo: &dpShadowLbl,
-												Text:     "",
+												Text:     "(0.00% DP)",
+												MaxSize:  Size{Width: 120},
 											},
 										},
 									},
@@ -855,18 +823,26 @@ func main() {
 									},
 									Label{Text: "Balloon:"},
 									Composite{
-										Layout: HBox{Spacing: 6},
+										Layout: Grid{Columns: 3, Spacing: 6},
 										Children: []Widget{
 											NumberEdit{
 												AssignTo: &balloonValueEd,
 												Decimals: 2,
 												MinValue: 0,
 												Value:    0,
-
 												OnValueChanged: func() {
-													// Update pretty label when in THB
-													if balloonShadowLbl != nil && balloonUnitCmb != nil && balloonUnitCmb.Text() == "THB" {
-														balloonShadowLbl.SetText("(" + FormatWithThousandSep(balloonValueEd.Value(), 0) + ")")
+													// Update suffix label "(xx% Balloon)"
+													if balloonShadowLbl != nil {
+														unit := "%"
+														if balloonUnitCmb != nil {
+															unit = balloonUnitCmb.Text()
+														}
+														pct := balloonValueEd.Value()
+														price := parseFloat(priceEdit)
+														if unit == "THB" && price > 0 {
+															pct = RoundTo((balloonValueEd.Value()/price)*100.0, 2)
+														}
+														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
 													}
 												},
 											},
@@ -874,7 +850,7 @@ func main() {
 												AssignTo:     &balloonUnitCmb,
 												Model:        []string{"THB", "%"},
 												CurrentIndex: 1,
-												MaxSize:      Size{Width: 70},
+												MaxSize:      Size{Width: 64},
 												OnCurrentIndexChanged: func() {
 													price := parseFloat(priceEdit)
 													if balloonValueEd == nil || balloonUnitCmb == nil {
@@ -891,9 +867,6 @@ func main() {
 														_ = balloonValueEd.SetDecimals(2)
 														_ = balloonValueEd.SetValue(pct)
 														balloonUnit = "%"
-														if balloonShadowLbl != nil {
-															balloonShadowLbl.SetText("")
-														}
 													} else if newUnit == "THB" && balloonUnit != "THB" {
 														// % -> THB
 														pct := balloonValueEd.Value()
@@ -901,16 +874,23 @@ func main() {
 														_ = balloonValueEd.SetDecimals(0)
 														_ = balloonValueEd.SetValue(thb)
 														balloonUnit = "THB"
-														if balloonShadowLbl != nil {
-															balloonShadowLbl.SetText("(" + FormatWithThousandSep(thb, 0) + ")")
+													}
+													// Refresh suffix
+													if balloonShadowLbl != nil {
+														val := balloonValueEd.Value()
+														pct := val
+														if newUnit == "THB" && price > 0 {
+															pct = RoundTo((val/price)*100.0, 2)
 														}
+														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
 													}
 													recalc()
 												},
 											},
 											Label{
 												AssignTo: &balloonShadowLbl,
-												Text:     "",
+												Text:     "(0.00% Balloon)",
+												MaxSize:  Size{Width: 120},
 											},
 										},
 									},
@@ -981,11 +961,11 @@ func main() {
 											recalc()
 										},
 									},
-									// Dealer commission pill (opens override dialog)
-									Label{Text: ""},
+									// Commission input presentation (label+value control consistent with others)
+									Label{Text: "IDCs — Commissions:"},
 									PushButton{
 										AssignTo:    &dealerCommissionPill,
-										Text:        "IDCs - Dealer Commissions: auto",
+										Text:        "auto",
 										Enabled:     true,
 										ToolTipText: "Auto-calculated from product policy; click to override or reset",
 										OnClicked: func() {
@@ -1027,7 +1007,8 @@ func main() {
 					},
 					// Right: Results (Tabs)
 					TabWidget{
-						AssignTo: &mainTabs,
+						AssignTo:      &mainTabs,
+						StretchFactor: 2,
 						Pages: []TabPage{
 							{
 								Title:  "Calculator",
@@ -1043,6 +1024,7 @@ func main() {
 											{Title: "Campaign", Width: 220},
 											{Title: "Monthly Installment", Width: 180},
 											{Title: "Downpayment", Width: 120},
+											{Title: "Cash Discount", Width: 140},
 											{Title: "Subsidy / Acq.RoRAC", Width: 180},
 											{Title: "Dealer Comm.", Width: 160},
 											{Title: "Notes", Width: 220},
@@ -1092,6 +1074,10 @@ func main() {
 														Children: []Widget{
 															Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
 															Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+															// Separated upfront components (annualized)
+															Label{Text: "IDC Upfront (cost) %"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+															Label{Text: "Subsidy Upfront (income) %"}, Label{AssignTo: &wfSubUpLbl, Text: "—"},
+															// Then remaining lines
 															Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
 															Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
 															Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
@@ -1099,7 +1085,6 @@ func main() {
 															Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
 															Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
 															Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
-															Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
 															Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
 															Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
 															Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
@@ -1200,9 +1185,12 @@ func main() {
 										StretchFactor:  1,
 										MultiSelection: false,
 										Columns: []TableViewColumn{
-											{Title: "Period", Width: 80},
-											{Title: "Date", Width: 120},
-											{Title: "Principal", Width: 120},
+											{Title: "Period", Width: 70},
+											{Title: "Date", Width: 110},
+											{Title: "Principal Outflow", Width: 140},
+											{Title: "Downpayment Inflow", Width: 150},
+											{Title: "Balloon Inflow", Width: 130},
+											{Title: "Principal Amortization", Width: 170},
 											{Title: "Interest", Width: 120},
 											{Title: "IDCs", Width: 120},
 											{Title: "Subsidy", Width: 120},
@@ -1390,7 +1378,7 @@ func main() {
 			}
 			campaignTV.SetMultiSelection(false)
 
-			// Selection behavior: sync IDCs - Other from selected campaign's Subsidy
+			// Selection behavior: update summary/details and cashflow from selected row; do not mutate inputs
 			campaignTV.CurrentIndexChanged().Attach(func() {
 				if campaignTV == nil || campaignModel == nil {
 					return
@@ -1409,50 +1397,20 @@ func main() {
 				}
 				campaignModel.PublishRowsReset()
 
-				// Compute new Subsidy from selected row (fallback to budget)
-				newSubsidy := 0.0
-				if idx >= 0 && idx < len(campaignModel.rows) {
-					newSubsidy = campaignModel.rows[idx].SubsidyValue
-				}
-				if newSubsidy <= 0 && subsidyBudgetEd != nil {
-					newSubsidy = subsidyBudgetEd.Value()
-				}
+				// Update summary and Profitability Details from the row's snapshot
+				row := campaignModel.rows[idx]
+				updateSummaryFromRow(
+					row,
+					monthlyLbl, headerMonthlyLbl,
+					custNominalLbl, custEffLbl,
+					roracLbl, headerRoRacLbl,
+					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+				)
 
-				// Respect user-edited flag and prompt to replace
-				if dealState.IDCOther.UserEdited {
-					ret := walk.MsgBox(mw, "Replace IDCs - Other?", fmt.Sprintf("Replace IDCs - Other with THB %s from selected campaign?", FormatTHB(newSubsidy)), walk.MsgBoxYesNo|walk.MsgBoxIconQuestion)
-					if ret == walk.DlgCmdYes {
-						if idcOtherEd != nil {
-							idcOtherEd.SetValue(newSubsidy)
-						}
-						dealState.IDCOther.Value = newSubsidy
-						dealState.IDCOther.UserEdited = false
-					}
-				} else {
-					if idcOtherEd != nil {
-						idcOtherEd.SetValue(newSubsidy)
-					}
-					dealState.IDCOther.Value = newSubsidy
-				}
-
-				// Update summary immediately from selection, then refresh IDC labels and headline
-				if idx >= 0 && idx < len(campaignModel.rows) {
-					updateSummaryFromRow(
-						campaignModel.rows[idx],
-						monthlyLbl, headerMonthlyLbl,
-						custNominalLbl, custEffLbl,
-						roracLbl, headerRoRacLbl,
-					)
-				}
 				// If Cashflow tab is active, refresh from the selected row
 				if mainTabs != nil && mainTabs.CurrentIndex() == 1 && cashflowTV != nil {
-					if row, ok := SelectedCampaignRow(campaignModel, selectedCampaignIdx); ok {
-						refreshCashflowTable(cashflowTV, row.Cashflows)
-					} else {
-						refreshCashflowTable(cashflowTV, []types.Cashflow{})
-					}
+					refreshCashflowTable(cashflowTV, row.Cashflows)
 				}
-				recalc()
 			})
 		}
 
@@ -1585,6 +1543,26 @@ func defaultParameterSet() types.ParameterSet {
 
 // --- Phase 1 UI placeholders: Campaign Options table model (unwired) ---
 
+// ProfitabilitySnapshot caches computed waterfall lines per row to avoid recompute on selection clicks.
+type ProfitabilitySnapshot struct {
+	DealIRREffective    float64
+	DealIRRNominal      float64
+	IDCUpfrontCostPct   float64
+	SubsidyUpfrontPct   float64
+	CostOfDebt          float64
+	MatchedFundedSpread float64
+	GrossInterestMargin float64
+	CapitalAdvantage    float64
+	NetInterestMargin   float64
+	CostOfCreditRisk    float64
+	OPEX                float64
+	IDCPeriodicPct      float64
+	SubsidyPeriodicPct  float64
+	NetEBITMargin       float64
+	EconomicCapital     float64
+	AcquisitionRoRAC    float64
+}
+
 type CampaignRow struct {
 	Selected bool
 
@@ -1592,6 +1570,7 @@ type CampaignRow struct {
 	Name                  string // campaign display name
 	MonthlyInstallmentStr string // e.g., "22,198.61"
 	DownpaymentStr        string // e.g., "20%"
+	CashDiscountStr       string // e.g., "THB 50,000" for cash discount row; "—" otherwise
 	NominalRateStr        string // e.g., "3.99 percent"
 	EffectiveRateStr      string // e.g., "4.05 percent"
 	AcqRoRacStr           string // e.g., "8.50 percent"
@@ -1608,9 +1587,13 @@ type CampaignRow struct {
 	IDCOtherTHB        float64
 
 	// Additional values used elsewhere
-	DealerCommAmt float64
-	DealerCommPct float64
-	SubsidyValue  float64
+	DealerCommAmt   float64
+	DealerCommPct   float64
+	SubsidyValue    float64
+	CashDiscountTHB float64
+
+	// Profit snapshot for details panel (per-row)
+	Profit ProfitabilitySnapshot
 
 	// Detailed outputs for Cashflow tab/export
 	Cashflows []types.Cashflow
@@ -1694,10 +1677,15 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 		}
 		return r.DownpaymentStr
 	case 4:
-		return r.SubsidyRorac
+		if r.CashDiscountStr == "" {
+			return "—"
+		}
+		return r.CashDiscountStr
 	case 5:
-		return r.DealerComm
+		return r.SubsidyRorac
 	case 6:
+		return r.DealerComm
+	case 7:
 		return r.Notes
 	default:
 		return ""
@@ -1707,6 +1695,10 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 // Map engine campaign type to display name for the grid.
 func campaignTypeDisplayName(t types.CampaignType) string {
 	switch t {
+	case types.CampaignBaseNoSubsidy:
+		return "Base (no subsidy)"
+	case types.CampaignBaseSubsidy:
+		return "Base (subsidy included)"
 	case types.CampaignSubdown:
 		return "Subdown"
 	case types.CampaignSubinterest:
@@ -1835,39 +1827,51 @@ func editDealerCommission(mw *walk.MainWindow, state *types.DealState) bool {
 func defaultCampaignsForUI() []types.Campaign {
 	return []types.Campaign{
 		{
+			ID:       "BASE-NO-SUB",
+			Type:     types.CampaignBaseNoSubsidy,
+			Funder:   "",
+			Stacking: 0,
+		},
+		{
+			ID:       "BASE-WITH-SUB",
+			Type:     types.CampaignBaseSubsidy,
+			Funder:   "",
+			Stacking: 1,
+		},
+		{
 			ID:             "SUBDOWN-5",
 			Type:           types.CampaignSubdown,
 			SubsidyPercent: types.NewDecimal(0.05),
 			Funder:         "Dealer",
-			Stacking:       1,
+			Stacking:       2,
 		},
 		{
 			ID:         "SUBINT-299",
 			Type:       types.CampaignSubinterest,
 			TargetRate: types.NewDecimal(0.0299),
 			Funder:     "Manufacturer",
-			Stacking:   2,
+			Stacking:   3,
 		},
 		{
 			ID:            "FREE-INS",
 			Type:          types.CampaignFreeInsurance,
 			InsuranceCost: types.NewDecimal(15000),
 			Funder:        "Insurance Partner",
-			Stacking:      3,
+			Stacking:      4,
 		},
 		{
 			ID:       "FREE-MBSP",
 			Type:     types.CampaignFreeMBSP,
 			MBSPCost: types.NewDecimal(5000),
 			Funder:   "Manufacturer",
-			Stacking: 4,
+			Stacking: 5,
 		},
 		{
 			ID:              "CASH-DISC-2",
 			Type:            types.CampaignCashDiscount,
 			DiscountPercent: types.NewDecimal(0.02),
 			Funder:          "Dealer",
-			Stacking:        5,
+			Stacking:        6,
 		},
 	}
 }
@@ -1944,7 +1948,13 @@ func updateResultsUI(
 	}
 }
 
-func updateSummaryFromRow(row CampaignRow, monthlyLbl, headerMonthlyLbl *walk.Label, custNominalLbl, custEffLbl *walk.Label, roracLbl, headerRoRacLbl *walk.Label) {
+func updateSummaryFromRow(
+	row CampaignRow,
+	monthlyLbl, headerMonthlyLbl *walk.Label,
+	custNominalLbl, custEffLbl *walk.Label,
+	roracLbl, headerRoRacLbl *walk.Label,
+	wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label,
+) {
 	// Monthly installment
 	if monthlyLbl != nil {
 		if row.MonthlyInstallmentStr != "" {
@@ -1981,18 +1991,70 @@ func updateSummaryFromRow(row CampaignRow, monthlyLbl, headerMonthlyLbl *walk.La
 
 	// Acquisition RoRAC
 	if roracLbl != nil {
-		if row.AcqRoRac > 0 {
+		if row.AcqRoRacStr != "" {
+			roracLbl.SetText(row.AcqRoRacStr)
+		} else if row.AcqRoRac != 0 {
 			roracLbl.SetText(fmt.Sprintf("%.2f%%", row.AcqRoRac*100.0))
 		} else {
 			roracLbl.SetText("—")
 		}
 	}
 	if headerRoRacLbl != nil {
-		if row.AcqRoRac > 0 {
+		if row.AcqRoRacStr != "" {
+			headerRoRacLbl.SetText(row.AcqRoRacStr)
+		} else if row.AcqRoRac != 0 {
 			headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", row.AcqRoRac*100.0))
 		} else {
 			headerRoRacLbl.SetText("—")
 		}
+	}
+
+	// Profitability Details from per-row snapshot (in requested order)
+	p := row.Profit
+	if wfDealIRREffLbl != nil {
+		wfDealIRREffLbl.SetText(fmt.Sprintf("%.2f%%", p.DealIRREffective*100.0))
+	}
+	if wfDealIRRNomLbl != nil {
+		wfDealIRRNomLbl.SetText(fmt.Sprintf("%.2f%%", p.DealIRRNominal*100.0))
+	}
+	if wfIDCUpLbl != nil {
+		wfIDCUpLbl.SetText(fmt.Sprintf("%.2f%%", p.IDCUpfrontCostPct*100.0))
+	}
+	if wfSubUpLbl != nil {
+		wfSubUpLbl.SetText(fmt.Sprintf("%.2f%%", p.SubsidyUpfrontPct*100.0))
+	}
+	if wfCostDebtLbl != nil {
+		wfCostDebtLbl.SetText(fmt.Sprintf("%.2f%%", p.CostOfDebt*100.0))
+	}
+	if wfMFSpreadLbl != nil {
+		wfMFSpreadLbl.SetText(fmt.Sprintf("%.2f%%", p.MatchedFundedSpread*100.0))
+	}
+	if wfGIMLbl != nil {
+		wfGIMLbl.SetText(fmt.Sprintf("%.2f%%", p.GrossInterestMargin*100.0))
+	}
+	if wfCapAdvLbl != nil {
+		wfCapAdvLbl.SetText(fmt.Sprintf("%.2f%%", p.CapitalAdvantage*100.0))
+	}
+	if wfNIMLbl != nil {
+		wfNIMLbl.SetText(fmt.Sprintf("%.2f%%", p.NetInterestMargin*100.0))
+	}
+	if wfRiskLbl != nil {
+		wfRiskLbl.SetText(fmt.Sprintf("%.2f%%", p.CostOfCreditRisk*100.0))
+	}
+	if wfOpexLbl != nil {
+		wfOpexLbl.SetText(fmt.Sprintf("%.2f%%", p.OPEX*100.0))
+	}
+	if wfIDCPeLbl != nil {
+		wfIDCPeLbl.SetText(fmt.Sprintf("%.2f%%", p.IDCPeriodicPct*100.0))
+	}
+	if wfNetEbitLbl != nil {
+		wfNetEbitLbl.SetText(fmt.Sprintf("%.2f%%", p.NetEBITMargin*100.0))
+	}
+	if wfEconCapLbl != nil {
+		wfEconCapLbl.SetText(fmt.Sprintf("%.2f%%", p.EconomicCapital*100.0))
+	}
+	if wfAcqRoRacDetailLbl != nil {
+		wfAcqRoRacDetailLbl.SetText(fmt.Sprintf("%.2f%%", p.AcquisitionRoRAC*100.0))
 	}
 }
 
@@ -2004,9 +2066,9 @@ func initCampaignTableColumns(tv *walk.TableView, totalWidth int) {
 	}
 
 	// Base target widths for ~1200–1400px total client width.
-	// Columns: Select, Campaign, Monthly, Downpayment, Subsidy/RoRAC, Dealer Comm., Notes
-	base := []int{70, 200, 180, 120, 180, 160, 220}
-	mins := []int{60, 160, 140, 100, 140, 120, 140}
+	// Columns: Select, Campaign, Monthly, Downpayment, Cash Discount, Subsidy/RoRAC, Dealer Comm., Notes
+	base := []int{70, 200, 180, 120, 140, 180, 160, 220}
+	mins := []int{60, 160, 140, 100, 110, 140, 120, 140}
 
 	// Fudge padding to account for borders/scrollbar
 	pad := 24

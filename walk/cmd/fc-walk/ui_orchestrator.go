@@ -86,7 +86,8 @@ func normalizeDealForCampaign(d types.Deal) types.Deal {
 // For each campaign type, it computes:
 // - Subinterest: via SubinterestByBudget using subsidyBudgetTHB
 // - Cash Discount: baseline metrics (no campaign) with Dealer Commission forced to 0% via summaries
-// - Subdown/Free Insurance/Free MBSP: baseline pricing + treat subsidyBudgetTHB as IDC Other T0 inflow (revenue)
+// - Subdown: use subsidyBudgetTHB to increase Down Payment (reduce financed amount). No T0 subsidy cashflow created.
+// - Free Insurance / Free MBSP: baseline pricing + treat subsidyBudgetTHB as IDC Other T0 inflow (revenue)
 // Rows carry numeric metrics for the Key Metrics Summary binding.
 func computeCampaignRows(
 	ps types.ParameterSet,
@@ -107,22 +108,55 @@ func computeCampaignRows(
 		summaries = campEng.GenerateCampaignSummaries(deal, state, displayCampaigns)
 	}
 
-	// Helper: baseline quote (no campaigns, no IDC)
-	baselineQuote := func() (types.Quote, bool) {
+	// Helper: compute quote with provided IDC items (commission/subsidy), no campaign transforms
+	baselineQuote := func(idcs []types.IDCItem, d types.Deal) (types.Quote, bool) {
 		if calc == nil {
 			return types.Quote{}, false
 		}
 		req := types.CalculationRequest{
-			Deal:         deal,
+			Deal:         d,
 			Campaigns:    []types.Campaign{},
-			IDCItems:     []types.IDCItem{},
+			IDCItems:     idcs,
 			ParameterSet: ps,
+			Options:      map[string]interface{}{"derive_idc_from_cf": true},
 		}
 		res, err := calc.Calculate(req)
 		if err != nil || res == nil || !res.Success {
 			return types.Quote{}, false
 		}
 		return res.Quote, true
+	}
+
+	// Local helper: map engine quote -> ProfitabilitySnapshot
+	snapshotFromQuote := func(q types.Quote) ProfitabilitySnapshot {
+		p := q.Profitability
+		return ProfitabilitySnapshot{
+			DealIRREffective:    p.DealIRREffective.InexactFloat64(),
+			DealIRRNominal:      p.DealIRRNominal.InexactFloat64(),
+			IDCUpfrontCostPct:   p.IDCUpfrontCostPct.InexactFloat64(),
+			SubsidyUpfrontPct:   p.SubsidyUpfrontPct.InexactFloat64(),
+			CostOfDebt:          p.CostOfDebtMatched.InexactFloat64(),
+			MatchedFundedSpread: p.MatchedFundedSpread.InexactFloat64(),
+			GrossInterestMargin: p.GrossInterestMargin.InexactFloat64(),
+			CapitalAdvantage:    p.CapitalAdvantage.InexactFloat64(),
+			NetInterestMargin:   p.NetInterestMargin.InexactFloat64(),
+			CostOfCreditRisk:    p.CostOfCreditRisk.InexactFloat64(),
+			OPEX:                p.OPEX.InexactFloat64(),
+			IDCPeriodicPct:      p.IDCPeriodicCostPct.InexactFloat64(),
+			SubsidyPeriodicPct:  p.SubsidyPeriodicPct.InexactFloat64(),
+			NetEBITMargin:       p.NetEBITMargin.InexactFloat64(),
+			EconomicCapital:     p.EconomicCapital.InexactFloat64(),
+			AcquisitionRoRAC:    p.AcquisitionRoRAC.InexactFloat64(),
+		}
+	}
+
+	// Local helper: map limited metrics -> ProfitabilitySnapshot (fallback when full quote not available)
+	snapshotFromMetrics := func(m types.CampaignMetrics) ProfitabilitySnapshot {
+		return ProfitabilitySnapshot{
+			NetEBITMargin:    m.NetEBITMargin.InexactFloat64(),
+			EconomicCapital:  m.EconomicCapital.InexactFloat64(),
+			AcquisitionRoRAC: m.AcquisitionRoRAC.InexactFloat64(),
+		}
 	}
 
 	// Default selected index
@@ -132,13 +166,23 @@ func computeCampaignRows(
 
 	rows := make([]CampaignRow, 0, len(displayCampaigns))
 
+	// Local: format downpayment as "THB X (Y% DP)"
+	dpString := func(dpAmtF, priceF float64) string {
+		pct := 0.0
+		if priceF > 0 {
+			pct = (dpAmtF / priceF) * 100.0
+		}
+		return fmt.Sprintf("THB %s (%.0f%% DP)", FormatTHB(dpAmtF), pct)
+	}
+
 	for i, c := range displayCampaigns {
 		row := CampaignRow{
-			Selected:       i == selectedIdx,
-			Name:           campaignTypeDisplayName(c.Type),
-			DownpaymentStr: fmt.Sprintf("%.0f%%", dpPercent),
-			Notes:          "",
-			SubsidyValue:   subsidyBudgetTHB,
+			Selected:        i == selectedIdx,
+			Name:            campaignTypeDisplayName(c.Type),
+			DownpaymentStr:  "",
+			CashDiscountStr: "",
+			Notes:           "",
+			SubsidyValue:    subsidyBudgetTHB,
 		}
 
 		// Dealer commission from summaries (if available)
@@ -152,7 +196,126 @@ func computeCampaignRows(
 			row.DealerComm = FormatDealerCommission(0, 0)
 		}
 
+		dpForCF := deal.DownPaymentAmount
+		// Default DP string for this row (may be overridden in specific cases below)
+		row.DownpaymentStr = dpString(dpForCF.InexactFloat64(), deal.PriceExTax.InexactFloat64())
+
+		// Common IDC - Other from state (applied as upfront T0 cost in all financed scenarios)
+		otherIDC := state.IDCOther.Value
+
 		switch c.Type {
+		case types.CampaignBaseNoSubsidy:
+			// Baseline with dealer commission + IDC Other; no subsidy injected.
+			idcs := []types.IDCItem{}
+			if row.DealerCommAmt > 0 {
+				idcs = append(idcs, types.IDCItem{
+					Category:    types.IDCBrokerCommission,
+					Amount:      types.NewDecimal(row.DealerCommAmt),
+					Payer:       "Dealer",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "Dealer commission",
+				})
+			}
+			if otherIDC > 0 {
+				idcs = append(idcs, types.IDCItem{
+					Category:    types.IDCAdminFee,
+					Amount:      types.NewDecimal(otherIDC),
+					Payer:       "Dealer/Provider",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "IDC - Other",
+				})
+			}
+			if q, ok := baselineQuote(idcs, deal); ok {
+				mi := q.MonthlyInstallment.InexactFloat64()
+				row.MonthlyInstallment = mi
+				row.MonthlyInstallmentStr = FormatTHB(mi)
+				row.NominalRate = q.CustomerRateNominal.InexactFloat64()
+				row.EffectiveRate = q.CustomerRateEffective.InexactFloat64()
+				row.AcqRoRac = q.Profitability.AcquisitionRoRAC.InexactFloat64()
+				row.NominalRateStr = FormatRatePct(row.NominalRate)
+				row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
+				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+				row.IDCDealerTHB = row.DealerCommAmt
+				row.IDCOtherTHB = otherIDC
+				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
+				row.Profit = snapshotFromQuote(q)
+				row.Cashflows = q.Cashflows
+			} else {
+				row.MonthlyInstallmentStr = ""
+				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(0))
+			}
+
+		case types.CampaignBaseSubsidy:
+			// Baseline with dealer commission + IDC Other; inject full subsidy upfront at T0 (income).
+			idcs := []types.IDCItem{}
+			if row.DealerCommAmt > 0 {
+				idcs = append(idcs, types.IDCItem{
+					Category:    types.IDCBrokerCommission,
+					Amount:      types.NewDecimal(row.DealerCommAmt),
+					Payer:       "Dealer",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "Dealer commission",
+				})
+			}
+			if otherIDC > 0 {
+				idcs = append(idcs, types.IDCItem{
+					Category:    types.IDCAdminFee,
+					Amount:      types.NewDecimal(otherIDC),
+					Payer:       "Dealer/Provider",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "IDC - Other",
+				})
+			}
+			req := types.CalculationRequest{
+				Deal: deal,
+				Campaigns: []types.Campaign{
+					{ID: "BASE-SUBSIDY", Type: types.CampaignBaseSubsidy, SubsidyAmount: types.NewDecimal(subsidyBudgetTHB)},
+				},
+				IDCItems:     idcs,
+				ParameterSet: ps,
+				Options:      map[string]interface{}{"derive_idc_from_cf": true},
+			}
+			if res, err := calc.Calculate(req); err == nil && res != nil && res.Success {
+				q := res.Quote
+				mi := q.MonthlyInstallment.InexactFloat64()
+				row.MonthlyInstallment = mi
+				row.MonthlyInstallmentStr = FormatTHB(mi)
+				row.NominalRate = q.CustomerRateNominal.InexactFloat64()
+				row.EffectiveRate = q.CustomerRateEffective.InexactFloat64()
+				row.AcqRoRac = q.Profitability.AcquisitionRoRAC.InexactFloat64()
+				row.NominalRateStr = FormatRatePct(row.NominalRate)
+				row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
+				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+				row.IDCDealerTHB = row.DealerCommAmt
+				row.IDCOtherTHB = otherIDC
+				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
+				row.Profit = snapshotFromQuote(q)
+				row.Cashflows = q.Cashflows
+			} else {
+				row.MonthlyInstallmentStr = ""
+				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
+			}
+
 		case types.CampaignSubinterest:
 			// Budget-constrained nominal rate reduction
 			input := types.CampaignBudgetInput{
@@ -163,27 +326,51 @@ func computeCampaignRows(
 			}
 			out, err := campaigns.SubinterestByBudget(input)
 			if err == nil && out.Error == nil {
-				mi := out.Metrics.MonthlyInstallment.InexactFloat64()
-				row.MonthlyInstallment = mi
-				row.MonthlyInstallmentStr = FormatTHB(mi)
+				// Prepare IDC items: commission cost + IDC Other (subsidy modeled as periodic income via Options)
+				idcItems := []types.IDCItem{}
+				if row.DealerCommAmt > 0 {
+					idcItems = append(idcItems, types.IDCItem{
+						Category:    types.IDCBrokerCommission,
+						Amount:      types.NewDecimal(row.DealerCommAmt),
+						Payer:       "Dealer",
+						Financed:    false,
+						Withheld:    false,
+						Timing:      types.IDCTimingUpfront,
+						TaxFlags:    nil,
+						IsRevenue:   false,
+						IsCost:      true,
+						Description: "Dealer commission",
+					})
+				}
+				if otherIDC > 0 {
+					idcItems = append(idcItems, types.IDCItem{
+						Category:    types.IDCAdminFee,
+						Amount:      types.NewDecimal(otherIDC),
+						Payer:       "Dealer/Provider",
+						Financed:    false,
+						Withheld:    false,
+						Timing:      types.IDCTimingUpfront,
+						TaxFlags:    nil,
+						IsRevenue:   false,
+						IsCost:      true,
+						Description: "IDC - Other",
+					})
+				}
 
-				row.NominalRate = out.Metrics.CustomerNominalRate.InexactFloat64()
-				row.EffectiveRate = out.Metrics.CustomerEffectiveRate.InexactFloat64()
-				row.AcqRoRac = out.Metrics.AcquisitionRoRAC.InexactFloat64()
+				// Recompute quote at the solved nominal rate so profitability includes IDC impacts and periodic subsidy income.
+				deal2 := deal
+				deal2.RateMode = "fixed_rate"
+				deal2.CustomerNominalRate = out.Metrics.CustomerNominalRate
 
-				row.NominalRateStr = FormatRatePct(row.NominalRate)
-				row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
-				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
-
-				row.IDCDealerTHB = row.DealerCommAmt
-				row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
-
-				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
-				// Carry full cashflows for Cashflow tab/export
-				row.Cashflows = out.Cashflows
-			} else {
-				// Fallback to baseline if solver fails
-				if q, ok := baselineQuote(); ok {
+				req := types.CalculationRequest{
+					Deal:         deal2,
+					Campaigns:    []types.Campaign{},
+					IDCItems:     idcItems,
+					ParameterSet: ps,
+					Options:      map[string]interface{}{"derive_idc_from_cf": true, "add_subsidy_upfront_thb": out.Metrics.SubsidyUsedTHB.InexactFloat64()},
+				}
+				if res2, err2 := calc.Calculate(req); err2 == nil && res2 != nil && res2.Success {
+					q := res2.Quote
 					mi := q.MonthlyInstallment.InexactFloat64()
 					row.MonthlyInstallment = mi
 					row.MonthlyInstallmentStr = FormatTHB(mi)
@@ -197,10 +384,81 @@ func computeCampaignRows(
 					row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
 
 					row.IDCDealerTHB = row.DealerCommAmt
-					row.IDCOtherTHB = 0
+					row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
+
+					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
+					row.Profit = snapshotFromQuote(q)
+					row.Cashflows = q.Cashflows
+				} else {
+					// Best-effort fallback: use solver metrics
+					mi := out.Metrics.MonthlyInstallment.InexactFloat64()
+					row.MonthlyInstallment = mi
+					row.MonthlyInstallmentStr = FormatTHB(mi)
+
+					row.NominalRate = out.Metrics.CustomerNominalRate.InexactFloat64()
+					row.EffectiveRate = out.Metrics.CustomerEffectiveRate.InexactFloat64()
+					row.AcqRoRac = out.Metrics.AcquisitionRoRAC.InexactFloat64()
+
+					row.NominalRateStr = FormatRatePct(row.NominalRate)
+					row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
+					row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+
+					row.IDCDealerTHB = row.DealerCommAmt
+					row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
+
+					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
+					row.Profit = snapshotFromMetrics(out.Metrics)
+					row.Cashflows = out.Cashflows
+				}
+			} else {
+				// Fallback to baseline with commission + IDC Other
+				idcs := []types.IDCItem{}
+				if row.DealerCommAmt > 0 {
+					idcs = append(idcs, types.IDCItem{
+						Category:    types.IDCBrokerCommission,
+						Amount:      types.NewDecimal(row.DealerCommAmt),
+						Payer:       "Dealer",
+						Financed:    false,
+						Withheld:    false,
+						Timing:      types.IDCTimingUpfront,
+						TaxFlags:    nil,
+						IsRevenue:   false,
+						IsCost:      true,
+						Description: "Dealer commission",
+					})
+				}
+				if otherIDC > 0 {
+					idcs = append(idcs, types.IDCItem{
+						Category:    types.IDCAdminFee,
+						Amount:      types.NewDecimal(otherIDC),
+						Payer:       "Dealer/Provider",
+						Financed:    false,
+						Withheld:    false,
+						Timing:      types.IDCTimingUpfront,
+						TaxFlags:    nil,
+						IsRevenue:   false,
+						IsCost:      true,
+						Description: "IDC - Other",
+					})
+				}
+				if q, ok := baselineQuote(idcs, deal); ok {
+					mi := q.MonthlyInstallment.InexactFloat64()
+					row.MonthlyInstallment = mi
+					row.MonthlyInstallmentStr = FormatTHB(mi)
+
+					row.NominalRate = q.CustomerRateNominal.InexactFloat64()
+					row.EffectiveRate = q.CustomerRateEffective.InexactFloat64()
+					row.AcqRoRac = q.Profitability.AcquisitionRoRAC.InexactFloat64()
+
+					row.NominalRateStr = FormatRatePct(row.NominalRate)
+					row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
+					row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+
+					row.IDCDealerTHB = row.DealerCommAmt
+					row.IDCOtherTHB = otherIDC
 
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
-					// Baseline cashflows for fallback
+					row.Profit = snapshotFromQuote(q)
 					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
@@ -209,8 +467,84 @@ func computeCampaignRows(
 			}
 
 		case types.CampaignCashDiscount:
-			// Metrics same as baseline; commission already forced to 0 via summaries
-			if q, ok := baselineQuote(); ok {
+			// Non-financing reference row:
+			// - Cash Discount column shows subsidy budget
+			// - Downpayment column shows effective cash price (Vehicle Price - Subsidy Budget)
+			// - All financing metrics blank; Notes updated.
+			row.CashDiscountStr = "THB " + FormatTHB(subsidyBudgetTHB)
+			effectiveCash := deal.PriceExTax.Sub(types.NewDecimal(subsidyBudgetTHB)).InexactFloat64()
+			if effectiveCash < 0 {
+				effectiveCash = 0
+			}
+			row.DownpaymentStr = "THB " + FormatTHB(effectiveCash)
+			row.MonthlyInstallmentStr = ""
+			row.NominalRateStr = ""
+			row.EffectiveRateStr = ""
+			row.AcqRoRacStr = ""
+			row.SubsidyRorac = "—"
+			row.DealerComm = "THB 0 (0%)"
+			row.Notes = "No financing (reference only)"
+			row.Cashflows = nil
+
+		case types.CampaignSubdown:
+			// Subdown modeling: use subsidy to increase down payment (reduce financed amount).
+			// No T0 subsidy cashflow is created; commission + IDC Other are modeled as T0 IDC outflows.
+			usedSubsidyTHB := subsidyBudgetTHB
+			financedBase := deal.PriceExTax.Sub(deal.DownPaymentAmount)
+			// Clamp to ensure financed amount stays positive (engine requires > 0)
+			if financedBase.LessThanOrEqual(types.NewDecimal(1)) {
+				usedSubsidyTHB = 0
+			} else {
+				maxUse := financedBase.Sub(types.NewDecimal(1)).InexactFloat64()
+				if usedSubsidyTHB > maxUse {
+					usedSubsidyTHB = maxUse
+				}
+				if usedSubsidyTHB < 0 {
+					usedSubsidyTHB = 0
+				}
+			}
+
+			// Build adjusted deal with higher DP
+			deal2 := deal
+			deal2.DownPaymentAmount = types.RoundTHB(deal.DownPaymentAmount.Add(types.NewDecimal(usedSubsidyTHB)))
+			if deal2.PriceExTax.GreaterThan(types.NewDecimal(0)) {
+				deal2.DownPaymentPercent = deal2.DownPaymentAmount.Div(deal2.PriceExTax)
+			}
+			deal2.DownPaymentLocked = "amount"
+			deal2.FinancedAmount = types.RoundTHB(deal2.PriceExTax.Sub(deal2.DownPaymentAmount))
+
+			// IDC items: commission + IDC Other
+			idcItems := []types.IDCItem{}
+			if row.DealerCommAmt > 0 {
+				idcItems = append(idcItems, types.IDCItem{
+					Category:    types.IDCBrokerCommission,
+					Amount:      types.NewDecimal(row.DealerCommAmt),
+					Payer:       "Dealer",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "Dealer commission",
+				})
+			}
+			if otherIDC > 0 {
+				idcItems = append(idcItems, types.IDCItem{
+					Category:    types.IDCAdminFee,
+					Amount:      types.NewDecimal(otherIDC),
+					Payer:       "Dealer/Provider",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "IDC - Other",
+				})
+			}
+
+			if q, ok := baselineQuote(idcItems, deal2); ok {
 				mi := q.MonthlyInstallment.InexactFloat64()
 				row.MonthlyInstallment = mi
 				row.MonthlyInstallmentStr = FormatTHB(mi)
@@ -223,38 +557,86 @@ func computeCampaignRows(
 				row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
 				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
 
-				row.IDCDealerTHB = row.DealerCommAmt
-				row.IDCOtherTHB = 0
+				// Downpayment column shows increased percent
+				row.DownpaymentStr = fmt.Sprintf("%.0f%%", deal2.DownPaymentPercent.Mul(types.NewDecimal(100)).InexactFloat64())
 
-				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
-				// Cashflows for Cash Discount (baseline)
+				row.IDCDealerTHB = row.DealerCommAmt
+				row.IDCOtherTHB = 0 // subsidy is not modeled as IDC Other for subdown
+
+				// Summary column “Subsidy / Acq.RoRAC”: display used subsidy and RoRAC
+				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(usedSubsidyTHB), row.AcqRoRac*100.0)
+
+				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = q.Cashflows
+
+				// Cashflow tab: append DP using adjusted DP
+				dpForCF = deal2.DownPaymentAmount
 			} else {
+				// Fallback when quote fails
 				row.MonthlyInstallmentStr = ""
-				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(0))
+				row.DownpaymentStr = fmt.Sprintf("%.0f%%", deal2.DownPaymentPercent.Mul(types.NewDecimal(100)).InexactFloat64())
+				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(usedSubsidyTHB))
+				dpForCF = deal2.DownPaymentAmount
 			}
 
-		case types.CampaignSubdown, types.CampaignFreeInsurance, types.CampaignFreeMBSP:
-			// Treat budget as IDC Other T0 inflow (revenue) to yield real RoRAC; pricing terms unchanged
+		case types.CampaignFreeInsurance, types.CampaignFreeMBSP:
+			// Treat subsidy as periodic income (not T0). Add placeholder IDC expense + Dealer Commission + IDC Other.
+			placeholderTHB := 50000.0
+			placeholderCat := types.IDCAdminFee
+			if c.Type == types.CampaignFreeMBSP {
+				placeholderTHB = 150000.0
+				placeholderCat = types.IDCMaintenanceFee
+			}
+
 			idcItems := []types.IDCItem{
 				{
-					Category:    types.IDCAdminFee,
-					Amount:      types.NewDecimal(subsidyBudgetTHB),
-					Payer:       "Campaign Funder",
+					Category:    placeholderCat,
+					Amount:      types.NewDecimal(placeholderTHB),
+					Payer:       "Dealer/Provider",
 					Financed:    false,
 					Withheld:    false,
 					Timing:      types.IDCTimingUpfront,
 					TaxFlags:    nil,
-					IsRevenue:   true,
-					IsCost:      false,
-					Description: fmt.Sprintf("%s subsidy", campaignTypeDisplayName(c.Type)),
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: fmt.Sprintf("%s placeholder IDC", campaignTypeDisplayName(c.Type)),
 				},
+			}
+			// Inject dealer commission as upfront cost (applies to finance options)
+			if row.DealerCommAmt > 0 {
+				idcItems = append(idcItems, types.IDCItem{
+					Category:    types.IDCBrokerCommission,
+					Amount:      types.NewDecimal(row.DealerCommAmt),
+					Payer:       "Dealer",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "Dealer commission",
+				})
+			}
+			if otherIDC > 0 {
+				idcItems = append(idcItems, types.IDCItem{
+					Category:    types.IDCAdminFee,
+					Amount:      types.NewDecimal(otherIDC),
+					Payer:       "Dealer/Provider",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "IDC - Other",
+				})
 			}
 			req := types.CalculationRequest{
 				Deal:         deal,
-				Campaigns:    []types.Campaign{}, // terms unchanged for MVP
+				Campaigns:    []types.Campaign{}, // terms unchanged
 				IDCItems:     idcItems,
 				ParameterSet: ps,
+				Options:      map[string]interface{}{"derive_idc_from_cf": true, "add_subsidy_periodic_thb": subsidyBudgetTHB},
 			}
 			res, err := calc.Calculate(req)
 			if err == nil && res != nil && res.Success {
@@ -275,11 +657,11 @@ func computeCampaignRows(
 				row.IDCOtherTHB = subsidyBudgetTHB
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
-				// Full cashflows with IDC T0 inflow
+				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = res.Quote.Cashflows
 			} else {
-				// Fallback baseline
-				if q, ok := baselineQuote(); ok {
+				// Fallback baseline without periodic subsidy effect
+				if q, ok := baselineQuote(idcItems, deal); ok {
 					mi := q.MonthlyInstallment.InexactFloat64()
 					row.MonthlyInstallment = mi
 					row.MonthlyInstallmentStr = FormatTHB(mi)
@@ -296,7 +678,7 @@ func computeCampaignRows(
 					row.IDCOtherTHB = subsidyBudgetTHB
 
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
-					// Baseline cashflows as fallback
+					row.Profit = snapshotFromQuote(q)
 					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
@@ -305,8 +687,23 @@ func computeCampaignRows(
 			}
 
 		default:
-			// Unknown types fall back to baseline
-			if q, ok := baselineQuote(); ok {
+			// Unknown types fall back to baseline with IDC injection (commission as upfront outflow)
+			idcs := []types.IDCItem{}
+			if row.DealerCommAmt > 0 {
+				idcs = append(idcs, types.IDCItem{
+					Category:    types.IDCBrokerCommission,
+					Amount:      types.NewDecimal(row.DealerCommAmt),
+					Payer:       "Dealer",
+					Financed:    false,
+					Withheld:    false,
+					Timing:      types.IDCTimingUpfront,
+					TaxFlags:    nil,
+					IsRevenue:   false,
+					IsCost:      true,
+					Description: "Dealer commission",
+				})
+			}
+			if q, ok := baselineQuote(idcs, deal); ok {
 				mi := q.MonthlyInstallment.InexactFloat64()
 				row.MonthlyInstallment = mi
 				row.MonthlyInstallmentStr = FormatTHB(mi)
@@ -323,11 +720,27 @@ func computeCampaignRows(
 				row.IDCOtherTHB = 0
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
-				// Baseline cashflows
+				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
 				row.SubsidyRorac = "- / -"
+			}
+		}
+
+		// Append synthetic downpayment inflow at T0 for Cashflow tab (UI-only)
+		if dpForCF.GreaterThan(types.NewDecimal(0)) {
+			dpFlow := types.Cashflow{
+				Date:      deal.PayoutDate,
+				Direction: "in",
+				Type:      types.CashflowDownPayment,
+				Amount:    dpForCF,
+				Memo:      "Customer downpayment",
+			}
+			if len(row.Cashflows) > 0 {
+				row.Cashflows = append([]types.Cashflow{dpFlow}, row.Cashflows...)
+			} else {
+				row.Cashflows = []types.Cashflow{dpFlow}
 			}
 		}
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/financial-calculator/engines/campaigns"
@@ -106,7 +107,37 @@ func (c *Calculator) processDeal(request types.CalculationRequest) (*types.Quote
 	}
 
 	// Step 4: Build complete cashflows
-	t0Flows := c.cashflowEngine.ConstructT0Flows(deal, campaignResult.T0Flows, request.IDCItems)
+	// Support synthetic upfront subsidy injection via Options["add_subsidy_upfront_thb"] (THB).
+	extraT0 := []types.Cashflow{}
+	if request.Options != nil {
+		if v, ok := request.Options["add_subsidy_upfront_thb"]; ok {
+			switch vv := v.(type) {
+			case float64:
+				if vv > 0 {
+					extraT0 = append(extraT0, types.Cashflow{
+						Date:      deal.PayoutDate,
+						Direction: "in",
+						Type:      types.CashflowSubsidy,
+						Amount:    types.NewDecimal(vv),
+						Memo:      "Synthetic upfront subsidy",
+					})
+				}
+			case int:
+				if vv > 0 {
+					extraT0 = append(extraT0, types.Cashflow{
+						Date:      deal.PayoutDate,
+						Direction: "in",
+						Type:      types.CashflowSubsidy,
+						Amount:    types.NewDecimal(float64(vv)),
+						Memo:      "Synthetic upfront subsidy",
+					})
+				}
+			}
+		}
+	}
+	combinedT0 := append([]types.Cashflow{}, campaignResult.T0Flows...)
+	combinedT0 = append(combinedT0, extraT0...)
+	t0Flows := c.cashflowEngine.ConstructT0Flows(deal, combinedT0, request.IDCItems)
 	periodicSchedule := c.cashflowEngine.BuildPeriodicSchedule(
 		deal,
 		pricingResult.MonthlyInstallment,
@@ -126,7 +157,89 @@ func (c *Calculator) processDeal(request types.CalculationRequest) (*types.Quote
 	}
 
 	// Step 6: Calculate profitability waterfall
-	idcUpfrontNet, idcPeriodicNet := c.profitabilityEngine.CalculateIDCImpact(request.IDCItems)
+	// Gate IDC derivation from cashflows behind an options flag to preserve golden tests by default.
+	deriveIDC := false
+	if request.Options != nil {
+		if v, ok := request.Options["derive_idc_from_cf"]; ok {
+			if vb, ok2 := v.(bool); ok2 && vb {
+				deriveIDC = true
+			}
+		}
+	}
+
+	var idcUpfrontNet decimal.Decimal
+	var idcPeriodicNet decimal.Decimal
+	var idcUpfrontCostPct decimal.Decimal
+	var subsidyUpfrontPct decimal.Decimal
+
+	if deriveIDC {
+		// 1) Derive separated annualized upfront components (display only) on ALB basis.
+		sumIDCOut := decimal.Zero    // T0 IDC outflows (costs)
+		sumSubsidyIn := decimal.Zero // T0 Subsidy inflows (income)
+		for _, cf := range t0Flows {
+			if cf.Date.Equal(deal.PayoutDate) {
+				if cf.Type == types.CashflowIDC && cf.Direction == "out" {
+					sumIDCOut = sumIDCOut.Add(cf.Amount)
+				}
+				if cf.Type == types.CashflowSubsidy && cf.Direction == "in" {
+					sumSubsidyIn = sumSubsidyIn.Add(cf.Amount)
+				}
+			}
+		}
+		// ALB denominator
+		startBalance := deal.FinancedAmount
+		sumStartBalances := decimal.Zero
+		months := int64(0)
+		for _, cf := range periodicSchedule {
+			if cf.Type == types.CashflowPrincipal {
+				sumStartBalances = sumStartBalances.Add(startBalance)
+				startBalance = startBalance.Sub(cf.Principal)
+				months++
+			}
+		}
+		denominatorALB := deal.FinancedAmount
+		if months > 0 {
+			denominatorALB = sumStartBalances.Div(decimal.NewFromInt(months))
+		}
+		if !denominatorALB.IsZero() {
+			idcUpfrontCostPct = sumIDCOut.Div(denominatorALB)
+			subsidyUpfrontPct = sumSubsidyIn.Div(denominatorALB)
+		}
+
+		// 2) Derive IDC_periodic as a net annualized rate spread over PV Outstanding (HQ: INDEX!B291 idea).
+		//    Use deal IRR as discount (effective -> monthly).
+		monthlyIRR := decimal.Zero
+		if dealIRR.GreaterThan(decimal.NewFromFloat(-0.99)) {
+			monthlyIRR = decimal.NewFromFloat(math.Pow(decimal.NewFromInt(1).Add(dealIRR).InexactFloat64(), 1.0/12.0) - 1.0)
+		}
+		// PV Outstanding approximation: sum over months of StartBalance_m * DCF_m * time_fraction (1/12)
+		startBalPV := deal.FinancedAmount
+		pvOutstanding := decimal.Zero
+		monthIdx := 0
+		for _, cf := range periodicSchedule {
+			if cf.Type != types.CashflowPrincipal {
+				continue
+			}
+			monthIdx++
+			df := decimal.NewFromFloat(math.Pow(1.0+monthlyIRR.InexactFloat64(), float64(-monthIdx)))
+			tf := decimal.NewFromFloat(1.0 / 12.0)
+			pvOutstanding = pvOutstanding.Add(startBalPV.Mul(df).Mul(tf))
+			startBalPV = startBalPV.Sub(cf.Principal)
+		}
+		netUpfrontTHB := sumIDCOut.Sub(sumSubsidyIn) // positive means net cost
+		idcPeriodicNet = decimal.Zero
+		if !pvOutstanding.IsZero() {
+			idcPeriodicNet = netUpfrontTHB.Div(pvOutstanding)
+		}
+
+		// Do NOT feed upfront net into profitability (IRR already embeds T0). Only periodic net is added to numerator.
+		idcUpfrontNet = decimal.Zero
+	} else {
+		// Preserve current engine behavior unless explicitly enabled.
+		idcUpfrontNet = decimal.Zero
+		idcPeriodicNet = decimal.Zero
+	}
+
 	waterfall, err := c.profitabilityEngine.CalculateWaterfall(
 		deal,
 		dealIRR,
@@ -135,6 +248,14 @@ func (c *Calculator) processDeal(request types.CalculationRequest) (*types.Quote
 	)
 	if err != nil {
 		return nil, fmt.Errorf("profitability calculation failed: %w", err)
+	}
+	// Propagate separated components for UI consumers when derived
+	if deriveIDC {
+		waterfall.IDCUpfrontCostPct = types.RoundBasisPoints(idcUpfrontCostPct)
+		waterfall.SubsidyUpfrontPct = types.RoundBasisPoints(subsidyUpfrontPct)
+		// Net periodic (IDC - Subsidy) is fed to engine as IDCSubsidiesFeesPeriodic; separated periodic not modeled yet.
+		waterfall.IDCPeriodicCostPct = types.RoundBasisPoints(decimal.Zero)
+		waterfall.SubsidyPeriodicPct = types.RoundBasisPoints(decimal.Zero)
 	}
 
 	// Build quote result

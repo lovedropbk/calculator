@@ -584,3 +584,359 @@ main.main()
 2025/09/25 10:39:31.165747 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
 2025/09/25 10:39:36.833092 step: mw.Run end; duration=34m29.1086827s
 2025/09/25 10:39:36.833649 shutdown: normal exit
+2025/09/25 11:29:02.587648 startup: begin
+2025/09/25 11:29:02.589256 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 11:29:02.589256 step: InitCommonControlsEx begin
+2025/09/25 11:29:02.598732 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 11:29:02.600378 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 11:29:02.600378 step: MainWindow.Create begin
+2025/09/25 11:29:02.862858 step: MainWindow.Create end; duration=262.4793ms
+2025/09/25 11:29:02.862858 step: mw.Run begin
+2025/09/25 11:29:04.163174 post-create: window initialized; awaiting user input
+2025/09/25 11:29:09.046829 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:09.065245 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:09.080129 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:14.860658 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:14.879126 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:14.910361 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:21.868834 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:21.885957 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:21.929908 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:23.479971 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:23.496893 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:23.516958 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:26.125775 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:26.138833 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:26.154278 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:27.501206 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:27.513891 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:27.528563 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:31.010734 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:31.019271 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:31.031834 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:34.798888 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:34.820865 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:34.840917 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:37.198965 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:37.218883 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:39.020835 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:39.498244 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:29:53.609577 step: mw.Run end; duration=50.7467092s
+2025/09/25 11:29:53.609577 shutdown: normal exit
+2025/09/25 11:31:26.912228 startup: begin
+2025/09/25 11:31:26.914417 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 11:31:26.914417 step: InitCommonControlsEx begin
+2025/09/25 11:31:26.927657 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 11:31:26.928702 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 11:31:26.928702 step: MainWindow.Create begin
+2025/09/25 11:31:27.298173 step: MainWindow.Create end; duration=369.4704ms
+2025/09/25 11:31:27.298173 step: mw.Run begin
+2025/09/25 11:31:28.952675 post-create: window initialized; awaiting user input
+2025/09/25 11:31:35.396310 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:35.411102 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:35.425923 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:40.828378 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:41.232248 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:41.709721 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:42.152178 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:31:53.643914 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:32:00.555329 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:32:03.536989 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:20.869745 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:38.787026 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:39.766467 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:45.249611 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:45.959779 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:49.710556 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:33:50.063515 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:29.036396 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:29.172174 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:34.013811 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:34.422064 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:34.967620 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:35.333653 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:35.917399 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:36.325773 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:36.795311 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:42.398382 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:42.476432 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:42.668198 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:42.900314 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:44.194190 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:47.911500 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:47.916276 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:34:48.704120 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:37:52.881925 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:37:53.399118 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:37:53.811577 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:37:54.235793 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:18.404825 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:18.502823 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:18.692480 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:18.853348 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:19.022527 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:21.368881 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:22.269640 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:23.296879 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:38:23.302739 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:43:22.881075 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:43:28.581711 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:05.027252 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:07.441034 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:09.505426 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:09.798578 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:13.757999 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:13.767495 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:15.016465 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:15.447899 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:15.842105 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:16.180085 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:16.586086 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:16.903832 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:20.222885 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:21.232318 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:23.102934 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:23.110099 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:23.705098 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:24.051164 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:24.605684 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:25.313374 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:25.904385 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:26.311954 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:26.706199 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:27.152851 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:27.835715 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:28.208335 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:28.765317 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:29.212068 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:29.578896 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:29.996643 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:30.412442 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:30.814101 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:31.270242 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:31.771156 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:32.606471 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:33.006169 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:34.718017 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:35.244006 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:35.652373 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:36.096614 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:36.601939 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:37.085505 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:37.861727 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:38.316092 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:38.738469 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:39.117116 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:39.539932 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:39.939356 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:40.328523 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:44:40.687682 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:00.662304 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:01.720132 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:02.280994 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:03.254591 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:03.676616 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:04.121863 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:04.576487 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:05.007889 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:20.894878 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:21.218048 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:21.658958 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:22.390480 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:22.821201 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:26.708090 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:28.224102 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:28.738591 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:29.932136 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:31.017109 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:31.412389 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:32.150585 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:32.742678 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:33.346401 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:33.826047 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:34.380806 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:34.894007 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:35.485032 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:36.441700 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:37.209212 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:37.879586 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:38.453572 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:39.294844 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:39.846006 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:40.472284 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:46:41.046470 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:47:56.841149 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:47:57.624539 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:48:30.193075 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:48:30.636945 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:16.712349 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:16.727031 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:16.746396 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:19.165104 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:19.173310 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:19.185984 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:21.239154 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:21.253034 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:21.269148 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:22.878327 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:22.889864 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:22.904394 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:24.889316 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:24.900448 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:24.913576 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:30.047476 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:30.064294 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:30.078908 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:31.411900 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:31.438590 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:31.449762 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:32.771066 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:32.786557 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:58:32.798760 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 11:59:47.381081 compute ok: version=2025-09-sample installment=THB 85,493 rorac=45.31%
+2025/09/25 12:12:32.037279 step: mw.Run end; duration=41m4.7302435s
+2025/09/25 12:12:32.040512 shutdown: normal exit
+2025/09/25 12:22:25.490852 startup: begin
+2025/09/25 12:22:25.492440 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 12:22:25.492440 step: InitCommonControlsEx begin
+2025/09/25 12:22:25.501281 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 12:22:25.514831 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 12:22:25.515337 step: MainWindow.Create begin
+2025/09/25 12:22:25.818339 step: MainWindow.Create end; duration=303.0024ms
+2025/09/25 12:22:25.818339 step: mw.Run begin
+2025/09/25 12:22:27.567837 post-create: window initialized; awaiting user input
+2025/09/25 12:22:54.569083 compute ok: version=2025-09-sample installment=THB 84,629 rorac=45.31%
+2025/09/25 12:23:08.389096 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:23:15.548711 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:23:17.013551 compute ok: version=2025-09-sample installment=THB 86,356 rorac=48.54%
+2025/09/25 12:23:19.388803 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:23:24.941425 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:23:27.975629 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:23:33.417214 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:24:31.339929 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:24:32.865025 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:24:33.713115 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:24:57.598222 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:24:59.434555 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:00.058945 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:12.464407 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:13.569505 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:29.176656 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:29.429721 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:29.631763 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:29.791972 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:29.982441 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:25:30.850510 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 12:32:09.720497 step: mw.Run end; duration=9m43.900275s
+2025/09/25 12:32:09.720497 shutdown: normal exit
+2025/09/25 13:15:45.512664 startup: begin
+2025/09/25 13:15:45.514927 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 13:15:45.514927 step: InitCommonControlsEx begin
+2025/09/25 13:15:45.532943 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 13:15:45.534005 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 13:15:45.534005 step: MainWindow.Create begin
+2025/09/25 13:15:46.999836 step: MainWindow.Create end; duration=1.4658284s
+2025/09/25 13:15:47.011659 step: mw.Run begin
+2025/09/25 13:15:47.971512 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 13:15:48.225250 post-create: window initialized; awaiting user input
+2025/09/25 13:26:37.675349 step: mw.Run end; duration=10m50.6627464s
+2025/09/25 13:26:37.675349 shutdown: normal exit
+2025/09/25 13:28:01.446849 startup: begin
+2025/09/25 13:28:01.447378 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 13:28:01.447378 step: InitCommonControlsEx begin
+2025/09/25 13:28:01.457801 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 13:28:01.458385 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 13:28:01.458385 step: MainWindow.Create begin
+2025/09/25 13:28:01.852786 step: MainWindow.Create end; duration=394.4004ms
+2025/09/25 13:28:01.854119 step: mw.Run begin
+2025/09/25 13:28:02.110899 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 13:28:02.171553 post-create: window initialized; awaiting user input
+2025/09/25 13:54:26.815757 step: mw.Run end; duration=26m24.9611797s
+2025/09/25 13:54:26.816770 shutdown: normal exit
+2025/09/25 14:03:31.395673 startup: begin
+2025/09/25 14:03:31.396758 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 14:03:31.396758 step: InitCommonControlsEx begin
+2025/09/25 14:03:31.405609 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 14:03:31.406207 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 14:03:31.406207 step: MainWindow.Create begin
+2025/09/25 14:03:31.627483 step: MainWindow.Create end; duration=221.2755ms
+2025/09/25 14:03:31.627483 step: mw.Run begin
+2025/09/25 14:03:31.774596 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 14:03:31.807313 post-create: window initialized; awaiting user input
+2025/09/25 14:11:34.905519 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 14:11:55.071836 step: mw.Run end; duration=8m23.4443026s
+2025/09/25 14:11:55.071836 shutdown: normal exit
+2025/09/25 15:43:29.798066 startup: begin
+2025/09/25 15:43:29.799677 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 15:43:29.799677 step: InitCommonControlsEx begin
+2025/09/25 15:43:29.810664 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 15:43:29.827524 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 15:43:29.827524 step: MainWindow.Create begin
+2025/09/25 15:43:30.174409 step: MainWindow.Create end; duration=346.8852ms
+2025/09/25 15:43:30.174956 step: mw.Run begin
+2025/09/25 15:43:30.483434 compute ok: version=2025-09-sample installment=THB 86,356 rorac=45.31%
+2025/09/25 15:43:30.527429 post-create: window initialized; awaiting user input
+2025/09/25 15:44:08.490142 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:20.658907 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:29.137470 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:36.508215 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:37.011591 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:37.043142 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:37.072532 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:44.908596 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:50.765726 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:50.774439 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:44:50.783580 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:45:15.204563 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:54:31.588379 step: mw.Run end; duration=11m1.4132738s
+2025/09/25 15:54:31.588555 shutdown: normal exit
+2025/09/25 15:56:58.145418 startup: begin
+2025/09/25 15:56:58.148814 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 15:56:58.148814 step: InitCommonControlsEx begin
+2025/09/25 15:56:58.167326 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 15:56:58.183448 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 15:56:58.183448 step: MainWindow.Create begin
+2025/09/25 15:56:58.561222 step: MainWindow.Create end; duration=377.7693ms
+2025/09/25 15:56:58.561222 step: mw.Run begin
+2025/09/25 15:57:00.042119 post-create: window initialized; awaiting user input
+2025/09/25 15:57:09.884780 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:09.905349 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:09.926903 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:22.948961 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:24.831046 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:25.064642 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 15:57:50.955440 step: mw.Run end; duration=52.3935471s
+2025/09/25 15:57:50.955440 shutdown: normal exit
+2025/09/25 16:00:16.476520 startup: begin
+2025/09/25 16:00:16.477573 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 16:00:16.477573 step: InitCommonControlsEx begin
+2025/09/25 16:00:16.486050 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 16:00:16.487263 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 16:00:16.487768 step: MainWindow.Create begin
+2025/09/25 16:00:16.724622 step: MainWindow.Create end; duration=236.8519ms
+2025/09/25 16:00:16.724622 step: mw.Run begin
+2025/09/25 16:00:18.259478 post-create: window initialized; awaiting user input
+2025/09/25 16:00:27.602849 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:27.640929 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:27.679351 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:46.984736 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:47.152013 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:47.335886 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:47.497309 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:00:49.295740 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:03:51.971158 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:03:51.981518 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:03:51.993465 compute ok: version=2025-09-sample installment=THB 86,269 rorac=43.85%
+2025/09/25 16:03:58.303586 compute ok: version=2025-09-sample installment=THB 69,015 rorac=43.85%
+2025/09/25 16:03:58.993077 compute ok: version=2025-09-sample installment=THB 69,015 rorac=43.85%
+2025/09/25 16:04:42.193223 compute ok: version=2025-09-sample installment=THB 69,015 rorac=43.85%
+2025/09/25 16:04:48.973914 compute ok: version=2025-09-sample installment=THB 198,418 rorac=43.85%
+2025/09/25 16:04:56.421336 compute ok: version=2025-09-sample installment=THB 198,418 rorac=43.85%
+2025/09/25 16:05:00.521624 compute ok: version=2025-09-sample installment=THB 54,481 rorac=41.13%
+2025/09/25 16:05:06.025546 compute ok: version=2025-09-sample installment=THB 55,076 rorac=47.33%
+2025/09/25 16:05:07.135358 compute ok: version=2025-09-sample installment=THB 55,076 rorac=47.33%
+2025/09/25 16:05:07.572128 compute ok: version=2025-09-sample installment=THB 55,076 rorac=47.33%
+2025/09/25 16:05:14.555507 compute ok: version=2025-09-sample installment=THB 55,076 rorac=47.33%
+2025/09/25 16:05:16.022430 compute ok: version=2025-09-sample installment=THB 55,076 rorac=47.33%
+2025/09/25 16:07:46.846063 step: mw.Run end; duration=7m30.117762s
+2025/09/25 16:07:46.847057 shutdown: normal exit
