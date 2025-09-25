@@ -399,3 +399,15 @@ main.main()
 2025/09/25 07:34:33.878201 step: mw.Run begin
 2025/09/25 07:34:33.977754 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
 2025/09/25 07:34:33.999125 post-create: window initialized; awaiting user input
+2025/09/25 07:40:53.604368 step: mw.Run end; duration=6m19.7257345s
+2025/09/25 07:40:53.604911 shutdown: normal exit
+2025/09/25 07:55:22.607907 startup: begin
+2025/09/25 07:55:22.608951 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/25 07:55:22.608951 step: InitCommonControlsEx begin
+2025/09/25 07:55:22.618027 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/25 07:55:22.619132 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/25 07:55:22.619132 step: MainWindow.Create begin
+2025/09/25 07:55:22.823817 step: MainWindow.Create end; duration=204.6855ms
+2025/09/25 07:55:22.823817 step: mw.Run begin
+2025/09/25 07:55:22.936134 compute ok: version=2025-09-sample installment=THB 23,616 rorac=9.79%
+2025/09/25 07:55:22.962735 post-create: window initialized; awaiting user input
