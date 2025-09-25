@@ -57,7 +57,8 @@ func convertParametersToEngine(ps *parameters.ParameterSet) types.ParameterSet {
 		PDLGD:               pdlgd,
 		OPEXRates:           opex,
 		EconomicCapitalParams: types.EconomicCapitalParams{
-			BaseCapitalRatio:     types.NewDecimal(ps.EconomicCapital.BaseCapitalRatio),
+			// HQ directive: fix EC at 8.8% for display and RoRAC until policy changes.
+			BaseCapitalRatio:     types.NewDecimal(0.088),
 			CapitalAdvantage:     types.NewDecimal(ps.EconomicCapital.CapitalAdvantage),
 			DTLAdvantage:         types.NewDecimal(ps.EconomicCapital.DTLAdvantage),
 			SecurityDepAdvantage: types.NewDecimal(ps.EconomicCapital.SecurityDepAdvantage),

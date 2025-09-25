@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/financial-calculator/engines/campaigns"
@@ -186,53 +185,38 @@ func (c *Calculator) processDeal(request types.CalculationRequest) (*types.Quote
 				}
 			}
 		}
-		// ALB denominator
-		startBalance := deal.FinancedAmount
-		sumStartBalances := decimal.Zero
-		months := int64(0)
+		// Annualize upfront items using HQ Weighted Average Life (WAL) approach:
+		// WAL_years = (Σ Principal_t * t_months) / (Total_Principal * 12)
+		// Annualized IDC/Subsidy rate = upfront_THB / (FinancedAmount * WAL_years)
+		var walNumMonths decimal.Decimal // Σ principal * t_months
+		sumPrincipal := decimal.Zero     // Σ principal (should equal financed for fully amortizing; include balloon if present)
+		monthIdx := int64(0)
 		for _, cf := range periodicSchedule {
 			if cf.Type == types.CashflowPrincipal {
-				sumStartBalances = sumStartBalances.Add(startBalance)
-				startBalance = startBalance.Sub(cf.Principal)
-				months++
+				monthIdx++
+				sumPrincipal = sumPrincipal.Add(cf.Principal)
+				walNumMonths = walNumMonths.Add(cf.Principal.Mul(decimal.NewFromInt(monthIdx)))
 			}
 		}
-		denominatorALB := deal.FinancedAmount
-		if months > 0 {
-			denominatorALB = sumStartBalances.Div(decimal.NewFromInt(months))
+		// Include balloon if present (exists as separate cashflow, not in the monthly loop)
+		if deal.BalloonAmount.GreaterThan(decimal.Zero) {
+			sumPrincipal = sumPrincipal.Add(deal.BalloonAmount)
+			walNumMonths = walNumMonths.Add(deal.BalloonAmount.Mul(decimal.NewFromInt(int64(deal.TermMonths))))
 		}
-		if !denominatorALB.IsZero() {
-			idcUpfrontCostPct = sumIDCOut.Div(denominatorALB)
-			subsidyUpfrontPct = sumSubsidyIn.Div(denominatorALB)
+		walYears := decimal.Zero
+		if !sumPrincipal.IsZero() {
+			walYears = walNumMonths.Div(sumPrincipal).Div(decimal.NewFromInt(12))
+		}
+		if deal.FinancedAmount.GreaterThan(decimal.Zero) && !walYears.IsZero() {
+			base := deal.FinancedAmount.Mul(walYears)
+			idcUpfrontCostPct = sumIDCOut.Div(base)
+			subsidyUpfrontPct = sumSubsidyIn.Div(base)
 		}
 
-		// 2) Derive IDC_periodic as a net annualized rate spread over PV Outstanding (HQ: INDEX!B291 idea).
-		//    Use deal IRR as discount (effective -> monthly).
-		monthlyIRR := decimal.Zero
-		if dealIRR.GreaterThan(decimal.NewFromFloat(-0.99)) {
-			monthlyIRR = decimal.NewFromFloat(math.Pow(decimal.NewFromInt(1).Add(dealIRR).InexactFloat64(), 1.0/12.0) - 1.0)
-		}
-		// PV Outstanding approximation: sum over months of StartBalance_m * DCF_m * time_fraction (1/12)
-		startBalPV := deal.FinancedAmount
-		pvOutstanding := decimal.Zero
-		monthIdx := 0
-		for _, cf := range periodicSchedule {
-			if cf.Type != types.CashflowPrincipal {
-				continue
-			}
-			monthIdx++
-			df := decimal.NewFromFloat(math.Pow(1.0+monthlyIRR.InexactFloat64(), float64(-monthIdx)))
-			tf := decimal.NewFromFloat(1.0 / 12.0)
-			pvOutstanding = pvOutstanding.Add(startBalPV.Mul(df).Mul(tf))
-			startBalPV = startBalPV.Sub(cf.Principal)
-		}
-		netUpfrontTHB := sumIDCOut.Sub(sumSubsidyIn) // positive means net cost
+		// Remove periodic IDC/Subsidy line from engine plumbing for now (to avoid double counting with Deal IRR).
+		// HQ panel only shows separated upfront lines; IDC/Subsidies periodic remains 0.00% in the example.
 		idcPeriodicNet = decimal.Zero
-		if !pvOutstanding.IsZero() {
-			idcPeriodicNet = netUpfrontTHB.Div(pvOutstanding)
-		}
-
-		// Do NOT feed upfront net into profitability (IRR already embeds T0). Only periodic net is added to numerator.
+		// Do NOT feed upfront net into profitability (IRR already embeds T0).
 		idcUpfrontNet = decimal.Zero
 	} else {
 		// Preserve current engine behavior unless explicitly enabled.
@@ -429,7 +413,7 @@ func (c *Calculator) createDefaultParameterSet() types.ParameterSet {
 
 		// Economic capital parameters
 		EconomicCapitalParams: types.EconomicCapitalParams{
-			BaseCapitalRatio:     decimal.NewFromFloat(0.12),   // 12%
+			BaseCapitalRatio:     decimal.NewFromFloat(0.088),  // 8.8%
 			CapitalAdvantage:     decimal.NewFromFloat(0.0008), // 8 bps
 			DTLAdvantage:         decimal.NewFromFloat(0.0003), // 3 bps
 			SecurityDepAdvantage: decimal.NewFromFloat(0.0002), // 2 bps

@@ -200,9 +200,11 @@ func main() {
 	// Profitability details controls (toggle and labels)
 	var detailsTogglePB *walk.PushButton
 	var wfPanel *walk.Composite
+	// Matrix (Effective | Nominal) label pointers
+	var wfCustRateEffLbl, wfCustRateNomLbl *walk.Label
 	var wfDealIRREffLbl, wfDealIRRNomLbl *walk.Label
-	var wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl *walk.Label
-	var wfRiskLbl, wfOpexLbl, wfIDCUpLbl, wfSubUpLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label
+	var wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl *walk.Label
+	var wfRiskLbl, wfOpexLbl, wfIDCUpLbl, wfSubUpLbl, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label
 	var subdown bool
 	var subinterest bool
 	var freeInsurance bool
@@ -374,9 +376,6 @@ func main() {
 				}
 				if wfIDCUpLbl != nil {
 					wfIDCUpLbl.SetText("—")
-				}
-				if wfIDCPeLbl != nil {
-					wfIDCPeLbl.SetText("—")
 				}
 				if wfNetEbitLbl != nil {
 					wfNetEbitLbl.SetText("—")
@@ -629,7 +628,8 @@ func main() {
 					monthlyLbl, headerMonthlyLbl,
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
-					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+					wfCustRateEffLbl, wfCustRateNomLbl,
+					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
 				)
 				if cashflowTV != nil {
 					refreshCashflowTable(cashflowTV, sel.Cashflows)
@@ -1070,25 +1070,62 @@ func main() {
 														AssignTo:   &wfPanel,
 														Visible:    false,
 														ColumnSpan: 2,
-														Layout:     Grid{Columns: 2, Spacing: 6},
+														Layout:     Grid{Columns: 3, Spacing: 6},
 														Children: []Widget{
-															Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
-															Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
-															// Separated upfront components (annualized)
-															Label{Text: "IDC Upfront (cost) %"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
-															Label{Text: "Subsidy Upfront (income) %"}, Label{AssignTo: &wfSubUpLbl, Text: "—"},
-															// Then remaining lines
-															Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
-															Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
-															Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
-															Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
-															Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
-															Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
-															Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
-															Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
-															Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
-															Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
-															Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+															// Header row
+															Label{Text: ""}, Label{Text: "Effective"}, Label{Text: "Nominal"},
+															// Customer Rate
+															Label{Text: "Customer Rate in %:"},
+															Label{AssignTo: &wfCustRateEffLbl, Text: "—"},
+															Label{AssignTo: &wfCustRateNomLbl, Text: "—"},
+															// Subsidy Upfront (income) %
+															Label{Text: "+ Subsidy Upfront (income) %:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfSubUpLbl, Text: "—"},
+															// IDC Upfront (cost) %
+															Label{Text: "− IDC Upfront (cost) %:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+															// Deal IRR
+															Label{Text: "= Deal Rate (IRR):"},
+															Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
+															Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+															// Cost of Debt
+															Label{Text: "− Cost of Debt (matched):"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfCostDebtLbl, Text: "—"},
+															// Gross Interest Margin
+															Label{Text: "= Gross Interest Margin:"},
+															Label{AssignTo: &wfGIMEffLbl, Text: "—"},
+															Label{AssignTo: &wfGIMLbl, Text: "—"},
+															// Capital Advantage
+															Label{Text: "+ Capital Advantage:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfCapAdvLbl, Text: "—"},
+															// Net Interest Margin
+															Label{Text: "= Net Interest Margin:"},
+															Label{AssignTo: &wfNIMEffLbl, Text: "—"},
+															Label{AssignTo: &wfNIMLbl, Text: "—"},
+															// Cost of Credit Risk
+															Label{Text: "− Cost of Credit Risk:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfRiskLbl, Text: "—"},
+															// OPEX
+															Label{Text: "− OPEX:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfOpexLbl, Text: "—"},
+															// Net EBIT Margin (remove periodic IDC line per HQ UI spec)
+															Label{Text: "= Net EBIT Margin:"},
+															Label{AssignTo: &wfNetEbitEffLbl, Text: "—"},
+															Label{AssignTo: &wfNetEbitLbl, Text: "—"},
+															// Economic Capital
+															Label{Text: "/ Economic Capital:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfEconCapLbl, Text: "—"},
+															// Acquisition RoRAC
+															Label{Text: "= Acquisition RoRAC:"},
+															Label{Text: "—"},
+															Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
 														},
 													},
 												},
@@ -1404,7 +1441,8 @@ func main() {
 					monthlyLbl, headerMonthlyLbl,
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
-					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+					wfCustRateEffLbl, wfCustRateNomLbl,
+					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl /* removed wfIDCPeLbl */, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
 				)
 
 				// If Cashflow tab is active, refresh from the selected row
@@ -1525,7 +1563,7 @@ func defaultParameterSet() types.ParameterSet {
 			},
 		},
 		EconomicCapitalParams: types.EconomicCapitalParams{
-			BaseCapitalRatio:     types.NewDecimal(0.12),
+			BaseCapitalRatio:     types.NewDecimal(0.088),
 			CapitalAdvantage:     types.NewDecimal(0.0008),
 			DTLAdvantage:         types.NewDecimal(0.0003),
 			SecurityDepAdvantage: types.NewDecimal(0.0002),
@@ -1953,7 +1991,8 @@ func updateSummaryFromRow(
 	monthlyLbl, headerMonthlyLbl *walk.Label,
 	custNominalLbl, custEffLbl *walk.Label,
 	roracLbl, headerRoRacLbl *walk.Label,
-	wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMLbl, wfCapAdvLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfIDCPeLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label,
+	wfCustRateEffLbl, wfCustRateNomLbl *walk.Label,
+	wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl /*wfIDCPeLbl,*/, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl *walk.Label,
 ) {
 	// Monthly installment
 	if monthlyLbl != nil {
@@ -2009,25 +2048,45 @@ func updateSummaryFromRow(
 		}
 	}
 
-	// Profitability Details from per-row snapshot (in requested order)
+	// Profitability Details from per-row snapshot (two-column matrix)
 	p := row.Profit
+	// Customer Rate
+	if wfCustRateEffLbl != nil {
+		if row.EffectiveRate != 0 {
+			wfCustRateEffLbl.SetText(fmt.Sprintf("%.2f%%", row.EffectiveRate*100.0))
+		} else {
+			wfCustRateEffLbl.SetText("—")
+		}
+	}
+	if wfCustRateNomLbl != nil {
+		if row.NominalRate != 0 {
+			wfCustRateNomLbl.SetText(fmt.Sprintf("%.2f%%", row.NominalRate*100.0))
+		} else {
+			wfCustRateNomLbl.SetText("—")
+		}
+	}
+	// Upfront components (nominal column): show income positive, costs negative
+	if wfSubUpLbl != nil {
+		wfSubUpLbl.SetText(fmt.Sprintf("%.2f%%", p.SubsidyUpfrontPct*100.0))
+	}
+	if wfIDCUpLbl != nil {
+		wfIDCUpLbl.SetText(fmt.Sprintf("-%.2f%%", p.IDCUpfrontCostPct*100.0))
+	}
+	// Deal IRR
 	if wfDealIRREffLbl != nil {
 		wfDealIRREffLbl.SetText(fmt.Sprintf("%.2f%%", p.DealIRREffective*100.0))
 	}
 	if wfDealIRRNomLbl != nil {
 		wfDealIRRNomLbl.SetText(fmt.Sprintf("%.2f%%", p.DealIRRNominal*100.0))
 	}
-	if wfIDCUpLbl != nil {
-		wfIDCUpLbl.SetText(fmt.Sprintf("%.2f%%", p.IDCUpfrontCostPct*100.0))
-	}
-	if wfSubUpLbl != nil {
-		wfSubUpLbl.SetText(fmt.Sprintf("%.2f%%", p.SubsidyUpfrontPct*100.0))
-	}
+	// Remaining nominal lines: costs as negative numbers
 	if wfCostDebtLbl != nil {
-		wfCostDebtLbl.SetText(fmt.Sprintf("%.2f%%", p.CostOfDebt*100.0))
+		wfCostDebtLbl.SetText(fmt.Sprintf("-%.2f%%", p.CostOfDebt*100.0))
 	}
-	if wfMFSpreadLbl != nil {
-		wfMFSpreadLbl.SetText(fmt.Sprintf("%.2f%%", p.MatchedFundedSpread*100.0))
+	// Derived Effective side: GIM, NIM, Net EBIT (use Deal IRR effective; deduct nominal CoD + MF spread).
+	effGIM := p.DealIRREffective - p.CostOfDebt - p.MatchedFundedSpread
+	if wfGIMEffLbl != nil {
+		wfGIMEffLbl.SetText(fmt.Sprintf("%.2f%%", effGIM*100.0))
 	}
 	if wfGIMLbl != nil {
 		wfGIMLbl.SetText(fmt.Sprintf("%.2f%%", p.GrossInterestMargin*100.0))
@@ -2035,17 +2094,23 @@ func updateSummaryFromRow(
 	if wfCapAdvLbl != nil {
 		wfCapAdvLbl.SetText(fmt.Sprintf("%.2f%%", p.CapitalAdvantage*100.0))
 	}
+	effNIM := effGIM + p.CapitalAdvantage
+	if wfNIMEffLbl != nil {
+		wfNIMEffLbl.SetText(fmt.Sprintf("%.2f%%", effNIM*100.0))
+	}
 	if wfNIMLbl != nil {
 		wfNIMLbl.SetText(fmt.Sprintf("%.2f%%", p.NetInterestMargin*100.0))
 	}
 	if wfRiskLbl != nil {
-		wfRiskLbl.SetText(fmt.Sprintf("%.2f%%", p.CostOfCreditRisk*100.0))
+		wfRiskLbl.SetText(fmt.Sprintf("-%.2f%%", p.CostOfCreditRisk*100.0))
 	}
 	if wfOpexLbl != nil {
-		wfOpexLbl.SetText(fmt.Sprintf("%.2f%%", p.OPEX*100.0))
+		wfOpexLbl.SetText(fmt.Sprintf("-%.2f%%", p.OPEX*100.0))
 	}
-	if wfIDCPeLbl != nil {
-		wfIDCPeLbl.SetText(fmt.Sprintf("%.2f%%", p.IDCPeriodicPct*100.0))
+	// Remove periodic IDC/Subsidies line from UI; keep EBITDA as currently computed by engine.
+	effNetEBIT := effNIM - p.CostOfCreditRisk - p.OPEX
+	if wfNetEbitEffLbl != nil {
+		wfNetEbitEffLbl.SetText(fmt.Sprintf("%.2f%%", effNetEBIT*100.0))
 	}
 	if wfNetEbitLbl != nil {
 		wfNetEbitLbl.SetText(fmt.Sprintf("%.2f%%", p.NetEBITMargin*100.0))
