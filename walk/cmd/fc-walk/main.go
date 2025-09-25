@@ -114,6 +114,8 @@ func main() {
 	}
 
 	var mw *walk.MainWindow
+	var mainSplit *walk.Splitter
+	var lastTVWidth int
 
 	// Engines orchestrator with YAML-loaded ParameterSet (discover at startup)
 	var (
@@ -674,6 +676,7 @@ func main() {
 		Layout:   VBox{},
 		Children: []Widget{
 			HSplitter{
+				AssignTo: &mainSplit,
 				Children: []Widget{
 					// Left: Inputs
 					Composite{
@@ -822,39 +825,7 @@ func main() {
 										OnEditingFinished: recalc,
 									},
 
-									// Small Key Metrics group (beneath inputs)
-									GroupBox{
-										Title:      "Key Metrics",
-										ColumnSpan: 2,
-										Layout:     Grid{Columns: 2, Spacing: 6},
-										Children: []Widget{
-											Label{Text: "Monthly Installment:"}, Label{AssignTo: &headerMonthlyLbl, Text: "-"},
-											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &headerRoRacLbl, Text: "-"},
-										},
-									},
-								},
-							},
-							// Campaign checkboxes removed in Phase 1; replaced by Campaign Options grid in right pane.
-							PushButton{
-								Text: "Calculate",
-								OnClicked: func() {
-									computeMode = "explicit"
-									recalc()
-									computeMode = "implicit"
-								},
-							},
-						},
-					},
-					// Right: Results
-					Composite{
-						StretchFactor: 1,
-						Layout:        VBox{Margins: Margins{Left: 6, Top: 12, Right: 12, Bottom: 12}, Spacing: 8},
-						Children: []Widget{
-							// Product & Subsidy section (top)
-							GroupBox{
-								Title:  "Product & Subsidy",
-								Layout: Grid{Columns: 2, Spacing: 6},
-								Children: []Widget{
+									// Product Subsidy (moved under Deal Inputs)
 									Label{Text: "Subsidy budget (THB):"},
 									NumberEdit{
 										AssignTo:    &subsidyBudgetEd,
@@ -867,7 +838,7 @@ func main() {
 											recalc()
 										},
 									},
-									// Dealer commission pill as disabled placeholder
+									// Dealer commission pill (opens override dialog)
 									Label{Text: ""},
 									PushButton{
 										AssignTo:    &dealerCommissionPill,
@@ -894,8 +865,35 @@ func main() {
 											recalc()
 										},
 									},
+
+									// Small Key Metrics group (beneath inputs)
+									GroupBox{
+										Title:      "Key Metrics",
+										ColumnSpan: 2,
+										Layout:     Grid{Columns: 2, Spacing: 6},
+										Children: []Widget{
+											Label{Text: "Monthly Installment:"}, Label{AssignTo: &headerMonthlyLbl, Text: "-"},
+											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &headerRoRacLbl, Text: "-"},
+										},
+									},
 								},
 							},
+							// Campaign checkboxes removed in Phase 1; replaced by Campaign Options grid in right pane.
+							PushButton{
+								Text: "Calculate",
+								OnClicked: func() {
+									computeMode = "explicit"
+									recalc()
+									computeMode = "implicit"
+								},
+							},
+						},
+					},
+					// Right: Results
+					Composite{
+						StretchFactor: 2,
+						Layout:        VBox{Margins: Margins{Left: 6, Top: 12, Right: 12, Bottom: 12}, Spacing: 8},
+						Children: []Widget{
 
 							// Campaign Options (grid) - single selection
 							TableView{
@@ -993,6 +991,31 @@ func main() {
 
 	// Post-create initialization on UI thread after controls are realized
 	mw.Synchronize(func() {
+		// Initial 1/3 : 2/3 visual ratio (via StretchFactor) and initial table column widths
+		if campaignTV != nil {
+			cw := mw.ClientBounds().Width
+			if cw <= 0 {
+				cw = 1200
+			}
+			rw := int(float64(cw) * 2.0 / 3.0) // approximate right pane width
+			tw := campaignTV.ClientBounds().Width
+			if tw <= 0 {
+				tw = rw - 32 // leave a little padding for borders/scrollbar
+			}
+			initCampaignTableColumns(campaignTV, tw)
+			lastTVWidth = tw
+		}
+
+		// Keep campaign columns visible on resize
+		mw.SizeChanged().Attach(func() {
+			if campaignTV != nil {
+				tw := campaignTV.ClientBounds().Width
+				if tw > 0 && tw != lastTVWidth {
+					initCampaignTableColumns(campaignTV, tw)
+					lastTVWidth = tw
+				}
+			}
+		})
 		if lockPercentRB != nil {
 			lockPercentRB.SetChecked(true)
 		}
@@ -1586,6 +1609,65 @@ func updateSummaryFromRow(row CampaignRow, monthlyLbl, headerMonthlyLbl *walk.La
 			headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", row.AcqRoRac*100.0))
 		} else {
 			headerRoRacLbl.SetText("—")
+		}
+	}
+}
+
+// Initialize Campaign Table column widths so all columns are visible without horizontal scrolling.
+// totalWidth should be the client width of the TableView.
+func initCampaignTableColumns(tv *walk.TableView, totalWidth int) {
+	if tv == nil || totalWidth <= 0 {
+		return
+	}
+
+	// Base target widths for ~1200–1400px total client width.
+	// Columns: Select, Campaign, Monthly, Downpayment, Subsidy/RoRAC, Dealer Comm., Notes
+	base := []int{70, 200, 180, 120, 180, 160, 220}
+	mins := []int{60, 160, 140, 100, 140, 120, 140}
+
+	// Fudge padding to account for borders/scrollbar
+	pad := 24
+	w := totalWidth - pad
+	if w < 400 {
+		w = totalWidth
+	}
+
+	baseSum := 0
+	for _, bw := range base {
+		baseSum += bw
+	}
+	scale := float64(w) / float64(baseSum)
+	if scale <= 0 {
+		scale = 1
+	}
+
+	widths := make([]int, len(base))
+	for i := range base {
+		widths[i] = int(math.Round(float64(base[i]) * scale))
+		if widths[i] < mins[i] {
+			widths[i] = mins[i]
+		}
+	}
+
+	// Make the last column ("Notes") absorb any remaining space.
+	sum := 0
+	for i := 0; i < len(widths)-1; i++ {
+		sum += widths[i]
+	}
+	rem := w - sum
+	if rem < mins[len(widths)-1] {
+		rem = mins[len(widths)-1]
+	}
+	widths[len(widths)-1] = rem
+
+	cols := tv.Columns()
+	n := cols.Len()
+	if n > len(widths) {
+		n = len(widths)
+	}
+	for i := 0; i < n; i++ {
+		if c := cols.At(i); c != nil {
+			_ = c.SetWidth(widths[i])
 		}
 	}
 }
