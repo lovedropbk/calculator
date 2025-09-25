@@ -142,11 +142,12 @@ func computeCampaignRows(
 			NetInterestMargin:   p.NetInterestMargin.InexactFloat64(),
 			CostOfCreditRisk:    p.CostOfCreditRisk.InexactFloat64(),
 			OPEX:                p.OPEX.InexactFloat64(),
-			IDCPeriodicPct:      p.IDCPeriodicCostPct.InexactFloat64(),
-			SubsidyPeriodicPct:  p.SubsidyPeriodicPct.InexactFloat64(),
-			NetEBITMargin:       p.NetEBITMargin.InexactFloat64(),
-			EconomicCapital:     p.EconomicCapital.InexactFloat64(),
-			AcquisitionRoRAC:    p.AcquisitionRoRAC.InexactFloat64(),
+			// Show net periodic impact actually used in NetEBIT (IDCSubsidiesFeesPeriodic), not the separated placeholders.
+			IDCPeriodicPct:     p.IDCSubsidiesFeesPeriodic.InexactFloat64(),
+			SubsidyPeriodicPct: p.SubsidyPeriodicPct.InexactFloat64(),
+			NetEBITMargin:      p.NetEBITMargin.InexactFloat64(),
+			EconomicCapital:    p.EconomicCapital.InexactFloat64(),
+			AcquisitionRoRAC:   p.AcquisitionRoRAC.InexactFloat64(),
 		}
 	}
 
@@ -557,8 +558,8 @@ func computeCampaignRows(
 				row.EffectiveRateStr = FormatRatePct(row.EffectiveRate)
 				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
 
-				// Downpayment column shows increased percent
-				row.DownpaymentStr = fmt.Sprintf("%.0f%%", deal2.DownPaymentPercent.Mul(types.NewDecimal(100)).InexactFloat64())
+				// Downpayment column shows "THB X (Y% DP)" consistently
+				row.DownpaymentStr = dpString(deal2.DownPaymentAmount.InexactFloat64(), deal2.PriceExTax.InexactFloat64())
 
 				row.IDCDealerTHB = row.DealerCommAmt
 				row.IDCOtherTHB = 0 // subsidy is not modeled as IDC Other for subdown
@@ -574,7 +575,7 @@ func computeCampaignRows(
 			} else {
 				// Fallback when quote fails
 				row.MonthlyInstallmentStr = ""
-				row.DownpaymentStr = fmt.Sprintf("%.0f%%", deal2.DownPaymentPercent.Mul(types.NewDecimal(100)).InexactFloat64())
+				row.DownpaymentStr = dpString(deal2.DownPaymentAmount.InexactFloat64(), deal2.PriceExTax.InexactFloat64())
 				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(usedSubsidyTHB))
 				dpForCF = deal2.DownPaymentAmount
 			}
