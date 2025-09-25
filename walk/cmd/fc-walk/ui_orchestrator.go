@@ -179,6 +179,8 @@ func computeCampaignRows(
 				row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
+				// Carry full cashflows for Cashflow tab/export
+				row.Cashflows = out.Cashflows
 			} else {
 				// Fallback to baseline if solver fails
 				if q, ok := baselineQuote(); ok {
@@ -198,6 +200,8 @@ func computeCampaignRows(
 					row.IDCOtherTHB = 0
 
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
+					// Baseline cashflows for fallback
+					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
 					row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
@@ -223,6 +227,8 @@ func computeCampaignRows(
 				row.IDCOtherTHB = 0
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
+				// Cashflows for Cash Discount (baseline)
+				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
 				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(0))
@@ -269,6 +275,8 @@ func computeCampaignRows(
 				row.IDCOtherTHB = subsidyBudgetTHB
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
+				// Full cashflows with IDC T0 inflow
+				row.Cashflows = res.Quote.Cashflows
 			} else {
 				// Fallback baseline
 				if q, ok := baselineQuote(); ok {
@@ -288,6 +296,8 @@ func computeCampaignRows(
 					row.IDCOtherTHB = subsidyBudgetTHB
 
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
+					// Baseline cashflows as fallback
+					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
 					row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
@@ -313,6 +323,8 @@ func computeCampaignRows(
 				row.IDCOtherTHB = 0
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
+				// Baseline cashflows
+				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
 				row.SubsidyRorac = "- / -"
@@ -323,4 +335,16 @@ func computeCampaignRows(
 	}
 
 	return rows, selectedIdx
+}
+
+// SelectedCampaignRow returns the CampaignRow at idx from the current model, with bounds checks.
+// If idx is out of range but rows exist, it falls back to the first row.
+func SelectedCampaignRow(m *CampaignTableModel, idx int) (CampaignRow, bool) {
+	if m == nil || len(m.rows) == 0 {
+		return CampaignRow{}, false
+	}
+	if idx < 0 || idx >= len(m.rows) {
+		return m.rows[0], true
+	}
+	return m.rows[idx], true
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 
 	"github.com/financial-calculator/engines/types"
@@ -93,4 +94,55 @@ func addThousandsSep(intStr string) string {
 		return "-" + string(out)
 	}
 	return string(out)
+}
+
+// RoundTo rounds a float64 to the given number of decimal places.
+func RoundTo(val float64, decimals int) float64 {
+	if decimals <= 0 {
+		return math.Round(val)
+	}
+	pow := math.Pow(10, float64(decimals))
+	return math.Round(val*pow) / pow
+}
+
+// FormatWithThousandSep formats a number with thousands separators and a fixed number of decimals.
+// Examples:
+//
+//	FormatWithThousandSep(1000000, 0)   -> "1,000,000"
+//	FormatWithThousandSep(22198.61, 2) -> "22,198.61"
+func FormatWithThousandSep(val float64, decimals int) string {
+	v := RoundTo(val, decimals)
+	neg := v < 0
+	if neg {
+		v = -v
+	}
+	var s string
+	if decimals <= 0 {
+		s = addThousandsSep(fmt.Sprintf("%.0f", v))
+	} else {
+		// Build a format string like "%.2f"
+		fs := "%." + strconv.Itoa(decimals) + "f"
+		raw := fmt.Sprintf(fs, v)
+		dot := strings.LastIndexByte(raw, '.')
+		if dot < 0 {
+			s = addThousandsSep(raw)
+		} else {
+			intPart := raw[:dot]
+			decPart := raw[dot:]
+			s = addThousandsSep(intPart) + decPart
+		}
+	}
+	if neg {
+		return "-" + s
+	}
+	return s
+}
+
+// ParseThousand parses a string that may contain thousands separators (commas) into a float64.
+func ParseThousand(s string) (float64, error) {
+	cleaned := strings.TrimSpace(strings.ReplaceAll(s, ",", ""))
+	if cleaned == "" {
+		return 0, nil
+	}
+	return strconv.ParseFloat(cleaned, 64)
 }
