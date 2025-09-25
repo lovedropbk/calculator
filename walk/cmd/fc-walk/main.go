@@ -163,8 +163,9 @@ func main() {
 	// UI state
 	product := "HP"          // engines/types constants expect "HP", "mySTAR", "F-Lease", "Op-Lease"
 	timing := "arrears"      // "arrears" | "advance"
-	dpLock := "percent"      // "percent" | "amount"
+	dpLock := "percent"      // "percent" | "amount" (mirrors dp unit)
 	rateMode := "fixed_rate" // "fixed_rate" | "target_installment"
+	balloonUnit := "%"       // "%" | "THB"
 
 	// DealState for UI wiring (Phase 2 - auto by default)
 	dealState := types.DealState{
@@ -175,8 +176,9 @@ func main() {
 	// Widgets
 	var productCB *walk.ComboBox
 	var timingCB *walk.ComboBox
-	var priceEdit, dpPercentEdit, dpAmountEdit, termEdit, balloonEdit, nominalRateEdit, targetInstallmentEdit *walk.LineEdit
-	var lockPercentRB, lockAmountRB *walk.RadioButton
+	var priceEdit, termEdit, nominalRateEdit, targetInstallmentEdit *walk.LineEdit
+	var dpValueEd, balloonValueEd *walk.NumberEdit
+	var dpUnitCmb, balloonUnitCmb *walk.ComboBox
 	var fixedRateRB, targetInstallmentRB *walk.RadioButton
 
 	var monthlyLbl, custNominalLbl, custEffLbl, roracLbl *walk.Label
@@ -186,10 +188,12 @@ func main() {
 	// New UI controls (Phase 1 placeholders)
 	var subsidyBudgetEd, idcOtherEd *walk.NumberEdit
 	var dealerCommissionPill *walk.PushButton
-	var campaignTV *walk.TableView
+	var campaignTV, cashflowTV *walk.TableView
+	var mainTabs *walk.TabWidget
 	var idcTotalLbl, idcDealerLbl, idcOtherLbl *walk.Label
 	var tip *walk.ToolTip
 	var campaignModel *CampaignTableModel
+	var dpShadowLbl, balloonShadowLbl *walk.Label
 
 	var headerMonthlyLbl, headerRoRacLbl *walk.Label
 	// Campaign toggles
@@ -252,10 +256,47 @@ func main() {
 			return
 		}
 		price := parseFloat(priceEdit)
-		dpPercent := parseFloat(dpPercentEdit)
-		dpAmount := parseFloat(dpAmountEdit)
+
+		// Derive DP percent/amount from compact unit switch
+		dpVal := 0.0
+		if dpValueEd != nil {
+			dpVal = dpValueEd.Value()
+		}
+		dpUnit := "%"
+		if dpUnitCmb != nil && dpUnitCmb.Text() != "" {
+			dpUnit = dpUnitCmb.Text()
+		}
+		var dpPercent, dpAmount float64
+		if dpUnit == "%" {
+			dpPercent = dpVal
+			dpAmount = price * (dpPercent / 100.0)
+			dpLock = "percent"
+		} else {
+			dpAmount = dpVal
+			if price > 0 {
+				dpPercent = (dpAmount / price) * 100.0
+			}
+			dpLock = "amount"
+		}
+
 		term := parseInt(termEdit)
-		balloon := parseFloat(balloonEdit)
+
+		// Balloon percent from compact unit switch
+		balloonVal := 0.0
+		if balloonValueEd != nil {
+			balloonVal = balloonValueEd.Value()
+		}
+		balloonSel := "%"
+		if balloonUnitCmb != nil && balloonUnitCmb.Text() != "" {
+			balloonSel = balloonUnitCmb.Text()
+		}
+		balloonPct := 0.0
+		if balloonSel == "%" {
+			balloonPct = balloonVal
+		} else if price > 0 {
+			balloonPct = (balloonVal / price) * 100.0
+		}
+
 		nominal := parseFloat(nominalRateEdit)
 		targetInstall := parseFloat(targetInstallmentEdit)
 
@@ -264,7 +305,7 @@ func main() {
 			Product:    product,
 			PriceExTax: price,
 			TermMonths: term,
-			BalloonPct: balloon,
+			BalloonPct: balloonPct,
 		}
 		if err := validateInputs(uiState); err != nil {
 			// Inline indicator, placeholders, and logging; modal only on explicit action
@@ -365,26 +406,13 @@ func main() {
 			term = 36
 		}
 
-		// Two-way lock between % and amount
-		if dpLock == "percent" {
-			dpAmount = price * (dpPercent / 100.0)
-			if dpAmountEdit != nil {
-				_ = dpAmountEdit.SetText(fmt.Sprintf("%.0f", dpAmount))
-			}
-		} else {
-			if price > 0 {
-				dpPercent = (dpAmount / price) * 100.0
-				if dpPercentEdit != nil {
-					_ = dpPercentEdit.SetText(fmt.Sprintf("%.2f", dpPercent))
-				}
-			}
-		}
+		// Compact DP control: value is already consistent with unit; nothing to sync here
 
 		// Build engines/types.Deal via pure helper
 		deal := buildDealFromControls(
 			product, timing, dpLock, rateMode,
 			price, dpPercent, dpAmount,
-			term, balloon, nominal, targetInstall,
+			term, balloonPct, nominal, targetInstall,
 		)
 
 		// Build campaigns from UI toggles
@@ -646,6 +674,9 @@ func main() {
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
 				)
+				if cashflowTV != nil {
+					refreshCashflowTable(cashflowTV, sel.Cashflows)
+				}
 			}
 		}
 
@@ -660,6 +691,22 @@ func main() {
 			if ts, ok := result.Metadata["calculation_time_ms"]; ok {
 				metaCalcTimeLbl.SetText(fmt.Sprintf("%v ms", ts))
 			}
+		}
+		// Persist sticky state after compute (non-blocking; ignore error)
+		if s, err := CollectStickyFromUI(
+			product,
+			priceEdit,
+			dpUnitCmb, dpValueEd,
+			termEdit,
+			timing,
+			balloonUnit, balloonUnitCmb, balloonValueEd,
+			rateMode,
+			nominalRateEdit,
+			targetInstallmentEdit,
+			subsidyBudgetEd, idcOtherEd,
+			selectedCampaignIdx,
+		); err == nil {
+			go func(ss StickyState) { _ = SaveStickyState(ss) }(s)
 		}
 	}
 
@@ -699,61 +746,97 @@ func main() {
 											} else {
 												product = "HP"
 											}
+											// Enable Balloon controls only for mySTAR; otherwise reset to 0 and disable
+											if balloonValueEd != nil && balloonUnitCmb != nil {
+												if product != "mySTAR" {
+													_ = balloonValueEd.SetValue(0)
+													balloonValueEd.SetEnabled(false)
+													balloonUnitCmb.SetEnabled(false)
+													balloonUnit = "%"
+												} else {
+													balloonValueEd.SetEnabled(true)
+													balloonUnitCmb.SetEnabled(true)
+												}
+											}
 											recalc()
 										},
 									},
 									Label{Text: "Price ex tax (THB):"},
 									LineEdit{
-										AssignTo:          &priceEdit,
-										Text:              "1000000",
-										OnEditingFinished: recalc,
-									},
-									Label{Text: "Down payment %:"},
-									LineEdit{
-										AssignTo: &dpPercentEdit,
-										Text:     "20",
+										AssignTo: &priceEdit,
+										Text:     "1000000",
 										OnEditingFinished: func() {
-											dpLock = "percent"
-											if lockPercentRB != nil {
-												lockPercentRB.SetChecked(true)
-											}
+											// Reformat with thousand separators on commit
+											v := parseFloat(priceEdit)
+											_ = priceEdit.SetText(FormatWithThousandSep(v, 0))
 											recalc()
 										},
 									},
-									Label{Text: "Down payment amount (THB):"},
-									LineEdit{
-										AssignTo: &dpAmountEdit,
-										Text:     "200000",
-										OnEditingFinished: func() {
-											dpLock = "amount"
-											if lockAmountRB != nil {
-												lockAmountRB.SetChecked(true)
-											}
-											recalc()
-										},
-									},
-									Label{Text: "Lock mode:"},
+									Label{Text: "Down payment:"},
 									Composite{
 										Layout: HBox{Spacing: 6},
 										Children: []Widget{
-											RadioButton{
-												AssignTo: &lockPercentRB,
-												Text:     "Percent",
-												OnClicked: func() {
-													dpLock = "percent"
+											NumberEdit{
+												AssignTo: &dpValueEd,
+												Decimals: 2,
+												MinValue: 0,
+												Value:    20,
+
+												OnValueChanged: func() {
+													// Update pretty label when in THB
+													if dpShadowLbl != nil && dpUnitCmb != nil && dpUnitCmb.Text() == "THB" {
+														dpShadowLbl.SetText("(" + FormatWithThousandSep(dpValueEd.Value(), 0) + ")")
+													}
+												},
+											},
+											ComboBox{
+												AssignTo:     &dpUnitCmb,
+												Model:        []string{"THB", "%"},
+												CurrentIndex: 1, // default to %
+												MaxSize:      Size{Width: 70},
+												OnCurrentIndexChanged: func() {
+													price := parseFloat(priceEdit)
+													if dpValueEd == nil || dpUnitCmb == nil {
+														return
+													}
+													newUnit := dpUnitCmb.Text()
+													// Convert existing value across units when toggled
+													if newUnit == "%" && dpLock != "percent" {
+														// THB -> %
+														thb := dpValueEd.Value()
+														pct := 0.0
+														if price > 0 {
+															pct = RoundTo((thb/price)*100.0, 2)
+														}
+														_ = dpValueEd.SetDecimals(2)
+														_ = dpValueEd.SetValue(pct)
+														dpLock = "percent"
+														if dpShadowLbl != nil {
+															dpShadowLbl.SetText("")
+														}
+													} else if newUnit == "THB" && dpLock != "amount" {
+														// % -> THB
+														pct := dpValueEd.Value()
+														thb := RoundTo(price*(pct/100.0), 0)
+														_ = dpValueEd.SetDecimals(0)
+														_ = dpValueEd.SetValue(thb)
+														dpLock = "amount"
+														if dpShadowLbl != nil {
+															dpShadowLbl.SetText("(" + FormatWithThousandSep(thb, 0) + ")")
+														}
+													}
 													recalc()
 												},
 											},
-											RadioButton{
-												AssignTo: &lockAmountRB,
-												Text:     "Amount",
-												OnClicked: func() {
-													dpLock = "amount"
-													recalc()
-												},
+											Label{
+												AssignTo: &dpShadowLbl,
+												Text:     "",
 											},
 										},
 									},
+									// placeholders to keep grid alignment where old fields were removed
+									Label{Text: ""}, Label{Text: ""},
+									Label{Text: ""}, Label{Text: ""},
 									Label{Text: "Term (months):"},
 									LineEdit{
 										AssignTo:          &termEdit,
@@ -770,11 +853,66 @@ func main() {
 											recalc()
 										},
 									},
-									Label{Text: "Balloon %:"},
-									LineEdit{
-										AssignTo:          &balloonEdit,
-										Text:              "0",
-										OnEditingFinished: recalc,
+									Label{Text: "Balloon:"},
+									Composite{
+										Layout: HBox{Spacing: 6},
+										Children: []Widget{
+											NumberEdit{
+												AssignTo: &balloonValueEd,
+												Decimals: 2,
+												MinValue: 0,
+												Value:    0,
+
+												OnValueChanged: func() {
+													// Update pretty label when in THB
+													if balloonShadowLbl != nil && balloonUnitCmb != nil && balloonUnitCmb.Text() == "THB" {
+														balloonShadowLbl.SetText("(" + FormatWithThousandSep(balloonValueEd.Value(), 0) + ")")
+													}
+												},
+											},
+											ComboBox{
+												AssignTo:     &balloonUnitCmb,
+												Model:        []string{"THB", "%"},
+												CurrentIndex: 1,
+												MaxSize:      Size{Width: 70},
+												OnCurrentIndexChanged: func() {
+													price := parseFloat(priceEdit)
+													if balloonValueEd == nil || balloonUnitCmb == nil {
+														return
+													}
+													newUnit := balloonUnitCmb.Text()
+													if newUnit == "%" && balloonUnit != "%" {
+														// THB -> %
+														thb := balloonValueEd.Value()
+														pct := 0.0
+														if price > 0 {
+															pct = RoundTo((thb/price)*100.0, 2)
+														}
+														_ = balloonValueEd.SetDecimals(2)
+														_ = balloonValueEd.SetValue(pct)
+														balloonUnit = "%"
+														if balloonShadowLbl != nil {
+															balloonShadowLbl.SetText("")
+														}
+													} else if newUnit == "THB" && balloonUnit != "THB" {
+														// % -> THB
+														pct := balloonValueEd.Value()
+														thb := RoundTo(price*(pct/100.0), 0)
+														_ = balloonValueEd.SetDecimals(0)
+														_ = balloonValueEd.SetValue(thb)
+														balloonUnit = "THB"
+														if balloonShadowLbl != nil {
+															balloonShadowLbl.SetText("(" + FormatWithThousandSep(thb, 0) + ")")
+														}
+													}
+													recalc()
+												},
+											},
+											Label{
+												AssignTo: &balloonShadowLbl,
+												Text:     "",
+											},
+										},
 									},
 
 									// Integrated Rate Mode controls
@@ -820,18 +958,23 @@ func main() {
 									},
 									Label{Text: "Target installment (THB):"},
 									LineEdit{
-										AssignTo:          &targetInstallmentEdit,
-										Text:              "0",
-										OnEditingFinished: recalc,
+										AssignTo: &targetInstallmentEdit,
+										Text:     "0",
+										OnEditingFinished: func() {
+											v := parseFloat(targetInstallmentEdit)
+											_ = targetInstallmentEdit.SetText(FormatWithThousandSep(v, 0))
+											recalc()
+										},
 									},
 
 									// Product Subsidy (moved under Deal Inputs)
 									Label{Text: "Subsidy budget (THB):"},
 									NumberEdit{
-										AssignTo:    &subsidyBudgetEd,
-										Decimals:    0,
-										MinValue:    0,
-										Value:       0,
+										AssignTo: &subsidyBudgetEd,
+										Decimals: 0,
+										MinValue: 0,
+										Value:    0,
+
 										ToolTipText: "Budget available for subsidies (placeholder)",
 										OnValueChanged: func() {
 											// Recompute grid metrics when subsidy budget changes
@@ -858,6 +1001,7 @@ func main() {
 										Decimals: 0,
 										MinValue: 0,
 										Value:    0,
+
 										OnValueChanged: func() {
 											// Mark user-edited and recalc to refresh IDC totals and grid
 											dealState.IDCOther.Value = idcOtherEd.Value()
@@ -866,16 +1010,8 @@ func main() {
 										},
 									},
 
-									// Small Key Metrics group (beneath inputs)
-									GroupBox{
-										Title:      "Key Metrics",
-										ColumnSpan: 2,
-										Layout:     Grid{Columns: 2, Spacing: 6},
-										Children: []Widget{
-											Label{Text: "Monthly Installment:"}, Label{AssignTo: &headerMonthlyLbl, Text: "-"},
-											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &headerRoRacLbl, Text: "-"},
-										},
-									},
+									// Removed redundant Key Metrics group (migrated to summary on right)
+									Label{Text: ""}, Label{Text: ""},
 								},
 							},
 							// Campaign checkboxes removed in Phase 1; replaced by Campaign Options grid in right pane.
@@ -889,90 +1025,190 @@ func main() {
 							},
 						},
 					},
-					// Right: Results
-					Composite{
-						StretchFactor: 2,
-						Layout:        VBox{Margins: Margins{Left: 6, Top: 12, Right: 12, Bottom: 12}, Spacing: 8},
-						Children: []Widget{
-
-							// Campaign Options (grid) - single selection
-							TableView{
-								AssignTo:       &campaignTV,
-								StretchFactor:  1,
-								MultiSelection: false,
-								Columns: []TableViewColumn{
-									{Title: "Select", Width: 70},
-									{Title: "Campaign", Width: 220},
-									{Title: "Monthly Installment", Width: 180},
-									{Title: "Downpayment", Width: 120},
-									{Title: "Subsidy / Acq.RoRAC", Width: 180},
-									{Title: "Dealer Comm.", Width: 160},
-									{Title: "Notes", Width: 220},
-								},
-							},
-
-							// Bottom: Key Metrics & Summary (expanded)
-							GroupBox{
-								Title:  "Key Metrics & Summary",
-								Layout: Grid{Columns: 2, Spacing: 6},
+					// Right: Results (Tabs)
+					TabWidget{
+						AssignTo: &mainTabs,
+						Pages: []TabPage{
+							{
+								Title:  "Calculator",
+								Layout: VBox{Spacing: 8},
 								Children: []Widget{
-									Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
-									Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
-									Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
-									Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
-									Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
-									Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
-									Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
-									Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
-									// Profitability Details (toggle)
+									// Campaign Options (grid)
+									TableView{
+										AssignTo:       &campaignTV,
+										StretchFactor:  1,
+										MultiSelection: false,
+										Columns: []TableViewColumn{
+											{Title: "Select", Width: 70},
+											{Title: "Campaign", Width: 220},
+											{Title: "Monthly Installment", Width: 180},
+											{Title: "Downpayment", Width: 120},
+											{Title: "Subsidy / Acq.RoRAC", Width: 180},
+											{Title: "Dealer Comm.", Width: 160},
+											{Title: "Notes", Width: 220},
+										},
+									},
+									// Summary
 									GroupBox{
-										Title:  "Profitability Details",
+										Title:  "Key Metrics & Summary",
 										Layout: Grid{Columns: 2, Spacing: 6},
 										Children: []Widget{
-											PushButton{
-												AssignTo:   &detailsTogglePB,
-												Text:       "Details ▼",
-												ColumnSpan: 2,
-												OnClicked: func() {
-													if wfPanel != nil {
-														vis := wfPanel.Visible()
-														wfPanel.SetVisible(!vis)
-														if detailsTogglePB != nil {
-															if vis {
-																detailsTogglePB.SetText("Details ▼")
-															} else {
-																detailsTogglePB.SetText("Details ▲")
+											Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
+											Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
+											Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
+											Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
+											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
+											Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
+											Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
+											Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
+											// Profitability Details (toggle)
+											GroupBox{
+												Title:  "Profitability Details",
+												Layout: Grid{Columns: 2, Spacing: 6},
+												Children: []Widget{
+													PushButton{
+														AssignTo:   &detailsTogglePB,
+														Text:       "Details ▼",
+														ColumnSpan: 2,
+														OnClicked: func() {
+															if wfPanel != nil {
+																vis := wfPanel.Visible()
+																wfPanel.SetVisible(!vis)
+																if detailsTogglePB != nil {
+																	if vis {
+																		detailsTogglePB.SetText("Details ▼")
+																	} else {
+																		detailsTogglePB.SetText("Details ▲")
+																	}
+																}
 															}
-														}
-													}
+														},
+													},
+													Composite{
+														AssignTo:   &wfPanel,
+														Visible:    false,
+														ColumnSpan: 2,
+														Layout:     Grid{Columns: 2, Spacing: 6},
+														Children: []Widget{
+															Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
+															Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+															Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
+															Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
+															Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
+															Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
+															Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
+															Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
+															Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
+															Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+															Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
+															Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
+															Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
+															Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+														},
+													},
 												},
 											},
-											Composite{
-												AssignTo:   &wfPanel,
-												Visible:    false,
+											Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
+											Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
+											PushButton{
 												ColumnSpan: 2,
-												Layout:     Grid{Columns: 2, Spacing: 6},
-												Children: []Widget{
-													Label{Text: "Deal IRR Effective:"}, Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
-													Label{Text: "Deal IRR Nominal:"}, Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
-													Label{Text: "Cost of Debt Matched:"}, Label{AssignTo: &wfCostDebtLbl, Text: "—"},
-													Label{Text: "Matched Funded Spread:"}, Label{AssignTo: &wfMFSpreadLbl, Text: "—"},
-													Label{Text: "Gross Interest Margin:"}, Label{AssignTo: &wfGIMLbl, Text: "—"},
-													Label{Text: "Capital Advantage:"}, Label{AssignTo: &wfCapAdvLbl, Text: "—"},
-													Label{Text: "Net Interest Margin:"}, Label{AssignTo: &wfNIMLbl, Text: "—"},
-													Label{Text: "Cost of Credit Risk:"}, Label{AssignTo: &wfRiskLbl, Text: "—"},
-													Label{Text: "OPEX:"}, Label{AssignTo: &wfOpexLbl, Text: "—"},
-													Label{Text: "IDC Subsidies/Fees Upfront:"}, Label{AssignTo: &wfIDCUpLbl, Text: "—"},
-													Label{Text: "IDC Subsidies/Fees Periodic:"}, Label{AssignTo: &wfIDCPeLbl, Text: "—"},
-													Label{Text: "Net EBIT Margin:"}, Label{AssignTo: &wfNetEbitLbl, Text: "—"},
-													Label{Text: "Economic Capital:"}, Label{AssignTo: &wfEconCapLbl, Text: "—"},
-													Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+												Text:       "Export XLSX",
+												OnClicked: func() {
+													// Build summary map and cashflow rows based on current selection
+													summary := map[string]string{}
+													if productCB != nil {
+														summary["Product"] = productCB.Text()
+													} else {
+														summary["Product"] = product
+													}
+													summary["Price ex tax (THB)"] = FormatWithThousandSep(parseFloat(priceEdit), 0)
+													if dpUnitCmb != nil && dpValueEd != nil {
+														unit := dpUnitCmb.Text()
+														val := dpValueEd.Value()
+														if unit == "THB" {
+															summary["Down payment"] = "THB " + FormatWithThousandSep(val, 0)
+														} else {
+															summary["Down payment"] = FormatWithThousandSep(val, 2) + " percent"
+														}
+													}
+													summary["Term (months)"] = fmt.Sprintf("%d", parseInt(termEdit))
+													if timingCB != nil {
+														summary["Timing"] = timingCB.Text()
+													} else {
+														summary["Timing"] = timing
+													}
+													if balloonUnitCmb != nil && balloonValueEd != nil {
+														bu := balloonUnitCmb.Text()
+														bv := balloonValueEd.Value()
+														if bu == "THB" {
+															summary["Balloon"] = "THB " + FormatWithThousandSep(bv, 0)
+														} else {
+															summary["Balloon"] = FormatWithThousandSep(bv, 2) + " percent"
+														}
+													}
+													summary["Rate mode"] = rateMode
+													summary["Customer rate (% p.a.)"] = fmt.Sprintf("%.2f", parseFloat(nominalRateEdit))
+													summary["Target installment (THB)"] = FormatWithThousandSep(parseFloat(targetInstallmentEdit), 0)
+													if subsidyBudgetEd != nil {
+														summary["Subsidy budget (THB)"] = FormatWithThousandSep(subsidyBudgetEd.Value(), 0)
+													}
+													if idcOtherEd != nil {
+														summary["IDCs - Other (THB)"] = FormatWithThousandSep(idcOtherEd.Value(), 0)
+													}
+													var cfr []CashflowRow
+													if campaignModel != nil && selectedCampaignIdx >= 0 && selectedCampaignIdx < len(campaignModel.rows) {
+														row := campaignModel.rows[selectedCampaignIdx]
+														summary["Selected Campaign"] = row.Name
+														summary["Monthly Installment (THB)"] = row.MonthlyInstallmentStr
+														summary["Nominal Rate"] = row.NominalRateStr
+														summary["Effective Rate"] = row.EffectiveRateStr
+														summary["Acq RoRAC"] = row.AcqRoRacStr
+														summary["Dealer Commission"] = row.DealerComm
+														cfr = buildCashflowRows(row.Cashflows)
+													}
+													if err := doExportXLSX(mw, summary, cfr); err != nil {
+														walk.MsgBox(mw, "Export XLSX", fmt.Sprintf("Export failed: %v", err), walk.MsgBoxIconError)
+													}
 												},
 											},
 										},
 									},
-									Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
-									Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
+								},
+							},
+							{
+								Title:  "Cashflow",
+								Layout: VBox{Spacing: 8},
+								Children: []Widget{
+									Composite{
+										Layout: HBox{Spacing: 6},
+										Children: []Widget{
+											PushButton{
+												Text: "Refresh",
+												OnClicked: func() {
+													if campaignModel != nil && cashflowTV != nil {
+														idx := selectedCampaignIdx
+														if idx >= 0 && idx < len(campaignModel.rows) {
+															refreshCashflowTable(cashflowTV, campaignModel.rows[idx].Cashflows)
+														}
+													}
+												},
+											},
+										},
+									},
+									TableView{
+										AssignTo:       &cashflowTV,
+										StretchFactor:  1,
+										MultiSelection: false,
+										Columns: []TableViewColumn{
+											{Title: "Period", Width: 80},
+											{Title: "Date", Width: 120},
+											{Title: "Principal", Width: 120},
+											{Title: "Interest", Width: 120},
+											{Title: "IDCs", Width: 120},
+											{Title: "Subsidy", Width: 120},
+											{Title: "Installment", Width: 140},
+										},
+									},
 								},
 							},
 						},
@@ -1016,9 +1252,6 @@ func main() {
 				}
 			}
 		})
-		if lockPercentRB != nil {
-			lockPercentRB.SetChecked(true)
-		}
 		if fixedRateRB != nil {
 			fixedRateRB.SetChecked(true)
 		}
@@ -1027,6 +1260,126 @@ func main() {
 		}
 		if targetInstallmentEdit != nil {
 			targetInstallmentEdit.SetEnabled(false)
+		}
+
+		// Load sticky state before first recalc and apply to controls
+		if s, ok := LoadStickyState(); ok {
+			// Product
+			product = s.Product
+			if productCB != nil {
+				display := s.Product
+				switch s.Product {
+				case "HP":
+					display = "HP"
+				case "mySTAR":
+					display = "mySTAR"
+				case "F-Lease":
+					display = "Financing Lease"
+				case "Op-Lease":
+					display = "Operating Lease"
+				}
+				_ = productCB.SetText(display)
+			}
+			// Price
+			if priceEdit != nil {
+				_ = priceEdit.SetText(FormatWithThousandSep(s.Price, 0))
+			}
+			// DP unit + value
+			if dpUnitCmb != nil {
+				_ = dpUnitCmb.SetText(s.DPUnit)
+			}
+			if dpValueEd != nil {
+				if s.DPUnit == "THB" {
+					_ = dpValueEd.SetDecimals(0)
+					dpLock = "amount"
+				} else {
+					_ = dpValueEd.SetDecimals(2)
+					dpLock = "percent"
+				}
+				dpValueEd.SetValue(s.DPValue)
+			}
+			// Term
+			if termEdit != nil {
+				_ = termEdit.SetText(fmt.Sprintf("%d", s.Term))
+			}
+			// Timing
+			timing = s.Timing
+			if timingCB != nil {
+				_ = timingCB.SetText(s.Timing)
+			}
+			// Balloon unit + value and enabling based on product
+			balloonUnit = s.BalloonUnit
+			if balloonUnitCmb != nil {
+				_ = balloonUnitCmb.SetText(s.BalloonUnit)
+			}
+			if balloonValueEd != nil {
+				if s.BalloonUnit == "THB" {
+					_ = balloonValueEd.SetDecimals(0)
+				} else {
+					_ = balloonValueEd.SetDecimals(2)
+				}
+				balloonValueEd.SetValue(s.BalloonValue)
+				if product != "mySTAR" {
+					balloonValueEd.SetEnabled(false)
+					if balloonUnitCmb != nil {
+						balloonUnitCmb.SetEnabled(false)
+					}
+				} else {
+					balloonValueEd.SetEnabled(true)
+					if balloonUnitCmb != nil {
+						balloonUnitCmb.SetEnabled(true)
+					}
+				}
+			}
+			// Rate mode + values
+			rateMode = s.RateMode
+			if fixedRateRB != nil && targetInstallmentRB != nil {
+				if s.RateMode == "fixed_rate" {
+					fixedRateRB.SetChecked(true)
+					if nominalRateEdit != nil {
+						nominalRateEdit.SetEnabled(true)
+						_ = nominalRateEdit.SetText(fmt.Sprintf("%.2f", s.CustomerRatePct))
+					}
+					if targetInstallmentEdit != nil {
+						targetInstallmentEdit.SetEnabled(false)
+						_ = targetInstallmentEdit.SetText(FormatWithThousandSep(0, 0))
+					}
+				} else {
+					targetInstallmentRB.SetChecked(true)
+					if nominalRateEdit != nil {
+						nominalRateEdit.SetEnabled(false)
+						_ = nominalRateEdit.SetText(fmt.Sprintf("%.2f", s.CustomerRatePct))
+					}
+					if targetInstallmentEdit != nil {
+						targetInstallmentEdit.SetEnabled(true)
+						_ = targetInstallmentEdit.SetText(FormatWithThousandSep(s.TargetInstallment, 0))
+					}
+				}
+			}
+			// Subsidy budget / IDC Other
+			if subsidyBudgetEd != nil {
+				subsidyBudgetEd.SetValue(s.SubsidyBudgetTHB)
+			}
+			if idcOtherEd != nil {
+				idcOtherEd.SetValue(s.IDCOtherTHB)
+				dealState.IDCOther.Value = s.IDCOtherTHB
+				dealState.IDCOther.UserEdited = s.IDCOtherTHB > 0
+			}
+			// Selected campaign index
+			selectedCampaignIdx = s.SelectedCampaignIx
+		}
+
+		// Tab change: auto refresh cashflow from selection
+		if mainTabs != nil {
+			mainTabs.CurrentIndexChanged().Attach(func() {
+				if mainTabs.CurrentIndex() == 1 && cashflowTV != nil {
+					if row, ok := SelectedCampaignRow(campaignModel, selectedCampaignIdx); ok {
+						refreshCashflowTable(cashflowTV, row.Cashflows)
+					} else {
+						refreshCashflowTable(cashflowTV, []types.Cashflow{})
+					}
+				}
+			})
 		}
 
 		// Initialize Campaign Options model (static placeholder rows)
@@ -1091,6 +1444,14 @@ func main() {
 						roracLbl, headerRoRacLbl,
 					)
 				}
+				// If Cashflow tab is active, refresh from the selected row
+				if mainTabs != nil && mainTabs.CurrentIndex() == 1 && cashflowTV != nil {
+					if row, ok := SelectedCampaignRow(campaignModel, selectedCampaignIdx); ok {
+						refreshCashflowTable(cashflowTV, row.Cashflows)
+					} else {
+						refreshCashflowTable(cashflowTV, []types.Cashflow{})
+					}
+				}
 				recalc()
 			})
 		}
@@ -1128,6 +1489,25 @@ func main() {
 		// Initial compute to populate campaign grid and summary
 		recalc()
 		logger.Printf("post-create: window initialized; awaiting user input")
+	})
+
+	// Persist sticky state on window close
+	mw.Closing().Attach(func(canceled *bool, reason walk.CloseReason) {
+		if s, err := CollectStickyFromUI(
+			product,
+			priceEdit,
+			dpUnitCmb, dpValueEd,
+			termEdit,
+			timing,
+			balloonUnit, balloonUnitCmb, balloonValueEd,
+			rateMode,
+			nominalRateEdit,
+			targetInstallmentEdit,
+			subsidyBudgetEd, idcOtherEd,
+			selectedCampaignIdx,
+		); err == nil {
+			_ = SaveStickyState(s)
+		}
 	})
 
 	runStart := time.Now()
@@ -1231,6 +1611,9 @@ type CampaignRow struct {
 	DealerCommAmt float64
 	DealerCommPct float64
 	SubsidyValue  float64
+
+	// Detailed outputs for Cashflow tab/export
+	Cashflows []types.Cashflow
 }
 
 type CampaignTableModel struct {

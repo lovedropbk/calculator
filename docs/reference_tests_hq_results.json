@@ -1,0 +1,228 @@
+{
+  "HP_no_dealer_commission": {
+    "input_parameters": {
+      "payment_information": {
+        "Interest Rate Type": "Fix",
+        "Payment Frequency": "Monthly",
+        "Payment Mode": "In Arrears",
+        "Payout Date": "24/09/2025",
+        "Customer Rate in %": 6.44,
+        "Benchmark": "None"
+      },
+      "deal_details": {
+        "OPEX Segment": "MB PC - retail business",
+        "Deal Currency": "TB1",
+        "Sales Price (excluding Tax)": "1,000,000",
+        "Downpayment Input (TB1)": "0",
+        "Financed Amount": "1,000,000",
+        "IDCs and Fee Expenses Input (TB1)": "0",
+        "Fees Subsidies Periodic Type": "% per anno",
+        "Balloon RV Input (TB1)": "0",
+        "Credit Term (Months)": 12
+      }
+    },
+    "output_parameters": {
+      "calculation_result": {
+        "Effective": {
+          "Customer Rate in %": "6.63%",
+          "Deal Rate (IRR)": "6.63%",
+          "Gross Interest Margin": "4.91%",
+          "Net Interest Margin": "5.04%",
+          "Net EBIT Margin": "3.78%"
+        },
+        "Nominal": {
+          "Customer Rate in %": "6.44%",
+          "IDCs/Subsidies/Fees (upfront)": "0.00%",
+          "Deal Rate (IRR)": "6.44%",
+          "Cost of Debt (100% Matched Funded)": "1.64%",
+          "Gross Interest Margin": "4.80%",
+          "Capital Advantage": "0.13%",
+          "Net Interest Margin": "4.93%",
+          "Standard Cost of Credit Risk": "0.25%",
+          "OPEX": "0.95%",
+          "IDC, Subs, and Fees (periodic)": "0.00%",
+          "Net EBIT Margin": "3.72%",
+          "Economic Capital": "7.74%"
+        }
+      },
+      "deal_summary": {
+        "Flat Rate": "3.52%",
+        "Effective Maturity": 1,
+        "Customer Installment": "86,268.80"
+      },
+      "rorac": {
+        "Percentage": "48.07%"
+      }
+    }
+  },
+  "HP_dealercommission_20kTHB": {
+    "input_parameters": {
+      "payment_information": {
+        "Interest Rate Type": "Fix",
+        "Payment Frequency": "Monthly",
+        "Payment Mode": "In Arrears",
+        "Payout Date": "24/09/2025",
+        "Customer Rate in %": 6.44,
+        "Benchmark": "None"
+      },
+      "deal_details": {
+        "OPEX Segment": "MB PC - retail business",
+        "Deal Currency": "TB1",
+        "Sales Price (excluding Tax)": "1,000,000",
+        "Downpayment Input (TB1)": "0",
+        "Financed Amount": "1,000,000",
+        "IDCs and Fee Expenses Input (TB1)": "20,000",
+        "Fees Subsidies Periodic Type": "% per anno",
+        "Balloon RV Input (TB1)": "0",
+        "Credit Term (Months)": 12
+      }
+    },
+    "output_parameters": {
+      "calculation_result": {
+        "Effective": {
+          "Customer Rate in %": "6.63%",
+          "Deal Rate (IRR)": "2.78%",
+          "Gross Interest Margin": "1.11%",
+          "Net Interest Margin": "1.24%",
+          "Net EBIT Margin": "0.02%"
+        },
+        "Nominal": {
+          "Customer Rate in %": "6.44%",
+          "IDCs/Subsidies/Fees (upfront)": "-3.70%",
+          "Deal Rate (IRR)": "2.74%",
+          "Cost of Debt (100% Matched Funded)": "1.64%",
+          "Gross Interest Margin": "1.10%",
+          "Capital Advantage": "0.13%",
+          "Net Interest Margin": "1.23%",
+          "Standard Cost of Credit Risk": "0.25%",
+          "OPEX": "0.95%",
+          "IDC, Subs, and Fees (periodic)": "0.00%",
+          "Net EBIT Margin": "0.02%",
+          "Economic Capital": "7.74%"
+        }
+      },
+      "deal_summary": {
+        "Flat Rate": "3.52%",
+        "Effective Maturity": 1,
+        "Customer Installment": "86,268.80"
+      },
+      "rorac": {
+        "Percentage": "0.31%"
+      }
+    }
+  },
+  "mySTAR_no_commission": {
+    "input_parameters": {
+      "payment_information": {
+        "Interest Rate Type": "Fix",
+        "Payment Frequency": "Monthly",
+        "Payment Mode": "In Arrears",
+        "Balloon/RV Postponed": false,
+        "Payout Date": "24/09/2025",
+        "Customer Rate in %": 6.44,
+        "Benchmark": "None"
+      },
+      "deal_details": {
+        "OPEX Segment": "MB PC - retail business",
+        "Deal Currency": "TB1",
+        "Sales Price (excluding Tax)": "1,000,000",
+        "Downpayment Input (TB1)": "0",
+        "Financed Amount": "1,000,000",
+        "IDCs and Fee Expenses Input (TB1)": "0",
+        "Fees Subsidies Periodic Type": "% per anno",
+        "Balloon RV Input (TB1)": "300,000",
+        "Credit Term (Months)": 12
+      }
+    },
+    "output_parameters": {
+      "calculation_result": {
+        "Effective": {
+          "Customer Rate in %": "6.63%",
+          "Deal Rate (IRR)": "6.63%",
+          "Gross Interest Margin": "4.90%",
+          "Net Interest Margin": "5.03%",
+          "Net EBIT Margin": "3.78%"
+        },
+        "Nominal": {
+          "Customer Rate in %": "6.44%",
+          "IDCs/Subsidies/Fees (upfront)": "0.00%",
+          "Deal Rate (IRR)": "6.44%",
+          "Cost of Debt (100% Matched Funded)": "1.66%",
+          "Gross Interest Margin": "4.79%",
+          "Capital Advantage": "0.13%",
+          "Net Interest Margin": "4.92%",
+          "Standard Cost of Credit Risk": "0.25%",
+          "OPEX": "0.95%",
+          "IDC, Subs, and Fees (periodic)": "0.00%",
+          "Net EBIT Margin": "3.72%",
+          "Economic Capital": "7.74%"
+        }
+      },
+      "deal_summary": {
+        "Flat Rate": "4.55%",
+        "Effective Maturity": 1,
+        "Customer Installment": "62,127.72"
+      },
+      "rorac": {
+        "Percentage": "48.02%"
+      }
+    }
+  },
+  "mySTAR_commission": {
+    "input_parameters": {
+      "payment_information": {
+        "Interest Rate Type": "Fix",
+        "Payment Frequency": "Monthly",
+        "Payment Mode": "In Arrears",
+        "Balloon/RV Postponed": false,
+        "Payout Date": "24/09/2025",
+        "Customer Rate in %": 6.44,
+        "Benchmark": "None"
+      },
+      "deal_details": {
+        "OPEX Segment": "MB PC - retail business",
+        "Deal Currency": "TB1",
+        "Sales Price (excluding Tax)": "1,000,000",
+        "Downpayment Input (TB1)": "0",
+        "Financed Amount": "1,000,000",
+        "IDCs and Fee Expenses Input (TB1)": "20,000",
+        "Fees Subsidies Periodic Type": "% per anno",
+        "Balloon RV Input (TB1)": "300,000",
+        "Credit Term (Months)": 12
+      }
+    },
+    "output_parameters": {
+      "calculation_result": {
+        "Effective": {
+          "Customer Rate in %": "6.63%",
+          "Deal Rate (IRR)": "3.62%",
+          "Gross Interest Margin": "1.93%",
+          "Net Interest Margin": "2.06%",
+          "Net EBIT Margin": "0.84%"
+        },
+        "Nominal": {
+          "Customer Rate in %": "6.44%",
+          "IDCs/Subsidies/Fees (upfront)": "-2.88%",
+          "Deal Rate (IRR)": "3.56%",
+          "Cost of Debt (100% Matched Funded)": "1.65%",
+          "Gross Interest Margin": "1.92%",
+          "Capital Advantage": "0.13%",
+          "Net Interest Margin": "2.04%",
+          "Standard Cost of Credit Risk": "0.25%",
+          "OPEX": "0.95%",
+          "IDC, Subs, and Fees (periodic)": "0.00%",
+          "Net EBIT Margin": "0.84%",
+          "Economic Capital": "7.74%"
+        }
+      },
+      "deal_summary": {
+        "Flat Rate": "4.55%",
+        "Effective Maturity": 1,
+        "Customer Installment": "62,127.72"
+      },
+      "rorac": {
+        "Percentage": "10.83%"
+      }
+    }
+  }
+}
