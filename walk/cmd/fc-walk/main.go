@@ -177,12 +177,12 @@ func main() {
 	var productCB *walk.ComboBox
 	var timingCB *walk.ComboBox
 	var priceEdit, termEdit, nominalRateEdit, targetInstallmentEdit *walk.LineEdit
-	var dpValueEd, balloonValueEd *walk.NumberEdit
+	var dpValueEd, dpAmountEd, balloonValueEd, balloonAmountEd *walk.NumberEdit
 	var dpUnitCmb, balloonUnitCmb *walk.ComboBox
 	var fixedRateRB, targetInstallmentRB *walk.RadioButton
 
 	var monthlyLbl, custNominalLbl, custEffLbl, roracLbl *walk.Label
-	var financedLbl, metaVersionLbl, metaCalcTimeLbl *walk.Label
+	var financedLbl, metaVersionLbl *walk.Label
 	var validationLbl *walk.Label
 
 	// New UI controls (Phase 1 placeholders)
@@ -194,6 +194,8 @@ func main() {
 	var tip *walk.ToolTip
 	var campaignModel *CampaignTableModel
 	var dpShadowLbl, balloonShadowLbl *walk.Label
+	// Selected Campaign Details labels (left bottom panel)
+	var selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCOtherValLbl, selIDCInsValLbl, selIDCMBSPValLbl *walk.Label
 
 	var headerMonthlyLbl, headerRoRacLbl *walk.Label
 	// Campaign toggles
@@ -259,22 +261,26 @@ func main() {
 		}
 		price := parseFloat(priceEdit)
 
-		// Derive DP percent/amount from compact unit switch
-		dpVal := 0.0
-		if dpValueEd != nil {
-			dpVal = dpValueEd.Value()
-		}
+		// Derive DP percent/amount from dual editors (static layout; only enabled editor is active)
 		dpUnit := "%"
 		if dpUnitCmb != nil && dpUnitCmb.Text() != "" {
 			dpUnit = dpUnitCmb.Text()
 		}
 		var dpPercent, dpAmount float64
 		if dpUnit == "%" {
-			dpPercent = dpVal
+			val := 0.0
+			if dpValueEd != nil {
+				val = dpValueEd.Value()
+			}
+			dpPercent = val
 			dpAmount = price * (dpPercent / 100.0)
 			dpLock = "percent"
 		} else {
-			dpAmount = dpVal
+			val := 0.0
+			if dpAmountEd != nil {
+				val = dpAmountEd.Value()
+			}
+			dpAmount = val
 			if price > 0 {
 				dpPercent = (dpAmount / price) * 100.0
 			}
@@ -283,20 +289,22 @@ func main() {
 
 		term := parseInt(termEdit)
 
-		// Balloon percent from compact unit switch
-		balloonVal := 0.0
-		if balloonValueEd != nil {
-			balloonVal = balloonValueEd.Value()
-		}
+		// Balloon percent from dual editors
 		balloonSel := "%"
 		if balloonUnitCmb != nil && balloonUnitCmb.Text() != "" {
 			balloonSel = balloonUnitCmb.Text()
 		}
 		balloonPct := 0.0
 		if balloonSel == "%" {
-			balloonPct = balloonVal
+			if balloonValueEd != nil {
+				balloonPct = balloonValueEd.Value()
+			}
 		} else if price > 0 {
-			balloonPct = (balloonVal / price) * 100.0
+			val := 0.0
+			if balloonAmountEd != nil {
+				val = balloonAmountEd.Value()
+			}
+			balloonPct = (val / price) * 100.0
 		}
 
 		nominal := parseFloat(nominalRateEdit)
@@ -620,16 +628,26 @@ func main() {
 				campaignModel.ReplaceRows(rows)
 			}
 
-			// Update Key Metrics Summary and header from selected row
+			// Update Key Metrics Summary and Campaign Details from selected row
 			if selectedCampaignIdx >= 0 && selectedCampaignIdx < len(rows) {
 				sel := rows[selectedCampaignIdx]
-				updateSummaryFromRow(
+				UpdateKeyMetrics(
 					sel,
 					monthlyLbl, headerMonthlyLbl,
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
+					idcTotalLbl, idcDealerLbl, idcOtherLbl,
+					financedLbl,
+					priceEdit, dpUnitCmb, dpValueEd, dpAmountEd,
 					wfCustRateEffLbl, wfCustRateNomLbl,
 					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+					idcOtherEd,
+				)
+				UpdateCampaignDetails(
+					sel,
+					selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCInsValLbl, selIDCMBSPValLbl, selIDCOtherValLbl,
+					priceEdit, dpUnitCmb, dpValueEd, dpAmountEd, termEdit,
+					subsidyBudgetEd, idcOtherEd,
 				)
 				if cashflowTV != nil {
 					refreshCashflowTable(cashflowTV, sel.Cashflows)
@@ -644,26 +662,65 @@ func main() {
 				metaVersionLbl.SetText(enginePS.Version)
 			}
 		}
-		if metaCalcTimeLbl != nil {
-			if ts, ok := result.Metadata["calculation_time_ms"]; ok {
-				metaCalcTimeLbl.SetText(fmt.Sprintf("%v ms", ts))
-			}
-		}
-		// Persist sticky state after compute (non-blocking; ignore error)
+		// Persist sticky state after compute (debounced; ignore error)
 		if s, err := CollectStickyFromUI(
 			product,
 			priceEdit,
-			dpUnitCmb, dpValueEd,
+			dpUnitCmb, func() *walk.NumberEdit {
+				if dpUnitCmb != nil && dpUnitCmb.Text() == "THB" {
+					return dpAmountEd
+				}
+				return dpValueEd
+			}(),
 			termEdit,
 			timing,
-			balloonUnit, balloonUnitCmb, balloonValueEd,
+			balloonUnit, balloonUnitCmb, func() *walk.NumberEdit {
+				if balloonUnitCmb != nil && balloonUnitCmb.Text() == "THB" {
+					return balloonAmountEd
+				}
+				return balloonValueEd
+			}(),
 			rateMode,
 			nominalRateEdit,
 			targetInstallmentEdit,
 			subsidyBudgetEd, idcOtherEd,
 			selectedCampaignIdx,
+			dealState,
 		); err == nil {
-			go func(ss StickyState) { _ = SaveStickyState(ss) }(s)
+			ScheduleStickySave(s)
+		}
+	}
+
+	// Debounced persistence helper: collect current UI and schedule a save
+	queueSave := func() {
+		if creatingUI {
+			return
+		}
+		if s, err := CollectStickyFromUI(
+			product,
+			priceEdit,
+			dpUnitCmb, func() *walk.NumberEdit {
+				if dpUnitCmb != nil && dpUnitCmb.Text() == "THB" {
+					return dpAmountEd
+				}
+				return dpValueEd
+			}(),
+			termEdit,
+			timing,
+			balloonUnit, balloonUnitCmb, func() *walk.NumberEdit {
+				if balloonUnitCmb != nil && balloonUnitCmb.Text() == "THB" {
+					return balloonAmountEd
+				}
+				return balloonValueEd
+			}(),
+			rateMode,
+			nominalRateEdit,
+			targetInstallmentEdit,
+			subsidyBudgetEd, idcOtherEd,
+			selectedCampaignIdx,
+			dealState,
+		); err == nil {
+			ScheduleStickySave(s)
 		}
 	}
 
@@ -692,7 +749,7 @@ func main() {
 								Layout: Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
 									// Basic inputs
-									Label{Text: "Product:"},
+									Label{Text: "Product:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									ComboBox{
 										AssignTo:     &productCB,
 										Model:        []string{"HP", "mySTAR", "Financing Lease", "Operating Lease"},
@@ -704,54 +761,93 @@ func main() {
 												product = "HP"
 											}
 											// Enable Balloon controls only for mySTAR; otherwise reset to 0 and disable
-											if balloonValueEd != nil && balloonUnitCmb != nil {
+											if balloonValueEd != nil && balloonAmountEd != nil && balloonUnitCmb != nil {
 												if product != "mySTAR" {
 													_ = balloonValueEd.SetValue(0)
+													_ = balloonAmountEd.SetValue(0)
 													balloonValueEd.SetEnabled(false)
+													balloonAmountEd.SetEnabled(false)
 													balloonUnitCmb.SetEnabled(false)
 													balloonUnit = "%"
 												} else {
-													balloonValueEd.SetEnabled(true)
+													// Enable only active editor by unit; keep both resident
+													if balloonUnitCmb.Text() == "THB" {
+														balloonValueEd.SetEnabled(false)
+														balloonAmountEd.SetEnabled(true)
+													} else {
+														balloonValueEd.SetEnabled(true)
+														balloonAmountEd.SetEnabled(false)
+													}
 													balloonUnitCmb.SetEnabled(true)
 												}
 											}
 											recalc()
+											queueSave()
 										},
 									},
-									Label{Text: "Price ex tax (THB):"},
+									Label{Text: "Price ex tax (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									LineEdit{
 										AssignTo: &priceEdit,
 										Text:     "1000000",
+										MinSize:  Size{Width: 360},
 										OnEditingFinished: func() {
 											// Reformat with thousand separators on commit
 											v := parseFloat(priceEdit)
 											_ = priceEdit.SetText(FormatWithThousandSep(v, 0))
 											recalc()
+											queueSave()
 										},
 									},
-									Label{Text: "Down payment:"},
+									Label{Text: "Down payment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									Composite{
-										Layout: Grid{Columns: 3, Spacing: 6},
+										// Alignment strategy: fixed label column, fixed input min-width; keep both editors resident and toggle Enabled
+										MinSize: Size{Width: 360},
+										Layout:  Grid{Columns: 4, Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
 										Children: []Widget{
 											NumberEdit{
-												AssignTo: &dpValueEd,
+												AssignTo: &dpValueEd, // percent editor (primary - first input box)
 												Decimals: 2,
 												MinValue: 0,
 												Value:    20,
+												MinSize:  Size{Width: 120},
 												OnValueChanged: func() {
-													// Update suffix label with percent annotation
+													// Keep suffix and THB editor synced from percent
+													price := parseFloat(priceEdit)
+													pct := dpValueEd.Value()
 													if dpShadowLbl != nil {
-														unit := "%"
-														if dpUnitCmb != nil {
-															unit = dpUnitCmb.Text()
-														}
-														pct := dpValueEd.Value()
-														price := parseFloat(priceEdit)
-														if unit == "THB" && price > 0 {
-															pct = RoundTo((dpValueEd.Value()/price)*100.0, 2)
-														}
 														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
 													}
+													if dpAmountEd != nil && price >= 0 {
+														thb := RoundTo(price*(pct/100.0), 0)
+														if math.Abs(dpAmountEd.Value()-thb) > 0.5 {
+															_ = dpAmountEd.SetValue(thb)
+														}
+													}
+													queueSave()
+												},
+											},
+											NumberEdit{
+												AssignTo: &dpAmountEd, // THB editor (secondary)
+												Decimals: 0,
+												MinValue: 0,
+												Value:    0,
+												MinSize:  Size{Width: 120},
+												Enabled:  false, // default unit is percent
+												OnValueChanged: func() {
+													// Keep suffix and percent editor synced from THB
+													price := parseFloat(priceEdit)
+													thb := dpAmountEd.Value()
+													pct := 0.0
+													if price > 0 {
+														pct = RoundTo((thb/price)*100.0, 2)
+													}
+													if dpShadowLbl != nil {
+														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
+													}
+													if dpValueEd != nil && math.Abs(dpValueEd.Value()-pct) > 1e-6 {
+														_ = dpValueEd.SetValue(pct)
+													}
+													queueSave()
 												},
 											},
 											ComboBox{
@@ -761,38 +857,37 @@ func main() {
 												MaxSize:      Size{Width: 64},
 												OnCurrentIndexChanged: func() {
 													price := parseFloat(priceEdit)
-													if dpValueEd == nil || dpUnitCmb == nil {
+													if dpValueEd == nil || dpAmountEd == nil || dpUnitCmb == nil {
 														return
 													}
 													newUnit := dpUnitCmb.Text()
 													if newUnit == "%" && dpLock != "percent" {
-														// THB -> %
-														thb := dpValueEd.Value()
+														// THB -> % (compute and switch enable)
+														thb := dpAmountEd.Value()
 														pct := 0.0
 														if price > 0 {
 															pct = RoundTo((thb/price)*100.0, 2)
 														}
-														_ = dpValueEd.SetDecimals(2)
 														_ = dpValueEd.SetValue(pct)
+														dpValueEd.SetEnabled(true)
+														dpAmountEd.SetEnabled(false)
 														dpLock = "percent"
 													} else if newUnit == "THB" && dpLock != "amount" {
 														// % -> THB
 														pct := dpValueEd.Value()
 														thb := RoundTo(price*(pct/100.0), 0)
-														_ = dpValueEd.SetDecimals(0)
-														_ = dpValueEd.SetValue(thb)
+														_ = dpAmountEd.SetValue(thb)
+														dpValueEd.SetEnabled(false)
+														dpAmountEd.SetEnabled(true)
 														dpLock = "amount"
 													}
 													// Refresh suffix text
 													if dpShadowLbl != nil {
-														pval := dpValueEd.Value()
-														pct := pval
-														if newUnit == "THB" && price > 0 {
-															pct = RoundTo((pval/price)*100.0, 2)
-														}
-														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
+														pval := dpValueEd.Value() // always reflect percent
+														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pval))
 													}
 													recalc()
+													queueSave()
 												},
 											},
 											Label{
@@ -802,48 +897,79 @@ func main() {
 											},
 										},
 									},
-									// placeholders to keep grid alignment where old fields were removed
-									Label{Text: ""}, Label{Text: ""},
-									Label{Text: ""}, Label{Text: ""},
-									Label{Text: "Term (months):"},
+									// removed legacy alignment placeholders
+									// removed legacy alignment placeholders
+									// removed legacy alignment placeholders
+									Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									LineEdit{
-										AssignTo:          &termEdit,
-										Text:              "36",
-										OnEditingFinished: recalc,
+										AssignTo: &termEdit,
+										Text:     "36",
+										MinSize:  Size{Width: 360},
+										OnEditingFinished: func() {
+											recalc()
+											queueSave()
+										},
 									},
-									Label{Text: "Timing:"},
+									Label{Text: "Timing:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									ComboBox{
 										AssignTo:     &timingCB,
 										Model:        []string{"arrears", "advance"},
 										CurrentIndex: 0,
+										MinSize:      Size{Width: 360},
 										OnCurrentIndexChanged: func() {
 											timing = timingCB.Text()
 											recalc()
+											queueSave()
 										},
 									},
-									Label{Text: "Balloon:"},
+									Label{Text: "Balloon:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									Composite{
-										Layout: Grid{Columns: 3, Spacing: 6},
+										MinSize: Size{Width: 360},
+										Layout:  Grid{Columns: 4, Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
 										Children: []Widget{
 											NumberEdit{
-												AssignTo: &balloonValueEd,
+												AssignTo: &balloonValueEd, // percent editor (primary - first input box)
 												Decimals: 2,
 												MinValue: 0,
 												Value:    0,
+												MinSize:  Size{Width: 120},
 												OnValueChanged: func() {
-													// Update suffix label "(xx% Balloon)"
+													// Update suffix and sync THB
+													price := parseFloat(priceEdit)
+													pct := balloonValueEd.Value()
 													if balloonShadowLbl != nil {
-														unit := "%"
-														if balloonUnitCmb != nil {
-															unit = balloonUnitCmb.Text()
-														}
-														pct := balloonValueEd.Value()
-														price := parseFloat(priceEdit)
-														if unit == "THB" && price > 0 {
-															pct = RoundTo((balloonValueEd.Value()/price)*100.0, 2)
-														}
 														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
 													}
+													if balloonAmountEd != nil && price >= 0 {
+														thb := RoundTo(price*(pct/100.0), 0)
+														if math.Abs(balloonAmountEd.Value()-thb) > 0.5 {
+															_ = balloonAmountEd.SetValue(thb)
+														}
+													}
+													queueSave()
+												},
+											},
+											NumberEdit{
+												AssignTo: &balloonAmountEd, // THB editor
+												Decimals: 0,
+												MinValue: 0,
+												Value:    0,
+												MinSize:  Size{Width: 120},
+												Enabled:  false,
+												OnValueChanged: func() {
+													price := parseFloat(priceEdit)
+													thb := balloonAmountEd.Value()
+													pct := 0.0
+													if price > 0 {
+														pct = RoundTo((thb/price)*100.0, 2)
+													}
+													if balloonShadowLbl != nil {
+														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
+													}
+													if balloonValueEd != nil && math.Abs(balloonValueEd.Value()-pct) > 1e-6 {
+														_ = balloonValueEd.SetValue(pct)
+													}
+													queueSave()
 												},
 											},
 											ComboBox{
@@ -853,38 +979,37 @@ func main() {
 												MaxSize:      Size{Width: 64},
 												OnCurrentIndexChanged: func() {
 													price := parseFloat(priceEdit)
-													if balloonValueEd == nil || balloonUnitCmb == nil {
+													if balloonValueEd == nil || balloonAmountEd == nil || balloonUnitCmb == nil {
 														return
 													}
 													newUnit := balloonUnitCmb.Text()
 													if newUnit == "%" && balloonUnit != "%" {
 														// THB -> %
-														thb := balloonValueEd.Value()
+														thb := balloonAmountEd.Value()
 														pct := 0.0
 														if price > 0 {
 															pct = RoundTo((thb/price)*100.0, 2)
 														}
-														_ = balloonValueEd.SetDecimals(2)
 														_ = balloonValueEd.SetValue(pct)
+														balloonValueEd.SetEnabled(true)
+														balloonAmountEd.SetEnabled(false)
 														balloonUnit = "%"
 													} else if newUnit == "THB" && balloonUnit != "THB" {
 														// % -> THB
 														pct := balloonValueEd.Value()
 														thb := RoundTo(price*(pct/100.0), 0)
-														_ = balloonValueEd.SetDecimals(0)
-														_ = balloonValueEd.SetValue(thb)
+														_ = balloonAmountEd.SetValue(thb)
+														balloonValueEd.SetEnabled(false)
+														balloonAmountEd.SetEnabled(true)
 														balloonUnit = "THB"
 													}
-													// Refresh suffix
+													// Refresh suffix (percent)
 													if balloonShadowLbl != nil {
-														val := balloonValueEd.Value()
-														pct := val
-														if newUnit == "THB" && price > 0 {
-															pct = RoundTo((val/price)*100.0, 2)
-														}
-														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
+														p := balloonValueEd.Value()
+														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", p))
 													}
 													recalc()
+													queueSave()
 												},
 											},
 											Label{
@@ -896,9 +1021,10 @@ func main() {
 									},
 
 									// Integrated Rate Mode controls
-									Label{Text: "Rate mode:"},
+									Label{Text: "Rate mode:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									Composite{
-										Layout: HBox{Spacing: 6},
+										MinSize: Size{Width: 360},
+										Layout:  HBox{Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
 										Children: []Widget{
 											RadioButton{
 												AssignTo: &fixedRateRB,
@@ -912,6 +1038,7 @@ func main() {
 														targetInstallmentEdit.SetEnabled(false)
 													}
 													recalc()
+													queueSave()
 												},
 											},
 											RadioButton{
@@ -926,67 +1053,80 @@ func main() {
 														targetInstallmentEdit.SetEnabled(true)
 													}
 													recalc()
+													queueSave()
 												},
 											},
 										},
 									},
-									Label{Text: "Customer rate (% p.a.):"},
+									Label{Text: "Customer rate (% p.a.):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									LineEdit{
-										AssignTo:          &nominalRateEdit,
-										Text:              "3.99",
-										OnEditingFinished: recalc,
+										AssignTo: &nominalRateEdit,
+										Text:     "3.99",
+										MinSize:  Size{Width: 360},
+										OnEditingFinished: func() {
+											recalc()
+											queueSave()
+										},
 									},
-									Label{Text: "Target installment (THB):"},
+									Label{Text: "Target installment (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									LineEdit{
 										AssignTo: &targetInstallmentEdit,
 										Text:     "0",
+										MinSize:  Size{Width: 360},
 										OnEditingFinished: func() {
 											v := parseFloat(targetInstallmentEdit)
 											_ = targetInstallmentEdit.SetText(FormatWithThousandSep(v, 0))
 											recalc()
+											queueSave()
 										},
 									},
 
 									// Product Subsidy (moved under Deal Inputs)
-									Label{Text: "Subsidy budget (THB):"},
+									Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									NumberEdit{
 										AssignTo: &subsidyBudgetEd,
 										Decimals: 0,
 										MinValue: 0,
 										Value:    0,
+										MinSize:  Size{Width: 360},
 
 										ToolTipText: "Budget available for subsidies (placeholder)",
 										OnValueChanged: func() {
 											// Recompute grid metrics when subsidy budget changes
 											recalc()
+											queueSave()
 										},
 									},
 									// Commission input presentation (label+value control consistent with others)
-									Label{Text: "IDCs — Commissions:"},
+									Label{Text: "IDCs — Commissions:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									PushButton{
 										AssignTo:    &dealerCommissionPill,
 										Text:        "auto",
 										Enabled:     true,
+										MinSize:     Size{Width: 360},
 										ToolTipText: "Auto-calculated from product policy; click to override or reset",
 										OnClicked: func() {
 											// Open editor; if accepted, trigger recompute
 											if editDealerCommission(mw, &dealState) {
 												recalc()
+												queueSave()
 											}
 										},
 									},
-									Label{Text: "IDCs - Other (THB):"},
+									Label{Text: "IDCs - Other (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									NumberEdit{
 										AssignTo: &idcOtherEd,
 										Decimals: 0,
 										MinValue: 0,
 										Value:    0,
+										MinSize:  Size{Width: 360},
 
 										OnValueChanged: func() {
 											// Mark user-edited and recalc to refresh IDC totals and grid
 											dealState.IDCOther.Value = idcOtherEd.Value()
 											dealState.IDCOther.UserEdited = true
 											recalc()
+											queueSave()
 										},
 									},
 
@@ -1000,6 +1140,7 @@ func main() {
 								OnClicked: func() {
 									computeMode = "explicit"
 									recalc()
+									queueSave()
 									computeMode = "implicit"
 								},
 							},
@@ -1031,108 +1172,147 @@ func main() {
 										},
 									},
 									// Summary
-									GroupBox{
-										Title:  "Key Metrics & Summary",
-										Layout: Grid{Columns: 2, Spacing: 6},
+									Composite{
+										Layout: Grid{Columns: 2, Spacing: 8, MarginsZero: true},
 										Children: []Widget{
-											Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
-											Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
-											Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
-											Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
-											Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
-											Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
-											Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
-											Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
-											// Profitability Details (toggle)
+											// Left half: Campaign Details (4-column grid)
 											GroupBox{
-												Title:  "Profitability Details",
-												Layout: Grid{Columns: 2, Spacing: 6},
+												Title: "Campaign Details",
+												Row:   0, Column: 0,
+												Layout: Grid{Columns: 4, Spacing: 6},
 												Children: []Widget{
-													PushButton{
-														AssignTo:   &detailsTogglePB,
-														Text:       "Details ▼",
-														ColumnSpan: 2,
-														OnClicked: func() {
-															if wfPanel != nil {
-																vis := wfPanel.Visible()
-																wfPanel.SetVisible(!vis)
-																if detailsTogglePB != nil {
-																	if vis {
-																		detailsTogglePB.SetText("Details ▼")
-																	} else {
-																		detailsTogglePB.SetText("Details ▲")
-																	}
-																}
-															}
-														},
-													},
-													Composite{
-														AssignTo:   &wfPanel,
-														Visible:    false,
-														ColumnSpan: 2,
-														Layout:     Grid{Columns: 3, Spacing: 6},
-														Children: []Widget{
-															// Header row
-															Label{Text: ""}, Label{Text: "Effective"}, Label{Text: "Nominal"},
-															// Customer Rate
-															Label{Text: "Customer Rate in %:"},
-															Label{AssignTo: &wfCustRateEffLbl, Text: "—"},
-															Label{AssignTo: &wfCustRateNomLbl, Text: "—"},
-															// Subsidy Upfront (income) %
-															Label{Text: "+ Subsidy Upfront (income) %:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfSubUpLbl, Text: "—"},
-															// IDC Upfront (cost) %
-															Label{Text: "− IDC Upfront (cost) %:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfIDCUpLbl, Text: "—"},
-															// Deal IRR
-															Label{Text: "= Deal Rate (IRR):"},
-															Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
-															Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
-															// Cost of Debt
-															Label{Text: "− Cost of Debt (matched):"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfCostDebtLbl, Text: "—"},
-															// Gross Interest Margin
-															Label{Text: "= Gross Interest Margin:"},
-															Label{AssignTo: &wfGIMEffLbl, Text: "—"},
-															Label{AssignTo: &wfGIMLbl, Text: "—"},
-															// Capital Advantage
-															Label{Text: "+ Capital Advantage:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfCapAdvLbl, Text: "—"},
-															// Net Interest Margin
-															Label{Text: "= Net Interest Margin:"},
-															Label{AssignTo: &wfNIMEffLbl, Text: "—"},
-															Label{AssignTo: &wfNIMLbl, Text: "—"},
-															// Cost of Credit Risk
-															Label{Text: "− Cost of Credit Risk:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfRiskLbl, Text: "—"},
-															// OPEX
-															Label{Text: "− OPEX:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfOpexLbl, Text: "—"},
-															// Net EBIT Margin (remove periodic IDC line per HQ UI spec)
-															Label{Text: "= Net EBIT Margin:"},
-															Label{AssignTo: &wfNetEbitEffLbl, Text: "—"},
-															Label{AssignTo: &wfNetEbitLbl, Text: "—"},
-															// Economic Capital
-															Label{Text: "/ Economic Capital:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfEconCapLbl, Text: "—"},
-															// Acquisition RoRAC
-															Label{Text: "= Acquisition RoRAC:"},
-															Label{Text: "—"},
-															Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
-														},
-													},
+													// Row 1
+													Label{Text: "Campaign Name:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selCampNameValLbl, Text: "-"},
+													Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selTermValLbl, Text: "-"},
+													// Row 2
+													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selFinancedValLbl, Text: "-"},
+													Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyBudgetValLbl, Text: "-"},
+													// Row 3
+													Label{Text: "Subsidy utilized (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyUsedValLbl, Text: "-"},
+													Label{Text: "Subsidy remaining (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyRemainValLbl, Text: "-"},
+													// Row 4
+													Label{Text: "Dealer Commissions Paid (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCDealerValLbl, Text: "-"},
+													Label{Text: "IDCs - Others (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCOtherValLbl, Text: "-"},
+													// Row 5
+													Label{Text: "IDC - Free Insurance (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCInsValLbl, Text: "THB 0"},
+													Label{Text: "IDC - Free MBSP (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCMBSPValLbl, Text: "THB 0"},
 												},
 											},
-											Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
-											Label{Text: "Calc Time:"}, Label{AssignTo: &metaCalcTimeLbl, Text: "-"},
-											PushButton{
+
+											// Right half: Key Metrics Summary in 4-column grid
+											GroupBox{
+												Title: "Key Metrics Summary",
+												Row:   0, Column: 1,
+												Layout: Grid{Columns: 4, Spacing: 6},
+												Children: []Widget{
+													// Row 1
+													Label{Text: "Monthly Installment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &monthlyLbl, Text: "-"},
+													Label{Text: "Nominal Customer Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custNominalLbl, Text: "-"},
+													// Row 2
+													Label{Text: "Effective Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custEffLbl, Text: "-"},
+													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &financedLbl, Text: "-"},
+													// Row 3
+													Label{Text: "Acquisition RoRAC:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &roracLbl, Text: "-"},
+													Label{Text: "IDC Total:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcTotalLbl, Text: "-"},
+													// Row 4
+													Label{Text: "IDC - Dealer Comm.:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcDealerLbl, Text: "-"},
+													Label{Text: "IDC - Other:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcOtherLbl, Text: "-"},
+													// Profitability Details (toggle) spanning all 4 columns
+													GroupBox{
+														Title:      "Profitability Details",
+														ColumnSpan: 4,
+														Layout:     Grid{Columns: 2, Spacing: 6},
+														Children: []Widget{
+															PushButton{
+																AssignTo:   &detailsTogglePB,
+																Text:       "Details ▼",
+																ColumnSpan: 2,
+																OnClicked: func() {
+																	if wfPanel != nil {
+																		vis := wfPanel.Visible()
+																		wfPanel.SetVisible(!vis)
+																		if detailsTogglePB != nil {
+																			if vis {
+																				detailsTogglePB.SetText("Details ▼")
+																			} else {
+																				detailsTogglePB.SetText("Details ▲")
+																			}
+																		}
+																	}
+																},
+															},
+															Composite{
+																AssignTo:   &wfPanel,
+																Visible:    false,
+																ColumnSpan: 2,
+																Layout:     Grid{Columns: 3, Spacing: 6},
+																Children: []Widget{
+																	// Header row
+																	Label{Text: ""}, Label{Text: "Effective"}, Label{Text: "Nominal"},
+																	// Customer Rate
+																	Label{Text: "Customer Rate in %:"},
+																	Label{AssignTo: &wfCustRateEffLbl, Text: "—"},
+																	Label{AssignTo: &wfCustRateNomLbl, Text: "—"},
+																	// Subsidy Upfront (income) %
+																	Label{Text: "+ Subsidy Upfront (income) %:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfSubUpLbl, Text: "—"},
+																	// IDC Upfront (cost) %
+																	Label{Text: "− IDC Upfront (cost) %:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfIDCUpLbl, Text: "—"},
+																	// Deal IRR
+																	Label{Text: "= Deal Rate (IRR):"},
+																	Label{AssignTo: &wfDealIRREffLbl, Text: "—"},
+																	Label{AssignTo: &wfDealIRRNomLbl, Text: "—"},
+																	// Cost of Debt
+																	Label{Text: "− Cost of Debt (matched):"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfCostDebtLbl, Text: "—"},
+																	// Gross Interest Margin
+																	Label{Text: "= Gross Interest Margin:"},
+																	Label{AssignTo: &wfGIMEffLbl, Text: "—"},
+																	Label{AssignTo: &wfGIMLbl, Text: "—"},
+																	// Capital Advantage
+																	Label{Text: "+ Capital Advantage:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfCapAdvLbl, Text: "—"},
+																	// Net Interest Margin
+																	Label{Text: "= Net Interest Margin:"},
+																	Label{AssignTo: &wfNIMEffLbl, Text: "—"},
+																	Label{AssignTo: &wfNIMLbl, Text: "—"},
+																	// Cost of Credit Risk
+																	Label{Text: "− Cost of Credit Risk:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfRiskLbl, Text: "—"},
+																	// OPEX
+																	Label{Text: "− OPEX:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfOpexLbl, Text: "—"},
+																	// Net EBIT Margin (remove periodic IDC line per HQ UI spec)
+																	Label{Text: "= Net EBIT Margin:"},
+																	Label{AssignTo: &wfNetEbitEffLbl, Text: "—"},
+																	Label{AssignTo: &wfNetEbitLbl, Text: "—"},
+																	// Economic Capital
+																	Label{Text: "/ Economic Capital:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfEconCapLbl, Text: "—"},
+																	// Acquisition RoRAC
+																	Label{Text: "= Acquisition RoRAC:"},
+																	Label{Text: "—"},
+																	Label{AssignTo: &wfAcqRoRacDetailLbl, Text: "—"},
+																},
+															},
+														},
+													},
+													// Row 5: Parameter Version at the very bottom (last row)
+													Label{Text: "Parameter Version:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &metaVersionLbl, Text: "-"},
+													Label{Text: ""}, Label{Text: ""},
+												},
+											},
+
+											// Export XLSX full-width under both boxes
+											PushButton{Row: 1, Column: 0,
 												ColumnSpan: 2,
 												Text:       "Export XLSX",
 												OnClicked: func() {
@@ -1144,12 +1324,14 @@ func main() {
 														summary["Product"] = product
 													}
 													summary["Price ex tax (THB)"] = FormatWithThousandSep(parseFloat(priceEdit), 0)
-													if dpUnitCmb != nil && dpValueEd != nil {
+													if dpUnitCmb != nil {
 														unit := dpUnitCmb.Text()
-														val := dpValueEd.Value()
-														if unit == "THB" {
+														val := 0.0
+														if unit == "THB" && dpAmountEd != nil {
+															val = dpAmountEd.Value()
 															summary["Down payment"] = "THB " + FormatWithThousandSep(val, 0)
-														} else {
+														} else if dpValueEd != nil {
+															val = dpValueEd.Value()
 															summary["Down payment"] = FormatWithThousandSep(val, 2) + " percent"
 														}
 													}
@@ -1159,12 +1341,13 @@ func main() {
 													} else {
 														summary["Timing"] = timing
 													}
-													if balloonUnitCmb != nil && balloonValueEd != nil {
+													if balloonUnitCmb != nil {
 														bu := balloonUnitCmb.Text()
-														bv := balloonValueEd.Value()
-														if bu == "THB" {
+														if bu == "THB" && balloonAmountEd != nil {
+															bv := balloonAmountEd.Value()
 															summary["Balloon"] = "THB " + FormatWithThousandSep(bv, 0)
-														} else {
+														} else if balloonValueEd != nil {
+															bv := balloonValueEd.Value()
 															summary["Balloon"] = FormatWithThousandSep(bv, 2) + " percent"
 														}
 													}
@@ -1304,60 +1487,131 @@ func main() {
 					display = "Operating Lease"
 				}
 				_ = productCB.SetText(display)
+				// Apply product gating early before other fields to keep Balloon UI consistent
+				if balloonValueEd != nil && balloonAmountEd != nil && balloonUnitCmb != nil {
+					if product != "mySTAR" {
+						balloonValueEd.SetEnabled(false)
+						balloonAmountEd.SetEnabled(false)
+						balloonUnitCmb.SetEnabled(false)
+					} else {
+						if balloonUnitCmb.Text() == "THB" {
+							balloonValueEd.SetEnabled(false)
+							balloonAmountEd.SetEnabled(true)
+						} else {
+							balloonValueEd.SetEnabled(true)
+							balloonAmountEd.SetEnabled(false)
+						}
+						balloonUnitCmb.SetEnabled(true)
+					}
+				}
 			}
 			// Price
 			if priceEdit != nil {
 				_ = priceEdit.SetText(FormatWithThousandSep(s.Price, 0))
 			}
-			// DP unit + value
+			// DP unit + value (both editors resident; toggle Enabled)
 			if dpUnitCmb != nil {
 				_ = dpUnitCmb.SetText(s.DPUnit)
 			}
-			if dpValueEd != nil {
+			if dpValueEd != nil && dpAmountEd != nil {
+				price := parseFloat(priceEdit)
 				if s.DPUnit == "THB" {
-					_ = dpValueEd.SetDecimals(0)
+					_ = dpAmountEd.SetDecimals(0)
+					_ = dpAmountEd.SetValue(s.DPValue)
+					// derive %
+					pct := 0.0
+					if price > 0 {
+						pct = RoundTo((s.DPValue/price)*100.0, 2)
+					}
+					_ = dpValueEd.SetDecimals(2)
+					_ = dpValueEd.SetValue(pct)
+					dpValueEd.SetEnabled(false)
+					dpAmountEd.SetEnabled(true)
 					dpLock = "amount"
 				} else {
 					_ = dpValueEd.SetDecimals(2)
+					_ = dpValueEd.SetValue(s.DPValue)
+					// derive THB
+					thb := RoundTo(price*(s.DPValue/100.0), 0)
+					_ = dpAmountEd.SetDecimals(0)
+					_ = dpAmountEd.SetValue(thb)
+					dpValueEd.SetEnabled(true)
+					dpAmountEd.SetEnabled(false)
 					dpLock = "percent"
 				}
-				dpValueEd.SetValue(s.DPValue)
+			}
+			// Refresh DP suffix label to mirror current percent
+			if dpShadowLbl != nil && dpValueEd != nil {
+				dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", dpValueEd.Value()))
 			}
 			// Term
 			if termEdit != nil {
 				_ = termEdit.SetText(fmt.Sprintf("%d", s.Term))
 			}
-			// Timing
+			// Timing (default to arrears)
 			timing = s.Timing
+			if strings.TrimSpace(timing) == "" {
+				timing = "arrears"
+			}
 			if timingCB != nil {
-				_ = timingCB.SetText(s.Timing)
+				_ = timingCB.SetText(timing)
 			}
 			// Balloon unit + value and enabling based on product
 			balloonUnit = s.BalloonUnit
-			if balloonUnitCmb != nil {
-				_ = balloonUnitCmb.SetText(s.BalloonUnit)
+			if strings.TrimSpace(balloonUnit) == "" {
+				balloonUnit = "%"
 			}
-			if balloonValueEd != nil {
+			if balloonUnitCmb != nil {
+				_ = balloonUnitCmb.SetText(balloonUnit)
+			}
+			if balloonValueEd != nil && balloonAmountEd != nil {
+				price := parseFloat(priceEdit)
 				if s.BalloonUnit == "THB" {
-					_ = balloonValueEd.SetDecimals(0)
+					_ = balloonAmountEd.SetDecimals(0)
+					_ = balloonAmountEd.SetValue(s.BalloonValue)
+					// derive %
+					pct := 0.0
+					if price > 0 {
+						pct = RoundTo((s.BalloonValue/price)*100.0, 2)
+					}
+					_ = balloonValueEd.SetDecimals(2)
+					_ = balloonValueEd.SetValue(pct)
 				} else {
 					_ = balloonValueEd.SetDecimals(2)
+					_ = balloonValueEd.SetValue(s.BalloonValue)
+					// derive THB
+					thb := RoundTo(price*(s.BalloonValue/100.0), 0)
+					_ = balloonAmountEd.SetDecimals(0)
+					_ = balloonAmountEd.SetValue(thb)
 				}
-				balloonValueEd.SetValue(s.BalloonValue)
 				if product != "mySTAR" {
 					balloonValueEd.SetEnabled(false)
+					balloonAmountEd.SetEnabled(false)
 					if balloonUnitCmb != nil {
 						balloonUnitCmb.SetEnabled(false)
 					}
 				} else {
-					balloonValueEd.SetEnabled(true)
+					if s.BalloonUnit == "THB" {
+						balloonValueEd.SetEnabled(false)
+						balloonAmountEd.SetEnabled(true)
+					} else {
+						balloonValueEd.SetEnabled(true)
+						balloonAmountEd.SetEnabled(false)
+					}
 					if balloonUnitCmb != nil {
 						balloonUnitCmb.SetEnabled(true)
 					}
 				}
 			}
-			// Rate mode + values
+			// Refresh Balloon suffix label to mirror current percent
+			if balloonShadowLbl != nil && balloonValueEd != nil {
+				balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", balloonValueEd.Value()))
+			}
+			// Rate mode + values (default to fixed_rate)
 			rateMode = s.RateMode
+			if strings.TrimSpace(rateMode) == "" {
+				rateMode = "fixed_rate"
+			}
 			if fixedRateRB != nil && targetInstallmentRB != nil {
 				if s.RateMode == "fixed_rate" {
 					fixedRateRB.SetChecked(true)
@@ -1390,8 +1644,30 @@ func main() {
 				dealState.IDCOther.Value = s.IDCOtherTHB
 				dealState.IDCOther.UserEdited = s.IDCOtherTHB > 0
 			}
-			// Selected campaign index
+			// Restore Dealer Commission (UI) from persisted IDCCommission* fields
+			if s.IDCCommissionMode != "" {
+				if strings.ToUpper(s.IDCCommissionMode) == "MANUAL" {
+					dealState.DealerCommission.Mode = types.DealerCommissionModeOverride
+					dealState.DealerCommission.Amt = nil
+					dealState.DealerCommission.Pct = nil
+					if s.IDCCommissionTHB > 0 {
+						v := s.IDCCommissionTHB
+						dealState.DealerCommission.Amt = &v
+					} else if s.IDCCommissionPercent > 0 {
+						p := s.IDCCommissionPercent / 100.0
+						dealState.DealerCommission.Pct = &p
+					}
+				} else {
+					dealState.DealerCommission.Mode = types.DealerCommissionModeAuto
+					dealState.DealerCommission.Amt = nil
+					dealState.DealerCommission.Pct = nil
+				}
+			}
+			// Selected campaign index (prefer v2 pointer if provided)
 			selectedCampaignIdx = s.SelectedCampaignIx
+			if s.SelectedCampaignIndex != nil {
+				selectedCampaignIdx = *s.SelectedCampaignIndex
+			}
 		}
 
 		// Tab change: auto refresh cashflow from selection
@@ -1414,6 +1690,10 @@ func main() {
 				logger.Printf("warn: campaign table model set failed: %v", err)
 			}
 			campaignTV.SetMultiSelection(false)
+			// Optionally restore previously selected campaign row if valid
+			if selectedCampaignIdx >= 0 && selectedCampaignIdx < campaignModel.RowCount() {
+				_ = campaignTV.SetCurrentIndex(selectedCampaignIdx)
+			}
 
 			// Selection behavior: update summary/details and cashflow from selected row; do not mutate inputs
 			campaignTV.CurrentIndexChanged().Attach(func() {
@@ -1427,6 +1707,7 @@ func main() {
 
 				// Update persistent selected index
 				selectedCampaignIdx = idx
+				queueSave()
 
 				// Reflect "radio dot" selection
 				for i := range campaignModel.rows {
@@ -1436,13 +1717,25 @@ func main() {
 
 				// Update summary and Profitability Details from the row's snapshot
 				row := campaignModel.rows[idx]
-				updateSummaryFromRow(
+				UpdateKeyMetrics(
 					row,
 					monthlyLbl, headerMonthlyLbl,
 					custNominalLbl, custEffLbl,
 					roracLbl, headerRoRacLbl,
+					idcTotalLbl, idcDealerLbl, idcOtherLbl,
+					financedLbl,
+					priceEdit, dpUnitCmb, dpValueEd, dpAmountEd,
 					wfCustRateEffLbl, wfCustRateNomLbl,
 					wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl /* removed wfIDCPeLbl */, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+					idcOtherEd,
+				)
+
+				// Update Campaign Details
+				UpdateCampaignDetails(
+					row,
+					selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCInsValLbl, selIDCMBSPValLbl, selIDCOtherValLbl,
+					priceEdit, dpUnitCmb, dpValueEd, dpAmountEd, termEdit,
+					subsidyBudgetEd, idcOtherEd,
 				)
 
 				// If Cashflow tab is active, refresh from the selected row
@@ -1492,17 +1785,28 @@ func main() {
 		if s, err := CollectStickyFromUI(
 			product,
 			priceEdit,
-			dpUnitCmb, dpValueEd,
+			dpUnitCmb, func() *walk.NumberEdit {
+				if dpUnitCmb != nil && dpUnitCmb.Text() == "THB" {
+					return dpAmountEd
+				}
+				return dpValueEd
+			}(),
 			termEdit,
 			timing,
-			balloonUnit, balloonUnitCmb, balloonValueEd,
+			balloonUnit, balloonUnitCmb, func() *walk.NumberEdit {
+				if balloonUnitCmb != nil && balloonUnitCmb.Text() == "THB" {
+					return balloonAmountEd
+				}
+				return balloonValueEd
+			}(),
 			rateMode,
 			nominalRateEdit,
 			targetInstallmentEdit,
 			subsidyBudgetEd, idcOtherEd,
 			selectedCampaignIdx,
+			dealState,
 		); err == nil {
-			_ = SaveStickyState(s)
+			FlushStickySave(s)
 		}
 	})
 
@@ -1983,6 +2287,66 @@ func updateResultsUI(
 	}
 	if headerRoRacLbl != nil {
 		headerRoRacLbl.SetText(fmt.Sprintf("%.2f%%", q.Profitability.AcquisitionRoRAC.Mul(types.NewDecimal(100)).InexactFloat64()))
+	}
+}
+
+// updateSelectedDetailsFromRow sets the left-panel details based on selected row and current inputs.
+func updateSelectedDetailsFromRow(
+	row CampaignRow,
+	selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyValLbl, selIDCDealerValLbl, selIDCInsValLbl, selIDCMBSPValLbl *walk.Label,
+	priceEdit *walk.LineEdit, dpUnitCmb *walk.ComboBox, dpValueEd, dpAmountEd *walk.NumberEdit, termEdit *walk.LineEdit,
+) {
+	// Campaign name
+	if selCampNameValLbl != nil {
+		selCampNameValLbl.SetText(row.Name)
+	}
+	// Term (months)
+	term := parseInt(termEdit)
+	if selTermValLbl != nil {
+		selTermValLbl.SetText(fmt.Sprintf("%d", term))
+	}
+	// Financed Amount (same logic as Key Metrics)
+	price := parseFloat(priceEdit)
+	dpAmt := 0.0
+	if dpUnitCmb != nil && dpUnitCmb.Text() == "THB" && dpAmountEd != nil {
+		dpAmt = dpAmountEd.Value()
+	} else if dpValueEd != nil {
+		dpAmt = RoundTo(price*(dpValueEd.Value()/100.0), 0)
+	}
+	financed := price - dpAmt
+	if financed < 0 {
+		financed = 0
+	}
+	if selFinancedValLbl != nil {
+		selFinancedValLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(financed)))
+	}
+	// Subsidy utilized (THB): parse from "THB X / ..." or default 0
+	subsidyUsed := 0.0
+	s := strings.TrimSpace(row.SubsidyRorac)
+	if strings.HasPrefix(s, "THB ") {
+		rest := strings.TrimPrefix(s, "THB ")
+		// cut at slash if present
+		if i := strings.Index(rest, "/"); i >= 0 {
+			rest = strings.TrimSpace(rest[:i])
+		}
+		rest = strings.ReplaceAll(rest, ",", "")
+		if v, err := strconv.ParseFloat(rest, 64); err == nil {
+			subsidyUsed = v
+		}
+	}
+	if selSubsidyValLbl != nil {
+		selSubsidyValLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(subsidyUsed)))
+	}
+	// Dealer commissions paid (THB)
+	if selIDCDealerValLbl != nil {
+		selIDCDealerValLbl.SetText(fmt.Sprintf("THB %s", FormatTHB(row.IDCDealerTHB)))
+	}
+	// Other IDC breakdown currently unavailable -> 0
+	if selIDCInsValLbl != nil {
+		selIDCInsValLbl.SetText("THB 0")
+	}
+	if selIDCMBSPValLbl != nil {
+		selIDCMBSPValLbl.SetText("THB 0")
 	}
 }
 
