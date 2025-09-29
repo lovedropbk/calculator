@@ -1124,3 +1124,33 @@ main.main()
 2025/09/26 12:26:42.748599 compute ok: version=2025-09-sample installment=THB 35,919 rorac=45.04%
 2025/09/26 12:26:49.589791 compute ok: version=2025-09-sample installment=THB 35,919 rorac=45.04%
 2025/09/26 12:26:55.147256 compute ok: version=2025-09-sample installment=THB 35,919 rorac=45.04%
+2025/09/29 13:03:47.420093 startup: begin
+2025/09/29 13:03:47.422389 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 13:03:47.422389 step: InitCommonControlsEx begin
+2025/09/29 13:03:47.436786 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/29 13:03:47.438892 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 13:03:47.438892 step: MainWindow.Create begin
+2025/09/29 13:03:47.870025 step: MainWindow.Create end; duration=431.1317ms
+2025/09/29 13:03:47.870025 step: mw.Run begin
+2025/09/29 13:03:48.249496 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:03:48.249496 post-create: window initialized; awaiting user input
+2025/09/29 13:04:04.260918 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:07.667521 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:13.771768 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:15.647721 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:28.173535 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:30.726241 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:04:35.185394 compute skipped: invalid inputs: price must be positive
+2025/09/29 13:09:25.172392 step: mw.Run end; duration=5m37.3011271s
+2025/09/29 13:09:25.172899 shutdown: normal exit
+2025/09/29 14:10:12.956027 startup: begin
+2025/09/29 14:10:12.957575 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 14:10:12.957575 step: InitCommonControlsEx begin
+2025/09/29 14:10:12.967236 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/29 14:10:12.981440 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 14:10:12.981440 step: MainWindow.Create begin
+2025/09/29 14:10:13.843436 step: MainWindow.Create end; duration=861.9938ms
+2025/09/29 14:10:13.843436 step: mw.Run begin
+2025/09/29 14:10:14.699757 compute skipped: invalid inputs: price must be positive
+2025/09/29 14:10:14.709678 post-create: window initialized; awaiting user input
+2025/09/29 14:10:24.255400 compute skipped: invalid inputs: price must be positive
