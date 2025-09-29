@@ -43,3 +43,48 @@ github.com/lxn/walk/declarative.MainWindow.Create({{{0x0, 0x0}, {0x0, 0x0}, {0x0
 	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/declarative/mainwindow.go:64 +0xee
 main.main()
 	C:/Users/PATKRAN/Python/07_controlling/financial_calculator/walk/cmd/fc-walk/main.go:1354 +0x87fd
+2025/09/29 15:09:02.724044 startup: begin
+2025/09/29 15:09:02.726878 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 15:09:02.726878 step: InitCommonControlsEx begin
+2025/09/29 15:09:02.750536 warn: InitCommonControlsEx failed (broad set); dwICC=0x000087ff
+2025/09/29 15:09:02.750536 step: InitCommonControlsEx success (conservative set); dwICC=0x000001ff
+2025/09/29 15:09:02.751045 step: InitCommonControlsEx fallback: conservative
+2025/09/29 15:09:02.752698 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 15:09:02.752698 step: MainWindow.Create begin
+2025/09/29 15:09:02.794620 step: MainWindow.Create end; duration=41.9217ms
+2025/09/29 15:09:02.794620 error: MainWindow.Create failed: TTM_ADDTOOL failed
+
+Stack:
+goroutine 1 [running, locked to thread]:
+runtime/debug.Stack()
+	C:/Program Files/Go/src/runtime/debug/stack.go:26 +0x5e
+github.com/lxn/walk.newErr(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:81
+github.com/lxn/walk.newError({0x112d588, 0x12})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/error.go:85 +0x25
+github.com/lxn/walk.(*ToolTip).addTool(0x28?, 0x1249ee8?, 0x8?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:184 +0x96
+github.com/lxn/walk.(*ToolTip).AddTool(0xc000164008, {0x1249ee8?, 0xc000148708?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/tooltip.go:160 +0x34
+github.com/lxn/walk.(*WidgetBase).init(0xc000148708, {0x110d000?, 0x11379e0?})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:137 +0x117
+github.com/lxn/walk.initWindowWithCfg(0xc00030d1c8)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:670 +0x60e
+github.com/lxn/walk.InitWindow(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:538
+github.com/lxn/walk.InitWidget({0x1249ee8, 0xc000148708}, {0x1242968, 0xc000005808}, {0x11379e0?, 0x1c?}, 0x50000000?, 0x10000?)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/widget.go:110 +0x105
+github.com/lxn/walk.NewCompositeWithStyle({0x1242968, 0xc000005808}, 0x0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:30 +0xbc
+github.com/lxn/walk.NewComposite(...)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/composite.go:45
+github.com/lxn/walk.(*FormBase).init(0xc000005808, {0x124a878, 0xc000005808})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/form.go:107 +0x69
+github.com/lxn/walk.initWindowWithCfg(0xc00030d4b0)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/window.go:662 +0x56e
+github.com/lxn/walk.NewMainWindowWithCfg(0xc00030d7d8)
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/mainwindow.go:48 +0x134
+github.com/lxn/walk/declarative.MainWindow.Create({{{0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, ...}, ...})
+	C:/Users/PATKRAN/go/pkg/mod/github.com/lxn/walk@v0.0.0-20210112085537-c389da54e794/declarative/mainwindow.go:64 +0xee
+main.main()
+	C:/Users/PATKRAN/Python/07_controlling/financial_calculator/walk/cmd/fc-walk/main.go:1354 +0x87fd

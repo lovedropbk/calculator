@@ -330,11 +330,13 @@ func computeCampaignRows(
 				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
 				row.IDCDealerTHB = row.DealerCommAmt
 				row.IDCOtherTHB = otherIDC
+				row.SubsidyUsedTHBStr = FormatTHB(0)
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
 				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
+				row.SubsidyUsedTHBStr = ""
 				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(0))
 			}
 
@@ -391,11 +393,13 @@ func computeCampaignRows(
 				row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
 				row.IDCDealerTHB = row.DealerCommAmt
 				row.IDCOtherTHB = otherIDC
+				row.SubsidyUsedTHBStr = FormatTHB(subsidyBudgetTHB)
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
 				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
+				row.SubsidyUsedTHBStr = ""
 				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
 			}
 
@@ -469,6 +473,7 @@ func computeCampaignRows(
 					row.IDCDealerTHB = row.DealerCommAmt
 					row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
 
+					row.SubsidyUsedTHBStr = FormatTHB(row.IDCOtherTHB)
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
 					row.Profit = snapshotFromQuote(q)
 					row.Cashflows = q.Cashflows
@@ -489,6 +494,7 @@ func computeCampaignRows(
 					row.IDCDealerTHB = row.DealerCommAmt
 					row.IDCOtherTHB = out.Metrics.SubsidyUsedTHB.InexactFloat64()
 
+					row.SubsidyUsedTHBStr = FormatTHB(row.IDCOtherTHB)
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(row.IDCOtherTHB), row.AcqRoRac*100.0)
 					row.Profit = snapshotFromMetrics(out.Metrics)
 					row.Cashflows = out.Cashflows
@@ -545,6 +551,7 @@ func computeCampaignRows(
 					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
+					row.SubsidyUsedTHBStr = ""
 					row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
 				}
 			}
@@ -647,6 +654,7 @@ func computeCampaignRows(
 				row.IDCOtherTHB = 0 // subsidy is not modeled as IDC Other for subdown
 
 				// Summary column “Subsidy / Acq.RoRAC”: display used subsidy and RoRAC
+				row.SubsidyUsedTHBStr = FormatTHB(usedSubsidyTHB)
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(usedSubsidyTHB), row.AcqRoRac*100.0)
 
 				row.Profit = snapshotFromQuote(q)
@@ -658,6 +666,7 @@ func computeCampaignRows(
 				// Fallback when quote fails
 				row.MonthlyInstallmentStr = ""
 				row.DownpaymentStr = dpString(deal2.DownPaymentAmount.InexactFloat64(), deal2.PriceExTax.InexactFloat64())
+				row.SubsidyUsedTHBStr = ""
 				row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(usedSubsidyTHB))
 				dpForCF = deal2.DownPaymentAmount
 			}
@@ -747,6 +756,7 @@ func computeCampaignRows(
 					}
 				}
 
+				row.SubsidyUsedTHBStr = FormatTHB(subsidyBudgetTHB)
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
 				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = res.Quote.Cashflows
@@ -776,11 +786,13 @@ func computeCampaignRows(
 						}
 					}
 
+					row.SubsidyUsedTHBStr = FormatTHB(subsidyBudgetTHB)
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
 					row.Profit = snapshotFromQuote(q)
 					row.Cashflows = q.Cashflows
 				} else {
 					row.MonthlyInstallmentStr = ""
+					row.SubsidyUsedTHBStr = ""
 					row.SubsidyRorac = fmt.Sprintf("THB %s / -", FormatTHB(subsidyBudgetTHB))
 				}
 			}
@@ -818,11 +830,13 @@ func computeCampaignRows(
 				row.IDCDealerTHB = row.DealerCommAmt
 				row.IDCOtherTHB = 0
 
+				row.SubsidyUsedTHBStr = FormatTHB(0)
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(0), row.AcqRoRac*100.0)
 				row.Profit = snapshotFromQuote(q)
 				row.Cashflows = q.Cashflows
 			} else {
 				row.MonthlyInstallmentStr = ""
+				row.SubsidyUsedTHBStr = ""
 				row.SubsidyRorac = "- / -"
 			}
 		}

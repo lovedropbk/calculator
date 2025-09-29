@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/lxn/walk"
@@ -28,6 +29,9 @@ type MyCampaignRow struct {
 type MyCampaignsTableModel struct {
 	walk.TableModelBase
 	rows []MyCampaignRow
+
+	// Optional: notify backing store when a row name is edited in-place
+	OnRowNameEdited func(id, name string)
 }
 
 // NewMyCampaignsTableModel creates an empty table model.
@@ -137,7 +141,7 @@ func (m *MyCampaignsTableModel) RowCount() int {
 
 // ColumnCount provides fixed columns for the table.
 func (m *MyCampaignsTableModel) ColumnCount() int {
-	return 4
+	return 10
 }
 
 // ColumnName provides human-readable column headers.
@@ -150,6 +154,18 @@ func (m *MyCampaignsTableModel) ColumnName(col int) string {
 	case 2:
 		return "Monthly Installment"
 	case 3:
+		return "Downpayment"
+	case 4:
+		return "Cash Discount"
+	case 5:
+		return "Free MBSP THB"
+	case 6:
+		return "Subsidy utilized"
+	case 7:
+		return "Acq. RoRAC"
+	case 8:
+		return "Dealer Comm."
+	case 9:
 		return "Notes"
 	default:
 		return ""
@@ -168,14 +184,26 @@ func (m *MyCampaignsTableModel) Value(row, col int) interface{} {
 			return "•"
 		}
 		return " "
-	case 1: // Campaign Name
+	case 1: // Campaign
 		return r.Name
 	case 2: // Monthly Installment
 		if r.MonthlyInstallmentStr == "" {
 			return "—"
 		}
 		return "THB " + r.MonthlyInstallmentStr
-	case 3: // Notes
+	case 3: // Downpayment (not wired yet)
+		return "—"
+	case 4: // Cash Discount (not wired yet)
+		return "—"
+	case 5: // Free MBSP THB (not wired yet)
+		return "—"
+	case 6: // Subsidy utilized (not wired yet)
+		return "—"
+	case 7: // Acq. RoRAC (not wired yet)
+		return "—"
+	case 8: // Dealer Comm. (not wired yet)
+		return "—"
+	case 9: // Notes
 		return r.Notes
 	default:
 		return ""
@@ -237,6 +265,54 @@ func (m *MyCampaignsTableModel) SetMonthlyInstallmentByID(id string, value strin
 	m.rows[idx].MonthlyInstallmentStr = value
 	m.PublishRowsReset()
 	return true
+}
+
+// SetCampaignNameByID finds a row by ID and sets Name. Publishes a reset when updated.
+func (m *MyCampaignsTableModel) SetCampaignNameByID(id string, name string) bool {
+	if m == nil {
+		return false
+	}
+	idx := m.IndexByID(id)
+	if idx < 0 {
+		return false
+	}
+	m.rows[idx].Name = name
+	m.PublishRowsReset()
+	return true
+}
+
+// SetValue enables in-place editing for Campaign Name (col 1) and Notes (col 9).
+// TableView will call this only for columns marked Editable: true.
+func (m *MyCampaignsTableModel) SetValue(row, col int, value interface{}) error {
+	if m == nil {
+		return nil
+	}
+	if row < 0 || row >= len(m.rows) {
+		return nil
+	}
+	switch col {
+	case 1: // Campaign Name
+		s, _ := value.(string)
+		s = strings.TrimSpace(s)
+		if s == "" {
+			s = "(unnamed)"
+		}
+		if m.rows[row].Name != s {
+			id := m.rows[row].ID
+			m.rows[row].Name = s
+			m.PublishRowChanged(row)
+			if m.OnRowNameEdited != nil {
+				m.OnRowNameEdited(id, s)
+			}
+		}
+	case 9: // Notes
+		s, _ := value.(string)
+		if m.rows[row].Notes != s {
+			m.rows[row].Notes = s
+			m.PublishRowChanged(row)
+		}
+	}
+	return nil
 }
 
 // Rows returns a shallow copy of current rows for read-only consumption.

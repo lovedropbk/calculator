@@ -1154,3 +1154,84 @@ main.main()
 2025/09/29 14:10:14.699757 compute skipped: invalid inputs: price must be positive
 2025/09/29 14:10:14.709678 post-create: window initialized; awaiting user input
 2025/09/29 14:10:24.255400 compute skipped: invalid inputs: price must be positive
+2025/09/29 15:07:28.388798 step: mw.Run end; duration=57m14.5326617s
+2025/09/29 15:07:28.391550 shutdown: normal exit
+2025/09/29 15:09:36.875591 startup: begin
+2025/09/29 15:09:36.876674 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 15:09:36.876674 step: InitCommonControlsEx begin
+2025/09/29 15:09:36.893941 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/29 15:09:36.894999 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 15:09:36.894999 step: MainWindow.Create begin
+2025/09/29 15:09:37.249498 step: MainWindow.Create end; duration=354.4966ms
+2025/09/29 15:09:37.250047 step: mw.Run begin
+2025/09/29 15:09:37.604128 compute skipped: invalid inputs: price must be positive
+2025/09/29 15:09:37.605205 post-create: window initialized; awaiting user input
+2025/09/29 15:10:12.007131 compute skipped: invalid inputs: price must be positive
+2025/09/29 15:17:49.295772 step: mw.Run end; duration=8m12.0436846s
+2025/09/29 15:17:49.297458 shutdown: normal exit
+2025/09/29 16:10:17.253841 startup: begin
+2025/09/29 16:10:17.256375 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 16:10:17.256375 step: InitCommonControlsEx begin
+2025/09/29 16:10:17.269136 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/29 16:10:17.290135 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 16:10:17.290681 step: MainWindow.Create begin
+2025/09/29 16:10:18.200460 step: MainWindow.Create end; duration=909.775ms
+2025/09/29 16:10:18.201005 step: mw.Run begin
+2025/09/29 16:10:18.734921 compute skipped: invalid inputs: price must be positive
+2025/09/29 16:10:18.736635 post-create: window initialized; awaiting user input
+2025/09/29 16:16:41.204793 compute skipped: invalid inputs: price must be positive
+2025/09/29 16:34:49.794180 step: mw.Run end; duration=24m31.5874468s
+2025/09/29 16:34:49.795260 shutdown: normal exit
+2025/09/29 17:00:51.024675 startup: begin
+2025/09/29 17:00:51.026286 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/29 17:00:51.026286 step: InitCommonControlsEx begin
+2025/09/29 17:00:51.039574 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/29 17:00:51.041179 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/29 17:00:51.041179 step: MainWindow.Create begin
+2025/09/29 17:00:51.537506 step: MainWindow.Create end; duration=496.3227ms
+2025/09/29 17:00:51.538505 step: mw.Run begin
+2025/09/29 17:00:51.938236 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:00:51.939315 post-create: window initialized; awaiting user input
+2025/09/29 17:00:53.715159 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:00:59.309210 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:05.343151 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:05.346453 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:05.352502 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:07.126064 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:07.128239 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:07.135859 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:08.690737 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:08.692906 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:08.700739 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:09.823516 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:09.827251 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:09.834265 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:15.420578 compute skipped: invalid inputs: price must be positive
+2025/09/29 17:01:19.592816 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:23.883007 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:24.431433 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:26.865018 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:29.953477 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:37.323349 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:37.429706 compute skipped: invalid inputs: term must be positive
+2025/09/29 17:01:47.433987 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:01:47.534582 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:02:07.636997 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:02:07.781219 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:02:07.998653 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:02:08.183740 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:02:08.348711 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:06.699624 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:07.619862 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:10.920858 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:12.183661 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:28.368562 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:28.453754 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:28.556560 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:28.734434 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:28.893335 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:30.660059 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:03:37.215010 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:04:45.297824 compute ok: version=2025-09-sample installment=THB 85,145 rorac=11.28%
+2025/09/29 17:24:51.495091 step: mw.Run end; duration=23m59.948435s
+2025/09/29 17:24:51.497304 shutdown: normal exit
