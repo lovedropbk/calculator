@@ -173,6 +173,17 @@ func main() {
 		IDCOther:         types.IDCOther{Value: 0, UserEdited: false},
 	}
 
+	// My Campaigns state (Interactive Campaign Manager)
+	var myCampaigns []CampaignDraft
+	var campaignsDirty bool
+	var campaignsFileVersion int
+	var selectedMyCampaignID string
+	// Edit mode and selection (UI-agnostic state)
+	var editor EditorState
+	// Temporary anchors to appease unused-var checks in some build paths
+	_ = campaignsFileVersion
+	_ = selectedMyCampaignID
+
 	// Widgets
 	var productCB *walk.ComboBox
 	var timingCB *walk.ComboBox
@@ -194,8 +205,16 @@ func main() {
 	var tip *walk.ToolTip
 	var campaignModel *CampaignTableModel
 	var dpShadowLbl, balloonShadowLbl *walk.Label
+	// Progressive disclosure UI for Campaign edit mode
+	var editModeUI *EditModeUI
+	var dealInputsGB *walk.GroupBox
 	// Selected Campaign Details labels (left bottom panel)
 	var selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCOtherValLbl, selIDCInsValLbl, selIDCMBSPValLbl *walk.Label
+
+	// Interactive Campaign Manager controls (MVP)
+	var myCampTV *walk.TableView
+	var myCampModel *MyCampaignsTableModel
+	var btnNewBlankCampaign, btnSaveAllCampaigns, btnLoadCampaigns, btnClearCampaigns *walk.PushButton
 
 	var headerMonthlyLbl, headerRoRacLbl *walk.Label
 	// Campaign toggles
@@ -215,10 +234,269 @@ func main() {
 	// Persistent selected row index for Campaign grid
 	var selectedCampaignIdx int
 	var creatingUI bool
+	// Forward declaration so earlier closures can call recalc()
+	var recalc func()
+
+	// Minimal deps for My Campaigns handlers
+	var myCampDeps MyCampaignsDeps
+	myCampDeps.Save = SaveCampaigns
+	myCampDeps.Load = LoadCampaigns
+	myCampDeps.Clear = ClearCampaigns
+	// Lifecycle callbacks to keep canonical slice and file version in sync
+	myCampDeps.OnSaved = func(drafts []CampaignDraft) {
+		myCampaigns = append([]CampaignDraft(nil), drafts...)
+	}
+	myCampDeps.OnLoaded = func(drafts []CampaignDraft, ver int) {
+		myCampaigns = append([]CampaignDraft(nil), drafts...)
+		campaignsFileVersion = ver
+	}
+	myCampDeps.OnCleared = func() {
+		myCampaigns = nil
+	}
+	myCampDeps.SetDirty = func(b bool) { campaignsDirty = b }
+	myCampDeps.SelectedID = func() string { return selectedMyCampaignID }
+	myCampDeps.SeedBlank = func() CampaignDraft { return AddNewBlankDraft("") }
+	myCampDeps.SeedCopy = func() (CampaignDraft, error) {
+		// Determine base name from selected default campaign row
+		baseName := "Custom Campaign"
+		if campaignModel != nil && selectedCampaignIdx >= 0 && selectedCampaignIdx < len(campaignModel.rows) {
+			baseName = campaignModel.rows[selectedCampaignIdx].Name
+		}
+
+		// Read current Deal Inputs high-level fields (identical logic)
+		price := parseFloat(priceEdit)
+		dpUnit := "%"
+		if dpUnitCmb != nil && dpUnitCmb.Text() != "" {
+			dpUnit = dpUnitCmb.Text()
+		}
+		dpPercent := 0.0
+		dpTHB := 0.0
+		if dpUnit == "THB" {
+			if dpAmountEd != nil {
+				dpTHB = dpAmountEd.Value()
+			}
+			if price > 0 {
+				dpPercent = (dpTHB / price) * 100.0
+			}
+		} else {
+			if dpValueEd != nil {
+				dpPercent = dpValueEd.Value()
+			}
+			dpTHB = price * (dpPercent / 100.0)
+		}
+		term := parseInt(termEdit)
+		bu := "%"
+		if balloonUnitCmb != nil && balloonUnitCmb.Text() != "" {
+			bu = balloonUnitCmb.Text()
+		}
+		balloonPct := 0.0
+		if bu == "%" {
+			if balloonValueEd != nil {
+				balloonPct = balloonValueEd.Value()
+			}
+		} else {
+			if balloonAmountEd != nil && price > 0 {
+				balloonPct = (balloonAmountEd.Value() / price) * 100.0
+			}
+		}
+
+		inputs := CampaignInputs{
+			PriceExTaxTHB:        price,
+			DownpaymentPercent:   dpPercent,
+			DownpaymentTHB:       dpTHB,
+			TermMonths:           term,
+			BalloonPercent:       balloonPct,
+			RateMode:             rateMode,
+			CustomerRateAPR:      parseFloat(nominalRateEdit),
+			TargetInstallmentTHB: parseFloat(targetInstallmentEdit),
+		}
+		name := "Copied: " + baseName
+		return SeedCopyDraft(name, product, inputs), nil
+	}
+	myCampDeps.SelectMyCampaign = func(id string) {
+		selectedMyCampaignID = id
+		SelectMyCampaign(&editor, id)
+		var selName string
+		if myCampModel != nil {
+			idx := myCampModel.IndexByID(id)
+			if idx >= 0 {
+				myCampModel.SetSelectedIndex(idx)
+				if myCampTV != nil {
+					_ = myCampTV.SetCurrentIndex(idx)
+				}
+				rows := myCampModel.Rows()
+				if idx >= 0 && idx < len(rows) {
+					selName = rows[idx].Name
+				}
+			}
+		}
+		ShowCampaignEditState(editModeUI, selName)
+		// Recompute to reflect draft values and refresh selected row
+		recalc()
+	}
+	myCampDeps.ExitEditMode = func() {
+		ExitEditMode(&editor)
+		ShowHighLevelState(editModeUI)
+		selectedMyCampaignID = ""
+		if myCampTV != nil {
+			_ = myCampTV.SetCurrentIndex(-1)
+		}
+		if myCampModel != nil {
+			rows := myCampModel.Rows()
+			for i := range rows {
+				rows[i].Selected = false
+			}
+			myCampModel.ReplaceRows(rows)
+		}
+	}
+
 	computeMode := "implicit"
-	recalc := func() {
+
+	// MARK: Helpers — live sync for selected My Campaign draft and row refresh
+	findDraftIndexByID := func(id string) int {
+		for i := range myCampaigns {
+			if myCampaigns[i].ID == id {
+				return i
+			}
+		}
+		return -1
+	}
+	ensureDraftInSlice := func(id string) int {
+		if id == "" {
+			return -1
+		}
+		idx := findDraftIndexByID(id)
+		if idx >= 0 {
+			return idx
+		}
+		// Build a minimal stub from the table row if available
+		name := ""
+		if myCampModel != nil {
+			if mi := myCampModel.IndexByID(id); mi >= 0 {
+				rows := myCampModel.Rows()
+				if mi >= 0 && mi < len(rows) {
+					name = rows[mi].Name
+				}
+			}
+		}
+		now := nowRFC3339()
+		stub := CampaignDraft{
+			ID:      id,
+			Name:    name,
+			Product: product,
+			Inputs:  CampaignInputs{RateMode: rateMode},
+			Adjustments: CampaignAdjustments{
+				CashDiscountTHB:     0,
+				SubdownTHB:          0,
+				IDCFreeInsuranceTHB: 0,
+				IDCFreeMBSPTHB:      0,
+			},
+			Metadata: CampaignMetadata{
+				CreatedAt: now,
+				UpdatedAt: now,
+				Version:   1,
+			},
+		}
+		myCampaigns = append(myCampaigns, stub)
+		return len(myCampaigns) - 1
+	}
+	updateSelectedDraftFromUI := func() {
+		if !editor.IsEditMode || selectedMyCampaignID == "" {
+			return
+		}
+		// Collect Deal Inputs from UI (same logic as myCampDeps.SeedCopy)
+		price := parseFloat(priceEdit)
+		dpUnit := "%"
+		if dpUnitCmb != nil && dpUnitCmb.Text() != "" {
+			dpUnit = dpUnitCmb.Text()
+		}
+		dpPercent := 0.0
+		dpTHB := 0.0
+		if dpUnit == "THB" {
+			if dpAmountEd != nil {
+				dpTHB = dpAmountEd.Value()
+			}
+			if price > 0 {
+				dpPercent = (dpTHB / price) * 100.0
+			}
+		} else {
+			if dpValueEd != nil {
+				dpPercent = dpValueEd.Value()
+			}
+			dpTHB = price * (dpPercent / 100.0)
+		}
+		term := parseInt(termEdit)
+		bu := "%"
+		if balloonUnitCmb != nil && balloonUnitCmb.Text() != "" {
+			bu = balloonUnitCmb.Text()
+		}
+		balloonPct := 0.0
+		if bu == "%" {
+			if balloonValueEd != nil {
+				balloonPct = balloonValueEd.Value()
+			}
+		} else if price > 0 {
+			if balloonAmountEd != nil {
+				balloonPct = (balloonAmountEd.Value() / price) * 100.0
+			}
+		}
+		apr := parseFloat(nominalRateEdit)
+		target := parseFloat(targetInstallmentEdit)
+
+		inputs := BuildCampaignInputs(price, dpPercent, dpTHB, term, balloonPct, rateMode, apr, target)
+		idx := ensureDraftInSlice(selectedMyCampaignID)
+		if idx >= 0 {
+			now := nowRFC3339()
+			myCampaigns[idx] = UpdateDraftInputs(myCampaigns[idx], inputs, now)
+			campaignsDirty = true
+		}
+	}
+	updateSelectedDraftAdjustmentsFromUI := func() {
+		if !editor.IsEditMode || selectedMyCampaignID == "" || editModeUI == nil {
+			return
+		}
+		adj := CampaignAdjustments{}
+		if editModeUI.CashDiscountNE != nil {
+			adj.CashDiscountTHB = editModeUI.CashDiscountNE.Value()
+		}
+		if editModeUI.SubdownNE != nil {
+			adj.SubdownTHB = editModeUI.SubdownNE.Value()
+		}
+		if editModeUI.IDCInsuranceNE != nil {
+			adj.IDCFreeInsuranceTHB = editModeUI.IDCInsuranceNE.Value()
+		}
+		if editModeUI.IDCMBSPNE != nil {
+			adj.IDCFreeMBSPTHB = editModeUI.IDCMBSPNE.Value()
+		}
+		idx := ensureDraftInSlice(selectedMyCampaignID)
+		if idx >= 0 {
+			now := nowRFC3339()
+			myCampaigns[idx] = UpdateDraftAdjustments(myCampaigns[idx], adj, now)
+			campaignsDirty = true
+		}
+	}
+	updateRowMonthlyFromLabels := func() {
+		if !editor.IsEditMode || selectedMyCampaignID == "" || myCampModel == nil {
+			return
+		}
+		val := ""
+		if headerMonthlyLbl != nil && headerMonthlyLbl.Text() != "" {
+			val = headerMonthlyLbl.Text()
+		} else if monthlyLbl != nil {
+			val = monthlyLbl.Text()
+		}
+		s := sanitizeMonthlyForRow(val)
+		_ = myCampModel.SetMonthlyInstallmentByID(selectedMyCampaignID, s)
+	}
+
+	recalc = func() {
 		if creatingUI {
 			return
+		}
+		// Sync the selected draft (inputs + adjustments) from current UI when in edit mode
+		if editor.IsEditMode && selectedMyCampaignID != "" {
+			updateSelectedDraftFromUI()
+			updateSelectedDraftAdjustmentsFromUI()
 		}
 		// Gate on parameters load/validation
 		if !paramsReady {
@@ -257,6 +535,21 @@ func main() {
 				idcOtherLbl.SetText("—")
 			}
 			logger.Printf("compute skipped: parameters not loaded: %s", paramsErr)
+			// Ensure Default Campaigns grid shows placeholders (no pre-population)
+			if campaignTV != nil {
+				display := defaultCampaignsForUI()
+				rows := placeholderCampaignRows(display)
+				if campaignModel == nil {
+					campaignModel = &CampaignTableModel{rows: rows}
+					_ = campaignTV.SetModel(campaignModel)
+				} else {
+					campaignModel.ReplaceRows(rows)
+				}
+			}
+			// Ensure selected row shows unknown monthly when params are not ready
+			if editor.IsEditMode && selectedMyCampaignID != "" && myCampModel != nil {
+				updateRowMonthlyFromLabels()
+			}
 			return
 		}
 		price := parseFloat(priceEdit)
@@ -399,6 +692,21 @@ func main() {
 			if computeMode == "explicit" {
 				walk.MsgBox(mw, "Invalid Inputs", err.Error(), walk.MsgBoxIconWarning)
 			}
+			// Ensure Default Campaigns grid shows placeholders (no pre-population)
+			if campaignTV != nil {
+				display := defaultCampaignsForUI()
+				rows := placeholderCampaignRows(display)
+				if campaignModel == nil {
+					campaignModel = &CampaignTableModel{rows: rows}
+					_ = campaignTV.SetModel(campaignModel)
+				} else {
+					campaignModel.ReplaceRows(rows)
+				}
+			}
+			// Reflect unknown monthly to the selected My Campaign row
+			if editor.IsEditMode && selectedMyCampaignID != "" && myCampModel != nil {
+				updateRowMonthlyFromLabels()
+			}
 			return
 		} else {
 			if validationLbl != nil {
@@ -509,6 +817,10 @@ func main() {
 			custNominalLbl, custEffLbl,
 			roracLbl, headerRoRacLbl,
 		)
+		// Live row refresh for selected My Campaign
+		if editor.IsEditMode && selectedMyCampaignID != "" {
+			updateRowMonthlyFromLabels()
+		}
 
 		// Success log for compute
 		logger.Printf("compute ok: version=%v installment=THB %s rorac=%.2f%%",
@@ -745,8 +1057,9 @@ func main() {
 						Layout:        VBox{Margins: Margins{Left: 12, Top: 12, Right: 6, Bottom: 12}, Spacing: 8},
 						Children: []Widget{
 							GroupBox{
-								Title:  "Deal Inputs",
-								Layout: Grid{Columns: 2, Spacing: 6},
+								AssignTo: &dealInputsGB,
+								Title:    "Deal Inputs",
+								Layout:   Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
 									// Basic inputs
 									Label{Text: "Product:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
@@ -1156,6 +1469,24 @@ func main() {
 								Layout: VBox{Spacing: 8},
 								Children: []Widget{
 									// Campaign Options (grid)
+									Composite{
+										Layout: HBox{Spacing: 6},
+										Children: []Widget{
+											PushButton{
+												Text: "Copy Selected to My Campaigns",
+												OnClicked: func() {
+													if err := HandleMyCampaignCopySelected(myCampDeps); err != nil {
+														walk.MsgBox(mw, "Copy Selected to My Campaigns", fmt.Sprintf("Copy failed: %v", err), walk.MsgBoxIconError)
+													} else {
+														// Keep canonical slice in sync
+														if myCampModel != nil {
+															myCampaigns = myCampModel.ToDrafts()
+														}
+													}
+												},
+											},
+										},
+									},
 									TableView{
 										AssignTo:       &campaignTV,
 										StretchFactor:  1,
@@ -1166,9 +1497,169 @@ func main() {
 											{Title: "Monthly Installment", Width: 180},
 											{Title: "Downpayment", Width: 120},
 											{Title: "Cash Discount", Width: 140},
+											{Title: "Free MBSP THB", Width: 140},
 											{Title: "Subsidy / Acq.RoRAC", Width: 180},
 											{Title: "Dealer Comm.", Width: 160},
 											{Title: "Notes", Width: 220},
+										},
+										OnCurrentIndexChanged: func() {
+											if campaignTV != nil {
+												selectedCampaignIdx = campaignTV.CurrentIndex()
+											}
+											// Leaving Default Campaigns selection disables edit mode for My Campaigns
+											ExitEditMode(&editor)
+											// Clear any selected My Campaign while browsing Default Campaigns
+											selectedMyCampaignID = ""
+											ShowHighLevelState(editModeUI)
+										},
+										ContextMenuItems: []MenuItem{
+											Action{
+												Text: "Copy Selected to My Campaigns",
+												OnTriggered: func() {
+													if err := HandleMyCampaignCopySelected(myCampDeps); err != nil {
+														walk.MsgBox(mw, "Copy Selected to My Campaigns", fmt.Sprintf("Copy failed: %v", err), walk.MsgBoxIconError)
+													} else {
+														// Keep canonical slice in sync
+														if myCampModel != nil {
+															myCampaigns = myCampModel.ToDrafts()
+														}
+													}
+												},
+											},
+										},
+									},
+									// My Campaigns (Editable)
+									GroupBox{
+										Title:  "My Campaigns (Editable)",
+										Layout: VBox{Spacing: 6},
+										Children: []Widget{
+											Composite{
+												Layout: HBox{Spacing: 6},
+												Children: []Widget{
+													PushButton{
+														AssignTo: &btnNewBlankCampaign,
+														Text:     "+ New Blank Campaign",
+														OnClicked: func() {
+															if err := HandleMyCampaignNewBlank(myCampDeps); err != nil {
+																walk.MsgBox(mw, "New Blank Campaign", fmt.Sprintf("Create failed: %v", err), walk.MsgBoxIconError)
+															} else {
+																// Keep canonical slice in sync
+																if myCampModel != nil {
+																	myCampaigns = myCampModel.ToDrafts()
+																}
+															}
+														},
+													},
+													PushButton{
+														AssignTo: &btnLoadCampaigns,
+														Text:     "Load Campaigns",
+														OnClicked: func() {
+															// Dirty guard: confirm discarding unsaved changes
+															if campaignsDirty {
+																choice := walk.MsgBox(mw, "Load Campaigns", "You have unsaved changes. Load will discard them. Continue?", walk.MsgBoxYesNoCancel|walk.MsgBoxIconWarning)
+																if choice != walk.DlgCmdYes {
+																	return
+																}
+															}
+															if err := HandleMyCampaignLoad(myCampDeps); err != nil {
+																walk.MsgBox(mw, "Load Campaigns", fmt.Sprintf("Load failed: %v", err), walk.MsgBoxIconError)
+																return
+															}
+															// Optional toast
+															walk.MsgBox(mw, "Load Campaigns", "Loaded My Campaigns.", walk.MsgBoxOK|walk.MsgBoxIconInformation)
+														},
+													},
+													PushButton{
+														AssignTo: &btnSaveAllCampaigns,
+														Text:     "Save All Changes",
+														OnClicked: func() {
+															if err := HandleMyCampaignSaveAll(myCampDeps); err != nil {
+																walk.MsgBox(mw, "Save Campaigns", fmt.Sprintf("Save failed: %v", err), walk.MsgBoxIconError)
+																return
+															}
+															// Success toast and dirty reset already handled by handler
+															walk.MsgBox(mw, "Save Campaigns", "Saved My Campaigns.", walk.MsgBoxOK|walk.MsgBoxIconInformation)
+														},
+													},
+													PushButton{
+														AssignTo: &btnClearCampaigns,
+														Text:     "Clear Campaigns",
+														OnClicked: func() {
+															// Dirty-aware confirmation per spec
+															if campaignsDirty {
+																choice := walk.MsgBox(mw, "Clear Campaigns", "Clear all My Campaigns and discard unsaved changes?", walk.MsgBoxYesNo|walk.MsgBoxIconWarning)
+																if choice != walk.DlgCmdYes {
+																	return
+																}
+															}
+															if err := HandleMyCampaignClear(myCampDeps); err != nil {
+																walk.MsgBox(mw, "Clear Campaigns", fmt.Sprintf("Clear failed: %v", err), walk.MsgBoxIconError)
+																return
+															}
+															// Canonical slice cleared via callback; ensure nil
+															myCampaigns = nil
+														},
+													},
+												},
+											},
+											TableView{
+												AssignTo:       &myCampTV,
+												StretchFactor:  1,
+												MultiSelection: false,
+												Columns: []TableViewColumn{
+													{Title: "Sel", Width: 70},
+													{Title: "Campaign", Width: 220},
+													{Title: "Monthly Installment", Width: 180},
+													{Title: "Notes", Width: 220},
+												},
+												OnCurrentIndexChanged: func() {
+													if myCampModel == nil || myCampTV == nil {
+														return
+													}
+													idx := myCampTV.CurrentIndex()
+													if idx >= 0 && idx < myCampModel.RowCount() {
+														myCampModel.SetSelectedIndex(idx)
+														id := ""
+														if idx < len(myCampModel.rows) {
+															id = myCampModel.rows[idx].ID
+														}
+														selectedMyCampaignID = id
+														SelectMyCampaign(&editor, id)
+														// Show edit section with campaign name
+														name := ""
+														rowsCopy := myCampModel.Rows()
+														if idx >= 0 && idx < len(rowsCopy) {
+															name = rowsCopy[idx].Name
+														}
+														ShowCampaignEditState(editModeUI, name)
+													} else {
+														// Clear bullets and exit edit mode
+														rows := myCampModel.rows
+														for i := range rows {
+															rows[i].Selected = false
+														}
+														myCampModel.ReplaceRows(rows)
+														selectedMyCampaignID = ""
+														ExitEditMode(&editor)
+														ShowHighLevelState(editModeUI)
+													}
+												},
+												ContextMenuItems: []MenuItem{
+													Action{
+														Text: "Delete",
+														OnTriggered: func() {
+															if err := HandleMyCampaignDelete(myCampDeps); err != nil {
+																walk.MsgBox(mw, "Delete Campaign", fmt.Sprintf("Delete failed: %v", err), walk.MsgBoxIconError)
+															} else {
+																// Keep canonical slice in sync
+																if myCampModel != nil {
+																	myCampaigns = myCampModel.ToDrafts()
+																}
+															}
+														},
+													},
+												},
+											},
 										},
 									},
 									// Summary
@@ -1435,6 +1926,50 @@ func main() {
 
 	// Post-create initialization on UI thread after controls are realized
 	mw.Synchronize(func() {
+		// Load My Campaigns from AppData (Interactive Campaign Manager)
+		if list, ver, err := LoadCampaigns(); err != nil {
+			logger.Printf("warn: LoadCampaigns failed: %v", err)
+			myCampaigns = []CampaignDraft{}
+			campaignsFileVersion = CampaignsFileVersion
+		} else {
+			myCampaigns = list
+			campaignsFileVersion = ver
+		}
+		campaignsDirty = false
+
+		// Bind My Campaigns model to TableView
+		if myCampTV != nil {
+			myCampModel = NewMyCampaignsTableModel()
+			if err := myCampTV.SetModel(myCampModel); err != nil {
+				logger.Printf("warn: my campaigns table model set failed: %v", err)
+			}
+			myCampModel.ReplaceFromDrafts(myCampaigns)
+			myCampDeps.Model = myCampModel
+		}
+		// Build progressive disclosure UI under Deal Inputs
+		if dealInputsGB != nil {
+			if ui, err := NewEditModeUI(dealInputsGB); err != nil {
+				logger.Printf("warn: NewEditModeUI failed: %v", err)
+			} else {
+				editModeUI = ui
+				ShowHighLevelState(editModeUI)
+				// Hook adjustments NumberEdits to live-sync draft and recalc when editing
+				attachAdj := func(ne *walk.NumberEdit) {
+					if ne != nil {
+						ne.ValueChanged().Attach(func() {
+							if editor.IsEditMode && selectedMyCampaignID != "" {
+								updateSelectedDraftAdjustmentsFromUI()
+								recalc()
+							}
+						})
+					}
+				}
+				attachAdj(editModeUI.CashDiscountNE)
+				attachAdj(editModeUI.SubdownNE)
+				attachAdj(editModeUI.IDCInsuranceNE)
+				attachAdj(editModeUI.IDCMBSPNE)
+			}
+		}
 		// Initial 1/3 : 2/3 visual ratio (via StretchFactor) and initial table column widths
 		if campaignTV != nil {
 			cw := mw.ClientBounds().Width
@@ -1780,8 +2315,29 @@ func main() {
 		logger.Printf("post-create: window initialized; awaiting user input")
 	})
 
-	// Persist sticky state on window close
+	// App-exit guard + persist sticky state on window close
 	mw.Closing().Attach(func(canceled *bool, reason walk.CloseReason) {
+		// Guard unsaved My Campaign changes
+		if campaignsDirty {
+			choice := walk.MsgBox(mw, "Unsaved My Campaigns", "You have unsaved changes. Save before closing?", walk.MsgBoxYesNoCancel|walk.MsgBoxIconWarning)
+			switch choice {
+			case walk.DlgCmdYes:
+				// Attempt to save; on error keep app open
+				if err := HandleMyCampaignSaveAll(myCampDeps); err != nil {
+					walk.MsgBox(mw, "Save Campaigns", fmt.Sprintf("Save failed: %v", err), walk.MsgBoxIconError)
+					*canceled = true
+					return
+				}
+			case walk.DlgCmdNo:
+				// Discard
+				campaignsDirty = false
+			default:
+				// Cancel app close
+				*canceled = true
+				return
+			}
+		}
+
 		if s, err := CollectStickyFromUI(
 			product,
 			priceEdit,
@@ -1913,6 +2469,7 @@ type CampaignRow struct {
 	MonthlyInstallmentStr string // e.g., "22,198.61"
 	DownpaymentStr        string // e.g., "20%"
 	CashDiscountStr       string // e.g., "THB 50,000" for cash discount row; "—" otherwise
+	MBSPTHBStr            string // e.g., "THB 5,000" only for Free MBSP rows; "—" otherwise
 	NominalRateStr        string // e.g., "3.99 percent"
 	EffectiveRateStr      string // e.g., "4.05 percent"
 	AcqRoRacStr           string // e.g., "8.50 percent"
@@ -1954,6 +2511,7 @@ func NewCampaignTableModel() *CampaignTableModel {
 				Name:                  "Standard (No Campaign)",
 				MonthlyInstallmentStr: "", // will render as "Monthly —"
 				DownpaymentStr:        "20% / THB 200,000",
+				MBSPTHBStr:            "",
 				SubsidyRorac:          "- / -",
 				Notes:                 "Baseline (placeholder)",
 			},
@@ -1962,6 +2520,7 @@ func NewCampaignTableModel() *CampaignTableModel {
 				Name:                  "Subinterest 2.99%",
 				MonthlyInstallmentStr: "",
 				DownpaymentStr:        "20%",
+				MBSPTHBStr:            "",
 				SubsidyRorac:          "THB 0 / 8.5%",
 				Notes:                 "Static row (Phase 1)",
 			},
@@ -1970,6 +2529,7 @@ func NewCampaignTableModel() *CampaignTableModel {
 				Name:                  "Subdown 5%",
 				MonthlyInstallmentStr: "",
 				DownpaymentStr:        "15%",
+				MBSPTHBStr:            "",
 				SubsidyRorac:          "THB 50,000 / 6.8%",
 				Notes:                 "Static row (Phase 1)",
 			},
@@ -1978,11 +2538,34 @@ func NewCampaignTableModel() *CampaignTableModel {
 				Name:                  "Free Insurance",
 				MonthlyInstallmentStr: "",
 				DownpaymentStr:        "20%",
+				MBSPTHBStr:            "",
 				SubsidyRorac:          "THB 15,000 / 7.2%",
 				Notes:                 "Static row (Phase 1)",
 			},
 		},
 	}
+}
+
+// Build placeholder rows with dashes until inputs are valid.
+func placeholderCampaignRows(camps []types.Campaign) []CampaignRow {
+	rows := make([]CampaignRow, 0, len(camps))
+	for i, c := range camps {
+		rows = append(rows, CampaignRow{
+			Selected:              i == 0,
+			Name:                  campaignTypeDisplayName(c.Type),
+			MonthlyInstallmentStr: "",
+			DownpaymentStr:        "",
+			CashDiscountStr:       "",
+			MBSPTHBStr:            "",
+			NominalRateStr:        "",
+			EffectiveRateStr:      "",
+			AcqRoRacStr:           "",
+			SubsidyRorac:          "—",
+			DealerComm:            "",
+			Notes:                 "",
+		})
+	}
+	return rows
 }
 
 // ReplaceRows replaces the table model rows and refreshes the view.
@@ -2023,11 +2606,16 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 			return "—"
 		}
 		return r.CashDiscountStr
-	case 5:
-		return r.SubsidyRorac
+	case 5: // Free MBSP THB
+		if r.MBSPTHBStr == "" {
+			return "—"
+		}
+		return r.MBSPTHBStr
 	case 6:
-		return r.DealerComm
+		return r.SubsidyRorac
 	case 7:
+		return r.DealerComm
+	case 8:
 		return r.Notes
 	default:
 		return ""

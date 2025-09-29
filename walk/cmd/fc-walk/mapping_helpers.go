@@ -146,3 +146,27 @@ func ParseThousand(s string) (float64, error) {
 	}
 	return strconv.ParseFloat(cleaned, 64)
 }
+
+// sanitizeMonthlyForRow converts a UI label text into a numeric string for the My Campaigns row.
+// Rules:
+// - "THB 12,345.67" -> "12,345.67"
+// - "—" or "-" or empty -> ""
+// - "12,345.67" (already numeric) -> "12,345.67"
+// Keeps commas and decimal point; strips "THB" and spaces.
+func sanitizeMonthlyForRow(input string) string {
+	s := strings.TrimSpace(input)
+	if s == "" {
+		return ""
+	}
+	if s == "—" || s == "-" {
+		return ""
+	}
+	// Remove any occurrence of "THB" then strip all spaces
+	s = strings.ReplaceAll(s, "THB", "")
+	s = strings.ReplaceAll(s, " ", "")
+	s = strings.TrimSpace(s)
+	if s == "" || s == "—" || s == "-" {
+		return ""
+	}
+	return s
+}

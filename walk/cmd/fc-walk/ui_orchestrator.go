@@ -56,6 +56,88 @@ func shouldCompute(s UIState) bool {
 	return validateInputs(s) == nil
 }
 
+// MARK: Edit mode helpers (pure)
+//
+// Keep Walk-agnostic: main.go can use these to manage "edit mode" and selection flags.
+type EditorState struct {
+	SelectedMyCampaignID string
+	IsEditMode           bool
+}
+
+// SelectMyCampaign sets the selected campaign ID and enters edit mode.
+func SelectMyCampaign(state *EditorState, id string) {
+	if state == nil {
+		return
+	}
+	state.SelectedMyCampaignID = id
+	state.IsEditMode = true
+}
+
+// ExitEditMode clears the edit mode flag (selection can be kept or cleared by caller).
+func ExitEditMode(state *EditorState) {
+	if state == nil {
+		return
+	}
+	state.IsEditMode = false
+}
+
+// MARK: Draft reducers (pure)
+//
+// Small, UI-agnostic helpers for editing CampaignDraft values. They do not
+// mutate the input; they return an updated copy.
+
+// UpdateDraftInputs returns a copy of d with Inputs replaced by in and
+// Metadata.UpdatedAt set to now (CreatedAt unchanged).
+func UpdateDraftInputs(d CampaignDraft, in CampaignInputs, now string) CampaignDraft {
+	out := d
+	out.Inputs = in
+	out.Metadata.UpdatedAt = now
+	return out
+}
+
+// UpdateDraftAdjustments returns a copy of d with Adjustments replaced by adj
+// and Metadata.UpdatedAt set to now (CreatedAt unchanged).
+func UpdateDraftAdjustments(d CampaignDraft, adj CampaignAdjustments, now string) CampaignDraft {
+	out := d
+	out.Adjustments = adj
+	out.Metadata.UpdatedAt = now
+	return out
+}
+
+// UpdateDraft returns a copy of d with both Inputs and Adjustments replaced,
+// and Metadata.UpdatedAt set to now (CreatedAt unchanged).
+func UpdateDraft(d CampaignDraft, in CampaignInputs, adj CampaignAdjustments, now string) CampaignDraft {
+	out := d
+	out.Inputs = in
+	out.Adjustments = adj
+	out.Metadata.UpdatedAt = now
+	return out
+}
+
+// BuildCampaignInputs constructs CampaignInputs from high-level values.
+// No validation here; validation remains in validateInputs and other callers.
+func BuildCampaignInputs(
+	price float64,
+	dpPercent float64,
+	dpTHB float64,
+	term int,
+	balloonPct float64,
+	rateMode string,
+	apr float64,
+	targetTHB float64,
+) CampaignInputs {
+	return CampaignInputs{
+		PriceExTaxTHB:        price,
+		DownpaymentPercent:   dpPercent,
+		DownpaymentTHB:       dpTHB,
+		TermMonths:           term,
+		BalloonPercent:       balloonPct,
+		RateMode:             rateMode,
+		CustomerRateAPR:      apr,
+		TargetInstallmentTHB: targetTHB,
+	}
+}
+
 // MARK: Campaign rows computation and binding (UI-agnostic helpers)
 //
 // These helpers compute per-campaign metrics for the Walk UI grid and selected summary.
@@ -656,6 +738,14 @@ func computeCampaignRows(
 
 				row.IDCDealerTHB = row.DealerCommAmt
 				row.IDCOtherTHB = subsidyBudgetTHB
+				// Free MBSP benefit display: show MBSP cost if available; fallback to budget
+				if c.Type == types.CampaignFreeMBSP {
+					if c.MBSPCost.GreaterThan(types.NewDecimal(0)) {
+						row.MBSPTHBStr = "THB " + FormatTHB(c.MBSPCost.InexactFloat64())
+					} else if subsidyBudgetTHB > 0 {
+						row.MBSPTHBStr = "THB " + FormatTHB(subsidyBudgetTHB)
+					}
+				}
 
 				row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
 				row.Profit = snapshotFromQuote(q)
@@ -677,6 +767,14 @@ func computeCampaignRows(
 
 					row.IDCDealerTHB = row.DealerCommAmt
 					row.IDCOtherTHB = subsidyBudgetTHB
+					// Free MBSP benefit display: show MBSP cost if available; fallback to budget
+					if c.Type == types.CampaignFreeMBSP {
+						if c.MBSPCost.GreaterThan(types.NewDecimal(0)) {
+							row.MBSPTHBStr = "THB " + FormatTHB(c.MBSPCost.InexactFloat64())
+						} else if subsidyBudgetTHB > 0 {
+							row.MBSPTHBStr = "THB " + FormatTHB(subsidyBudgetTHB)
+						}
+					}
 
 					row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(subsidyBudgetTHB), row.AcqRoRac*100.0)
 					row.Profit = snapshotFromQuote(q)
