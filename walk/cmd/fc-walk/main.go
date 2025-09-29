@@ -208,6 +208,7 @@ func main() {
 	// Progressive disclosure UI for Campaign edit mode
 	var editModeUI *EditModeUI
 	var dealInputsGB *walk.GroupBox
+	var editModeAnchor *walk.Composite
 	// Selected Campaign Details labels (left bottom panel)
 	var selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCOtherValLbl, selIDCInsValLbl, selIDCMBSPValLbl *walk.Label
 
@@ -1041,6 +1042,11 @@ func main() {
 	createStart := time.Now()
 	logger.Printf("step: MainWindow.Create begin")
 
+	// Shared table column widths (used by Default Campaigns and My Campaigns)
+	selW, nameW, monthlyW := 70, 220, 180
+	dpW, cashDiscW, mbspW := 120, 140, 140
+	subsidyW, acqW, dealerW, notesW := 160, 140, 160, 220
+
 	err := (MainWindow{
 		AssignTo: &mw,
 		Title:    "Financial Calculator (Walk UI)",
@@ -1062,6 +1068,21 @@ func main() {
 								Layout:   Grid{Columns: 2, Spacing: 6},
 								Children: []Widget{
 									// Basic inputs
+									// 1) Price first
+									Label{Text: "Price ex tax (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+									LineEdit{
+										AssignTo: &priceEdit,
+										Text:     "1000000",
+										MinSize:  Size{Width: 360},
+										OnEditingFinished: func() {
+											// Reformat with thousand separators on commit
+											v := parseFloat(priceEdit)
+											_ = priceEdit.SetText(FormatWithThousandSep(v, 0))
+											recalc()
+											queueSave()
+										},
+									},
+									// 2) Product directly below Price
 									Label{Text: "Product:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
 									ComboBox{
 										AssignTo:     &productCB,
@@ -1094,19 +1115,6 @@ func main() {
 													balloonUnitCmb.SetEnabled(true)
 												}
 											}
-											recalc()
-											queueSave()
-										},
-									},
-									Label{Text: "Price ex tax (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
-									LineEdit{
-										AssignTo: &priceEdit,
-										Text:     "1000000",
-										MinSize:  Size{Width: 360},
-										OnEditingFinished: func() {
-											// Reformat with thousand separators on commit
-											v := parseFloat(priceEdit)
-											_ = priceEdit.SetText(FormatWithThousandSep(v, 0))
 											recalc()
 											queueSave()
 										},
@@ -1492,15 +1500,16 @@ func main() {
 										StretchFactor:  1,
 										MultiSelection: false,
 										Columns: []TableViewColumn{
-											{Title: "Select", Width: 70},
-											{Title: "Campaign", Width: 220},
-											{Title: "Monthly Installment", Width: 180},
-											{Title: "Downpayment", Width: 120},
-											{Title: "Cash Discount", Width: 140},
-											{Title: "Free MBSP THB", Width: 140},
-											{Title: "Subsidy / Acq.RoRAC", Width: 180},
-											{Title: "Dealer Comm.", Width: 160},
-											{Title: "Notes", Width: 220},
+											{Title: "Select", Width: selW},
+											{Title: "Campaign", Width: nameW},
+											{Title: "Monthly Installment", Width: monthlyW},
+											{Title: "Downpayment", Width: dpW},
+											{Title: "Cash Discount", Width: cashDiscW},
+											{Title: "Free MBSP THB", Width: mbspW},
+											{Title: "Subsidy utilized", Width: subsidyW},
+											{Title: "Acq. RoRAC", Width: acqW},
+											{Title: "Dealer Comm.", Width: dealerW},
+											{Title: "Notes", Width: notesW},
 										},
 										OnCurrentIndexChanged: func() {
 											if campaignTV != nil {
@@ -1531,7 +1540,7 @@ func main() {
 									// My Campaigns (Editable)
 									GroupBox{
 										Title:  "My Campaigns (Editable)",
-										Layout: VBox{Spacing: 6},
+										Layout: VBox{Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
 										Children: []Widget{
 											Composite{
 												Layout: HBox{Spacing: 6},
@@ -1607,10 +1616,16 @@ func main() {
 												StretchFactor:  1,
 												MultiSelection: false,
 												Columns: []TableViewColumn{
-													{Title: "Sel", Width: 70},
-													{Title: "Campaign", Width: 220},
-													{Title: "Monthly Installment", Width: 180},
-													{Title: "Notes", Width: 220},
+													{Title: "Sel", Width: selW},
+													{Title: "Campaign", Width: nameW},
+													{Title: "Monthly Installment", Width: monthlyW},
+													{Title: "Downpayment", Width: dpW},
+													{Title: "Cash Discount", Width: cashDiscW},
+													{Title: "Free MBSP THB", Width: mbspW},
+													{Title: "Subsidy utilized", Width: subsidyW},
+													{Title: "Acq. RoRAC", Width: acqW},
+													{Title: "Dealer Comm.", Width: dealerW},
+													{Title: "Notes", Width: notesW},
 												},
 												OnCurrentIndexChanged: func() {
 													if myCampModel == nil || myCampTV == nil {
@@ -1642,6 +1657,44 @@ func main() {
 														selectedMyCampaignID = ""
 														ExitEditMode(&editor)
 														ShowHighLevelState(editModeUI)
+													}
+												},
+												OnItemActivated: func() {
+													if myCampModel == nil || myCampTV == nil {
+														return
+													}
+													idx := myCampTV.CurrentIndex()
+													if idx < 0 || idx >= myCampModel.RowCount() {
+														return
+													}
+													rows := myCampModel.Rows()
+													if idx < 0 || idx >= len(rows) {
+														return
+													}
+													id := rows[idx].ID
+													initial := rows[idx].Name
+													if newName, ok := promptCampaignName(initial); ok {
+														newName = strings.TrimSpace(newName)
+														if newName == "" {
+															newName = "(unnamed)"
+														}
+														if myCampModel.SetCampaignNameByID(id, newName) {
+															// Update backing drafts
+															di := findDraftIndexByID(id)
+															if di >= 0 {
+																myCampaigns[di].Name = newName
+															} else {
+																dj := ensureDraftInSlice(id)
+																if dj >= 0 {
+																	myCampaigns[dj].Name = newName
+																}
+															}
+															campaignsDirty = true
+															// Preserve edit mode and refresh header
+															if editor.IsEditMode && editModeUI != nil {
+																ShowCampaignEditState(editModeUI, newName)
+															}
+														}
 													}
 												},
 												ContextMenuItems: []MenuItem{
@@ -1944,11 +1997,27 @@ func main() {
 				logger.Printf("warn: my campaigns table model set failed: %v", err)
 			}
 			myCampModel.ReplaceFromDrafts(myCampaigns)
+			// Wire in-place edit callback to persist to backing drafts and keep header in sync
+			myCampModel.OnRowNameEdited = func(id, name string) {
+				di := findDraftIndexByID(id)
+				if di >= 0 {
+					myCampaigns[di].Name = name
+				} else {
+					dj := ensureDraftInSlice(id)
+					if dj >= 0 {
+						myCampaigns[dj].Name = name
+					}
+				}
+				campaignsDirty = true
+				if editor.IsEditMode && editModeUI != nil {
+					ShowCampaignEditState(editModeUI, name)
+				}
+			}
 			myCampDeps.Model = myCampModel
 		}
-		// Build progressive disclosure UI under Deal Inputs
-		if dealInputsGB != nil {
-			if ui, err := NewEditModeUI(dealInputsGB); err != nil {
+		// Build progressive disclosure UI below Deal Inputs (under anchor)
+		if editModeAnchor != nil {
+			if ui, err := NewEditModeUI(editModeAnchor); err != nil {
 				logger.Printf("warn: NewEditModeUI failed: %v", err)
 			} else {
 				editModeUI = ui
@@ -2299,6 +2368,31 @@ func main() {
 				}
 			}
 		}
+		// Ensure strict vertical alignment — keep space even when widgets are disabled/hidden
+		if dpValueEd != nil {
+			dpValueEd.SetAlwaysConsumeSpace(true)
+		}
+		if dpAmountEd != nil {
+			dpAmountEd.SetAlwaysConsumeSpace(true)
+		}
+		if dpUnitCmb != nil {
+			dpUnitCmb.SetAlwaysConsumeSpace(true)
+		}
+		if dpShadowLbl != nil {
+			dpShadowLbl.SetAlwaysConsumeSpace(true)
+		}
+		if balloonValueEd != nil {
+			balloonValueEd.SetAlwaysConsumeSpace(true)
+		}
+		if balloonAmountEd != nil {
+			balloonAmountEd.SetAlwaysConsumeSpace(true)
+		}
+		if balloonUnitCmb != nil {
+			balloonUnitCmb.SetAlwaysConsumeSpace(true)
+		}
+		if balloonShadowLbl != nil {
+			balloonShadowLbl.SetAlwaysConsumeSpace(true)
+		}
 		// Update version/status on startup
 		if metaVersionLbl != nil {
 			if paramsReady {
@@ -2470,10 +2564,11 @@ type CampaignRow struct {
 	DownpaymentStr        string // e.g., "20%"
 	CashDiscountStr       string // e.g., "THB 50,000" for cash discount row; "—" otherwise
 	MBSPTHBStr            string // e.g., "THB 5,000" only for Free MBSP rows; "—" otherwise
+	SubsidyUsedTHBStr     string // e.g., "50,000" (formatted without "THB")
 	NominalRateStr        string // e.g., "3.99 percent"
 	EffectiveRateStr      string // e.g., "4.05 percent"
 	AcqRoRacStr           string // e.g., "8.50 percent"
-	SubsidyRorac          string // combined: "THB X / Y%"
+	SubsidyRorac          string // combined legacy: "THB X / Y%"
 	DealerComm            string
 	Notes                 string
 
@@ -2557,6 +2652,7 @@ func placeholderCampaignRows(camps []types.Campaign) []CampaignRow {
 			DownpaymentStr:        "",
 			CashDiscountStr:       "",
 			MBSPTHBStr:            "",
+			SubsidyUsedTHBStr:     "",
 			NominalRateStr:        "",
 			EffectiveRateStr:      "",
 			AcqRoRacStr:           "",
@@ -2611,11 +2707,19 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 			return "—"
 		}
 		return r.MBSPTHBStr
-	case 6:
-		return r.SubsidyRorac
-	case 7:
-		return r.DealerComm
+	case 6: // Subsidy utilized (THB)
+		if r.SubsidyUsedTHBStr == "" {
+			return "—"
+		}
+		return "THB " + r.SubsidyUsedTHBStr
+	case 7: // Acq. RoRAC
+		if r.AcqRoRacStr == "" {
+			return "—"
+		}
+		return r.AcqRoRacStr
 	case 8:
+		return r.DealerComm
+	case 9:
 		return r.Notes
 	default:
 		return ""
