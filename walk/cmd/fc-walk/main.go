@@ -263,39 +263,37 @@ func main() {
 		baseName := "Custom Campaign"
 		adjustments := CampaignAdjustments{}
 
+		// Capture current subsidy budget to inherit into the new campaign
+		var subsidyBudget float64
+		if subsidyBudgetEd != nil {
+			subsidyBudget = subsidyBudgetEd.Value()
+		}
+
 		if campaignModel != nil && selectedCampaignIdx >= 0 && selectedCampaignIdx < len(campaignModel.rows) {
 			row := campaignModel.rows[selectedCampaignIdx]
 			baseName = row.Name
 
-			// Extract campaign-specific adjustments from the row
-			// Map campaign type to adjustment fields
-			if row.CashDiscountTHB > 0 {
-				adjustments.CashDiscountTHB = row.CashDiscountTHB
-			}
-			// For other campaign types, infer from the name and row data
-			// Note: The row has the calculated values we need to preserve
-			if row.Name == "Subdown" || row.Name == "Subinterest" {
-				// Subdown campaigns have subsidy that reduces downpayment
-				if row.SubsidyValue > 0 {
-					adjustments.SubdownTHB = row.SubsidyValue
-				}
-			}
-			if row.Name == "Free Insurance" {
-				// Free insurance campaigns have IDC adjustment
-				if row.SubsidyValue > 0 {
-					adjustments.IDCFreeInsuranceTHB = row.SubsidyValue
-				}
-			}
-			if row.Name == "Free MBSP" {
-				// Free MBSP campaigns have MBSP IDC adjustment
-				if row.SubsidyValue > 0 {
-					adjustments.IDCFreeMBSPTHB = row.SubsidyValue
-				}
-			}
-			if row.Name == "Cash Discount" {
-				if row.CashDiscountTHB > 0 {
-					adjustments.CashDiscountTHB = row.CashDiscountTHB
-				}
+			// One-time inheritance: copy campaign-specific properties from the selected template row
+			// Map campaign type by name to appropriate adjustment fields
+			switch row.Name {
+			case "Baseline (No Subsidy)":
+				// No adjustments for baseline
+			case "Baseline (With Subsidy)":
+				// Generic subsidy - map to subdown for now
+				adjustments.SubdownTHB = subsidyBudget
+			case "Subinterest":
+				// Subinterest uses subsidy budget directly in calculation
+				adjustments.SubdownTHB = subsidyBudget
+			case "Cash Discount":
+				adjustments.CashDiscountTHB = subsidyBudget
+			case "Subdown":
+				adjustments.SubdownTHB = subsidyBudget
+			case "Free Insurance":
+				adjustments.IDCFreeInsuranceTHB = subsidyBudget
+			case "Free MBSP":
+				adjustments.IDCFreeMBSPTHB = subsidyBudget
+			default:
+				// Unknown campaign type - no adjustments
 			}
 		}
 
@@ -368,23 +366,47 @@ func main() {
 		}
 		ShowCampaignEditState(editModeUI, selName)
 
-		// Populate edit mode fields from the selected draft (inline to avoid forward reference)
-		if editModeUI != nil && id != "" {
+		// Populate Deal Inputs and edit mode fields from the selected draft
+		if id != "" {
 			// Find draft by ID
 			for i := range myCampaigns {
 				if myCampaigns[i].ID == id {
 					draft := myCampaigns[i]
-					if editModeUI.CashDiscountNE != nil {
-						editModeUI.CashDiscountNE.SetValue(draft.Adjustments.CashDiscountTHB)
+					
+					// Populate Deal Inputs from draft
+					if priceEdit != nil {
+						_ = priceEdit.SetText(FormatWithThousandSep(draft.Inputs.PriceExTaxTHB, 0))
 					}
-					if editModeUI.SubdownNE != nil {
-						editModeUI.SubdownNE.SetValue(draft.Adjustments.SubdownTHB)
+					if termEdit != nil {
+						_ = termEdit.SetText(fmt.Sprintf("%d", draft.Inputs.TermMonths))
 					}
-					if editModeUI.IDCInsuranceNE != nil {
-						editModeUI.IDCInsuranceNE.SetValue(draft.Adjustments.IDCFreeInsuranceTHB)
+					if dpValueEd != nil && draft.Inputs.DownpaymentPercent > 0 {
+						_ = dpValueEd.SetValue(draft.Inputs.DownpaymentPercent)
 					}
-					if editModeUI.IDCMBSPNE != nil {
-						editModeUI.IDCMBSPNE.SetValue(draft.Adjustments.IDCFreeMBSPTHB)
+					if nominalRateEdit != nil && draft.Inputs.RateMode == "fixed_rate" {
+						_ = nominalRateEdit.SetText(fmt.Sprintf("%.2f", draft.Inputs.CustomerRateAPR))
+					}
+					if targetInstallmentEdit != nil && draft.Inputs.RateMode == "target_installment" {
+						_ = targetInstallmentEdit.SetText(fmt.Sprintf("%.2f", draft.Inputs.TargetInstallmentTHB))
+					}
+					if balloonValueEd != nil && draft.Inputs.BalloonPercent > 0 {
+						_ = balloonValueEd.SetValue(draft.Inputs.BalloonPercent)
+					}
+					
+					// Populate edit mode adjustment fields
+					if editModeUI != nil {
+						if editModeUI.CashDiscountNE != nil {
+							editModeUI.CashDiscountNE.SetValue(draft.Adjustments.CashDiscountTHB)
+						}
+						if editModeUI.SubdownNE != nil {
+							editModeUI.SubdownNE.SetValue(draft.Adjustments.SubdownTHB)
+						}
+						if editModeUI.IDCInsuranceNE != nil {
+							editModeUI.IDCInsuranceNE.SetValue(draft.Adjustments.IDCFreeInsuranceTHB)
+						}
+						if editModeUI.IDCMBSPNE != nil {
+							editModeUI.IDCMBSPNE.SetValue(draft.Adjustments.IDCFreeMBSPTHB)
+						}
 					}
 					break
 				}
@@ -877,9 +899,82 @@ func main() {
 			custNominalLbl, custEffLbl,
 			roracLbl, headerRoRacLbl,
 		)
-		// Live row refresh for selected My Campaign
-		if editor.IsEditMode && selectedMyCampaignID != "" {
-			updateRowMonthlyFromLabels()
+		// Live row refresh for selected My Campaign - compute full metrics
+		if editor.IsEditMode && selectedMyCampaignID != "" && myCampModel != nil {
+			// Find the draft and compute its full row
+			idx := findDraftIndexByID(selectedMyCampaignID)
+			if idx >= 0 && idx < len(myCampaigns) {
+				draft := myCampaigns[idx]
+				computedRow := computeMyCampaignRow(enginePS, calc, campEng, draft, dealState)
+				
+				// Update the model row with computed metrics
+				modelIdx := myCampModel.IndexByID(selectedMyCampaignID)
+				if modelIdx >= 0 && modelIdx < len(myCampModel.rows) {
+					// Preserve identity and selection state
+					computedRow.Selected = myCampModel.rows[modelIdx].Selected
+					computedRow.Notes = myCampModel.rows[modelIdx].Notes
+					
+					// Update the row
+					myCampModel.rows[modelIdx] = computedRow
+					myCampModel.items[modelIdx] = &myCampModel.rows[modelIdx]
+					myCampModel.PublishRowChanged(modelIdx)
+					
+					// Update Campaign Details and Key Metrics from the computed row
+					sel := CampaignRow{
+						Selected:              computedRow.Selected,
+						Name:                  computedRow.Name,
+						MonthlyInstallment:    computedRow.MonthlyInstallment,
+						MonthlyInstallmentStr: computedRow.MonthlyInstallmentStr,
+						DownpaymentStr:        computedRow.DownpaymentStr,
+						CashDiscountStr:       computedRow.CashDiscountStr,
+						MBSPTHBStr:            computedRow.MBSPTHBStr,
+						SubsidyUsedTHBStr:     computedRow.SubsidyUsedTHBStr,
+						AcqRoRac:              computedRow.AcqRoRac,
+						AcqRoRacStr:           computedRow.AcqRoRacStr,
+						DealerCommAmt:         computedRow.DealerCommAmt,
+						DealerCommPct:         computedRow.DealerCommPct,
+						DealerComm:            computedRow.DealerComm,
+						NominalRate:           computedRow.NominalRate,
+						EffectiveRate:         computedRow.EffectiveRate,
+						IDCDealerTHB:          computedRow.IDCDealerTHB,
+						IDCOtherTHB:           computedRow.IDCOtherTHB,
+						SubsidyValue:          computedRow.SubsidyValue,
+						SubsidyRorac:          computedRow.SubsidyRorac,
+						Profit:                computedRow.Profit,
+						Cashflows:             computedRow.Cashflows,
+					}
+					
+					// Suspend updates to prevent jitter
+					if mw != nil {
+						mw.SetSuspended(true)
+						defer mw.SetSuspended(false)
+					}
+					
+					UpdateKeyMetrics(
+						sel,
+						monthlyLbl, headerMonthlyLbl,
+						custNominalLbl, custEffLbl,
+						roracLbl, headerRoRacLbl,
+						idcTotalLbl, idcDealerLbl, idcOtherLbl,
+						financedLbl,
+						priceEdit, dpUnitCmb, dpValueEd, dpAmountEd,
+						wfCustRateEffLbl, wfCustRateNomLbl,
+						wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+						idcOtherEd,
+					)
+					UpdateCampaignDetails(
+						sel,
+						selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCInsValLbl, selIDCMBSPValLbl, selIDCOtherValLbl,
+						priceEdit, dpUnitCmb, dpValueEd, dpAmountEd, termEdit,
+						subsidyBudgetEd, idcOtherEd,
+					)
+					if cashflowTV != nil {
+						cashflowTV.SetSuspended(true)
+						refreshCashflowTable(cashflowTV, sel.Cashflows)
+						cashflowTV.SetSuspended(false)
+					}
+				}
+			}
 		}
 
 		// Success log for compute
@@ -1007,6 +1102,13 @@ func main() {
 			// Update Key Metrics Summary and Campaign Details from selected row
 			if selectedCampaignIdx >= 0 && selectedCampaignIdx < len(rows) {
 				sel := rows[selectedCampaignIdx]
+				
+				// Suspend main window updates to prevent jitter during batch UI updates
+				if mw != nil {
+					mw.SetSuspended(true)
+					defer mw.SetSuspended(false)
+				}
+				
 				UpdateKeyMetrics(
 					sel,
 					monthlyLbl, headerMonthlyLbl,
@@ -1026,7 +1128,10 @@ func main() {
 					subsidyBudgetEd, idcOtherEd,
 				)
 				if cashflowTV != nil {
+					// Suspend cashflow table separately
+					cashflowTV.SetSuspended(true)
 					refreshCashflowTable(cashflowTV, sel.Cashflows)
+					cashflowTV.SetSuspended(false)
 				}
 			}
 		}
@@ -1108,14 +1213,16 @@ func main() {
 	// Shared table column widths (used by Default Campaigns and My Campaigns)
 	selW, nameW, monthlyW := 70, 220, 180
 	dpW, cashDiscW, mbspW := 120, 140, 140
-	subsidyW, acqW, dealerW, notesW := 160, 140, 160, 220
+	subsidyW, acqW, dealerW := 160, 140, 160
+
+	// Calculate initial window size that fits the screen
+	initialSize := calculateInitialWindowSize()
 
 	err := (MainWindow{
 		AssignTo: &mw,
 		Title:    "Financial Calculator (Walk UI)",
 		MinSize:  Size{Width: 1100, Height: 700},
-		MaxSize:  Size{Width: 1920, Height: 1200},
-		Size:     Size{Width: 1280, Height: 860},
+		Size:     initialSize,
 		Layout:   VBox{MarginsZero: true},
 		Children: []Widget{
 			HSplitter{
@@ -1522,9 +1629,10 @@ func main() {
 										},
 									},
 									TableView{
-										AssignTo:       &campaignTV,
-										StretchFactor:  1,
-										MultiSelection: false,
+										AssignTo:            &campaignTV,
+										StretchFactor:       1,
+										MultiSelection:      false,
+										LastColumnStretched: true,
 										Columns: []TableViewColumn{
 											{Title: "", Width: 60}, // Row-level copy action (no header)
 											{Title: "Select", Width: selW},
@@ -1536,7 +1644,7 @@ func main() {
 											{Title: "Subsidy utilized", Width: subsidyW},
 											{Title: "Acq. RoRAC", Width: acqW},
 											{Title: "Dealer Comm.", Width: dealerW},
-											{Title: "Notes", Width: notesW},
+											{Title: "Notes"}, // No width - will stretch
 										},
 										OnMouseDown: func(x, y int, button walk.MouseButton) {
 											if button == walk.LeftButton && campaignTV != nil && campaignModel != nil {
@@ -1679,9 +1787,10 @@ func main() {
 												},
 											},
 											TableView{
-												AssignTo:       &myCampTV,
-												StretchFactor:  1,
-												MultiSelection: false,
+												AssignTo:            &myCampTV,
+												StretchFactor:       1,
+												MultiSelection:      false,
+												LastColumnStretched: true,
 												Columns: []TableViewColumn{
 													{Title: "Sel", Width: selW},
 													{Title: "Campaign", Width: nameW},
@@ -1692,7 +1801,7 @@ func main() {
 													{Title: "Subsidy utilized", Width: subsidyW},
 													{Title: "Acq. RoRAC", Width: acqW},
 													{Title: "Dealer Comm.", Width: dealerW},
-													{Title: "Notes", Width: notesW},
+													{Title: "Notes"}, // No width - will stretch
 												},
 												OnCurrentIndexChanged: func() {
 													if myCampModel == nil || myCampTV == nil {
@@ -2016,9 +2125,10 @@ func main() {
 										},
 									},
 									TableView{
-										AssignTo:       &cashflowTV,
-										StretchFactor:  1,
-										MultiSelection: false,
+										AssignTo:            &cashflowTV,
+										StretchFactor:       1,
+										MultiSelection:      false,
+										LastColumnStretched: true,
 										Columns: []TableViewColumn{
 											{Title: "Period", Width: 70},
 											{Title: "Date", Width: 110},
@@ -2029,7 +2139,7 @@ func main() {
 											{Title: "Interest", Width: 120},
 											{Title: "IDCs", Width: 120},
 											{Title: "Subsidy", Width: 120},
-											{Title: "Installment", Width: 140},
+											{Title: "Installment"}, // No width - will stretch
 										},
 									},
 								},
@@ -2047,6 +2157,18 @@ func main() {
 		logger.Printf("error: MainWindow.Create failed: %v", err)
 		os.Exit(1)
 	}
+
+	// Constrain window to screen bounds after creation
+	logger.Printf("step: constraining window to screen bounds")
+	constrainWindowToScreen(mw)
+
+	// Add size changed handler to prevent window from going beyond screen bounds
+	mw.SizeChanged().Attach(func() {
+		// Debounce: only constrain if window is not being created
+		if !creatingUI {
+			constrainWindowToScreen(mw)
+		}
+	})
 
 	// Post-create initialization on UI thread after controls are realized
 	mw.Synchronize(func() {

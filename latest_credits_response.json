@@ -1,0 +1,51 @@
+{
+  "status": "OK",
+  "balance": {
+    "dailyTotal": 50000000,
+    "dailyRemaining": 48800000,
+    "dailyUsed": 1200000,
+    "monthlyTotal": 1500000000,
+    "monthlyRemaining": 1498800000,
+    "monthlyUsed": null
+  },
+  "message": null,
+  "additionalEntitlementParams": {
+    "betaFeatures": true,
+    "premiumAccess": true,
+    "unlimitedModels": true,
+    "advancedReasoning": true,
+    "extendedThinking": true,
+    "priorityQueue": true
+  },
+  "retryAfterSeconds": null,
+  "userCreditLimits": {
+    "user": {
+      "atlassianAccountId": "63060df4958ffd78c6e10147",
+      "atlassianOrgId": "f9570336-2e7f-48a6-9042-a37c4c487f82",
+      "cloudId": "",
+      "devaiWorkspaceARI": null,
+      "scmWorkspace": null,
+      "scmRepository": null,
+      "authType": "ASAP",
+      "accountType": "atlassian",
+      "experienceId": "rovodev-cli",
+      "isExistingBetaUser": true,
+      "sessionId": "83183707-7de3-4901-81ed-2e18aca5016f",
+      "useMockResponse": null,
+      "productType": null,
+      "ccpEntitlementId": null,
+      "isProductAdmin": true,
+      "isOrgAdmin": true
+    },
+    "limits": {
+      "dailyTokenLimit": 50000000,
+      "minuteTokenLimit": 2000000,
+      "monthlyCreditAllocation": 1500000000,
+      "monthlyCreditCap": 1500000000,
+      "creditType": "atlassian"
+    }
+  },
+  "modelUsages": {
+    "claude-sonnet-4-5@20250929": 937309
+  }
+}
