@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/financial-calculator/engines/types"
 	"github.com/lxn/walk"
 )
 
@@ -13,6 +14,7 @@ import (
 // Later phases can add live-calculated fields (MonthlyInstallmentStr, etc.) based on engine results.
 
 // MyCampaignRow represents one row in the "My Campaigns" editable table.
+// Fields match CampaignRow for consistent display across both tables.
 type MyCampaignRow struct {
 	Selected bool
 
@@ -20,9 +22,29 @@ type MyCampaignRow struct {
 	ID   string
 	Name string
 
-	// Display metrics (MVP placeholders; to be wired to live calc later)
+	// Computed metrics (populated from live calculations)
+	MonthlyInstallment    float64
 	MonthlyInstallmentStr string // "22,198.61" (without THB prefix)
+	DownpaymentStr        string // "THB 200,000 (20% DP)"
+	CashDiscountStr       string // "THB 50,000" or "—"
+	MBSPTHBStr            string // "THB 5,000" or "—"
+	SubsidyUsedTHBStr     string // "THB 50,000" or "—"
+	AcqRoRac              float64
+	AcqRoRacStr           string // "15.23%"
+	DealerCommAmt         float64
+	DealerCommPct         float64
+	DealerComm            string // "THB 25,000 (2.5%)"
 	Notes                 string
+
+	// Profitability snapshot and cashflows for drill-down views
+	NominalRate   float64
+	EffectiveRate float64
+	IDCDealerTHB  float64
+	IDCOtherTHB   float64
+	SubsidyValue  float64
+	SubsidyRorac  string
+	Profit        ProfitabilitySnapshot
+	Cashflows     []types.Cashflow
 }
 
 // CampaignsModel is the data model for the editable campaigns table.
@@ -50,6 +72,7 @@ func (m *CampaignsModel) Items() interface{} {
 }
 
 // ReplaceFromDrafts rebuilds the model's items from campaign drafts.
+// Note: This only sets up the row structure - metrics should be computed separately via computeMyCampaignRow.
 func (m *CampaignsModel) ReplaceFromDrafts(drafts []CampaignDraft) {
 	// Build legacy-compatible value slice and pointer slice.
 	m.rows = make([]MyCampaignRow, len(drafts))
@@ -70,6 +93,29 @@ func (m *CampaignsModel) ReplaceFromDrafts(drafts []CampaignDraft) {
 		m.items[i] = &m.rows[i]
 	}
 	m.PublishRowsReset()
+}
+
+// UpdateRowWithMetrics updates an existing row with computed metrics.
+func (m *CampaignsModel) UpdateRowWithMetrics(id string, computed MyCampaignRow) bool {
+	if m == nil {
+		return false
+	}
+	idx := m.IndexByID(id)
+	if idx < 0 || idx >= len(m.rows) {
+		return false
+	}
+	
+	// Preserve identity, selection, and notes
+	computed.ID = m.rows[idx].ID
+	computed.Selected = m.rows[idx].Selected
+	if computed.Notes == "" {
+		computed.Notes = m.rows[idx].Notes
+	}
+	
+	m.rows[idx] = computed
+	m.items[idx] = &m.rows[idx]
+	m.PublishRowChanged(idx)
+	return true
 }
 
 // ReplaceRows replaces internal rows (legacy API) and rebuilds item pointers.
@@ -132,25 +178,43 @@ func (m *CampaignsModel) Value(row, col int) interface{} {
 			return "•"
 		}
 		return " "
-	case 1: // Campaign
+	case 1: // Campaign Name
 		return r.Name
 	case 2: // Monthly Installment
 		if r.MonthlyInstallmentStr == "" {
 			return "—"
 		}
 		return "THB " + r.MonthlyInstallmentStr
-	case 3: // Downpayment (not wired yet)
-		return "—"
-	case 4: // Cash Discount (not wired yet)
-		return "—"
-	case 5: // Free MBSP THB (not wired yet)
-		return "—"
-	case 6: // Subsidy utilized (not wired yet)
-		return "—"
-	case 7: // Acq. RoRAC (not wired yet)
-		return "—"
-	case 8: // Dealer Comm. (not wired yet)
-		return "—"
+	case 3: // Downpayment
+		if r.DownpaymentStr == "" {
+			return "—"
+		}
+		return r.DownpaymentStr
+	case 4: // Cash Discount
+		if r.CashDiscountStr == "" {
+			return "—"
+		}
+		return r.CashDiscountStr
+	case 5: // Free MBSP THB
+		if r.MBSPTHBStr == "" {
+			return "—"
+		}
+		return r.MBSPTHBStr
+	case 6: // Subsidy utilized
+		if r.SubsidyUsedTHBStr == "" {
+			return "—"
+		}
+		return r.SubsidyUsedTHBStr
+	case 7: // Acq. RoRAC
+		if r.AcqRoRacStr == "" {
+			return "—"
+		}
+		return r.AcqRoRacStr
+	case 8: // Dealer Comm.
+		if r.DealerComm == "" {
+			return "—"
+		}
+		return r.DealerComm
 	case 9: // Notes
 		return r.Notes
 	default:

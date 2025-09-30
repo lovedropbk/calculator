@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/financial-calculator/engines/calculator"
 	"github.com/financial-calculator/engines/campaigns"
@@ -873,4 +874,309 @@ func SelectedCampaignRow(m *CampaignTableModel, idx int) (CampaignRow, bool) {
 		return m.rows[0], true
 	}
 	return m.rows[idx], true
+}
+
+// computeMyCampaignRow computes full metrics for a single My Campaign draft.
+// This mirrors computeCampaignRows logic but works with campaign-specific adjustments.
+func computeMyCampaignRow(
+	ps types.ParameterSet,
+	calc *calculator.Calculator,
+	campEng *campaigns.Engine,
+	draft CampaignDraft,
+	state types.DealState,
+) MyCampaignRow {
+	row := MyCampaignRow{
+		ID:   draft.ID,
+		Name: draft.Name,
+	}
+
+	// Build deal from draft inputs
+	deal := types.Deal{
+		Product:             types.Product(draft.Product),
+		PriceExTax:          types.NewDecimal(draft.Inputs.PriceExTaxTHB),
+		DownPaymentPercent:  types.NewDecimal(draft.Inputs.DownpaymentPercent / 100.0),
+		DownPaymentAmount:   types.NewDecimal(draft.Inputs.DownpaymentTHB),
+		DownPaymentLocked:   "percent",
+		TermMonths:          draft.Inputs.TermMonths,
+		BalloonPercent:      types.NewDecimal(draft.Inputs.BalloonPercent / 100.0),
+		Timing:              types.TimingArrears,
+		RateMode:            draft.Inputs.RateMode,
+		CustomerNominalRate: types.NewDecimal(draft.Inputs.CustomerRateAPR / 100.0),
+		TargetInstallment:   types.NewDecimal(draft.Inputs.TargetInstallmentTHB),
+	}
+
+	// Set payout date to today
+	deal.PayoutDate = time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	// Normalize deal
+	deal = normalizeDealForCampaign(deal)
+
+	// Compute dealer commission
+	financedBase := deal.PriceExTax.Sub(deal.DownPaymentAmount)
+	if financedBase.LessThan(types.NewDecimal(0)) {
+		financedBase = types.NewDecimal(0)
+	}
+
+	dealerPct := 0.025 // Default 2.5%
+	if state.DealerCommission.Mode == types.DealerCommissionModeOverride {
+		if state.DealerCommission.Pct != nil {
+			dealerPct = *state.DealerCommission.Pct
+		}
+	}
+	dealerAmt := financedBase.Mul(types.NewDecimal(dealerPct)).InexactFloat64()
+	row.DealerCommAmt = dealerAmt
+	row.DealerCommPct = dealerPct
+	row.DealerComm = FormatDealerCommission(dealerAmt, dealerPct)
+
+	// Determine campaign type from adjustments
+	adj := draft.Adjustments
+	otherIDC := state.IDCOther.Value
+
+	// Helper: format downpayment as "THB X (Y% DP)"
+	dpString := func(dpAmtF, priceF float64) string {
+		pct := 0.0
+		if priceF > 0 {
+			pct = (dpAmtF / priceF) * 100.0
+		}
+		return fmt.Sprintf("THB %s (%.0f%% DP)", FormatTHB(dpAmtF), pct)
+	}
+
+	row.DownpaymentStr = dpString(deal.DownPaymentAmount.InexactFloat64(), deal.PriceExTax.InexactFloat64())
+
+	// Helper: compute quote with IDC items
+	baselineQuote := func(idcs []types.IDCItem, d types.Deal) (types.Quote, bool) {
+		if calc == nil {
+			return types.Quote{}, false
+		}
+		req := types.CalculationRequest{
+			Deal:         d,
+			Campaigns:    []types.Campaign{},
+			IDCItems:     idcs,
+			ParameterSet: ps,
+			Options:      map[string]interface{}{"derive_idc_from_cf": true},
+		}
+		res, err := calc.Calculate(req)
+		if err != nil || res == nil || !res.Success {
+			return types.Quote{}, false
+		}
+		return res.Quote, true
+	}
+
+	// Helper: snapshot from quote
+	snapshotFromQuote := func(q types.Quote) ProfitabilitySnapshot {
+		p := q.Profitability
+		return ProfitabilitySnapshot{
+			DealIRREffective:    p.DealIRREffective.InexactFloat64(),
+			DealIRRNominal:      p.DealIRRNominal.InexactFloat64(),
+			IDCUpfrontCostPct:   p.IDCUpfrontCostPct.InexactFloat64(),
+			SubsidyUpfrontPct:   p.SubsidyUpfrontPct.InexactFloat64(),
+			CostOfDebt:          p.CostOfDebtMatched.InexactFloat64(),
+			MatchedFundedSpread: p.MatchedFundedSpread.InexactFloat64(),
+			GrossInterestMargin: p.GrossInterestMargin.InexactFloat64(),
+			CapitalAdvantage:    p.CapitalAdvantage.InexactFloat64(),
+			NetInterestMargin:   p.NetInterestMargin.InexactFloat64(),
+			CostOfCreditRisk:    p.CostOfCreditRisk.InexactFloat64(),
+			OPEX:                p.OPEX.InexactFloat64(),
+			IDCPeriodicPct:      p.IDCSubsidiesFeesPeriodic.InexactFloat64(),
+			SubsidyPeriodicPct:  p.SubsidyPeriodicPct.InexactFloat64(),
+			NetEBITMargin:       p.NetEBITMargin.InexactFloat64(),
+			EconomicCapital:     p.EconomicCapital.InexactFloat64(),
+			AcquisitionRoRAC:    p.AcquisitionRoRAC.InexactFloat64(),
+		}
+	}
+
+	// Calculate total subsidy from all components
+	totalSubsidyRequested := adj.IDCFreeInsuranceTHB + adj.IDCFreeMBSPTHB + adj.SubdownTHB
+	
+	// Cash Discount is treated separately (non-financing reference)
+	if adj.CashDiscountTHB > 0 {
+		// Cash Discount campaign (non-financing reference)
+		row.CashDiscountStr = "THB " + FormatTHB(adj.CashDiscountTHB)
+		effectiveCash := deal.PriceExTax.Sub(types.NewDecimal(adj.CashDiscountTHB)).InexactFloat64()
+		if effectiveCash < 0 {
+			effectiveCash = 0
+		}
+		row.DownpaymentStr = "THB " + FormatTHB(effectiveCash)
+		row.MonthlyInstallmentStr = ""
+		row.AcqRoRacStr = ""
+		row.SubsidyRorac = "—"
+		row.DealerComm = "THB 0 (0%)"
+		row.Notes = "No financing (reference only)"
+		row.Cashflows = nil
+		return row
+	}
+	
+	// For financing campaigns, apply all components simultaneously
+	// Note: Since we don't have a subsidy budget field in state for My Campaigns,
+	// we use the total requested as the available budget (can be extended later)
+	subsidyBudgetAvailable := totalSubsidyRequested
+	
+	// Cap total subsidy at budget available
+	totalSubsidyUsed := totalSubsidyRequested
+	if totalSubsidyUsed > subsidyBudgetAvailable {
+		totalSubsidyUsed = subsidyBudgetAvailable
+	}
+	
+	// Calculate scaling factor if we need to reduce subsidies
+	scalingFactor := 1.0
+	if totalSubsidyRequested > 0 && totalSubsidyUsed < totalSubsidyRequested {
+		scalingFactor = totalSubsidyUsed / totalSubsidyRequested
+	}
+	
+	// Apply scaling to each component
+	usedSubdownTHB := adj.SubdownTHB * scalingFactor
+	usedFreeInsuranceTHB := adj.IDCFreeInsuranceTHB * scalingFactor
+	usedFreeMBSPTHB := adj.IDCFreeMBSPTHB * scalingFactor
+	
+	// Start with original deal, will be modified if Subdown is active
+	deal2 := deal
+	
+	// Clamp Subdown to ensure financed amount stays positive
+	if usedSubdownTHB > 0 {
+		financedBase := deal.PriceExTax.Sub(deal.DownPaymentAmount)
+		if financedBase.LessThanOrEqual(types.NewDecimal(1)) {
+			usedSubdownTHB = 0
+		} else {
+			maxUse := financedBase.Sub(types.NewDecimal(1)).InexactFloat64()
+			if usedSubdownTHB > maxUse {
+				usedSubdownTHB = maxUse
+			}
+		}
+		
+		// Adjust deal with increased downpayment
+		deal2.DownPaymentAmount = types.RoundTHB(deal.DownPaymentAmount.Add(types.NewDecimal(usedSubdownTHB)))
+		if deal2.PriceExTax.GreaterThan(types.NewDecimal(0)) {
+			deal2.DownPaymentPercent = deal2.DownPaymentAmount.Div(deal2.PriceExTax)
+		}
+		deal2.DownPaymentLocked = "amount"
+		deal2.FinancedAmount = types.RoundTHB(deal2.PriceExTax.Sub(deal2.DownPaymentAmount))
+		
+		// Update downpayment display
+		row.DownpaymentStr = dpString(deal2.DownPaymentAmount.InexactFloat64(), deal2.PriceExTax.InexactFloat64())
+	}
+	
+	// Build IDC items: dealer commission + other IDC + placeholder costs for Free Insurance/MBSP
+	idcItems := []types.IDCItem{}
+	
+	// Dealer commission (always included for financed deals)
+	if dealerAmt > 0 {
+		idcItems = append(idcItems, types.IDCItem{
+			Category:    types.IDCBrokerCommission,
+			Amount:      types.NewDecimal(dealerAmt),
+			Payer:       "Dealer",
+			Financed:    false,
+			Timing:      types.IDCTimingUpfront,
+			IsRevenue:   false,
+			IsCost:      true,
+			Description: "Dealer commission",
+		})
+	}
+	
+	// Other IDC from state
+	if otherIDC > 0 {
+		idcItems = append(idcItems, types.IDCItem{
+			Category:    types.IDCAdminFee,
+			Amount:      types.NewDecimal(otherIDC),
+			Payer:       "Dealer/Provider",
+			Financed:    false,
+			Timing:      types.IDCTimingUpfront,
+			IsRevenue:   false,
+			IsCost:      true,
+			Description: "IDC - Other",
+		})
+	}
+	
+	// Add placeholder costs for Free Insurance and Free MBSP (upfront costs)
+	if usedFreeInsuranceTHB > 0 {
+		idcItems = append(idcItems, types.IDCItem{
+			Category:    types.IDCAdminFee,
+			Amount:      types.NewDecimal(50000.0), // Placeholder insurance cost
+			Payer:       "Dealer/Provider",
+			Financed:    false,
+			Timing:      types.IDCTimingUpfront,
+			IsRevenue:   false,
+			IsCost:      true,
+			Description: "Placeholder Insurance IDC",
+		})
+	}
+	
+	if usedFreeMBSPTHB > 0 {
+		idcItems = append(idcItems, types.IDCItem{
+			Category:    types.IDCMaintenanceFee,
+			Amount:      types.NewDecimal(150000.0), // Placeholder MBSP cost
+			Payer:       "Dealer/Provider",
+			Financed:    false,
+			Timing:      types.IDCTimingUpfront,
+			IsRevenue:   false,
+			IsCost:      true,
+			Description: "Placeholder MBSP IDC",
+		})
+		row.MBSPTHBStr = "THB " + FormatTHB(usedFreeMBSPTHB)
+	}
+	
+	// Calculate total periodic subsidy (Free Insurance + Free MBSP)
+	totalPeriodicSubsidy := usedFreeInsuranceTHB + usedFreeMBSPTHB
+	
+	// Run calculation with all components
+	req := types.CalculationRequest{
+		Deal:         deal2,
+		Campaigns:    []types.Campaign{},
+		IDCItems:     idcItems,
+		ParameterSet: ps,
+		Options:      map[string]interface{}{"derive_idc_from_cf": true, "add_subsidy_periodic_thb": totalPeriodicSubsidy},
+	}
+	
+	if res, err := calc.Calculate(req); err == nil && res != nil && res.Success {
+		q := res.Quote
+		mi := q.MonthlyInstallment.InexactFloat64()
+		row.MonthlyInstallment = mi
+		row.MonthlyInstallmentStr = FormatTHB(mi)
+		row.NominalRate = q.CustomerRateNominal.InexactFloat64()
+		row.EffectiveRate = q.CustomerRateEffective.InexactFloat64()
+		row.AcqRoRac = q.Profitability.AcquisitionRoRAC.InexactFloat64()
+		row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+		row.IDCDealerTHB = dealerAmt
+		row.IDCOtherTHB = totalPeriodicSubsidy
+		row.SubsidyValue = totalSubsidyUsed
+		row.SubsidyUsedTHBStr = FormatTHB(totalSubsidyUsed)
+		row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(totalSubsidyUsed), row.AcqRoRac*100.0)
+		row.Profit = snapshotFromQuote(q)
+		row.Cashflows = q.Cashflows
+	} else {
+		// Fallback: baseline quote without subsidies
+		if q, ok := baselineQuote(idcItems, deal2); ok {
+			mi := q.MonthlyInstallment.InexactFloat64()
+			row.MonthlyInstallment = mi
+			row.MonthlyInstallmentStr = FormatTHB(mi)
+			row.NominalRate = q.CustomerRateNominal.InexactFloat64()
+			row.EffectiveRate = q.CustomerRateEffective.InexactFloat64()
+			row.AcqRoRac = q.Profitability.AcquisitionRoRAC.InexactFloat64()
+			row.AcqRoRacStr = FormatRatePct(row.AcqRoRac)
+			row.IDCDealerTHB = dealerAmt
+			row.IDCOtherTHB = otherIDC
+			row.SubsidyValue = totalSubsidyUsed
+			row.SubsidyUsedTHBStr = FormatTHB(totalSubsidyUsed)
+			row.SubsidyRorac = fmt.Sprintf("THB %s / %.2f%%", FormatTHB(totalSubsidyUsed), row.AcqRoRac*100.0)
+			row.Profit = snapshotFromQuote(q)
+			row.Cashflows = q.Cashflows
+		}
+	}
+
+	// Append downpayment cashflow for consistency with campaign rows
+	if deal.DownPaymentAmount.GreaterThan(types.NewDecimal(0)) {
+		dpFlow := types.Cashflow{
+			Date:      deal.PayoutDate,
+			Direction: "in",
+			Type:      types.CashflowDownPayment,
+			Amount:    deal.DownPaymentAmount,
+			Memo:      "Customer downpayment",
+		}
+		if len(row.Cashflows) > 0 {
+			row.Cashflows = append([]types.Cashflow{dpFlow}, row.Cashflows...)
+		} else {
+			row.Cashflows = []types.Cashflow{dpFlow}
+		}
+	}
+
+	return row
 }

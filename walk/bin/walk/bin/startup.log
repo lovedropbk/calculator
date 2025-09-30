@@ -1409,3 +1409,74 @@ main.main()
 2025/09/30 21:39:11.751166 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
 2025/09/30 21:39:11.809725 step: mw.Run end; duration=6.0958722s
 2025/09/30 21:39:11.809725 shutdown: normal exit
+2025/09/30 23:09:41.767836 startup: begin
+2025/09/30 23:09:41.768920 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/30 23:09:41.768920 step: InitCommonControlsEx begin
+2025/09/30 23:09:41.777077 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/30 23:09:41.789117 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/30 23:09:41.789117 step: MainWindow.Create begin
+2025/09/30 23:09:42.094281 step: MainWindow.Create end; duration=305.1636ms
+2025/09/30 23:09:42.094281 step: mw.Run begin
+2025/09/30 23:09:42.385255 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:42.421978 post-create: window initialized; awaiting user input
+2025/09/30 23:09:46.736982 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:48.425002 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:50.538881 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:54.500686 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:55.094836 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:56.560455 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:56.600159 step: mw.Run end; duration=14.5058872s
+2025/09/30 23:09:56.600159 shutdown: normal exit
+2025/09/30 23:09:58.358898 startup: begin
+2025/09/30 23:09:58.360144 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/09/30 23:09:58.360144 step: InitCommonControlsEx begin
+2025/09/30 23:09:58.369544 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/09/30 23:09:58.370345 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/09/30 23:09:58.370345 step: MainWindow.Create begin
+2025/09/30 23:09:58.645219 step: MainWindow.Create end; duration=274.8733ms
+2025/09/30 23:09:58.645754 step: mw.Run begin
+2025/09/30 23:09:58.898172 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:09:58.930774 post-create: window initialized; awaiting user input
+2025/09/30 23:10:18.923744 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/09/30 23:10:19.995280 compute ok: version=2025-09-sample installment=THB 140,665 rorac=79.44%
+2025/10/01 00:46:30.097745 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:26.092865 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:26.142908 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:27.062348 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:28.784898 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:28.884129 step: mw.Run end; duration=2h27m30.2157385s
+2025/10/01 01:37:28.884129 shutdown: normal exit
+2025/10/01 01:37:37.866520 startup: begin
+2025/10/01 01:37:37.868127 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 01:37:37.868127 step: InitCommonControlsEx begin
+2025/10/01 01:37:37.877387 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 01:37:37.878519 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 01:37:37.878519 step: MainWindow.Create begin
+2025/10/01 01:37:38.294594 step: MainWindow.Create end; duration=416.0766ms
+2025/10/01 01:37:38.294594 step: constraining window to screen bounds
+2025/10/01 01:37:38.317814 step: mw.Run begin
+2025/10/01 01:37:38.765999 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:38.816037 post-create: window initialized; awaiting user input
+2025/10/01 01:37:43.070321 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:37:48.666043 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:43:49.108626 step: mw.Run end; duration=6m10.7917637s
+2025/10/01 01:43:49.108626 shutdown: normal exit
+2025/10/01 01:44:27.344178 startup: begin
+2025/10/01 01:44:27.344717 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 01:44:27.344717 step: InitCommonControlsEx begin
+2025/10/01 01:44:27.353648 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 01:44:27.354209 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 01:44:27.354209 step: MainWindow.Create begin
+2025/10/01 01:44:27.681943 step: MainWindow.Create end; duration=327.7349ms
+2025/10/01 01:44:27.681943 step: constraining window to screen bounds
+2025/10/01 01:44:27.694542 step: mw.Run begin
+2025/10/01 01:44:28.049574 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:44:28.121407 post-create: window initialized; awaiting user input
+2025/10/01 01:44:39.651230 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:44:43.775677 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:44:44.462566 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:45:31.957173 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:45:32.602194 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:45:33.075202 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 01:45:33.154167 step: mw.Run end; duration=1m5.4597888s
+2025/10/01 01:45:33.154681 shutdown: normal exit
