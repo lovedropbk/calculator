@@ -25,127 +25,75 @@ type MyCampaignRow struct {
 	Notes                 string
 }
 
-// MyCampaignsTableModel implements walk.TableModel for My Campaigns.
-type MyCampaignsTableModel struct {
+// CampaignsModel is the data model for the editable campaigns table.
+type CampaignsModel struct {
 	walk.TableModelBase
+	walk.SorterBase
+
+	// Legacy-compatible backing slice of value rows (kept in sync with items).
 	rows []MyCampaignRow
+	// Pointer slice for any binding helpers (points into rows).
+	items []*MyCampaignRow
 
 	// Optional: notify backing store when a row name is edited in-place
 	OnRowNameEdited func(id, name string)
 }
 
-// NewMyCampaignsTableModel creates an empty table model.
-func NewMyCampaignsTableModel() *MyCampaignsTableModel {
-	return &MyCampaignsTableModel{
-		rows: []MyCampaignRow{},
-	}
+// NewCampaignsModel creates a new, empty model.
+func NewCampaignsModel() *CampaignsModel {
+	return new(CampaignsModel)
 }
 
-// ReplaceFromDrafts rebuilds rows based on the given drafts and publishes a reset.
-func (m *MyCampaignsTableModel) ReplaceFromDrafts(drafts []CampaignDraft) {
-	rows := make([]MyCampaignRow, 0, len(drafts))
-	for _, d := range drafts {
+// Items returns the underlying slice for data binding.
+func (m *CampaignsModel) Items() interface{} {
+	return m.items
+}
+
+// ReplaceFromDrafts rebuilds the model's items from campaign drafts.
+func (m *CampaignsModel) ReplaceFromDrafts(drafts []CampaignDraft) {
+	// Build legacy-compatible value slice and pointer slice.
+	m.rows = make([]MyCampaignRow, len(drafts))
+	m.items = make([]*MyCampaignRow, len(drafts))
+
+	for i, d := range drafts {
 		name := d.Name
 		if name == "" {
 			name = "(unnamed)"
 		}
-		rows = append(rows, MyCampaignRow{
+		m.rows[i] = MyCampaignRow{
 			Selected:              false,
 			ID:                    d.ID,
 			Name:                  name,
-			MonthlyInstallmentStr: "", // computed later; keep blank for MVP
+			MonthlyInstallmentStr: "",
 			Notes:                 "",
-		})
-	}
-	m.rows = rows
-	m.PublishRowsReset()
-}
-
-// ReplaceRows replaces the internal rows directly and publishes a reset (utility).
-func (m *MyCampaignsTableModel) ReplaceRows(rows []MyCampaignRow) {
-	m.rows = rows
-	m.PublishRowsReset()
-}
-
-// SetCampaigns replaces the rows with a copy and publishes a reset (API helper).
-func (m *MyCampaignsTableModel) SetCampaigns(rows []MyCampaignRow) {
-	if rows == nil {
-		m.rows = nil
-	} else {
-		m.rows = append([]MyCampaignRow(nil), rows...)
+		}
+		m.items[i] = &m.rows[i]
 	}
 	m.PublishRowsReset()
 }
 
-// AppendDraft appends a single draft as a row (Selected flag left false by default).
-func (m *MyCampaignsTableModel) AppendDraft(d CampaignDraft) {
-	name := d.Name
-	if name == "" {
-		name = "(unnamed)"
+// ReplaceRows replaces internal rows (legacy API) and rebuilds item pointers.
+func (m *CampaignsModel) ReplaceRows(rows []MyCampaignRow) {
+	m.rows = append([]MyCampaignRow(nil), rows...)
+	m.items = make([]*MyCampaignRow, len(m.rows))
+	for i := range m.rows {
+		m.items[i] = &m.rows[i]
 	}
-	m.rows = append(m.rows, MyCampaignRow{
-		Selected:              false,
-		ID:                    d.ID,
-		Name:                  name,
-		MonthlyInstallmentStr: "",
-		Notes:                 "",
-	})
 	m.PublishRowsReset()
 }
 
-// AddDraft maps to AppendDraft (parity with milestone spec).
-func (m *MyCampaignsTableModel) AddDraft(d CampaignDraft) {
-	m.AppendDraft(d)
-}
-
-// ToDrafts maps the current rows back to minimal drafts. This is a lossy mapping,
-// intended only for Save/Load scaffolding in MVP where rows carry limited fields.
-func (m *MyCampaignsTableModel) ToDrafts() []CampaignDraft {
-	out := make([]CampaignDraft, 0, len(m.rows))
-	now := nowRFC3339()
-	for _, r := range m.rows {
-		out = append(out, CampaignDraft{
-			ID:      r.ID,
-			Name:    r.Name,
-			Product: "", // product unknown at this layer; left blank for MVP
-			Inputs: CampaignInputs{
-				PriceExTaxTHB:        0,
-				DownpaymentPercent:   0,
-				DownpaymentTHB:       0,
-				TermMonths:           0,
-				BalloonPercent:       0,
-				RateMode:             "fixed_rate",
-				CustomerRateAPR:      0,
-				TargetInstallmentTHB: 0,
-			},
-			Adjustments: CampaignAdjustments{
-				CashDiscountTHB:     0,
-				SubdownTHB:          0,
-				IDCFreeInsuranceTHB: 0,
-				IDCFreeMBSPTHB:      0,
-			},
-			Metadata: CampaignMetadata{
-				CreatedAt: now,
-				UpdatedAt: now,
-				Version:   1,
-			},
-		})
-	}
-	return out
-}
-
-// RowCount implements walk.TableModel.
-func (m *MyCampaignsTableModel) RowCount() int {
+// RowCount implements walk.TableModel (legacy API compatibility).
+func (m *CampaignsModel) RowCount() int {
 	return len(m.rows)
 }
 
-// ColumnCount provides fixed columns for the table.
-func (m *MyCampaignsTableModel) ColumnCount() int {
+// ColumnCount provides fixed columns for the table (legacy API compatibility).
+func (m *CampaignsModel) ColumnCount() int {
 	return 10
 }
 
-// ColumnName provides human-readable column headers.
-func (m *MyCampaignsTableModel) ColumnName(col int) string {
+// ColumnName provides human-readable column headers (legacy API compatibility).
+func (m *CampaignsModel) ColumnName(col int) string {
 	switch col {
 	case 0:
 		return "Sel"
@@ -172,8 +120,8 @@ func (m *MyCampaignsTableModel) ColumnName(col int) string {
 	}
 }
 
-// Value implements walk.TableModel.
-func (m *MyCampaignsTableModel) Value(row, col int) interface{} {
+// Value implements walk.TableModel (legacy API compatibility).
+func (m *CampaignsModel) Value(row, col int) interface{} {
 	if row < 0 || row >= len(m.rows) {
 		return ""
 	}
@@ -210,65 +158,8 @@ func (m *MyCampaignsTableModel) Value(row, col int) interface{} {
 	}
 }
 
-// SetSelectedIndex sets the Selected flag for a single row and clears others, then publishes a reset.
-func (m *MyCampaignsTableModel) SetSelectedIndex(idx int) {
-	if idx < 0 || idx >= len(m.rows) {
-		return
-	}
-	for i := range m.rows {
-		m.rows[i].Selected = (i == idx)
-	}
-	m.PublishRowsReset()
-}
-
-// SelectedIndex returns the first selected row index, or -1 if none.
-func (m *MyCampaignsTableModel) SelectedIndex() int {
-	for i := range m.rows {
-		if m.rows[i].Selected {
-			return i
-		}
-	}
-	return -1
-}
-
-// IndexByID returns the index of the row with the given ID, or -1.
-func (m *MyCampaignsTableModel) IndexByID(id string) int {
-	for i := range m.rows {
-		if m.rows[i].ID == id {
-			return i
-		}
-	}
-	return -1
-}
-
-// RemoveByID removes the first row with the given ID and publishes a reset. Returns true if removed.
-func (m *MyCampaignsTableModel) RemoveByID(id string) bool {
-	idx := m.IndexByID(id)
-	if idx < 0 {
-		return false
-	}
-	m.rows = append(m.rows[:idx], m.rows[idx+1:]...)
-	m.PublishRowsReset()
-	return true
-}
-
-// SetMonthlyInstallmentByID finds a row by ID and sets MonthlyInstallmentStr (expects numeric string without "THB ").
-// Publishes a reset when updated. Returns true if a row was updated.
-func (m *MyCampaignsTableModel) SetMonthlyInstallmentByID(id string, value string) bool {
-	if m == nil {
-		return false
-	}
-	idx := m.IndexByID(id)
-	if idx < 0 {
-		return false
-	}
-	m.rows[idx].MonthlyInstallmentStr = value
-	m.PublishRowsReset()
-	return true
-}
-
 // SetCampaignNameByID finds a row by ID and sets Name. Publishes a reset when updated.
-func (m *MyCampaignsTableModel) SetCampaignNameByID(id string, name string) bool {
+func (m *CampaignsModel) SetCampaignNameByID(id string, name string) bool {
 	if m == nil {
 		return false
 	}
@@ -276,14 +167,24 @@ func (m *MyCampaignsTableModel) SetCampaignNameByID(id string, name string) bool
 	if idx < 0 {
 		return false
 	}
-	m.rows[idx].Name = name
-	m.PublishRowsReset()
+	name = strings.TrimSpace(name)
+	if name == "" {
+		name = "(unnamed)"
+	}
+	if m.rows[idx].Name != name {
+		m.rows[idx].Name = name
+		// items points into rows, so pointer slice reflects the change
+		m.PublishRowChanged(idx)
+		if m.OnRowNameEdited != nil {
+			m.OnRowNameEdited(id, name)
+		}
+	}
 	return true
 }
 
 // SetValue enables in-place editing for Campaign Name (col 1) and Notes (col 9).
-// TableView will call this only for columns marked Editable: true.
-func (m *MyCampaignsTableModel) SetValue(row, col int, value interface{}) error {
+// TableView will call this only for columns marked Editable: true (legacy API).
+func (m *CampaignsModel) SetValue(row, col int, value interface{}) error {
 	if m == nil {
 		return nil
 	}
@@ -315,8 +216,104 @@ func (m *MyCampaignsTableModel) SetValue(row, col int, value interface{}) error 
 	return nil
 }
 
+// AddDraft appends a single draft as a row.
+func (m *CampaignsModel) AddDraft(d CampaignDraft) {
+	name := d.Name
+	if name == "" {
+		name = "(unnamed)"
+	}
+	row := MyCampaignRow{
+		Selected:              false,
+		ID:                    d.ID,
+		Name:                  name,
+		MonthlyInstallmentStr: "",
+		Notes:                 "",
+	}
+	m.rows = append(m.rows, row)
+	// CRITICAL: Rebuild items pointers after append, as append may reallocate the backing array
+	m.items = make([]*MyCampaignRow, len(m.rows))
+	for i := range m.rows {
+		m.items[i] = &m.rows[i]
+	}
+	m.PublishRowsReset()
+}
+
+// ToDrafts maps the current model items back to minimal drafts.
+func (m *CampaignsModel) ToDrafts() []CampaignDraft {
+	out := make([]CampaignDraft, 0, len(m.items))
+	now := nowRFC3339()
+	for _, r := range m.items {
+		out = append(out, CampaignDraft{
+			ID:   r.ID,
+			Name: r.Name,
+			// Note: This is a lossy conversion, suitable for MVP persistence.
+			Metadata: CampaignMetadata{
+				UpdatedAt: now,
+				Version:   1,
+			},
+		})
+	}
+	return out
+}
+
+// SetSelectedIndex sets the Selected flag for a single row and clears others.
+func (m *CampaignsModel) SetSelectedIndex(idx int) {
+	if idx < 0 || idx >= len(m.items) {
+		return
+	}
+	for i := range m.items {
+		m.items[i].Selected = (i == idx)
+	}
+	m.PublishRowsReset()
+}
+
+// SelectedIndex returns the first selected row index, or -1 if none.
+func (m *CampaignsModel) SelectedIndex() int {
+	for i, item := range m.items {
+		if item.Selected {
+			return i
+		}
+	}
+	return -1
+}
+
+// IndexByID returns the index of the row with the given ID, or -1.
+func (m *CampaignsModel) IndexByID(id string) int {
+	for i, item := range m.items {
+		if item.ID == id {
+			return i
+		}
+	}
+	return -1
+}
+
+// RemoveByID removes the first row with the given ID. Returns true if removed.
+func (m *CampaignsModel) RemoveByID(id string) bool {
+	idx := m.IndexByID(id)
+	if idx < 0 {
+		return false
+	}
+	m.items = append(m.items[:idx], m.items[idx+1:]...)
+	m.PublishRowsReset()
+	return true
+}
+
+// SetMonthlyInstallmentByID finds a row by ID and sets MonthlyInstallmentStr.
+func (m *CampaignsModel) SetMonthlyInstallmentByID(id string, value string) bool {
+	if m == nil {
+		return false
+	}
+	idx := m.IndexByID(id)
+	if idx < 0 {
+		return false
+	}
+	m.items[idx].MonthlyInstallmentStr = value
+	m.PublishRowChanged(idx)
+	return true
+}
+
 // Rows returns a shallow copy of current rows for read-only consumption.
-func (m *MyCampaignsTableModel) Rows() []MyCampaignRow {
+func (m *CampaignsModel) Rows() []MyCampaignRow {
 	out := make([]MyCampaignRow, len(m.rows))
 	copy(out, m.rows)
 	return out

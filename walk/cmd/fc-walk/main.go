@@ -214,7 +214,8 @@ func main() {
 
 	// Interactive Campaign Manager controls (MVP)
 	var myCampTV *walk.TableView
-	var myCampModel *MyCampaignsTableModel
+	var myCampModel *CampaignsModel
+	var myCampBinder *walk.DataBinder
 	var btnNewBlankCampaign, btnSaveAllCampaigns, btnLoadCampaigns, btnClearCampaigns *walk.PushButton
 
 	var headerMonthlyLbl, headerRoRacLbl *walk.Label
@@ -258,13 +259,47 @@ func main() {
 	myCampDeps.SelectedID = func() string { return selectedMyCampaignID }
 	myCampDeps.SeedBlank = func() CampaignDraft { return AddNewBlankDraft("") }
 	myCampDeps.SeedCopy = func() (CampaignDraft, error) {
-		// Determine base name from selected default campaign row
+		// Determine base name and adjustments from selected default campaign row
 		baseName := "Custom Campaign"
+		adjustments := CampaignAdjustments{}
+
 		if campaignModel != nil && selectedCampaignIdx >= 0 && selectedCampaignIdx < len(campaignModel.rows) {
-			baseName = campaignModel.rows[selectedCampaignIdx].Name
+			row := campaignModel.rows[selectedCampaignIdx]
+			baseName = row.Name
+
+			// Extract campaign-specific adjustments from the row
+			// Map campaign type to adjustment fields
+			if row.CashDiscountTHB > 0 {
+				adjustments.CashDiscountTHB = row.CashDiscountTHB
+			}
+			// For other campaign types, infer from the name and row data
+			// Note: The row has the calculated values we need to preserve
+			if row.Name == "Subdown" || row.Name == "Subinterest" {
+				// Subdown campaigns have subsidy that reduces downpayment
+				if row.SubsidyValue > 0 {
+					adjustments.SubdownTHB = row.SubsidyValue
+				}
+			}
+			if row.Name == "Free Insurance" {
+				// Free insurance campaigns have IDC adjustment
+				if row.SubsidyValue > 0 {
+					adjustments.IDCFreeInsuranceTHB = row.SubsidyValue
+				}
+			}
+			if row.Name == "Free MBSP" {
+				// Free MBSP campaigns have MBSP IDC adjustment
+				if row.SubsidyValue > 0 {
+					adjustments.IDCFreeMBSPTHB = row.SubsidyValue
+				}
+			}
+			if row.Name == "Cash Discount" {
+				if row.CashDiscountTHB > 0 {
+					adjustments.CashDiscountTHB = row.CashDiscountTHB
+				}
+			}
 		}
 
-		// Read current Deal Inputs high-level fields (identical logic)
+		// Read current Deal Inputs high-level fields
 		price := parseFloat(priceEdit)
 		dpUnit := "%"
 		if dpUnitCmb != nil && dpUnitCmb.Text() != "" {
@@ -312,7 +347,7 @@ func main() {
 			TargetInstallmentTHB: parseFloat(targetInstallmentEdit),
 		}
 		name := "Copied: " + baseName
-		return SeedCopyDraft(name, product, inputs), nil
+		return SeedCopyDraftWithAdjustments(name, product, inputs, adjustments), nil
 	}
 	myCampDeps.SelectMyCampaign = func(id string) {
 		selectedMyCampaignID = id
@@ -325,13 +360,37 @@ func main() {
 				if myCampTV != nil {
 					_ = myCampTV.SetCurrentIndex(idx)
 				}
-				rows := myCampModel.Rows()
+				rows := myCampModel.items
 				if idx >= 0 && idx < len(rows) {
 					selName = rows[idx].Name
 				}
 			}
 		}
 		ShowCampaignEditState(editModeUI, selName)
+
+		// Populate edit mode fields from the selected draft (inline to avoid forward reference)
+		if editModeUI != nil && id != "" {
+			// Find draft by ID
+			for i := range myCampaigns {
+				if myCampaigns[i].ID == id {
+					draft := myCampaigns[i]
+					if editModeUI.CashDiscountNE != nil {
+						editModeUI.CashDiscountNE.SetValue(draft.Adjustments.CashDiscountTHB)
+					}
+					if editModeUI.SubdownNE != nil {
+						editModeUI.SubdownNE.SetValue(draft.Adjustments.SubdownTHB)
+					}
+					if editModeUI.IDCInsuranceNE != nil {
+						editModeUI.IDCInsuranceNE.SetValue(draft.Adjustments.IDCFreeInsuranceTHB)
+					}
+					if editModeUI.IDCMBSPNE != nil {
+						editModeUI.IDCMBSPNE.SetValue(draft.Adjustments.IDCFreeMBSPTHB)
+					}
+					break
+				}
+			}
+		}
+
 		// Recompute to reflect draft values and refresh selected row
 		recalc()
 	}
@@ -347,7 +406,7 @@ func main() {
 			for i := range rows {
 				rows[i].Selected = false
 			}
-			myCampModel.ReplaceRows(rows)
+			myCampModel.PublishRowsReset()
 		}
 	}
 
@@ -374,7 +433,7 @@ func main() {
 		name := ""
 		if myCampModel != nil {
 			if mi := myCampModel.IndexByID(id); mi >= 0 {
-				rows := myCampModel.Rows()
+				rows := myCampModel.items
 				if mi >= 0 && mi < len(rows) {
 					name = rows[mi].Name
 				}
@@ -916,6 +975,10 @@ func main() {
 
 		// Compute and bind Campaign Options grid with per-row metrics
 		if campaignTV != nil && campEng != nil {
+			// Suspend layout updates to prevent jittering during recalculation
+			campaignTV.SetSuspended(true)
+			defer campaignTV.SetSuspended(false)
+
 			// Subsidy budget baseline for each row
 			var subsidyBudget float64
 			if subsidyBudgetEd != nil {
@@ -1051,8 +1114,9 @@ func main() {
 		AssignTo: &mw,
 		Title:    "Financial Calculator (Walk UI)",
 		MinSize:  Size{Width: 1100, Height: 700},
+		MaxSize:  Size{Width: 1920, Height: 1200},
 		Size:     Size{Width: 1280, Height: 860},
-		Layout:   VBox{},
+		Layout:   VBox{MarginsZero: true},
 		Children: []Widget{
 			HSplitter{
 				AssignTo: &mainSplit,
@@ -1065,26 +1129,27 @@ func main() {
 							GroupBox{
 								AssignTo: &dealInputsGB,
 								Title:    "Deal Inputs",
-								Layout:   Grid{Columns: 2, Spacing: 6},
+								Layout:   Grid{Columns: 5, Spacing: 6}, // 1 for label, 4 for controls
 								Children: []Widget{
-									// Basic inputs
-									// 1) Price first
-									Label{Text: "Price ex tax (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+									// Row 1: Price
+									Label{Text: "Price ex tax (THB):"},
 									LineEdit{
-										AssignTo: &priceEdit,
-										Text:     "1000000",
-										MinSize:  Size{Width: 360},
+										ColumnSpan: 4,
+										AssignTo:   &priceEdit,
+										Text:       "1000000",
+										MinSize:    Size{Width: 150},
 										OnEditingFinished: func() {
-											// Reformat with thousand separators on commit
 											v := parseFloat(priceEdit)
 											_ = priceEdit.SetText(FormatWithThousandSep(v, 0))
 											recalc()
 											queueSave()
 										},
 									},
-									// 2) Product directly below Price
-									Label{Text: "Product:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+
+									// Row 2: Product
+									Label{Text: "Product:"},
 									ComboBox{
+										ColumnSpan:   4,
 										AssignTo:     &productCB,
 										Model:        []string{"HP", "mySTAR", "Financing Lease", "Operating Lease"},
 										CurrentIndex: 0,
@@ -1094,7 +1159,6 @@ func main() {
 											} else {
 												product = "HP"
 											}
-											// Enable Balloon controls only for mySTAR; otherwise reset to 0 and disable
 											if balloonValueEd != nil && balloonAmountEd != nil && balloonUnitCmb != nil {
 												if product != "mySTAR" {
 													_ = balloonValueEd.SetValue(0)
@@ -1104,7 +1168,6 @@ func main() {
 													balloonUnitCmb.SetEnabled(false)
 													balloonUnit = "%"
 												} else {
-													// Enable only active editor by unit; keep both resident
 													if balloonUnitCmb.Text() == "THB" {
 														balloonValueEd.SetEnabled(false)
 														balloonAmountEd.SetEnabled(true)
@@ -1119,237 +1182,208 @@ func main() {
 											queueSave()
 										},
 									},
-									Label{Text: "Down payment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
-									Composite{
-										// Alignment strategy: fixed label column, fixed input min-width; keep both editors resident and toggle Enabled
-										MinSize: Size{Width: 360},
-										Layout:  Grid{Columns: 4, Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
-										Children: []Widget{
-											NumberEdit{
-												AssignTo: &dpValueEd, // percent editor (primary - first input box)
-												Decimals: 2,
-												MinValue: 0,
-												Value:    20,
-												MinSize:  Size{Width: 120},
-												OnValueChanged: func() {
-													// Keep suffix and THB editor synced from percent
-													price := parseFloat(priceEdit)
-													pct := dpValueEd.Value()
-													if dpShadowLbl != nil {
-														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
-													}
-													if dpAmountEd != nil && price >= 0 {
-														thb := RoundTo(price*(pct/100.0), 0)
-														if math.Abs(dpAmountEd.Value()-thb) > 0.5 {
-															_ = dpAmountEd.SetValue(thb)
-														}
-													}
-													queueSave()
-												},
-											},
-											NumberEdit{
-												AssignTo: &dpAmountEd, // THB editor (secondary)
-												Decimals: 0,
-												MinValue: 0,
-												Value:    0,
-												MinSize:  Size{Width: 120},
-												Enabled:  false, // default unit is percent
-												OnValueChanged: func() {
-													// Keep suffix and percent editor synced from THB
-													price := parseFloat(priceEdit)
-													thb := dpAmountEd.Value()
-													pct := 0.0
-													if price > 0 {
-														pct = RoundTo((thb/price)*100.0, 2)
-													}
-													if dpShadowLbl != nil {
-														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
-													}
-													if dpValueEd != nil && math.Abs(dpValueEd.Value()-pct) > 1e-6 {
-														_ = dpValueEd.SetValue(pct)
-													}
-													queueSave()
-												},
-											},
-											ComboBox{
-												AssignTo:     &dpUnitCmb,
-												Model:        []string{"THB", "%"},
-												CurrentIndex: 1,
-												MaxSize:      Size{Width: 64},
-												OnCurrentIndexChanged: func() {
-													price := parseFloat(priceEdit)
-													if dpValueEd == nil || dpAmountEd == nil || dpUnitCmb == nil {
-														return
-													}
-													newUnit := dpUnitCmb.Text()
-													if newUnit == "%" && dpLock != "percent" {
-														// THB -> % (compute and switch enable)
-														thb := dpAmountEd.Value()
-														pct := 0.0
-														if price > 0 {
-															pct = RoundTo((thb/price)*100.0, 2)
-														}
-														_ = dpValueEd.SetValue(pct)
-														dpValueEd.SetEnabled(true)
-														dpAmountEd.SetEnabled(false)
-														dpLock = "percent"
-													} else if newUnit == "THB" && dpLock != "amount" {
-														// % -> THB
-														pct := dpValueEd.Value()
-														thb := RoundTo(price*(pct/100.0), 0)
-														_ = dpAmountEd.SetValue(thb)
-														dpValueEd.SetEnabled(false)
-														dpAmountEd.SetEnabled(true)
-														dpLock = "amount"
-													}
-													// Refresh suffix text
-													if dpShadowLbl != nil {
-														pval := dpValueEd.Value() // always reflect percent
-														dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pval))
-													}
-													recalc()
-													queueSave()
-												},
-											},
-											Label{
-												AssignTo: &dpShadowLbl,
-												Text:     "(0.00% DP)",
-												MaxSize:  Size{Width: 120},
-											},
+
+									// Row 3: Down Payment
+									Label{Text: "Down payment:"},
+									NumberEdit{ // %
+										AssignTo: &dpValueEd,
+										Decimals: 2, MinValue: 0, MaxValue: 100, Value: 20,
+										MinSize: Size{Width: 100},
+										OnValueChanged: func() {
+											price := parseFloat(priceEdit)
+											pct := dpValueEd.Value()
+											if dpShadowLbl != nil {
+												dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
+											}
+											if dpAmountEd != nil && price >= 0 {
+												thb := RoundTo(price*(pct/100.0), 0)
+												if math.Abs(dpAmountEd.Value()-thb) > 0.5 {
+													_ = dpAmountEd.SetValue(thb)
+												}
+											}
+											queueSave()
 										},
 									},
-									// removed legacy alignment placeholders
-									// removed legacy alignment placeholders
-									// removed legacy alignment placeholders
-									Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+									NumberEdit{ // THB
+										AssignTo: &dpAmountEd,
+										Decimals: 0, MinValue: 0, MaxValue: 99999999, Value: 0, Enabled: false,
+										MinSize: Size{Width: 120},
+										OnValueChanged: func() {
+											price := parseFloat(priceEdit)
+											thb := dpAmountEd.Value()
+											pct := 0.0
+											if price > 0 {
+												pct = RoundTo((thb/price)*100.0, 2)
+											}
+											if dpShadowLbl != nil {
+												dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pct))
+											}
+											if dpValueEd != nil && math.Abs(dpValueEd.Value()-pct) > 1e-6 {
+												_ = dpValueEd.SetValue(pct)
+											}
+											queueSave()
+										},
+									},
+									ComboBox{ // Unit
+										AssignTo:     &dpUnitCmb,
+										Model:        []string{"THB", "%"},
+										CurrentIndex: 1,
+										OnCurrentIndexChanged: func() {
+											price := parseFloat(priceEdit)
+											if dpValueEd == nil || dpAmountEd == nil || dpUnitCmb == nil {
+												return
+											}
+											newUnit := dpUnitCmb.Text()
+											if newUnit == "%" && dpLock != "percent" {
+												thb := dpAmountEd.Value()
+												pct := 0.0
+												if price > 0 {
+													pct = RoundTo((thb/price)*100.0, 2)
+												}
+												_ = dpValueEd.SetValue(pct)
+												dpValueEd.SetEnabled(true)
+												dpAmountEd.SetEnabled(false)
+												dpLock = "percent"
+											} else if newUnit == "THB" && dpLock != "amount" {
+												pct := dpValueEd.Value()
+												thb := RoundTo(price*(pct/100.0), 0)
+												_ = dpAmountEd.SetValue(thb)
+												dpValueEd.SetEnabled(false)
+												dpAmountEd.SetEnabled(true)
+												dpLock = "amount"
+											}
+											if dpShadowLbl != nil {
+												pval := dpValueEd.Value()
+												dpShadowLbl.SetText(fmt.Sprintf("(%.2f%% DP)", pval))
+											}
+											recalc()
+											queueSave()
+										},
+									},
+									Label{ // Shadow label
+										AssignTo: &dpShadowLbl,
+										Text:     "(0.00% DP)",
+										// Fix layout jitter: keep constant width even as text changes
+										MinSize: Size{Width: 120},
+										MaxSize: Size{Width: 120},
+									},
+
+									// Row 4: Term
+									Label{Text: "Term (months):"},
 									LineEdit{
-										AssignTo: &termEdit,
-										Text:     "36",
-										MinSize:  Size{Width: 360},
+										ColumnSpan: 4,
+										AssignTo:   &termEdit,
+										Text:       "36",
 										OnEditingFinished: func() {
 											recalc()
 											queueSave()
 										},
 									},
-									Label{Text: "Timing:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+
+									// Row 5: Timing
+									Label{Text: "Timing:"},
 									ComboBox{
+										ColumnSpan:   4,
 										AssignTo:     &timingCB,
 										Model:        []string{"arrears", "advance"},
 										CurrentIndex: 0,
-										MinSize:      Size{Width: 360},
 										OnCurrentIndexChanged: func() {
 											timing = timingCB.Text()
 											recalc()
 											queueSave()
 										},
 									},
-									Label{Text: "Balloon:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
-									Composite{
-										MinSize: Size{Width: 360},
-										Layout:  Grid{Columns: 4, Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
-										Children: []Widget{
-											NumberEdit{
-												AssignTo: &balloonValueEd, // percent editor (primary - first input box)
-												Decimals: 2,
-												MinValue: 0,
-												Value:    0,
-												MinSize:  Size{Width: 120},
-												OnValueChanged: func() {
-													// Update suffix and sync THB
-													price := parseFloat(priceEdit)
-													pct := balloonValueEd.Value()
-													if balloonShadowLbl != nil {
-														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
-													}
-													if balloonAmountEd != nil && price >= 0 {
-														thb := RoundTo(price*(pct/100.0), 0)
-														if math.Abs(balloonAmountEd.Value()-thb) > 0.5 {
-															_ = balloonAmountEd.SetValue(thb)
-														}
-													}
-													queueSave()
-												},
-											},
-											NumberEdit{
-												AssignTo: &balloonAmountEd, // THB editor
-												Decimals: 0,
-												MinValue: 0,
-												Value:    0,
-												MinSize:  Size{Width: 120},
-												Enabled:  false,
-												OnValueChanged: func() {
-													price := parseFloat(priceEdit)
-													thb := balloonAmountEd.Value()
-													pct := 0.0
-													if price > 0 {
-														pct = RoundTo((thb/price)*100.0, 2)
-													}
-													if balloonShadowLbl != nil {
-														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
-													}
-													if balloonValueEd != nil && math.Abs(balloonValueEd.Value()-pct) > 1e-6 {
-														_ = balloonValueEd.SetValue(pct)
-													}
-													queueSave()
-												},
-											},
-											ComboBox{
-												AssignTo:     &balloonUnitCmb,
-												Model:        []string{"THB", "%"},
-												CurrentIndex: 1,
-												MaxSize:      Size{Width: 64},
-												OnCurrentIndexChanged: func() {
-													price := parseFloat(priceEdit)
-													if balloonValueEd == nil || balloonAmountEd == nil || balloonUnitCmb == nil {
-														return
-													}
-													newUnit := balloonUnitCmb.Text()
-													if newUnit == "%" && balloonUnit != "%" {
-														// THB -> %
-														thb := balloonAmountEd.Value()
-														pct := 0.0
-														if price > 0 {
-															pct = RoundTo((thb/price)*100.0, 2)
-														}
-														_ = balloonValueEd.SetValue(pct)
-														balloonValueEd.SetEnabled(true)
-														balloonAmountEd.SetEnabled(false)
-														balloonUnit = "%"
-													} else if newUnit == "THB" && balloonUnit != "THB" {
-														// % -> THB
-														pct := balloonValueEd.Value()
-														thb := RoundTo(price*(pct/100.0), 0)
-														_ = balloonAmountEd.SetValue(thb)
-														balloonValueEd.SetEnabled(false)
-														balloonAmountEd.SetEnabled(true)
-														balloonUnit = "THB"
-													}
-													// Refresh suffix (percent)
-													if balloonShadowLbl != nil {
-														p := balloonValueEd.Value()
-														balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", p))
-													}
-													recalc()
-													queueSave()
-												},
-											},
-											Label{
-												AssignTo: &balloonShadowLbl,
-												Text:     "(0.00% Balloon)",
-												MaxSize:  Size{Width: 120},
-											},
+
+									// Row 6: Balloon
+									Label{Text: "Balloon:"},
+									NumberEdit{ // %
+										AssignTo: &balloonValueEd,
+										Decimals: 2, MinValue: 0, MaxValue: 100, Value: 0,
+										MinSize: Size{Width: 100},
+										OnValueChanged: func() {
+											price := parseFloat(priceEdit)
+											pct := balloonValueEd.Value()
+											if balloonShadowLbl != nil {
+												balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
+											}
+											if balloonAmountEd != nil && price >= 0 {
+												thb := RoundTo(price*(pct/100.0), 0)
+												if math.Abs(balloonAmountEd.Value()-thb) > 0.5 {
+													_ = balloonAmountEd.SetValue(thb)
+												}
+											}
+											queueSave()
 										},
 									},
+									NumberEdit{ // THB
+										AssignTo: &balloonAmountEd,
+										Decimals: 0, MinValue: 0, MaxValue: 99999999, Value: 0, Enabled: false,
+										MinSize: Size{Width: 120},
+										OnValueChanged: func() {
+											price := parseFloat(priceEdit)
+											thb := balloonAmountEd.Value()
+											pct := 0.0
+											if price > 0 {
+												pct = RoundTo((thb/price)*100.0, 2)
+											}
+											if balloonShadowLbl != nil {
+												balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", pct))
+											}
+											if balloonValueEd != nil && math.Abs(balloonValueEd.Value()-pct) > 1e-6 {
+												_ = balloonValueEd.SetValue(pct)
+											}
+											queueSave()
+										},
+									},
+									ComboBox{ // Unit
+										AssignTo:     &balloonUnitCmb,
+										Model:        []string{"THB", "%"},
+										CurrentIndex: 1,
+										OnCurrentIndexChanged: func() {
+											price := parseFloat(priceEdit)
+											if balloonValueEd == nil || balloonAmountEd == nil || balloonUnitCmb == nil {
+												return
+											}
+											newUnit := balloonUnitCmb.Text()
+											if newUnit == "%" && balloonUnit != "%" {
+												thb := balloonAmountEd.Value()
+												pct := 0.0
+												if price > 0 {
+													pct = RoundTo((thb/price)*100.0, 2)
+												}
+												_ = balloonValueEd.SetValue(pct)
+												balloonValueEd.SetEnabled(true)
+												balloonAmountEd.SetEnabled(false)
+												balloonUnit = "%"
+											} else if newUnit == "THB" && balloonUnit != "THB" {
+												pct := balloonValueEd.Value()
+												thb := RoundTo(price*(pct/100.0), 0)
+												_ = balloonAmountEd.SetValue(thb)
+												balloonValueEd.SetEnabled(false)
+												balloonAmountEd.SetEnabled(true)
+												balloonUnit = "THB"
+											}
+											if balloonShadowLbl != nil {
+												p := balloonValueEd.Value()
+												balloonShadowLbl.SetText(fmt.Sprintf("(%.2f%% Balloon)", p))
+											}
+											recalc()
+											queueSave()
+										},
+									},
+									Label{ // Shadow label
+										AssignTo: &balloonShadowLbl,
+										Text:     "(0.00% Balloon)",
+									},
 
-									// Integrated Rate Mode controls
-									Label{Text: "Rate mode:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+									// Row 7: Rate Mode
+									Label{Text: "Rate mode:"},
 									Composite{
-										MinSize: Size{Width: 360},
-										Layout:  HBox{Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
+										ColumnSpan: 4,
+										Layout:     HBox{Spacing: 6, MarginsZero: true},
 										Children: []Widget{
 											RadioButton{
-												AssignTo: &fixedRateRB,
-												Text:     "Fixed Rate",
+												AssignTo: &fixedRateRB, Text: "Fixed Rate",
 												OnClicked: func() {
 													rateMode = "fixed_rate"
 													if nominalRateEdit != nil {
@@ -1363,8 +1397,7 @@ func main() {
 												},
 											},
 											RadioButton{
-												AssignTo: &targetInstallmentRB,
-												Text:     "Target Installment",
+												AssignTo: &targetInstallmentRB, Text: "Target Installment",
 												OnClicked: func() {
 													rateMode = "target_installment"
 													if nominalRateEdit != nil {
@@ -1379,21 +1412,26 @@ func main() {
 											},
 										},
 									},
-									Label{Text: "Customer rate (% p.a.):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+
+									// Row 8: Customer Rate
+									Label{Text: "Customer rate (% p.a.):"},
 									LineEdit{
-										AssignTo: &nominalRateEdit,
-										Text:     "3.99",
-										MinSize:  Size{Width: 360},
+										ColumnSpan: 4,
+										AssignTo:   &nominalRateEdit,
+										Text:       "3.99",
 										OnEditingFinished: func() {
 											recalc()
 											queueSave()
 										},
 									},
-									Label{Text: "Target installment (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+
+									// Row 9: Target Installment
+									Label{Text: "Target installment (THB):"},
 									LineEdit{
-										AssignTo: &targetInstallmentEdit,
-										Text:     "0",
-										MinSize:  Size{Width: 360},
+										ColumnSpan: 4,
+										AssignTo:   &targetInstallmentEdit,
+										Text:       "0",
+										MinSize:    Size{Width: 150},
 										OnEditingFinished: func() {
 											v := parseFloat(targetInstallmentEdit)
 											_ = targetInstallmentEdit.SetText(FormatWithThousandSep(v, 0))
@@ -1402,58 +1440,57 @@ func main() {
 										},
 									},
 
-									// Product Subsidy (moved under Deal Inputs)
-									Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+									// Row 10: Subsidy Budget
+									Label{Text: "Subsidy budget (THB):"},
 									NumberEdit{
-										AssignTo: &subsidyBudgetEd,
-										Decimals: 0,
-										MinValue: 0,
-										Value:    0,
-										MinSize:  Size{Width: 360},
-
+										ColumnSpan: 4,
+										AssignTo:   &subsidyBudgetEd,
+										Decimals:   0, MinValue: 0, MaxValue: 99999999, Value: 0,
+										MinSize:     Size{Width: 150},
 										ToolTipText: "Budget available for subsidies (placeholder)",
 										OnValueChanged: func() {
-											// Recompute grid metrics when subsidy budget changes
 											recalc()
 											queueSave()
 										},
 									},
-									// Commission input presentation (label+value control consistent with others)
-									Label{Text: "IDCs — Commissions:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
+
+									// Row 11: Commissions
+									Label{Text: "IDCs — Commissions:"},
 									PushButton{
+										ColumnSpan:  4,
 										AssignTo:    &dealerCommissionPill,
 										Text:        "auto",
 										Enabled:     true,
-										MinSize:     Size{Width: 360},
 										ToolTipText: "Auto-calculated from product policy; click to override or reset",
 										OnClicked: func() {
-											// Open editor; if accepted, trigger recompute
 											if editDealerCommission(mw, &dealState) {
 												recalc()
 												queueSave()
 											}
 										},
 									},
-									Label{Text: "IDCs - Other (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}},
-									NumberEdit{
-										AssignTo: &idcOtherEd,
-										Decimals: 0,
-										MinValue: 0,
-										Value:    0,
-										MinSize:  Size{Width: 360},
 
+									// Row 12: IDC Other
+									Label{Text: "IDCs - Other (THB):"},
+									NumberEdit{
+										ColumnSpan: 4,
+										AssignTo:   &idcOtherEd,
+										Decimals:   0, MinValue: 0, MaxValue: 99999999, Value: 0,
+										MinSize:     Size{Width: 150},
+										ToolTipText: "Other acquisition costs (e.g., marketing)",
 										OnValueChanged: func() {
-											// Mark user-edited and recalc to refresh IDC totals and grid
 											dealState.IDCOther.Value = idcOtherEd.Value()
 											dealState.IDCOther.UserEdited = true
 											recalc()
 											queueSave()
 										},
 									},
-
-									// Removed redundant Key Metrics group (migrated to summary on right)
-									Label{Text: ""}, Label{Text: ""},
 								},
+							},
+							Composite{
+								AssignTo: &editModeAnchor,
+								Layout:   VBox{},
+								Visible:  true, // Must be visible so children can be shown/hidden
 							},
 							// Campaign checkboxes removed in Phase 1; replaced by Campaign Options grid in right pane.
 							PushButton{
@@ -1478,21 +1515,10 @@ func main() {
 								Children: []Widget{
 									// Campaign Options (grid)
 									Composite{
-										Layout: HBox{Spacing: 6},
+										Layout:   HBox{Spacing: 6},
 										Children: []Widget{
-											PushButton{
-												Text: "Copy Selected to My Campaigns",
-												OnClicked: func() {
-													if err := HandleMyCampaignCopySelected(myCampDeps); err != nil {
-														walk.MsgBox(mw, "Copy Selected to My Campaigns", fmt.Sprintf("Copy failed: %v", err), walk.MsgBoxIconError)
-													} else {
-														// Keep canonical slice in sync
-														if myCampModel != nil {
-															myCampaigns = myCampModel.ToDrafts()
-														}
-													}
-												},
-											},
+											// Removed global copy button to reduce confusion.
+											// Row-level copy is available via the new "Copy" column and double-click/context menu on the table.
 										},
 									},
 									TableView{
@@ -1500,6 +1526,7 @@ func main() {
 										StretchFactor:  1,
 										MultiSelection: false,
 										Columns: []TableViewColumn{
+											{Title: "", Width: 60}, // Row-level copy action (no header)
 											{Title: "Select", Width: selW},
 											{Title: "Campaign", Width: nameW},
 											{Title: "Monthly Installment", Width: monthlyW},
@@ -1511,6 +1538,24 @@ func main() {
 											{Title: "Dealer Comm.", Width: dealerW},
 											{Title: "Notes", Width: notesW},
 										},
+										OnMouseDown: func(x, y int, button walk.MouseButton) {
+											if button == walk.LeftButton && campaignTV != nil && campaignModel != nil {
+												idx := campaignTV.CurrentIndex()
+												if idx >= 0 && idx < campaignModel.RowCount() {
+													// Check if click is in "Copy" column (first column, ~60px wide)
+													if x < 60 {
+														selectedCampaignIdx = idx
+														if err := HandleMyCampaignCopySelected(myCampDeps); err != nil {
+															walk.MsgBox(mw, "Copy to My Campaigns", fmt.Sprintf("Copy failed: %v", err), walk.MsgBoxIconError)
+														} else {
+															if myCampModel != nil {
+																myCampaigns = myCampModel.ToDrafts()
+															}
+														}
+													}
+												}
+											}
+										},
 										OnCurrentIndexChanged: func() {
 											if campaignTV != nil {
 												selectedCampaignIdx = campaignTV.CurrentIndex()
@@ -1520,6 +1565,25 @@ func main() {
 											// Clear any selected My Campaign while browsing Default Campaigns
 											selectedMyCampaignID = ""
 											ShowHighLevelState(editModeUI)
+										},
+										// Double-click any row to copy it to My Campaigns and enter edit mode
+										OnItemActivated: func() {
+											if campaignTV == nil {
+												return
+											}
+											idx := campaignTV.CurrentIndex()
+											if idx < 0 {
+												return
+											}
+											selectedCampaignIdx = idx
+											if err := HandleMyCampaignCopySelected(myCampDeps); err != nil {
+												walk.MsgBox(mw, "Copy Selected to My Campaigns", fmt.Sprintf("Copy failed: %v", err), walk.MsgBoxIconError)
+											} else {
+												// Keep canonical slice in sync
+												if myCampModel != nil {
+													myCampaigns = myCampModel.ToDrafts()
+												}
+											}
 										},
 										ContextMenuItems: []MenuItem{
 											Action{
@@ -1537,11 +1601,14 @@ func main() {
 											},
 										},
 									},
-									// My Campaigns (Editable)
-									GroupBox{
-										Title:  "My Campaigns (Editable)",
+									// My Campaigns (Editable) - using Composite instead of GroupBox for alignment
+									Composite{
 										Layout: VBox{Spacing: 6, Margins: Margins{Left: 0, Top: 0, Right: 0, Bottom: 0}},
 										Children: []Widget{
+											Label{
+												Text: "My Campaigns (Editable)",
+												Font: Font{Bold: true, PointSize: 10},
+											},
 											Composite{
 												Layout: HBox{Spacing: 6},
 												Children: []Widget{
@@ -1676,22 +1743,26 @@ func main() {
 													if newName, ok := promptCampaignName(initial); ok {
 														newName = strings.TrimSpace(newName)
 														if newName == "" {
-															newName = "(unnamed)"
+															newName = initial
 														}
 														if myCampModel.SetCampaignNameByID(id, newName) {
-															// Update backing drafts
+															// Update backing drafts with metadata
 															di := findDraftIndexByID(id)
 															if di >= 0 {
 																myCampaigns[di].Name = newName
+																myCampaigns[di].Metadata.UpdatedAt = nowRFC3339()
 															} else {
 																dj := ensureDraftInSlice(id)
 																if dj >= 0 {
 																	myCampaigns[dj].Name = newName
+																	myCampaigns[dj].Metadata.UpdatedAt = nowRFC3339()
 																}
 															}
 															campaignsDirty = true
+															// Force model refresh to show updated name
+															myCampModel.PublishRowChanged(idx)
 															// Preserve edit mode and refresh header
-															if editor.IsEditMode && editModeUI != nil {
+															if editor.IsEditMode && editModeUI != nil && selectedMyCampaignID == id {
 																ShowCampaignEditState(editModeUI, newName)
 															}
 														}
@@ -1726,20 +1797,20 @@ func main() {
 												Layout: Grid{Columns: 4, Spacing: 6},
 												Children: []Widget{
 													// Row 1
-													Label{Text: "Campaign Name:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selCampNameValLbl, Text: "-"},
-													Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selTermValLbl, Text: "-"},
+													Label{Text: "Campaign Name:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selCampNameValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selTermValLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 2
-													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selFinancedValLbl, Text: "-"},
-													Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyBudgetValLbl, Text: "-"},
+													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selFinancedValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyBudgetValLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 3
-													Label{Text: "Subsidy utilized (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyUsedValLbl, Text: "-"},
-													Label{Text: "Subsidy remaining (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyRemainValLbl, Text: "-"},
+													Label{Text: "Subsidy utilized (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyUsedValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Subsidy remaining (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyRemainValLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 4
-													Label{Text: "Dealer Commissions Paid (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCDealerValLbl, Text: "-"},
-													Label{Text: "IDCs - Others (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCOtherValLbl, Text: "-"},
+													Label{Text: "Dealer Commissions Paid (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCDealerValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "IDCs - Others (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCOtherValLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 5
-													Label{Text: "IDC - Free Insurance (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCInsValLbl, Text: "THB 0"},
-													Label{Text: "IDC - Free MBSP (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCMBSPValLbl, Text: "THB 0"},
+													Label{Text: "IDC - Free Insurance (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCInsValLbl, Text: "THB 0", MinSize: Size{Width: 150}},
+													Label{Text: "IDC - Free MBSP (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCMBSPValLbl, Text: "THB 0", MinSize: Size{Width: 150}},
 												},
 											},
 
@@ -1750,17 +1821,17 @@ func main() {
 												Layout: Grid{Columns: 4, Spacing: 6},
 												Children: []Widget{
 													// Row 1
-													Label{Text: "Monthly Installment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &monthlyLbl, Text: "-"},
-													Label{Text: "Nominal Customer Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custNominalLbl, Text: "-"},
+													Label{Text: "Monthly Installment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &monthlyLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Nominal Customer Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custNominalLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 2
-													Label{Text: "Effective Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custEffLbl, Text: "-"},
-													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &financedLbl, Text: "-"},
+													Label{Text: "Effective Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custEffLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &financedLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 3
-													Label{Text: "Acquisition RoRAC:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &roracLbl, Text: "-"},
-													Label{Text: "IDC Total:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcTotalLbl, Text: "-"},
+													Label{Text: "Acquisition RoRAC:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &roracLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "IDC Total:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcTotalLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Row 4
-													Label{Text: "IDC - Dealer Comm.:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcDealerLbl, Text: "-"},
-													Label{Text: "IDC - Other:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcOtherLbl, Text: "-"},
+													Label{Text: "IDC - Dealer Comm.:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcDealerLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "IDC - Other:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcOtherLbl, Text: "-", MinSize: Size{Width: 150}},
 													// Profitability Details (toggle) spanning all 4 columns
 													GroupBox{
 														Title:      "Profitability Details",
@@ -1850,7 +1921,7 @@ func main() {
 														},
 													},
 													// Row 5: Parameter Version at the very bottom (last row)
-													Label{Text: "Parameter Version:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &metaVersionLbl, Text: "-"},
+													Label{Text: "Parameter Version:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &metaVersionLbl, Text: "-", MinSize: Size{Width: 150}},
 													Label{Text: ""}, Label{Text: ""},
 												},
 											},
@@ -1992,20 +2063,18 @@ func main() {
 
 		// Bind My Campaigns model to TableView
 		if myCampTV != nil {
-			myCampModel = NewMyCampaignsTableModel()
-			if err := myCampTV.SetModel(myCampModel); err != nil {
-				logger.Printf("warn: my campaigns table model set failed: %v", err)
-			}
-			myCampModel.ReplaceFromDrafts(myCampaigns)
-			// Wire in-place edit callback to persist to backing drafts and keep header in sync
+			myCampModel = NewCampaignsModel()
+			// Bridge in-place edits back to canonical drafts slice
 			myCampModel.OnRowNameEdited = func(id, name string) {
 				di := findDraftIndexByID(id)
 				if di >= 0 {
 					myCampaigns[di].Name = name
+					myCampaigns[di].Metadata.UpdatedAt = nowRFC3339()
 				} else {
 					dj := ensureDraftInSlice(id)
 					if dj >= 0 {
 						myCampaigns[dj].Name = name
+						myCampaigns[dj].Metadata.UpdatedAt = nowRFC3339()
 					}
 				}
 				campaignsDirty = true
@@ -2013,7 +2082,16 @@ func main() {
 					ShowCampaignEditState(editModeUI, name)
 				}
 			}
+			myCampModel.ReplaceFromDrafts(myCampaigns)
+			if err := myCampTV.SetModel(myCampModel); err != nil {
+				logger.Printf("warn: my campaigns table model set failed: %v", err)
+			}
 			myCampDeps.Model = myCampModel
+			if myCampBinder != nil {
+				if err := myCampBinder.Reset(); err != nil {
+					logger.Printf("error resetting myCampBinder: %v", err)
+				}
+			}
 		}
 		// Build progressive disclosure UI below Deal Inputs (under anchor)
 		if editModeAnchor != nil {
@@ -2022,6 +2100,17 @@ func main() {
 			} else {
 				editModeUI = ui
 				ShowHighLevelState(editModeUI)
+				// If a My Campaign is already selected when the progressive UI is created, show it.
+				if editor.IsEditMode && selectedMyCampaignID != "" && myCampModel != nil {
+					name := ""
+					if idx := myCampModel.SelectedIndex(); idx >= 0 {
+						rowsCopy := myCampModel.Rows()
+						if idx >= 0 && idx < len(rowsCopy) {
+							name = rowsCopy[idx].Name
+						}
+					}
+					ShowCampaignEditState(editModeUI, name)
+				}
 				// Hook adjustments NumberEdits to live-sync draft and recalc when editing
 				attachAdj := func(ne *walk.NumberEdit) {
 					if ne != nil {
@@ -2680,46 +2769,48 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 	}
 	r := m.rows[row]
 	switch col {
-	case 0:
+	case 0: // Copy action
+		return "Copy"
+	case 1: // Select indicator
 		if r.Selected {
 			return "●" // filled to simulate radio selected
 		}
 		return "○" // empty to simulate not selected
-	case 1:
+	case 2: // Campaign
 		return r.Name
-	case 2:
+	case 3: // Monthly Installment
 		if r.MonthlyInstallmentStr == "" {
 			return "Monthly —"
 		}
 		return "THB " + r.MonthlyInstallmentStr
-	case 3:
+	case 4: // Downpayment
 		if r.DownpaymentStr == "" {
 			return "—"
 		}
 		return r.DownpaymentStr
-	case 4:
+	case 5: // Cash Discount
 		if r.CashDiscountStr == "" {
 			return "—"
 		}
 		return r.CashDiscountStr
-	case 5: // Free MBSP THB
+	case 6: // Free MBSP THB
 		if r.MBSPTHBStr == "" {
 			return "—"
 		}
 		return r.MBSPTHBStr
-	case 6: // Subsidy utilized (THB)
+	case 7: // Subsidy utilized (THB)
 		if r.SubsidyUsedTHBStr == "" {
 			return "—"
 		}
 		return "THB " + r.SubsidyUsedTHBStr
-	case 7: // Acq. RoRAC
+	case 8: // Acq. RoRAC
 		if r.AcqRoRacStr == "" {
 			return "—"
 		}
 		return r.AcqRoRacStr
-	case 8:
+	case 9: // Dealer Commission
 		return r.DealerComm
-	case 9:
+	case 10: // Notes
 		return r.Notes
 	default:
 		return ""
@@ -3187,9 +3278,9 @@ func initCampaignTableColumns(tv *walk.TableView, totalWidth int) {
 	}
 
 	// Base target widths for ~1200–1400px total client width.
-	// Columns: Select, Campaign, Monthly, Downpayment, Cash Discount, Subsidy/RoRAC, Dealer Comm., Notes
-	base := []int{70, 200, 180, 120, 140, 180, 160, 220}
-	mins := []int{60, 160, 140, 100, 110, 140, 120, 140}
+	// Columns: Copy, Select, Campaign, Monthly, Downpayment, Cash Discount, Free MBSP THB, Subsidy used, Acq. RoRAC, Dealer Comm., Notes
+	base := []int{60, 70, 200, 180, 120, 140, 140, 140, 140, 160, 220}
+	mins := []int{48, 60, 160, 140, 100, 110, 110, 110, 120, 120, 140}
 
 	// Fudge padding to account for borders/scrollbar
 	pad := 24
