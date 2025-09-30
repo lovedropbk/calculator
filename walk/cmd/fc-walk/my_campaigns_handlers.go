@@ -4,7 +4,7 @@ import "fmt"
 
 // MyCampaignsDeps carries minimal dependencies for My Campaigns handlers to avoid long parameter lists.
 type MyCampaignsDeps struct {
-	Model *MyCampaignsTableModel
+	Model *CampaignsModel
 	Save  func([]CampaignDraft) error
 	Load  func() ([]CampaignDraft, int, error)
 	Clear func() error

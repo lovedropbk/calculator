@@ -53,9 +53,9 @@ func FormatTHB(amount float64) string {
 	return addThousandsSep(intPart) + decPart
 }
 
-// FormatRatePct formats a fractional rate (e.g., 0.0558) as a human string "5.58 percent".
+// FormatRatePct formats a fractional rate (e.g., 0.0558) as a human string "5.58%".
 func FormatRatePct(p float64) string {
-	return fmt.Sprintf("%.2f percent", p*100.0)
+	return fmt.Sprintf("%.2f%%", p*100.0)
 }
 
 // FormatDealerCommission renders "THB X (Y%)" with compact zero formatting for cash discount rows.

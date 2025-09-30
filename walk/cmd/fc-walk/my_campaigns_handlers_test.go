@@ -5,7 +5,7 @@ package main
 import "testing"
 
 func TestHandleMyCampaignNewBlank_AddsRowAndDirty(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 
 	var selectedIDs []string
 	var dirtyCalls []bool
@@ -24,8 +24,8 @@ func TestHandleMyCampaignNewBlank_AddsRowAndDirty(t *testing.T) {
 		t.Fatalf("HandleMyCampaignNewBlank error: %v", err)
 	}
 
-	if m.RowCount() != 1 {
-		t.Fatalf("RowCount = %d; want 1", m.RowCount())
+	if len(m.items) != 1 {
+		t.Fatalf("RowCount = %d; want 1", len(m.items))
 	}
 	if m.IndexByID("new-blank-1") != 0 {
 		t.Fatalf("expected new draft to be present with index 0")
@@ -39,7 +39,7 @@ func TestHandleMyCampaignNewBlank_AddsRowAndDirty(t *testing.T) {
 }
 
 func TestHandleMyCampaignCopySelected_AddsRowAndDirty(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 	// Seed one to simulate existing selection context (not used directly by handler)
 	m.ReplaceFromDrafts([]CampaignDraft{{ID: "base-1", Name: "Base"}})
 
@@ -60,8 +60,8 @@ func TestHandleMyCampaignCopySelected_AddsRowAndDirty(t *testing.T) {
 		t.Fatalf("HandleMyCampaignCopySelected error: %v", err)
 	}
 
-	if m.RowCount() != 2 {
-		t.Fatalf("RowCount = %d; want 2", m.RowCount())
+	if len(m.items) != 2 {
+		t.Fatalf("RowCount = %d; want 2", len(m.items))
 	}
 	if idx := m.IndexByID("copy-1"); idx == -1 {
 		t.Fatalf("expected copied draft to be present")
@@ -75,7 +75,7 @@ func TestHandleMyCampaignCopySelected_AddsRowAndDirty(t *testing.T) {
 }
 
 func TestHandleMyCampaignDelete_RemovesRow_ExitEditMode_Dirty(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 	m.ReplaceFromDrafts([]CampaignDraft{
 		{ID: "del-1", Name: "Delete Me"},
 		{ID: "keep-1", Name: "Keep Me"},
@@ -97,8 +97,8 @@ func TestHandleMyCampaignDelete_RemovesRow_ExitEditMode_Dirty(t *testing.T) {
 		t.Fatalf("HandleMyCampaignDelete error: %v", err)
 	}
 
-	if m.RowCount() != 1 {
-		t.Fatalf("RowCount = %d; want 1", m.RowCount())
+	if len(m.items) != 1 {
+		t.Fatalf("RowCount = %d; want 1", len(m.items))
 	}
 	if idx := m.IndexByID("del-1"); idx != -1 {
 		t.Fatalf("deleted ID still present, IndexByID = %d", idx)
@@ -112,7 +112,7 @@ func TestHandleMyCampaignDelete_RemovesRow_ExitEditMode_Dirty(t *testing.T) {
 }
 
 func TestHandleMyCampaignSaveAll_ResetsDirty_InvokesOnSaved(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 	m.ReplaceFromDrafts([]CampaignDraft{
 		{ID: "s1", Name: "Save 1"},
 		{ID: "s2", Name: "Save 2"},
@@ -161,7 +161,7 @@ func TestHandleMyCampaignSaveAll_ResetsDirty_InvokesOnSaved(t *testing.T) {
 }
 
 func TestHandleMyCampaignLoad_ReplacesRows_ResetsDirty_InvokesOnLoaded(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 	m.ReplaceFromDrafts([]CampaignDraft{{ID: "old-1", Name: "Old"}})
 
 	loaded := []CampaignDraft{
@@ -194,8 +194,8 @@ func TestHandleMyCampaignLoad_ReplacesRows_ResetsDirty_InvokesOnLoaded(t *testin
 		t.Fatalf("HandleMyCampaignLoad error: %v", err)
 	}
 
-	if m.RowCount() != 2 || m.IndexByID("n1") == -1 || m.IndexByID("n2") == -1 {
-		t.Fatalf("rows not replaced correctly; RowCount=%d", m.RowCount())
+	if len(m.items) != 2 || m.IndexByID("n1") == -1 || m.IndexByID("n2") == -1 {
+		t.Fatalf("rows not replaced correctly; RowCount=%d", len(m.items))
 	}
 	if exitCalled != 1 {
 		t.Fatalf("ExitEditMode called %d times; want 1", exitCalled)
@@ -209,7 +209,7 @@ func TestHandleMyCampaignLoad_ReplacesRows_ResetsDirty_InvokesOnLoaded(t *testin
 }
 
 func TestHandleMyCampaignClear_EmptiesRows_ResetsDirty_InvokesOnCleared(t *testing.T) {
-	m := NewMyCampaignsTableModel()
+	m := NewCampaignsModel()
 	m.ReplaceFromDrafts([]CampaignDraft{{ID: "x1", Name: "X"}, {ID: "x2", Name: "Y"}})
 
 	exitCalled := 0
@@ -228,8 +228,8 @@ func TestHandleMyCampaignClear_EmptiesRows_ResetsDirty_InvokesOnCleared(t *testi
 		t.Fatalf("HandleMyCampaignClear error: %v", err)
 	}
 
-	if m.RowCount() != 0 {
-		t.Fatalf("RowCount = %d; want 0", m.RowCount())
+	if len(m.items) != 0 {
+		t.Fatalf("RowCount = %d; want 0", len(m.items))
 	}
 	if exitCalled != 1 {
 		t.Fatalf("ExitEditMode called %d times; want 1", exitCalled)

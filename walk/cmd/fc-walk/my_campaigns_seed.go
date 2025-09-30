@@ -13,6 +13,12 @@ import (
 // - adjustments := zeros
 // - name := param (fallback to "New Campaign" if empty)
 func SeedCopyDraft(name string, product string, inputs CampaignInputs) CampaignDraft {
+	return SeedCopyDraftWithAdjustments(name, product, inputs, CampaignAdjustments{})
+}
+
+// SeedCopyDraftWithAdjustments creates a CampaignDraft with specified adjustments.
+// This allows copying campaigns with their campaign-specific values (e.g., Free MBSP amounts).
+func SeedCopyDraftWithAdjustments(name string, product string, inputs CampaignInputs, adjustments CampaignAdjustments) CampaignDraft {
 	id := fmt.Sprintf("mc-%d", time.Now().UTC().UnixNano())
 	if name == "" {
 		name = "New Campaign"
@@ -23,7 +29,7 @@ func SeedCopyDraft(name string, product string, inputs CampaignInputs) CampaignD
 		Name:        name,
 		Product:     product,
 		Inputs:      inputs,
-		Adjustments: CampaignAdjustments{},
+		Adjustments: adjustments,
 		Metadata: CampaignMetadata{
 			CreatedAt: now,
 			UpdatedAt: now,

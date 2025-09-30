@@ -81,7 +81,7 @@ func TestFormatTHB_Decimal(t *testing.T) {
 
 func TestFormatRatePct(t *testing.T) {
 	got := FormatRatePct(0.0558)
-	want := "5.58 percent"
+	want := "5.58%"
 	if got != want {
 		t.Fatalf("FormatRatePct(0.0558) = %q; want %q", got, want)
 	}
