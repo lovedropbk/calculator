@@ -28,8 +28,9 @@ type MyCampaignRow struct {
 	DownpaymentStr        string // "THB 200,000 (20% DP)"
 	SubdownTHBStr         string // "THB 50,000" or "—"
 	CashDiscountStr       string // "THB 50,000" or "—"
-	MBSPTHBStr            string // "THB 5,000" or "—"
-	SubsidyUsedTHBStr     string // "THB 50,000" or "—"
+	FreeInsuranceTHBStr   string // "THB 50,000" or "—" - actual insurance cost
+	MBSPTHBStr            string // "THB 150,000" or "—" - actual MBSP cost
+	SubsidyUsedTHBStr     string // "THB 200,000" or "—"
 	AcqRoRac              float64
 	AcqRoRacStr           string // "15.23%"
 	DealerCommAmt         float64

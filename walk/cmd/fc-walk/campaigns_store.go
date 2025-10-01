@@ -34,8 +34,15 @@ type CampaignInputs struct {
 type CampaignAdjustments struct {
 	CashDiscountTHB     float64 `json:"cashDiscountTHB"`
 	SubdownTHB          float64 `json:"subdownTHB"`
-	IDCFreeInsuranceTHB float64 `json:"idcFreeInsuranceTHB"`
-	IDCFreeMBSPTHB      float64 `json:"idcFreeMBSPTHB"`
+	
+	// Actual costs for benefits (what it actually costs the finance company)
+	FreeInsuranceCostTHB float64 `json:"freeInsuranceCostTHB"`
+	FreeMBSPCostTHB      float64 `json:"freeMBSPCostTHB"`
+	
+	// Legacy fields - kept for backward compatibility, migrate on load if new fields are 0
+	IDCFreeInsuranceTHB float64 `json:"idcFreeInsuranceTHB,omitempty"` // Deprecated: use FreeInsuranceCostTHB
+	IDCFreeMBSPTHB      float64 `json:"idcFreeMBSPTHB,omitempty"`      // Deprecated: use FreeMBSPCostTHB
+	
 	IDCOtherTHB         float64 `json:"idcOtherTHB,omitempty"`
 }
 

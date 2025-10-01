@@ -1,0 +1,47 @@
+name: Build Go Backends
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch: {}
+
+jobs:
+  build-go:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+          cache: true
+
+      - name: Go env
+        run: |
+          go version
+          go env
+
+      - name: Restore and Build fc-api
+        run: |
+          go mod download
+          go build -v -o bin/fc-api.exe ./cmd/fc-api
+
+      - name: Restore and Build fc-svc (modular)
+        run: |
+          go build -v -o bin/fc-svc.exe ./cmd/fc-svc
+
+      - name: Run unit tests (engines + parameters)
+        run: |
+          go test ./...
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-backends
+          path: |
+            bin/fc-api.exe
+            bin/fc-svc.exe

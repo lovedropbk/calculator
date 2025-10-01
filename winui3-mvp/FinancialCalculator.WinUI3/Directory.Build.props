@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <EnableDefaultXamlItems>true</EnableDefaultXamlItems>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,38 @@
+name: Build WinUI3 MVP
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch: {}
+
+jobs:
+  build-winui3:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: |
+          dotnet restore winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj
+
+      - name: Build (Release win-x64)
+        run: |
+          dotnet build winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 --no-restore
+
+      - name: Publish self-contained (optional)
+        run: |
+          dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 -o artifacts/winui3 --self-contained false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FinancialCalculator.WinUI3
+          path: artifacts/winui3
