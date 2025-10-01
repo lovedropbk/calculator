@@ -43,17 +43,17 @@
         <!-- Campaign options list -->
         <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding CampaignSummaries}" SelectedItem="{Binding SelectedCampaign, Mode=TwoWay}" SelectionMode="Single">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:CampaignSummaryViewModel">
+                <DataTemplate>
                     <StackPanel Orientation="Vertical" Padding="8">
-                        <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold"/>
-                        <TextBlock Text="{x:Bind Subtitle}"/>
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Subtitle}"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Monthly:"/>
-                            <TextBlock Text="{x:Bind Monthly}"/>
+                            <TextBlock Text="{Binding Monthly}"/>
                             <TextBlock Text="Eff:" Margin="12,0,0,0"/>
-                            <TextBlock Text="{x:Bind Effective}"/>
+                            <TextBlock Text="{Binding Effective}"/>
                         </StackPanel>
-                        <TextBlock Text="{x:Bind Notes}" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Notes}" Foreground="Gray"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
