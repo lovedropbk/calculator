@@ -18,8 +18,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <!-- Top inputs -->
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12" Padding="12">
+        
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Padding="12">
             <TextBlock Text="Product" VerticalAlignment="Center"/>
             <ComboBox Width="120" SelectedItem="{Binding Product, Mode=TwoWay}">
                 <x:String>HP</x:String>
@@ -47,7 +47,7 @@
                     <StackPanel Orientation="Vertical" Padding="8">
                         <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold"/>
                         <TextBlock Text="{x:Bind Subtitle}"/>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Monthly:"/>
                             <TextBlock Text="{x:Bind Monthly}"/>
                             <TextBlock Text="Eff:" Margin="12,0,0,0"/>
@@ -60,7 +60,7 @@
         </ListView>
 
         <!-- Key metrics -->
-        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="8" Padding="12">
+        <StackPanel Grid.Row="1" Grid.Column="1" Padding="12">
             <TextBlock Text="Key Metrics" FontSize="20" FontWeight="Bold"/>
             <TextBlock Text="Monthly Installment:"/>
             <TextBlock Text="{Binding Metrics.MonthlyInstallment}" FontSize="18" FontWeight="SemiBold"/>
