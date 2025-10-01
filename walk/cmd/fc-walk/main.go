@@ -1654,7 +1654,8 @@ func main() {
 											{Title: "Downpayment", Width: 80},
 											{Title: "Subdown", Width: 70},
 											{Title: "Cash Discount", Width: 80},
-											{Title: "Free MBSP THB", Width: 80},
+											{Title: "Free Insurance", Width: 80},
+											{Title: "Free MBSP", Width: 80},
 											{Title: "Subsidy utilized", Width: 90},
 											{Title: "Acq. RoRAC", Width: 80},
 											{Title: "Dealer Comm.", Width: 90},
@@ -1813,7 +1814,8 @@ func main() {
 													{Title: "Downpayment", Width: 80},
 													{Title: "Subdown", Width: 70},
 													{Title: "Cash Discount", Width: 80},
-													{Title: "Free MBSP THB", Width: 80},
+													{Title: "Free Insurance", Width: 80},
+													{Title: "Free MBSP", Width: 80},
 													{Title: "Subsidy utilized", Width: 90},
 													{Title: "Acq. RoRAC", Width: 80},
 													{Title: "Dealer Comm.", Width: 90},
@@ -2976,7 +2978,8 @@ type CampaignRow struct {
 	DownpaymentStr        string // e.g., "20%"
 	SubdownTHBStr         string // e.g., "THB 50,000" or "—" (Subdown subsidy amount)
 	CashDiscountStr       string // e.g., "THB 50,000" for cash discount row; "—" otherwise
-	MBSPTHBStr            string // e.g., "THB 5,000" only for Free MBSP rows; "—" otherwise
+	FreeInsuranceTHBStr   string // e.g., "THB 50,000" - actual insurance cost
+	MBSPTHBStr            string // e.g., "THB 150,000" - actual MBSP cost
 	SubsidyUsedTHBStr     string // e.g., "50,000" (formatted without "THB")
 	NominalRateStr        string // e.g., "3.99 percent"
 	EffectiveRateStr      string // e.g., "4.05 percent"
@@ -3122,24 +3125,29 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 			return "—"
 		}
 		return r.CashDiscountStr
-	case 7: // Free MBSP THB
+	case 7: // Free Insurance
+		if r.FreeInsuranceTHBStr == "" {
+			return "—"
+		}
+		return r.FreeInsuranceTHBStr
+	case 8: // Free MBSP
 		if r.MBSPTHBStr == "" {
 			return "—"
 		}
 		return r.MBSPTHBStr
-	case 8: // Subsidy utilized (THB)
+	case 9: // Subsidy utilized (THB)
 		if r.SubsidyUsedTHBStr == "" {
 			return "—"
 		}
 		return "THB " + r.SubsidyUsedTHBStr
-	case 9: // Acq. RoRAC
+	case 10: // Acq. RoRAC
 		if r.AcqRoRacStr == "" {
 			return "—"
 		}
 		return r.AcqRoRacStr
-	case 10: // Dealer Commission
+	case 11: // Dealer Commission
 		return r.DealerComm
-	case 11: // Notes
+	case 12: // Notes
 		return r.Notes
 	default:
 		return ""

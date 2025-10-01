@@ -1,0 +1,44 @@
+# Azure DevOps adminless build for WinUI 3
+# Uses Microsoft-hosted Windows runners with Visual Studio + Windows SDK preinstalled.
+trigger:
+- '*'
+
+pr:
+- '*'
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildConfiguration: 'Release'
+  RuntimeIdentifier: 'win-x64'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK 8.x'
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+
+- powershell: |
+    dotnet --info
+  displayName: 'Dotnet info'
+
+- powershell: |
+    dotnet restore winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj
+  displayName: 'Restore WinUI3'
+
+- powershell: |
+    dotnet build winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c $(BuildConfiguration) -r $(RuntimeIdentifier) --no-restore
+  displayName: 'Build WinUI3'
+
+- powershell: |
+    dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c $(BuildConfiguration) -r $(RuntimeIdentifier) -o $(Build.ArtifactStagingDirectory)/winui3
+  displayName: 'Publish WinUI3'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: winui3-mvp'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/winui3'
+    ArtifactName: 'winui3-mvp'
+    publishLocation: 'Container'

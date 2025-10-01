@@ -48,18 +48,19 @@ func DetermineLayoutMode(windowWidth int, dpiCtx *DPIContext) LayoutMode {
 
 // ColumnWidths holds the calculated widths for table columns
 type ColumnWidths struct {
-	Copy     int // Copy button column (only for default campaigns)
-	Select   int // Selection checkbox column
-	Name     int // Campaign name
-	Monthly  int // Monthly installment
-	DP       int // Down payment
-	Subdown  int // Subdown subsidy
-	Cash     int // Cash discount
-	MBSP     int // MBSP
-	Subsidy  int // Subsidy utilized
-	Acq      int // Acquisition RoRAC
-	Dealer   int // Dealer commission
-	Notes    int // Notes (stretched)
+	Copy      int // Copy button column (only for default campaigns)
+	Select    int // Selection checkbox column
+	Name      int // Campaign name
+	Monthly   int // Monthly installment
+	DP        int // Down payment
+	Subdown   int // Subdown subsidy
+	Cash      int // Cash discount
+	Insurance int // Free Insurance cost
+	MBSP      int // Free MBSP cost
+	Subsidy   int // Subsidy utilized
+	Acq       int // Acquisition RoRAC
+	Dealer    int // Dealer commission
+	Notes     int // Notes (stretched)
 }
 
 // CalcCampaignTableWidthsResponsive calculates responsive column widths for the Default Campaigns table
@@ -109,12 +110,18 @@ func calcCompactCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 	}
 
 	// Proportional distribution favoring name and monthly
-	widths.Name = int(float64(remaining) * 0.28)
-	widths.Monthly = int(float64(remaining) * 0.23)
-	widths.DP = int(float64(remaining) * 0.11)
-	widths.Subdown = int(float64(remaining) * 0.11)
-	widths.Acq = int(float64(remaining) * 0.15)
+	widths.Name = int(float64(remaining) * 0.26)
+	widths.Monthly = int(float64(remaining) * 0.20)
+	widths.DP = int(float64(remaining) * 0.10)
+	widths.Subdown = int(float64(remaining) * 0.10)
+	widths.Acq = int(float64(remaining) * 0.14)
 	widths.Dealer = remaining - widths.Name - widths.Monthly - widths.DP - widths.Subdown - widths.Acq
+	
+	// Hide less critical columns in compact mode
+	widths.Cash = 0
+	widths.Insurance = 0
+	widths.MBSP = 0
+	widths.Subsidy = 0
 
 	// Compact minimums (smaller than normal)
 	minName := dpiCtx.Scale(120)
@@ -143,11 +150,6 @@ func calcCompactCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 		widths.Dealer = minDealer
 	}
 
-	// Hide less critical columns in compact mode
-	widths.Cash = 0
-	widths.MBSP = 0
-	widths.Subsidy = 0
-
 	return widths
 }
 
@@ -163,15 +165,16 @@ func calcNormalCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 	}
 
 	// Proportional splits
-	widths.Name = int(float64(remaining) * 0.22)
-	widths.Monthly = int(float64(remaining) * 0.16)
-	widths.DP = int(float64(remaining) * 0.10)
-	widths.Subdown = int(float64(remaining) * 0.10)
-	widths.Cash = int(float64(remaining) * 0.10)
+	widths.Name = int(float64(remaining) * 0.20)
+	widths.Monthly = int(float64(remaining) * 0.14)
+	widths.DP = int(float64(remaining) * 0.09)
+	widths.Subdown = int(float64(remaining) * 0.09)
+	widths.Cash = int(float64(remaining) * 0.09)
+	widths.Insurance = int(float64(remaining) * 0.09)
 	widths.MBSP = int(float64(remaining) * 0.09)
-	widths.Subsidy = int(float64(remaining) * 0.10)
-	widths.Acq = int(float64(remaining) * 0.07)
-	widths.Dealer = remaining - widths.Name - widths.Monthly - widths.DP - widths.Subdown - widths.Cash - widths.MBSP - widths.Subsidy - widths.Acq
+	widths.Subsidy = int(float64(remaining) * 0.09)
+	widths.Acq = int(float64(remaining) * 0.06)
+	widths.Dealer = remaining - widths.Name - widths.Monthly - widths.DP - widths.Subdown - widths.Cash - widths.Insurance - widths.MBSP - widths.Subsidy - widths.Acq
 
 	// Normal minimums
 	minName := dpiCtx.Scale(150)
@@ -179,6 +182,7 @@ func calcNormalCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 	minDP := dpiCtx.Scale(100)
 	minSubdown := dpiCtx.Scale(90)
 	minCash := dpiCtx.Scale(110)
+	minInsurance := dpiCtx.Scale(100)
 	minMBSP := dpiCtx.Scale(100)
 	minSubsidy := dpiCtx.Scale(120)
 	minAcq := dpiCtx.Scale(110)
@@ -198,6 +202,9 @@ func calcNormalCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 	}
 	if widths.Cash < minCash {
 		widths.Cash = minCash
+	}
+	if widths.Insurance < minInsurance {
+		widths.Insurance = minInsurance
 	}
 	if widths.MBSP < minMBSP {
 		widths.MBSP = minMBSP
@@ -227,15 +234,16 @@ func calcWideCampaignWidths(remaining int, dpiCtx *DPIContext) ColumnWidths {
 	}
 
 	// More generous proportions
-	widths.Name = int(float64(remaining) * 0.25)
-	widths.Monthly = int(float64(remaining) * 0.16)
-	widths.DP = int(float64(remaining) * 0.10)
-	widths.Subdown = int(float64(remaining) * 0.10)
-	widths.Cash = int(float64(remaining) * 0.10)
-	widths.MBSP = int(float64(remaining) * 0.08)
-	widths.Subsidy = int(float64(remaining) * 0.10)
-	widths.Acq = int(float64(remaining) * 0.07)
-	widths.Dealer = remaining - widths.Name - widths.Monthly - widths.DP - widths.Subdown - widths.Cash - widths.MBSP - widths.Subsidy - widths.Acq
+	widths.Name = int(float64(remaining) * 0.22)
+	widths.Monthly = int(float64(remaining) * 0.14)
+	widths.DP = int(float64(remaining) * 0.09)
+	widths.Subdown = int(float64(remaining) * 0.09)
+	widths.Cash = int(float64(remaining) * 0.09)
+	widths.Insurance = int(float64(remaining) * 0.09)
+	widths.MBSP = int(float64(remaining) * 0.09)
+	widths.Subsidy = int(float64(remaining) * 0.09)
+	widths.Acq = int(float64(remaining) * 0.06)
+	widths.Dealer = remaining - widths.Name - widths.Monthly - widths.DP - widths.Subdown - widths.Cash - widths.Insurance - widths.MBSP - widths.Subsidy - widths.Acq
 
 	// Wide minimums (more comfortable)
 	minName := dpiCtx.Scale(180)

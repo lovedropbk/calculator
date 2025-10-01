@@ -40,4 +40,4 @@ Write-Host "----------------------------------------------------"
 
 # Run the acli command with the configured environment
 # Any arguments passed to this script will be forwarded to the acli command.
-acli login
+acli rovodev auth login

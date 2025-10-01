@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winui3-mvp", "winui3-mvp", "{FD971EC7-09A5-52D7-7201-0B176598A9CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialCalculator.WinUI3", "winui3-mvp\FinancialCalculator.WinUI3\FinancialCalculator.WinUI3.csproj", "{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F} = {FD971EC7-09A5-52D7-7201-0B176598A9CA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6374EF65-B18F-4705-AB82-99C3DEFDE382}
+	EndGlobalSection
+EndGlobal
