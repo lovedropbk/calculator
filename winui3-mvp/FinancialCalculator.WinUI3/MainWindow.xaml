@@ -1,82 +1,10 @@
 <Window
     x:Class="FinancialCalculator.WinUI3.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:FinancialCalculator.WinUI3.ViewModels"
-    mc:Ignorable="d"
-    Width="1200" Height="800">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Grid x:Name="Root">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Padding="12">
-            <TextBlock Text="Product" VerticalAlignment="Center"/>
-            <ComboBox Width="120" SelectedItem="{Binding Product, Mode=TwoWay}">
-                <x:String>HP</x:String>
-                <x:String>mySTAR</x:String>
-                <x:String>F-Lease</x:String>
-                <x:String>Op-Lease</x:String>
-            </ComboBox>
-            <TextBlock Text="Price (THB)" VerticalAlignment="Center"/>
-            <TextBox Width="150" Text="{Binding PriceExTax, Mode=TwoWay}"/>
-            <TextBlock Text="Down Payment (THB)" VerticalAlignment="Center"/>
-            <TextBox Width="150" Text="{Binding DownPaymentAmount, Mode=TwoWay}"/>
-            <TextBlock Text="Term (months)" VerticalAlignment="Center"/>
-            <TextBox Width="80" Text="{Binding TermMonths, Mode=TwoWay}"/>
-            <TextBlock Text="Rate % p.a." VerticalAlignment="Center"/>
-            <TextBox Width="80" Text="{Binding CustomerRatePct, Mode=TwoWay}"/>
-            <TextBlock Text="Subsidy Budget (THB)" VerticalAlignment="Center"/>
-            <TextBox Width="150" Text="{Binding SubsidyBudget, Mode=TwoWay}"/>
-            <Button Content="Recalculate" Command="{Binding RecalculateCommand}"/>
-        </StackPanel>
-
-        <!-- Campaign options list -->
-        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding CampaignSummaries}" SelectedItem="{Binding SelectedCampaign, Mode=TwoWay}" SelectionMode="Single">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical" Padding="8">
-                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
-                        <TextBlock Text="{Binding Subtitle}"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Monthly:"/>
-                            <TextBlock Text="{Binding Monthly}"/>
-                            <TextBlock Text="Eff:" Margin="12,0,0,0"/>
-                            <TextBlock Text="{Binding Effective}"/>
-                        </StackPanel>
-                        <TextBlock Text="{Binding Notes}" Foreground="Gray"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-
-        <!-- Key metrics -->
-        <StackPanel Grid.Row="1" Grid.Column="1" Padding="12">
-            <TextBlock Text="Key Metrics" FontSize="20" FontWeight="Bold"/>
-            <TextBlock Text="Monthly Installment:"/>
-            <TextBlock Text="{Binding Metrics.MonthlyInstallment}" FontSize="18" FontWeight="SemiBold"/>
-            <TextBlock Text="Nominal Rate:"/>
-            <TextBlock Text="{Binding Metrics.NominalRate}"/>
-            <TextBlock Text="Effective Rate:"/>
-            <TextBlock Text="{Binding Metrics.EffectiveRate}"/>
-            <TextBlock Text="Financed Amount:"/>
-            <TextBlock Text="{Binding Metrics.FinancedAmount}"/>
-            <TextBlock Text="Acq. RoRAC:"/>
-            <TextBlock Text="{Binding Metrics.RoRAC}"/>
-        </StackPanel>
-
-        <!-- Status bar replacement -->
-        <Border Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" Padding="8">
-            <TextBlock Text="{Binding Status}" />
-        </Border>
-    </Grid>
+    <StackPanel>
+        <TextBlock Text="Financial Calculator (WinUI 3 MVP)" FontSize="24" Margin="20"/>
+        <TextBlock Text="Build test - if you see this, XAML compiler works!" Margin="20"/>
+    </StackPanel>
 </Window>
