@@ -30,7 +30,7 @@
       "accountType": "atlassian",
       "experienceId": "rovodev-cli",
       "isExistingBetaUser": true,
-      "sessionId": "83183707-7de3-4901-81ed-2e18aca5016f",
+      "sessionId": "a6dc3dc8-ad2a-4c29-8867-402a1ef3a938",
       "useMockResponse": null,
       "productType": null,
       "ccpEntitlementId": null,
@@ -46,6 +46,7 @@
     }
   },
   "modelUsages": {
-    "claude-sonnet-4-5@20250929": 937309
+    "GPT 5": 353978,
+    "claude-sonnet-4-5@20250929": 19077094
   }
 }

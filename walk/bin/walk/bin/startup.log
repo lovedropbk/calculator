@@ -1480,3 +1480,125 @@ main.main()
 2025/10/01 01:45:33.075202 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
 2025/10/01 01:45:33.154167 step: mw.Run end; duration=1m5.4597888s
 2025/10/01 01:45:33.154681 shutdown: normal exit
+2025/10/01 11:26:50.642852 startup: begin
+2025/10/01 11:26:50.647740 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 11:26:50.647740 step: InitCommonControlsEx begin
+2025/10/01 11:26:50.655824 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 11:26:50.658686 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 11:26:50.659235 step: MainWindow.Create begin
+2025/10/01 11:26:51.611919 step: MainWindow.Create end; duration=952.6672ms
+2025/10/01 11:26:51.611919 step: constraining window to screen bounds
+2025/10/01 11:26:51.629684 step: mw.Run begin
+2025/10/01 11:26:52.456415 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 11:26:52.533174 post-create: window initialized; awaiting user input
+2025/10/01 11:27:01.286535 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 11:27:02.400453 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:30:06.640316 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:30:08.406150 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:30:09.590065 step: mw.Run end; duration=1h3m17.9476244s
+2025/10/01 12:30:09.590065 shutdown: normal exit
+2025/10/01 12:31:44.216185 startup: begin
+2025/10/01 12:31:44.217825 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 12:31:44.217825 step: InitCommonControlsEx begin
+2025/10/01 12:31:44.228684 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 12:31:44.242612 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 12:31:44.242612 step: MainWindow.Create begin
+2025/10/01 12:31:44.242612 step: DPI context initialized: dpi=120 scale=1.25
+2025/10/01 12:31:44.250216 step: Window sizing: initial=1500x944 min=1125x750 max=3000x2000
+2025/10/01 12:31:44.769094 step: MainWindow.Create end; duration=526.4814ms
+2025/10/01 12:31:44.769641 step: constraining window to screen bounds
+2025/10/01 12:31:44.785443 step: mw.Run begin
+2025/10/01 12:31:45.160567 step: DPI updated after window creation: 96 (scale=1.00)
+2025/10/01 12:31:45.160567 step: No saved window state - centering on screen
+2025/10/01 12:31:45.169169 step: Initial layout mode: 2 (width=1922)
+2025/10/01 12:31:45.454836 step: Post-creation initialization complete
+2025/10/01 12:31:45.545596 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:31:45.600873 post-create: window initialized; awaiting user input
+2025/10/01 12:32:14.500858 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:32:14.532263 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:13.227738 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:13.341329 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:15.762327 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:17.191583 step: Layout mode changed to: 0 (width=0)
+2025/10/01 12:34:17.589318 step: Layout mode changed to: 2 (width=1922)
+2025/10/01 12:34:20.474624 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:20.749973 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:27.312176 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:27.355087 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:49.589792 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:34:49.652064 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:36:22.606663 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:36:22.647244 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:52:08.449913 step: Window closing - saving state
+2025/10/01 12:52:08.453793 step: Window closing - cleanup complete
+2025/10/01 12:52:08.477427 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:52:08.577891 step: mw.Run end; duration=20m23.7878521s
+2025/10/01 12:52:08.577891 shutdown: normal exit
+2025/10/01 12:54:54.981461 startup: begin
+2025/10/01 12:54:54.983621 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 12:54:54.983621 step: InitCommonControlsEx begin
+2025/10/01 12:54:54.994848 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 12:54:54.996023 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 12:54:54.996023 step: MainWindow.Create begin
+2025/10/01 12:54:54.996533 step: DPI context initialized: dpi=120 scale=1.25
+2025/10/01 12:54:55.001323 step: Window sizing: initial=1500x944 min=1125x750 max=3000x2000
+2025/10/01 12:54:55.485586 step: MainWindow.Create end; duration=489.562ms
+2025/10/01 12:54:55.486123 step: constraining window to screen bounds
+2025/10/01 12:54:55.495845 step: mw.Run begin
+2025/10/01 12:54:55.802604 step: DPI updated after window creation: 96 (scale=1.00)
+2025/10/01 12:54:55.803674 step: Restoring saved window state: 1940x777 at (1920,-94) maximized=false
+2025/10/01 12:54:55.834422 step: Initial layout mode: 2 (width=1902)
+2025/10/01 12:54:56.201802 step: Post-creation initialization complete
+2025/10/01 12:54:56.305250 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:54:56.354486 post-create: window initialized; awaiting user input
+2025/10/01 12:55:06.665999 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:42.979272 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:43.440392 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:43.601304 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:43.748137 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:43.943338 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 12:56:47.318383 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 13:07:42.584793 step: Window closing - saving state
+2025/10/01 13:07:42.593760 step: Window closing - cleanup complete
+2025/10/01 13:07:42.897568 step: mw.Run end; duration=12m47.400541s
+2025/10/01 13:07:42.897568 shutdown: normal exit
+2025/10/01 13:10:18.494867 startup: begin
+2025/10/01 13:10:18.497383 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 13:10:18.497383 step: InitCommonControlsEx begin
+2025/10/01 13:10:18.511673 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 13:10:18.513391 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 13:10:18.513391 step: MainWindow.Create begin
+2025/10/01 13:10:18.513391 step: DPI context initialized: dpi=120 scale=1.25
+2025/10/01 13:10:18.518703 step: Window sizing: initial=1500x944 min=1125x750 max=3000x2000
+2025/10/01 13:10:19.436663 step: MainWindow.Create end; duration=923.2648ms
+2025/10/01 13:10:19.437213 step: constraining window to screen bounds
+2025/10/01 13:10:19.456168 step: mw.Run begin
+2025/10/01 13:10:19.986109 step: DPI updated after window creation: 96 (scale=1.00)
+2025/10/01 13:10:19.987176 step: Restoring saved window state: 1452x777 at (2029,-156) maximized=false
+2025/10/01 13:10:20.017412 step: Initial layout mode: 2 (width=1434)
+2025/10/01 13:10:20.399958 step: Post-creation initialization complete
+2025/10/01 13:10:20.570517 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 13:10:20.694220 post-create: window initialized; awaiting user input
+2025/10/01 13:10:24.939817 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 13:34:52.165003 startup: begin
+2025/10/01 13:34:52.168226 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 13:34:52.168226 step: InitCommonControlsEx begin
+2025/10/01 13:34:52.190599 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 13:34:52.192746 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 13:34:52.192746 step: MainWindow.Create begin
+2025/10/01 13:34:52.192746 step: DPI context initialized: dpi=120 scale=1.25
+2025/10/01 13:34:52.199291 step: Window sizing: initial=1500x944 min=1125x750 max=3000x2000
+2025/10/01 13:34:53.290686 step: MainWindow.Create end; duration=1.0979388s
+2025/10/01 13:34:53.290686 step: constraining window to screen bounds
+2025/10/01 13:34:53.294008 step: mw.Run begin
+2025/10/01 13:34:54.130392 step: DPI updated after window creation: 96 (scale=1.00)
+2025/10/01 13:34:54.132112 step: Restoring saved window state: 1452x777 at (2029,-156) maximized=false
+2025/10/01 13:34:54.198715 step: Initial layout mode: 2 (width=1434)
+2025/10/01 13:34:54.544405 step: Post-creation initialization complete
+2025/10/01 13:34:54.695935 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 13:34:54.783735 post-create: window initialized; awaiting user input
+2025/10/01 13:35:53.031416 compute ok: version=2025-09-sample installment=THB 140,665 rorac=78.09%
+2025/10/01 13:35:57.183339 step: Window closing - saving state
+2025/10/01 13:35:57.184459 step: Window closing - cleanup complete
+2025/10/01 13:35:57.324616 step: mw.Run end; duration=1m4.0305268s
+2025/10/01 13:35:57.324616 shutdown: normal exit

@@ -1,0 +1,24 @@
+2025/10/01 11:03:54.765943 startup: begin
+2025/10/01 11:03:54.767518 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 11:03:54.767518 step: InitCommonControlsEx begin
+2025/10/01 11:03:54.768052 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 11:03:54.769123 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 11:03:54.769123 step: MainWindow.Create begin
+2025/10/01 11:03:55.355599 step: MainWindow.Create end; duration=586.4752ms
+2025/10/01 11:03:55.355599 step: constraining window to screen bounds
+2025/10/01 11:03:55.411472 step: mw.Run begin
+2025/10/01 11:03:56.144149 post-create: window initialized; awaiting user input
+2025/10/01 11:04:02.814798 step: mw.Run end; duration=7.4033156s
+2025/10/01 11:04:02.815398 shutdown: normal exit
+2025/10/01 11:05:47.518718 startup: begin
+2025/10/01 11:05:47.522560 env: GOOS=windows GOARCH=amd64 GOVERSION=go1.24.4 GOTRACEBACK=
+2025/10/01 11:05:47.522560 step: InitCommonControlsEx begin
+2025/10/01 11:05:47.523817 step: InitCommonControlsEx success (broad set); dwICC=0x000087ff
+2025/10/01 11:05:47.526170 params loaded: version=2025-09-sample source=C:\Users\PATKRAN\Python\07_controlling\financial_calculator\config.yaml
+2025/10/01 11:05:47.526704 step: MainWindow.Create begin
+2025/10/01 11:05:48.253267 step: MainWindow.Create end; duration=726.5628ms
+2025/10/01 11:05:48.253267 step: constraining window to screen bounds
+2025/10/01 11:05:48.344640 step: mw.Run begin
+2025/10/01 11:05:48.996288 post-create: window initialized; awaiting user input
+2025/10/01 11:05:57.445827 step: mw.Run end; duration=9.1011833s
+2025/10/01 11:05:57.445827 shutdown: normal exit

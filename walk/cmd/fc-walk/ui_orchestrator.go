@@ -595,6 +595,9 @@ func computeCampaignRows(
 				}
 			}
 
+			// Populate Subdown field
+			row.SubdownTHBStr = "THB " + FormatTHB(usedSubsidyTHB)
+
 			// Build adjusted deal with higher DP
 			deal2 := deal
 			deal2.DownPaymentAmount = types.RoundTHB(deal.DownPaymentAmount.Add(types.NewDecimal(usedSubsidyTHB)))
@@ -1042,6 +1045,9 @@ func computeMyCampaignRow(
 				usedSubdownTHB = maxUse
 			}
 		}
+		
+		// Populate Subdown field
+		row.SubdownTHBStr = "THB " + FormatTHB(usedSubdownTHB)
 		
 		// Adjust deal with increased downpayment
 		deal2.DownPaymentAmount = types.RoundTHB(deal.DownPaymentAmount.Add(types.NewDecimal(usedSubdownTHB)))

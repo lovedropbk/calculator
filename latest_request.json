@@ -1,0 +1,30 @@
+{
+  "headers": {
+    "Host": "api.atlassian.com",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Connection": "keep-alive",
+    "User-Agent": "python-httpx/0.28.1",
+    "Authorization": "Basic cGF0cmljay5rcmFuekBtZXJjZWRlcy1iZW56LmNvbTpBVEFUVDN4RmZHRjAwZldsMERrY1FNSHNrempheWw1RjV1VERobDlGTlZjbDFwbEpxQVZkZ3QwZWpDQ0x1NmdlTmRncG5ZczhzWGtreTByQWtpa1M0ODNNR0dxOVY0YmNyYXFWMDhmNjZPdXp1NE5MUnZXU2daSjdBcVpGNGY1VExjMk41cEtxcjNOV0dqVVZxMUpIYVJCWW15RnJlT2YtbjRQMlEydHFXc2Y0YThJVmhSLUp4Rzg9NkZGNkZCRUU=",
+    "X-Atlassian-EncodedToken": "cGF0cmljay5rcmFuekBtZXJjZWRlcy1iZW56LmNvbTpBVEFUVDN4RmZHRjAwZldsMERrY1FNSHNrempheWw1RjV1VERobDlGTlZjbDFwbEpxQVZkZ3QwZWpDQ0x1NmdlTmRncG5ZczhzWGtreTByQWtpa1M0ODNNR0dxOVY0YmNyYXFWMDhmNjZPdXp1NE5MUnZXU2daSjdBcVpGNGY1VExjMk41cEtxcjNOV0dqVVZxMUpIYVJCWW15RnJlT2YtbjRQMlEydHFXc2Y0YThJVmhSLUp4Rzg9NkZGNkZCRUU=",
+    "X-RovoDev-Xid": "rovodev-cli",
+    "X-RovoDev-Session-Id": "f6ba6d79-0334-4740-abb3-7427408fe9c5",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Content-Length": "296"
+  },
+  "body": {
+    "model": "gpt-5-2025-08-07",
+    "reasoning_effort": "high",
+    "verbosity": "high",
+    "service_tier": "priority",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Say exactly: Hello from RovoDev!"
+      }
+    ],
+    "stream": true,
+    "max_tokens": 50,
+    "max_completion_tokens": 640000
+  }
+}
