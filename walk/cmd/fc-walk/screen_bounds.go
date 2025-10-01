@@ -3,11 +3,19 @@
 package main
 
 import (
-	"github.com/lxn/walk"
-	"github.com/lxn/walk/declarative"
-	"github.com/lxn/win"
+	"syscall"
 	"unsafe"
+
+	"github.com/lxn/walk"
+	"github.com/lxn/win"
 )
+
+// MonitorInfo contains information about a monitor including its DPI
+type MonitorInfo struct {
+	WorkArea walk.Rectangle
+	DPI      int
+	Handle   win.HMONITOR
+}
 
 // getScreenWorkArea returns the work area (usable screen space) of the primary monitor
 // The work area is the screen size minus the taskbar and other reserved areas
@@ -40,6 +48,12 @@ func getScreenWorkArea() walk.Rectangle {
 
 // getMonitorWorkAreaForWindow returns the work area of the monitor containing the window
 func getMonitorWorkAreaForWindow(hwnd win.HWND) walk.Rectangle {
+	info := getMonitorInfoForWindow(hwnd)
+	return info.WorkArea
+}
+
+// getMonitorInfoForWindow returns detailed monitor information for the window
+func getMonitorInfoForWindow(hwnd win.HWND) MonitorInfo {
 	// Get the monitor handle for this window
 	hMonitor := win.MonitorFromWindow(hwnd, win.MONITOR_DEFAULTTONEAREST)
 	
@@ -47,18 +61,65 @@ func getMonitorWorkAreaForWindow(hwnd win.HWND) walk.Rectangle {
 	var mi win.MONITORINFO
 	mi.CbSize = uint32(unsafe.Sizeof(mi))
 	
+	info := MonitorInfo{
+		Handle: hMonitor,
+		DPI:    96, // Default
+	}
+	
 	if win.GetMonitorInfo(hMonitor, &mi) {
-		// Return the work area (screen minus taskbar)
-		return walk.Rectangle{
+		// Set work area (screen minus taskbar)
+		info.WorkArea = walk.Rectangle{
 			X:      int(mi.RcWork.Left),
 			Y:      int(mi.RcWork.Top),
 			Width:  int(mi.RcWork.Right - mi.RcWork.Left),
 			Height: int(mi.RcWork.Bottom - mi.RcWork.Top),
 		}
+	} else {
+		// Fallback to GetSystemMetrics
+		info.WorkArea = getScreenWorkArea()
 	}
 	
-	// Fallback to GetSystemMetrics
-	return getScreenWorkArea()
+	// Try to get monitor-specific DPI (Windows 8.1+)
+	// This requires GetDpiForMonitor from Shcore.dll
+	var dpiX, dpiY uint32
+	
+	// Load Shcore.dll using syscall
+	shcore, err := syscall.LoadLibrary("Shcore.dll")
+	if err == nil {
+		defer syscall.FreeLibrary(shcore)
+		
+		// Get GetDpiForMonitor function
+		getDpiForMonitor, err := syscall.GetProcAddress(shcore, "GetDpiForMonitor")
+		if err == nil {
+			// Call GetDpiForMonitor
+			// HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY)
+			const MDT_EFFECTIVE_DPI = 0
+			ret, _, _ := syscall.Syscall6(
+				uintptr(getDpiForMonitor),
+				4,
+				uintptr(hMonitor), 
+				uintptr(MDT_EFFECTIVE_DPI), 
+				uintptr(unsafe.Pointer(&dpiX)), 
+				uintptr(unsafe.Pointer(&dpiY)),
+				0,
+				0)
+			
+			if ret == 0 && dpiX > 0 { // S_OK = 0
+				info.DPI = int(dpiX)
+			}
+		}
+	}
+	
+	// Fallback: use system DPI
+	if info.DPI == 96 {
+		hdc := win.GetDC(0)
+		if hdc != 0 {
+			info.DPI = int(win.GetDeviceCaps(hdc, win.LOGPIXELSX))
+			win.ReleaseDC(0, hdc)
+		}
+	}
+	
+	return info
 }
 
 // constrainWindowToScreen ensures the window size doesn't exceed the screen work area
@@ -115,44 +176,17 @@ func constrainWindowToScreen(mw *walk.MainWindow) {
 	}
 }
 
-// calculateInitialWindowSize returns an appropriate initial window size
-// that fits within the screen, with some margin
-func calculateInitialWindowSize() declarative.Size {
+// isWindowOnScreen checks if the window is visible on any monitor
+func isWindowOnScreen(bounds walk.Rectangle) bool {
+	// Simple check: ensure bounds are not completely off-screen
+	// Get work area of primary monitor
 	workArea := getScreenWorkArea()
 	
-	// Use 70% of work area width and height, but cap at reasonable maximum
-	// and ensure we meet minimum requirements
-	const (
-		minWidth  = 1100
-		minHeight = 700
-		maxWidth  = 1400
-		maxHeight = 900
-	)
+	// Check if window center is within reasonable bounds
+	centerX := bounds.X + bounds.Width/2
+	centerY := bounds.Y + bounds.Height/2
 	
-	// Calculate 70% of work area
-	width := int(float64(workArea.Width) * 0.7)
-	height := int(float64(workArea.Height) * 0.7)
-	
-	// Constrain to reasonable bounds
-	if width < minWidth {
-		width = minWidth
-	}
-	if width > maxWidth {
-		width = maxWidth
-	}
-	if width > workArea.Width {
-		width = workArea.Width - 40 // Leave some margin
-	}
-	
-	if height < minHeight {
-		height = minHeight
-	}
-	if height > maxHeight {
-		height = maxHeight
-	}
-	if height > workArea.Height {
-		height = workArea.Height - 80 // Leave margin for taskbar
-	}
-	
-	return declarative.Size{Width: width, Height: height}
+	// Allow some tolerance (window can be partially off-screen)
+	return centerX >= -bounds.Width && centerX <= workArea.Width+bounds.Width &&
+		centerY >= -bounds.Height && centerY <= workArea.Height+bounds.Height
 }

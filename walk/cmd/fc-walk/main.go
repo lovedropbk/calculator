@@ -116,6 +116,12 @@ func main() {
 	var mw *walk.MainWindow
 	var mainSplit *walk.Splitter
 	var lastTVWidth int
+	
+	// DPI and Responsive Layout Management
+	var dpiCtx *DPIContext
+	var currentLayoutMode LayoutMode
+	var windowStateMgr *WindowStateManager
+	var stateSaver *DebouncedStateSaver
 
 	// Engines orchestrator with YAML-loaded ParameterSet (discover at startup)
 	var (
@@ -1210,19 +1216,25 @@ func main() {
 	createStart := time.Now()
 	logger.Printf("step: MainWindow.Create begin")
 
-	// Shared table column widths (used by Default Campaigns and My Campaigns)
-	selW, nameW, monthlyW := 70, 220, 180
-	dpW, cashDiscW, mbspW := 120, 140, 140
-	subsidyW, acqW, dealerW := 160, 140, 160
+	// Initialize DPI context before creating any UI (will be updated once window is created)
+	dpiCtx = NewDPIContextForScreen()
+	logger.Printf("step: DPI context initialized: dpi=%d scale=%.2f", dpiCtx.GetCurrentDPI(), dpiCtx.GetScaleFactor())
 
-	// Calculate initial window size that fits the screen
-	initialSize := calculateInitialWindowSize()
+	// Initialize window state manager
+	windowStateMgr = NewWindowStateManager()
+
+	// Calculate initial window size that fits the screen (DPI-aware)
+	initialSize := CalculateInitialWindowSize(dpiCtx)
+	minSize, maxSize := GetMinMaxWindowSize(dpiCtx)
+	logger.Printf("step: Window sizing: initial=%dx%d min=%dx%d max=%dx%d", 
+		initialSize.Width, initialSize.Height, minSize.Width, minSize.Height, maxSize.Width, maxSize.Height)
 
 	err := (MainWindow{
 		AssignTo: &mw,
 		Title:    "Financial Calculator (Walk UI)",
-		MinSize:  Size{Width: 1100, Height: 700},
-		Size:     initialSize,
+		MinSize:  Size{Width: minSize.Width, Height: minSize.Height},
+		MaxSize:  Size{Width: maxSize.Width, Height: maxSize.Height},
+		Size:     Size{Width: initialSize.Width, Height: initialSize.Height},
 		Layout:   VBox{MarginsZero: true},
 		Children: []Widget{
 			HSplitter{
@@ -1633,17 +1645,19 @@ func main() {
 										StretchFactor:       1,
 										MultiSelection:      false,
 										LastColumnStretched: true,
+										ColumnsSizable:      true,
 										Columns: []TableViewColumn{
 											{Title: "", Width: 60}, // Row-level copy action (no header)
-											{Title: "Select", Width: selW},
-											{Title: "Campaign", Width: nameW},
-											{Title: "Monthly Installment", Width: monthlyW},
-											{Title: "Downpayment", Width: dpW},
-											{Title: "Cash Discount", Width: cashDiscW},
-											{Title: "Free MBSP THB", Width: mbspW},
-											{Title: "Subsidy utilized", Width: subsidyW},
-											{Title: "Acq. RoRAC", Width: acqW},
-											{Title: "Dealer Comm.", Width: dealerW},
+											{Title: "Select", Width: 50},
+											{Title: "Campaign", Width: 120},
+											{Title: "Monthly Installment", Width: 100},
+											{Title: "Downpayment", Width: 80},
+											{Title: "Subdown", Width: 70},
+											{Title: "Cash Discount", Width: 80},
+											{Title: "Free MBSP THB", Width: 80},
+											{Title: "Subsidy utilized", Width: 90},
+											{Title: "Acq. RoRAC", Width: 80},
+											{Title: "Dealer Comm.", Width: 90},
 											{Title: "Notes"}, // No width - will stretch
 										},
 										OnMouseDown: func(x, y int, button walk.MouseButton) {
@@ -1791,16 +1805,18 @@ func main() {
 												StretchFactor:       1,
 												MultiSelection:      false,
 												LastColumnStretched: true,
+												ColumnsSizable:      true,
 												Columns: []TableViewColumn{
-													{Title: "Sel", Width: selW},
-													{Title: "Campaign", Width: nameW},
-													{Title: "Monthly Installment", Width: monthlyW},
-													{Title: "Downpayment", Width: dpW},
-													{Title: "Cash Discount", Width: cashDiscW},
-													{Title: "Free MBSP THB", Width: mbspW},
-													{Title: "Subsidy utilized", Width: subsidyW},
-													{Title: "Acq. RoRAC", Width: acqW},
-													{Title: "Dealer Comm.", Width: dealerW},
+													{Title: "Sel", Width: 50},
+													{Title: "Campaign", Width: 120},
+													{Title: "Monthly Installment", Width: 100},
+													{Title: "Downpayment", Width: 80},
+													{Title: "Subdown", Width: 70},
+													{Title: "Cash Discount", Width: 80},
+													{Title: "Free MBSP THB", Width: 80},
+													{Title: "Subsidy utilized", Width: 90},
+													{Title: "Acq. RoRAC", Width: 80},
+													{Title: "Dealer Comm.", Width: 90},
 													{Title: "Notes"}, // No width - will stretch
 												},
 												OnCurrentIndexChanged: func() {
@@ -1816,6 +1832,16 @@ func main() {
 														}
 														selectedMyCampaignID = id
 														SelectMyCampaign(&editor, id)
+														
+														// MUTUAL EXCLUSION: Clear Default Campaigns selection
+														if campaignModel != nil && campaignTV != nil {
+															for i := range campaignModel.rows {
+																campaignModel.rows[i].Selected = false
+															}
+															campaignModel.PublishRowsReset()
+															selectedCampaignIdx = -1
+														}
+														
 														// Show edit section with campaign name
 														name := ""
 														rowsCopy := myCampModel.Rows()
@@ -1823,6 +1849,62 @@ func main() {
 															name = rowsCopy[idx].Name
 														}
 														ShowCampaignEditState(editModeUI, name)
+														
+														// UPDATE BOTTOM PANELS: Compute metrics for selected My Campaign
+														if editor.IsEditMode && selectedMyCampaignID != "" && myCampModel != nil {
+															// Find the draft
+															draftIdx := findDraftIndexByID(selectedMyCampaignID)
+															if draftIdx >= 0 && draftIdx < len(myCampaigns) {
+																draft := myCampaigns[draftIdx]
+																
+																// Compute full row metrics
+																computedRow := computeMyCampaignRow(enginePS, calc, campEng, draft, dealState)
+																
+																// Convert MyCampaignRow to CampaignRow for update functions
+																sel := CampaignRow{
+																	Name:                  computedRow.Name,
+																	MonthlyInstallment:    computedRow.MonthlyInstallment,
+																	MonthlyInstallmentStr: computedRow.MonthlyInstallmentStr,
+																	NominalRate:           computedRow.NominalRate,
+																	EffectiveRate:         computedRow.EffectiveRate,
+																	AcqRoRac:              computedRow.AcqRoRac,
+																	SubsidyUsedTHBStr:     computedRow.SubsidyUsedTHBStr,
+																	SubsidyValue:          computedRow.SubsidyValue,
+																	IDCDealerTHB:          computedRow.IDCDealerTHB,
+																	IDCOtherTHB:           computedRow.IDCOtherTHB,
+																	Profit:                computedRow.Profit,
+																	Cashflows:             computedRow.Cashflows,
+																	DownpaymentStr:        computedRow.DownpaymentStr,
+																}
+																
+																// Update Key Metrics Summary
+																UpdateKeyMetrics(
+																	sel,
+																	monthlyLbl, headerMonthlyLbl,
+																	custNominalLbl, custEffLbl,
+																	roracLbl, headerRoRacLbl,
+																	idcTotalLbl, idcDealerLbl, idcOtherLbl,
+																	financedLbl,
+																	priceEdit, dpUnitCmb, dpValueEd, dpAmountEd,
+																	wfCustRateEffLbl, wfCustRateNomLbl,
+																	wfDealIRREffLbl, wfDealIRRNomLbl, wfIDCUpLbl, wfSubUpLbl, wfCostDebtLbl, wfMFSpreadLbl, wfGIMEffLbl, wfGIMLbl, wfCapAdvLbl, wfNIMEffLbl, wfNIMLbl, wfRiskLbl, wfOpexLbl, wfNetEbitEffLbl, wfNetEbitLbl, wfEconCapLbl, wfAcqRoRacDetailLbl,
+																	idcOtherEd,
+																)
+																
+																// Update Campaign Details
+																UpdateCampaignDetails(
+																	sel,
+																	selCampNameValLbl, selTermValLbl, selFinancedValLbl, selSubsidyUsedValLbl, selSubsidyBudgetValLbl, selSubsidyRemainValLbl, selIDCDealerValLbl, selIDCInsValLbl, selIDCMBSPValLbl, selIDCOtherValLbl,
+																	priceEdit, dpUnitCmb, dpValueEd, dpAmountEd, termEdit,
+																	subsidyBudgetEd, idcOtherEd,
+																)
+																
+																// Update Cashflow tab if active
+																if cashflowTV != nil {
+																	refreshCashflowTable(cashflowTV, sel.Cashflows)
+																}
+															}
+														}
 													} else {
 														// Clear bullets and exit edit mode
 														rows := myCampModel.rows
@@ -1906,20 +1988,20 @@ func main() {
 												Layout: Grid{Columns: 4, Spacing: 6},
 												Children: []Widget{
 													// Row 1
-													Label{Text: "Campaign Name:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selCampNameValLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "Term (months):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selTermValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Campaign Name:"}, Label{AssignTo: &selCampNameValLbl, Text: "-"},
+													Label{Text: "Term (months):"}, Label{AssignTo: &selTermValLbl, Text: "-"},
 													// Row 2
-													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selFinancedValLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "Subsidy budget (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyBudgetValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Financed Amount:"}, Label{AssignTo: &selFinancedValLbl, Text: "-"},
+													Label{Text: "Subsidy budget (THB):"}, Label{AssignTo: &selSubsidyBudgetValLbl, Text: "-"},
 													// Row 3
-													Label{Text: "Subsidy utilized (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyUsedValLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "Subsidy remaining (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selSubsidyRemainValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Subsidy utilized (THB):"}, Label{AssignTo: &selSubsidyUsedValLbl, Text: "-"},
+													Label{Text: "Subsidy remaining (THB):"}, Label{AssignTo: &selSubsidyRemainValLbl, Text: "-"},
 													// Row 4
-													Label{Text: "Dealer Commissions Paid (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCDealerValLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "IDCs - Others (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCOtherValLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Dealer Comm. Paid (THB):"}, Label{AssignTo: &selIDCDealerValLbl, Text: "-"},
+													Label{Text: "IDCs - Others (THB):"}, Label{AssignTo: &selIDCOtherValLbl, Text: "-"},
 													// Row 5
-													Label{Text: "IDC - Free Insurance (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCInsValLbl, Text: "THB 0", MinSize: Size{Width: 150}},
-													Label{Text: "IDC - Free MBSP (THB):", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &selIDCMBSPValLbl, Text: "THB 0", MinSize: Size{Width: 150}},
+													Label{Text: "IDC - Free Ins. (THB):"}, Label{AssignTo: &selIDCInsValLbl, Text: "THB 0"},
+													Label{Text: "IDC - Free MBSP (THB):"}, Label{AssignTo: &selIDCMBSPValLbl, Text: "THB 0"},
 												},
 											},
 
@@ -1930,17 +2012,17 @@ func main() {
 												Layout: Grid{Columns: 4, Spacing: 6},
 												Children: []Widget{
 													// Row 1
-													Label{Text: "Monthly Installment:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &monthlyLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "Nominal Customer Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custNominalLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Monthly Installment:"}, Label{AssignTo: &monthlyLbl, Text: "-"},
+													Label{Text: "Nominal Customer Rate:"}, Label{AssignTo: &custNominalLbl, Text: "-"},
 													// Row 2
-													Label{Text: "Effective Rate:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &custEffLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "Financed Amount:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &financedLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Effective Rate:"}, Label{AssignTo: &custEffLbl, Text: "-"},
+													Label{Text: "Financed Amount:"}, Label{AssignTo: &financedLbl, Text: "-"},
 													// Row 3
-													Label{Text: "Acquisition RoRAC:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &roracLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "IDC Total:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcTotalLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Acquisition RoRAC:"}, Label{AssignTo: &roracLbl, Text: "-"},
+													Label{Text: "IDC Total:"}, Label{AssignTo: &idcTotalLbl, Text: "-"},
 													// Row 4
-													Label{Text: "IDC - Dealer Comm.:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcDealerLbl, Text: "-", MinSize: Size{Width: 150}},
-													Label{Text: "IDC - Other:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &idcOtherLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "IDC - Dealer Comm.:"}, Label{AssignTo: &idcDealerLbl, Text: "-"},
+													Label{Text: "IDC - Other:"}, Label{AssignTo: &idcOtherLbl, Text: "-"},
 													// Profitability Details (toggle) spanning all 4 columns
 													GroupBox{
 														Title:      "Profitability Details",
@@ -2030,7 +2112,7 @@ func main() {
 														},
 													},
 													// Row 5: Parameter Version at the very bottom (last row)
-													Label{Text: "Parameter Version:", MinSize: Size{Width: 160}, MaxSize: Size{Width: 160}}, Label{AssignTo: &metaVersionLbl, Text: "-", MinSize: Size{Width: 150}},
+													Label{Text: "Parameter Version:"}, Label{AssignTo: &metaVersionLbl, Text: "-"},
 													Label{Text: ""}, Label{Text: ""},
 												},
 											},
@@ -2562,6 +2644,125 @@ func main() {
 
 		// Create ToolTips after window initialization
 		creatingUI = false
+		
+		// ========================================
+		// POST-CREATION: DPI, State Restoration, and Event Handlers
+		// ========================================
+		
+		// Update DPI context with actual window DPI (may differ from screen DPI)
+		actualDPI := mw.DPI()
+		if dpiCtx.UpdateDPI(actualDPI) {
+			logger.Printf("step: DPI updated after window creation: %d (scale=%.2f)", 
+				actualDPI, dpiCtx.GetScaleFactor())
+		}
+		
+		// Try to restore saved window state
+		if savedState, err := windowStateMgr.LoadWindowState(); err == nil && savedState != nil {
+			logger.Printf("step: Restoring saved window state: %dx%d at (%d,%d) maximized=%v", 
+				savedState.Width, savedState.Height, savedState.X, savedState.Y, savedState.IsMaximized)
+			if err := windowStateMgr.RestoreWindowState(mw, savedState, dpiCtx); err != nil {
+				logger.Printf("warn: Failed to restore window state: %v", err)
+				// Center window as fallback
+				CenterWindowOnScreen(mw)
+			}
+		} else {
+			// No saved state - center the window
+			logger.Printf("step: No saved window state - centering on screen")
+			CenterWindowOnScreen(mw)
+		}
+		
+		// Initialize debounced state saver
+		stateSaver = NewDebouncedStateSaver(windowStateMgr, mw)
+		
+		// Determine initial layout mode
+		currentLayoutMode = DetermineLayoutMode(mw.ClientBoundsPixels().Width, dpiCtx)
+		logger.Printf("step: Initial layout mode: %d (width=%d)", currentLayoutMode, mw.ClientBoundsPixels().Width)
+		
+		// Set up SizeChanged handler for responsive layout
+		mw.SizeChanged().Attach(func() {
+			if creatingUI || mw == nil {
+				return
+			}
+			
+			bounds := mw.ClientBoundsPixels()
+			newMode := DetermineLayoutMode(bounds.Width, dpiCtx)
+			
+			// Update layout mode if changed
+			if newMode != currentLayoutMode {
+				currentLayoutMode = newMode
+				logger.Printf("step: Layout mode changed to: %d (width=%d)", currentLayoutMode, bounds.Width)
+			}
+			
+			// Update Default Campaigns table column widths
+			if campaignTV != nil {
+				applyCampaignTableWidths(campaignTV, dpiCtx, currentLayoutMode)
+			}
+			
+			// Update My Campaigns table column widths
+			if myCampTV != nil {
+				applyMyCampTableWidths(myCampTV, dpiCtx, currentLayoutMode)
+			}
+			
+			// Request save of window state (debounced)
+			if stateSaver != nil {
+				stateSaver.RequestSave()
+			}
+		})
+		
+		// Set up Closing handler to save window state and pending changes
+		mw.Closing().Attach(func(canceled *bool, reason walk.CloseReason) {
+			logger.Printf("step: Window closing - saving state")
+			
+			// Save window state immediately
+			if windowStateMgr != nil && mw != nil {
+				if err := windowStateMgr.SaveWindowState(mw); err != nil {
+					logger.Printf("warn: Failed to save window state: %v", err)
+				}
+			}
+			
+			// Check for unsaved campaign changes
+			if campaignsDirty && len(myCampaigns) > 0 {
+				result := walk.MsgBox(mw, "Unsaved Changes", 
+					"You have unsaved campaigns. Save before closing?", 
+					walk.MsgBoxYesNoCancel|walk.MsgBoxIconQuestion)
+				
+				switch result {
+				case walk.DlgCmdYes:
+					// Save campaigns
+					if err := SaveCampaigns(myCampaigns); err != nil {
+						walk.MsgBox(mw, "Save Error", 
+							fmt.Sprintf("Failed to save campaigns: %v", err), 
+							walk.MsgBoxIconError)
+						*canceled = true
+						return
+					}
+				case walk.DlgCmdNo:
+					// Don't save, just close
+				case walk.DlgCmdCancel:
+					// Cancel close
+					*canceled = true
+					return
+				}
+			}
+			
+			logger.Printf("step: Window closing - cleanup complete")
+		})
+		
+		// Apply initial column widths based on window size
+		if campaignTV != nil {
+			applyCampaignTableWidths(campaignTV, dpiCtx, currentLayoutMode)
+		}
+		if myCampTV != nil {
+			applyMyCampTableWidths(myCampTV, dpiCtx, currentLayoutMode)
+		}
+		
+		logger.Printf("step: Post-creation initialization complete")
+		
+		// ========================================
+		// END POST-CREATION SETUP
+		// ========================================
+		
+		// Create ToolTips after window initialization
 		if t, err := walk.NewToolTip(); err != nil {
 			logger.Printf("warn: ToolTip Create failed: %v", err)
 		} else {
@@ -2773,6 +2974,7 @@ type CampaignRow struct {
 	Name                  string // campaign display name
 	MonthlyInstallmentStr string // e.g., "22,198.61"
 	DownpaymentStr        string // e.g., "20%"
+	SubdownTHBStr         string // e.g., "THB 50,000" or "—" (Subdown subsidy amount)
 	CashDiscountStr       string // e.g., "THB 50,000" for cash discount row; "—" otherwise
 	MBSPTHBStr            string // e.g., "THB 5,000" only for Free MBSP rows; "—" otherwise
 	SubsidyUsedTHBStr     string // e.g., "50,000" (formatted without "THB")
@@ -2910,29 +3112,34 @@ func (m *CampaignTableModel) Value(row, col int) interface{} {
 			return "—"
 		}
 		return r.DownpaymentStr
-	case 5: // Cash Discount
+	case 5: // Subdown
+		if r.SubdownTHBStr == "" {
+			return "—"
+		}
+		return r.SubdownTHBStr
+	case 6: // Cash Discount
 		if r.CashDiscountStr == "" {
 			return "—"
 		}
 		return r.CashDiscountStr
-	case 6: // Free MBSP THB
+	case 7: // Free MBSP THB
 		if r.MBSPTHBStr == "" {
 			return "—"
 		}
 		return r.MBSPTHBStr
-	case 7: // Subsidy utilized (THB)
+	case 8: // Subsidy utilized (THB)
 		if r.SubsidyUsedTHBStr == "" {
 			return "—"
 		}
 		return "THB " + r.SubsidyUsedTHBStr
-	case 8: // Acq. RoRAC
+	case 9: // Acq. RoRAC
 		if r.AcqRoRacStr == "" {
 			return "—"
 		}
 		return r.AcqRoRacStr
-	case 9: // Dealer Commission
+	case 10: // Dealer Commission
 		return r.DealerComm
-	case 10: // Notes
+	case 11: // Notes
 		return r.Notes
 	default:
 		return ""

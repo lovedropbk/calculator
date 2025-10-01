@@ -26,6 +26,7 @@ type MyCampaignRow struct {
 	MonthlyInstallment    float64
 	MonthlyInstallmentStr string // "22,198.61" (without THB prefix)
 	DownpaymentStr        string // "THB 200,000 (20% DP)"
+	SubdownTHBStr         string // "THB 50,000" or "—"
 	CashDiscountStr       string // "THB 50,000" or "—"
 	MBSPTHBStr            string // "THB 5,000" or "—"
 	SubsidyUsedTHBStr     string // "THB 50,000" or "—"
