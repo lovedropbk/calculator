@@ -1,7 +1,7 @@
 Overall Goal
 - Deliver a native, straightforward WinUI 3 frontend that binds to a Go backend, replacing the lxn/walk UI with higher performance and better UX. Build an MVP quickly, then design a parallel, modular backend service that mirrors the MVP API while keeping clean layering for long-term maintainability.
 
-To-Do List
+To-Do List (Authoritative UI SOT Execution)
 1) Assess docs and engines to list MVP scope and data flows. [Done]
 2) Implement simple fc-api HTTP wrapper over existing engines. [Done]
 3) Create WinUI 3 MVP app with bindings to fc-api (/calculate, /campaigns/catalog). [Done]
@@ -15,7 +15,7 @@ To-Do List
 11) Extend WinUI 3 campaign summaries with full metrics. [Done - already included]
 12) Add Dealer Commission auto/override UI. [Planned - future enhancement]
 
-Current Status - ✅ MVP COMPLETE
+Current Status - In Progress (WinUI authoritative UI milestones)
 - Repository: https://github.com/lovedropbk/calculator
 - Build #11: ✅ SUCCEEDED (commit 7130379)
 - Artifacts: https://github.com/lovedropbk/calculator/actions/runs/18180013132/artifacts/4160622923
@@ -85,7 +85,13 @@ Documentation
 - docs/adminless-build-options.md: CI/CD options (GitHub Actions, Azure DevOps)
 - winui3-mvp/README-winui3-mvp.md: MVP quick start
 
-Next Steps (Optional Enhancements)
+Next Milestones (per docs/authoritative-ui-sot.md)
+- M1 Contracts Frozen (A1-A3) — PARTIAL: API_CONTRACT_V1.md added; WinUI parsing aligned; commission auto wired.
+- M2 Standard Grid Parity (B1-B3) — IN PROGRESS: B1 DONE (Standard grid columns added: Subdown, Free Insurance, MBSP, Cash); B2 default sort implemented (Monthly asc, Effective asc); B3 notes/viability pending.
+- M3 My Campaigns Parity (C1-C3) — IN PROGRESS: Copy action wired; persistence pending.
+- M4 Dealer Commission Auto/Override (D1-D3) — IN PROGRESS: Policy fetch + pill; override editors present; reset wired.
+- M5 Insights Completed (E1-E3) — TODO.
+- M6 Guardrails Polish and A11y (F1-F3) — TODO.
 - Batch calculation endpoint for campaign summaries (optimize per-row calls)
 - Dealer Commission auto/override UI toggle
 - Subsidy budget "apply" button to auto-fill IDC Other
@@ -94,6 +100,12 @@ Next Steps (Optional Enhancements)
 - Scenario save/load
 - Unit tests for ViewModels and API services
 - Package as MSIX for easier distribution
+
+Session updates:
+- Fixed linting/IDE analyzer errors by guarding InitializeComponent via reflection for App and MainWindow, and by setting DataContext via Window.Content fallback (avoids Root symbol in tooling-only contexts).
+- Implemented Standard grid columns and default sort; wired audit extraction for Free Insurance/MBSP/Cash via campaign_audit parsing.
+- Kept debounced refresh logic in PropertyChangedHandlers partial to centralize side-effects.
+
 
 Final Status
 ✅ MVP delivered, built, and documented.
