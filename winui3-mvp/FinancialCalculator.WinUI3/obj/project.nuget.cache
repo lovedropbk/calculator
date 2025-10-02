@@ -1,28 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "BQjXOiJ/Co8=",
-  "success": false,
+  "dgSpecHash": "led8/unohUU=",
+  "success": true,
   "projectFilePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PATKRAN\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.2\\communitytoolkit.mvvm.8.2.2.nupkg.sha512",
+    "C:\\Users\\PATKRAN\\.nuget\\packages\\communitytoolkit.winui.ui.controls.datagrid\\7.1.2\\communitytoolkit.winui.ui.controls.datagrid.7.1.2.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.web.webview2\\1.0.2651.64\\microsoft.web.webview2.1.0.2651.64.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.buildtools\\10.0.22621.756\\microsoft.windows.sdk.buildtools.10.0.22621.756.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windowsappsdk\\1.6.241106002\\microsoft.windowsappsdk.1.6.241106002.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.57\\microsoft.windows.sdk.net.ref.10.0.22621.57.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1102",
-      "level": "Error",
-      "message": "Unable to find package CommunityToolkit.WinUI.UI.Controls.DataGrid with version (>= 8.2.2)\r\n  - Found 6 version(s) in nuget.org [ Nearest version: 7.1.2 ]",
-      "projectPath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "filePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "libraryId": "CommunityToolkit.WinUI.UI.Controls.DataGrid",
-      "targetGraphs": [
-        "net8.0-windows10.0.22621",
-        "net8.0-windows10.0.22621/win-x64"
-      ]
-    }
-  ]
+  "logs": []
 }
