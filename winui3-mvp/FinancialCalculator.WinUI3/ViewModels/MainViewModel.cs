@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private string product = "HP";
     [ObservableProperty] private double priceExTax = 1_000_000;
     [ObservableProperty] private double downPaymentAmount = 200_000;
+    // Unified entry + unit for Down Payment and Balloon
+    [ObservableProperty] private string downPaymentUnit = "THB"; // THB | %
+    [ObservableProperty] private double downPaymentValueEntry = 200_000;
+    [ObservableProperty] private string balloonUnit = "%"; // THB | %
+    [ObservableProperty] private double balloonValueEntry = 0;
     [ObservableProperty] private int termMonths = 36;
     [ObservableProperty] private string timing = "arrears"; // arrears|advance
     [ObservableProperty] private double balloonPercent = 0;
@@ -27,15 +33,23 @@ public partial class MainViewModel : ObservableObject
 
     // MARK: Rate Mode
     [ObservableProperty] private string rateMode = "fixed_rate"; // fixed_rate|target_installment
+    [ObservableProperty] private int rateModeIndex = 0; // 0=fixed_rate, 1=target_installment
+    public bool IsFixedRateMode => string.Equals(RateMode, "fixed_rate", StringComparison.OrdinalIgnoreCase);
+    public bool IsTargetInstallmentMode => string.Equals(RateMode, "target_installment", StringComparison.OrdinalIgnoreCase);
     [ObservableProperty] private double customerRatePct = 3.99;
     [ObservableProperty] private double targetInstallment = 0;
 
     // MARK: Subsidy & IDC
     [ObservableProperty] private double subsidyBudget = 100_000;
+    [ObservableProperty] private bool subsidyBudgetIsEnabled = false; // enabled only if MyCampaign selected and total allocation exceeds initial budget
     [ObservableProperty] private string dealerCommissionMode = "auto"; // auto|override
     [ObservableProperty] private double? dealerCommissionPct;
     [ObservableProperty] private double? dealerCommissionAmt;
     [ObservableProperty] private double dealerCommissionResolvedAmt;
+
+    // Unified commission entry (auto | % | THB)
+    [ObservableProperty] private string commissionEntryUnit = "auto"; // auto | % | THB
+    [ObservableProperty] private double commissionEntryValue = 0;
 
     // Auto policy (fetched)
     [ObservableProperty] private double autoCommissionPct; // fraction (e.g., 0.03)
@@ -46,6 +60,16 @@ public partial class MainViewModel : ObservableObject
 
     public string DealerCommissionPctText => ((DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct) * 100.0).ToString("0.00", CultureInfo.InvariantCulture);
     public string DealerCommissionResolvedAmtText => DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture);
+
+    // UI helpers for placeholders and unit tokens
+    public string PricePlaceholder => "THB";
+    public string PriceUnitSuffix => "THB";
+    public string DownPaymentPlaceholder => DownPaymentUnit;
+    public string DownPaymentUnitSuffix => DownPaymentUnit;
+    public string BalloonPlaceholder => BalloonUnit;
+    public string BalloonUnitSuffix => BalloonUnit;
+    public bool IsBalloonEnabled => !string.Equals(Product, "HP", StringComparison.OrdinalIgnoreCase);
+    public bool IsCommissionEntryEditable => !string.Equals(CommissionEntryUnit, "auto", StringComparison.OrdinalIgnoreCase);
 
 
     // MARK: Collections & Selection
@@ -112,6 +136,59 @@ public partial class MainViewModel : ObservableObject
 
     public bool CanCopy => SelectedCampaign != null;
 
+    // MARK: My Campaigns persistence
+    private static string MyCampaignsPath => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FinancialCalculator", "my_campaigns.json");
+
+    [RelayCommand]
+    private void NewBankCampaign()
+    {
+        var vm = new CampaignSummaryViewModel { Title = "Custom: Bank Campaign", Notes = "", CashDiscountAmount = 0, FSSubDownAmount = 0, FSSubInterestAmount = 0, IDC_MBSP_CostAmount = 0, FSFreeMBSPAmount = 0 };
+        MyCampaigns.Add(vm);
+        SelectedMyCampaign = vm;
+    }
+
+    [RelayCommand]
+    private async Task SaveAllCampaignsAsync()
+    {
+        try
+        {
+            var dir = System.IO.Path.GetDirectoryName(MyCampaignsPath)!;
+            System.IO.Directory.CreateDirectory(dir);
+            var json = System.Text.Json.JsonSerializer.Serialize(MyCampaigns, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            await System.IO.File.WriteAllTextAsync(MyCampaignsPath, json);
+            Status = $"Saved {MyCampaigns.Count} campaigns";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Save error: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task LoadCampaignsAsync()
+    {
+        try
+        {
+            if (!System.IO.File.Exists(MyCampaignsPath)) { Status = "No saved campaigns"; return; }
+            var json = await System.IO.File.ReadAllTextAsync(MyCampaignsPath);
+            var list = System.Text.Json.JsonSerializer.Deserialize<List<CampaignSummaryViewModel>>(json) ?? new();
+            MyCampaigns.Clear();
+            foreach (var c in list) MyCampaigns.Add(c);
+            Status = $"Loaded {MyCampaigns.Count} campaigns";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Load error: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ClearCampaigns()
+    {
+        MyCampaigns.Clear();
+        SelectedMyCampaign = null;
+    }
+
     // MARK: Data Loading
     private async Task LoadSummariesAsync()
     {
@@ -164,8 +241,9 @@ public partial class MainViewModel : ObservableObject
                     Effective = (calcRes.Quote.CustomerRateEffective).ToString("0.00%"),
                     Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
                     SubsidyUsed = SubsidyBudget.ToString("N0", CultureInfo.InvariantCulture),
-                    FreeInsurance = comps.freeInsurance.ToString("N0", CultureInfo.InvariantCulture),
-                    MBSP = comps.mbsp.ToString("N0", CultureInfo.InvariantCulture),
+                    FSSubDown = "0",
+                    FSSubInterest = comps.freeInsurance.ToString("N0", CultureInfo.InvariantCulture),
+                    FSFreeMBSP = comps.mbsp.ToString("N0", CultureInfo.InvariantCulture),
                     CashDiscount = comps.cashDiscount.ToString("N0", CultureInfo.InvariantCulture),
                     RoRAC = (calcRes.Quote.Profitability.AcquisitionRoRAC).ToString("0.00%"),
                     Notes = string.Empty,
@@ -306,16 +384,39 @@ public partial class MainViewModel : ObservableObject
     // MARK: Helpers
     private DealDto BuildDealFromInputs()
     {
+        // Map unified entry + unit to engine-facing fields
+        double dpAmt = 0, dpPct = 0; string dpLock = "amount";
+        if (string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase))
+        {
+            dpPct = DownPaymentValueEntry / 100.0;
+            dpLock = "percent";
+        }
+        else
+        {
+            dpAmt = DownPaymentValueEntry;
+            dpLock = "amount";
+        }
+
+        double blAmt = 0, blPct = 0;
+        if (string.Equals(BalloonUnit, "%", StringComparison.OrdinalIgnoreCase))
+        {
+            blPct = BalloonValueEntry / 100.0;
+        }
+        else
+        {
+            blAmt = BalloonValueEntry;
+        }
+
         return new DealDto
         {
             Product = Product,
             PriceExTax = PriceExTax,
-            DownPaymentAmount = DownPaymentAmount,
-            DownPaymentPercent = 0,
-            DownPaymentLocked = LockMode,
+            DownPaymentAmount = dpAmt,
+            DownPaymentPercent = dpPct,
+            DownPaymentLocked = dpLock,
             TermMonths = TermMonths,
-            BalloonPercent = BalloonPercent,
-            BalloonAmount = 0,
+            BalloonPercent = blPct,
+            BalloonAmount = blAmt,
             Timing = Timing,
             RateMode = RateMode,
             CustomerNominalRate = CustomerRatePct / 100.0,
@@ -357,12 +458,25 @@ public class CampaignSummaryViewModel : ObservableObject
     public string Monthly { get; set; } = string.Empty;
     public string Effective { get; set; } = string.Empty;
     public string Downpayment { get; set; } = string.Empty;
-    public string SubsidyUsed { get; set; } = string.Empty;
-    public string FreeInsurance { get; set; } = string.Empty;
-    public string MBSP { get; set; } = string.Empty;
     public string CashDiscount { get; set; } = string.Empty;
+    public string FSSubDown { get; set; } = string.Empty;
+    public string FSSubInterest { get; set; } = string.Empty;
+    public string FSFreeMBSP { get; set; } = string.Empty;
+    public string SubsidyUsed { get; set; } = string.Empty;
     public string RoRAC { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+
+    // Editable amounts for My Campaigns (impact calculators)
+    private double _cashDiscountAmount;
+    public double CashDiscountAmount { get => _cashDiscountAmount; set { if (_cashDiscountAmount != value) { _cashDiscountAmount = value; OnPropertyChanged(nameof(CashDiscountAmount)); } } }
+    private double _fsSubDownAmount;
+    public double FSSubDownAmount { get => _fsSubDownAmount; set { if (_fsSubDownAmount != value) { _fsSubDownAmount = value; OnPropertyChanged(nameof(FSSubDownAmount)); } } }
+    private double _fsSubInterestAmount;
+    public double FSSubInterestAmount { get => _fsSubInterestAmount; set { if (_fsSubInterestAmount != value) { _fsSubInterestAmount = value; OnPropertyChanged(nameof(FSSubInterestAmount)); } } }
+    private double _idcMbspCostAmount;
+    public double IDC_MBSP_CostAmount { get => _idcMbspCostAmount; set { if (_idcMbspCostAmount != value) { _idcMbspCostAmount = value; OnPropertyChanged(nameof(IDC_MBSP_CostAmount)); } } }
+    private double _fsFreeMbspAmount;
+    public double FSFreeMBSPAmount { get => _fsFreeMbspAmount; set { if (_fsFreeMbspAmount != value) { _fsFreeMbspAmount = value; OnPropertyChanged(nameof(FSFreeMBSPAmount)); } } }
 
     public CampaignSummaryViewModel Clone() => new CampaignSummaryViewModel
     {
@@ -373,12 +487,18 @@ public class CampaignSummaryViewModel : ObservableObject
         Monthly = this.Monthly,
         Effective = this.Effective,
         Downpayment = this.Downpayment,
-        SubsidyUsed = this.SubsidyUsed,
-        FreeInsurance = this.FreeInsurance,
-        MBSP = this.MBSP,
         CashDiscount = this.CashDiscount,
+        FSSubDown = this.FSSubDown,
+        FSSubInterest = this.FSSubInterest,
+        FSFreeMBSP = this.FSFreeMBSP,
+        SubsidyUsed = this.SubsidyUsed,
         RoRAC = this.RoRAC,
-        Notes = this.Notes
+        Notes = this.Notes,
+        CashDiscountAmount = this.CashDiscountAmount,
+        FSSubDownAmount = this.FSSubDownAmount,
+        FSSubInterestAmount = this.FSSubInterestAmount,
+        IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
+        FSFreeMBSPAmount = this.FSFreeMBSPAmount
     };
 }
 

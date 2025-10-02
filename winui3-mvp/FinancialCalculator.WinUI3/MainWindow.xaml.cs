@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using FinancialCalculator.WinUI3.ViewModels;
 using WinRT.Interop;
+using System.Collections.Generic;
 
 namespace FinancialCalculator.WinUI3;
 
@@ -18,7 +19,6 @@ public sealed partial class MainWindow : Window
         TryInitializeComponent();
         ViewModel = new MainViewModel();
 
-        // Prefer the XAML-named root if available (in compiled contexts); otherwise fall back to the Window.Content
         if (this.Content is FrameworkElement fe)
         {
             fe.DataContext = ViewModel;

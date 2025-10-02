@@ -87,7 +87,7 @@ Documentation
 
 Next Milestones (per docs/authoritative-ui-sot.md)
 - M1 Contracts Frozen (A1-A3) — PARTIAL: API_CONTRACT_V1.md added; WinUI parsing aligned; commission auto wired.
-- M2 Standard Grid Parity (B1-B3) — IN PROGRESS: B1 DONE (Standard grid columns added: Subdown, Free Insurance, MBSP, Cash); B2 default sort implemented (Monthly asc, Effective asc); B3 notes/viability pending.
+- M2 Standard Grid Parity (B1-B3) — IN PROGRESS: B1 DONE (Standard + My grids columns aligned: Subdown, Free Insurance, MBSP, Cash); B2 default sort implemented (Monthly asc, Effective asc); B3 notes/viability pending; B4 DataGrid alignment with resize/reorder + double-click reset DONE.
 - M3 My Campaigns Parity (C1-C3) — IN PROGRESS: Copy action wired; persistence pending.
 - M4 Dealer Commission Auto/Override (D1-D3) — IN PROGRESS: Policy fetch + pill; override editors present; reset wired.
 - M5 Insights Completed (E1-E3) — TODO.
@@ -103,8 +103,10 @@ Next Milestones (per docs/authoritative-ui-sot.md)
 
 Session updates:
 - Fixed linting/IDE analyzer errors by guarding InitializeComponent via reflection for App and MainWindow, and by setting DataContext via Window.Content fallback (avoids Root symbol in tooling-only contexts).
-- Implemented Standard grid columns and default sort; wired audit extraction for Free Insurance/MBSP/Cash via campaign_audit parsing.
-- Kept debounced refresh logic in PropertyChangedHandlers partial to centralize side-effects.
+- Implemented Standard + My grids with CommunityToolkit DataGrid; identical columns & widths; user resize/reorder enabled; double-click resets; no persistence.
+- Implemented Commission unified input (auto | % | THB) with live pill.
+- Replaced Rate Mode ComboBox with RadioButtons; emphasized Recalculate; added unified validation area.
+- Auto-recalc wired across Deal Inputs, Commission, Rate Mode, selections, and My Campaign property changes; refreshes metrics and cashflows.
 
 
 Final Status

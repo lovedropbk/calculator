@@ -54,6 +54,10 @@
               "target": "Package",
               "version": "[8.2.2, )"
             },
+            "CommunityToolkit.WinUI.UI.Controls.DataGrid": {
+              "target": "Package",
+              "version": "[8.2.2, )"
+            },
             "Microsoft.WindowsAppSDK": {
               "target": "Package",
               "version": "[1.6.241106002, )"
