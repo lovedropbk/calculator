@@ -20,8 +20,8 @@
   "retryAfterSeconds": null,
   "userCreditLimits": {
     "user": {
-      "atlassianAccountId": "63060df4958ffd78c6e10147",
-      "atlassianOrgId": "f9570336-2e7f-48a6-9042-a37c4c487f82",
+      "atlassianAccountId": "712020:092fa489-7bbf-47d2-9599-db72bc2c7ee2",
+      "atlassianOrgId": "a422ccae-c99f-4096-a1db-f5689136c201",
       "cloudId": "",
       "devaiWorkspaceARI": null,
       "scmWorkspace": null,
@@ -30,8 +30,8 @@
       "accountType": "atlassian",
       "experienceId": "rovodev-cli",
       "isExistingBetaUser": true,
-      "sessionId": "52186d6d-70a0-4c7b-971a-421c4a568073",
-      "sessionAgentRunId": "52186d6d-70a0-4c7b-971a-421c4a568073_ebe5d434-5161-407f-be69-b3b525995968",
+      "sessionId": null,
+      "sessionAgentRunId": null,
       "useMockResponse": null,
       "productType": null,
       "ccpEntitlementId": null,
@@ -47,7 +47,7 @@
     }
   },
   "modelUsages": {
-    "GPT 5": 17698802,
-    "claude-sonnet-4-5@20250929": 1555179
+    "claude-sonnet-4-5@20250929": 30046,
+    "GPT 5": 4979231
   }
 }
