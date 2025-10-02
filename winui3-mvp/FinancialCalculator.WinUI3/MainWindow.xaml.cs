@@ -16,7 +16,7 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        TryInitializeComponent();
+        InitializeComponent();
         ViewModel = new MainViewModel();
 
         if (this.Content is FrameworkElement fe)
@@ -26,28 +26,6 @@ public sealed partial class MainWindow : Window
 
         TryApplySystemBackdrop();
         CustomizeTitleBar();
-    }
-
-    private void TryInitializeComponent()
-    {
-        try
-        {
-            var mi = typeof(MainWindow).GetMethod("InitializeComponent", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-            if (mi != null)
-            {
-                mi.Invoke(this, null);
-            }
-            else
-            {
-                // Fallback when XAML codegen isn't active in tooling
-                var uri = new Uri("ms-appx:///MainWindow.xaml");
-                Application.LoadComponent(this, uri);
-            }
-        }
-        catch
-        {
-            // Safe no-op in lint-only contexts
-        }
     }
 
     private void TryApplySystemBackdrop()
