@@ -109,16 +109,16 @@ public partial class MainViewModel : ObservableObject
     {
         return new DealDto
         {
-            Product = product,
-            PriceExTax = priceExTax,
-            DownPaymentAmount = downPaymentAmount,
+            Product = Product,
+            PriceExTax = PriceExTax,
+            DownPaymentAmount = DownPaymentAmount,
             DownPaymentLocked = "amount",
-            TermMonths = termMonths,
+            TermMonths = TermMonths,
             BalloonPercent = 0,
             BalloonAmount = 0,
             Timing = "arrears",
             RateMode = "fixed_rate",
-            CustomerNominalRate = customerRatePct / 100.0,
+            CustomerNominalRate = CustomerRatePct / 100.0,
         };
     }
 }
