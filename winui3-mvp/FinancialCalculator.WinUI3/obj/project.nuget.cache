@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "lVa5XQa3COo=",
-  "success": true,
+  "dgSpecHash": "BQjXOiJ/Co8=",
+  "success": false,
   "projectFilePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PATKRAN\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.2\\communitytoolkit.mvvm.8.2.2.nupkg.sha512",
@@ -11,5 +11,18 @@
     "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.57\\microsoft.windows.sdk.net.ref.10.0.22621.57.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1102",
+      "level": "Error",
+      "message": "Unable to find package CommunityToolkit.WinUI.UI.Controls.DataGrid with version (>= 8.2.2)\r\n  - Found 6 version(s) in nuget.org [ Nearest version: 7.1.2 ]",
+      "projectPath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
+      "filePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
+      "libraryId": "CommunityToolkit.WinUI.UI.Controls.DataGrid",
+      "targetGraphs": [
+        "net8.0-windows10.0.22621",
+        "net8.0-windows10.0.22621/win-x64"
+      ]
+    }
+  ]
 }

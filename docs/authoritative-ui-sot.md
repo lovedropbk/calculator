@@ -139,10 +139,11 @@ Epic A — Backend Contract Confirmation and Stubs (Blocking)
 
 Acceptance: One page “API Contract v1” with example JSON, and WinUI consuming code updated to new shape (or documented fallback to per-row calculate).
 
-Epic B — WinUI Standard Campaigns Grid Completion
-- B1. Add missing columns: Subdown, Free Insurance, MBSP, Cash Discount; ensure widths and order match specs. [DONE for Standard grid]
+Epic B — WinUI Campaigns Grids Completion
+- B1. Add missing columns: Subdown, Free Insurance, MBSP, Cash Discount; ensure widths and order match specs. [DONE for Standard + My grids]
 - B2. Implement default sorting: Monthly asc, then Effective asc. Add toggle (viable only). [Default sort implemented; viable toggle pending]
-- B3. Display Notes and disabled row visuals with tooltip for reason.
+- B3. Display Notes and disabled row visuals with tooltip for reason. [Notes present; viability pending]
+- B4. Adopt CommunityToolkit DataGrid for both grids with identical columns/widths; enable user reordering/resizing but do not persist; double-click resets to defaults. [DONE]
 
 Acceptance: Visual parity with spec grid; sort toggle works; disabled rows show reason.
 

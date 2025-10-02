@@ -1192,6 +1192,7 @@
   "projectFileDependencyGroups": {
     "net8.0-windows10.0.22621": [
       "CommunityToolkit.Mvvm >= 8.2.2",
+      "CommunityToolkit.WinUI.UI.Controls.DataGrid >= 8.2.2",
       "Microsoft.WindowsAppSDK >= 1.6.241106002",
       "System.Text.Json >= 8.0.5"
     ]
@@ -1250,6 +1251,10 @@
             "target": "Package",
             "version": "[8.2.2, )"
           },
+          "CommunityToolkit.WinUI.UI.Controls.DataGrid": {
+            "target": "Package",
+            "version": "[8.2.2, )"
+          },
           "Microsoft.WindowsAppSDK": {
             "target": "Package",
             "version": "[1.6.241106002, )"
@@ -1292,5 +1297,17 @@
         "#import": []
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1102",
+      "level": "Error",
+      "message": "Unable to find package CommunityToolkit.WinUI.UI.Controls.DataGrid with version (>= 8.2.2)\r\n  - Found 6 version(s) in nuget.org [ Nearest version: 7.1.2 ]",
+      "libraryId": "CommunityToolkit.WinUI.UI.Controls.DataGrid",
+      "targetGraphs": [
+        "net8.0-windows10.0.22621",
+        "net8.0-windows10.0.22621/win-x64"
+      ]
+    }
+  ]
 }
