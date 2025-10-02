@@ -12,6 +12,8 @@
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableMsixPackageBuild>false</EnableMsixPackageBuild>
+    <EnableDefaultPriFiles>false</EnableDefaultPriFiles>
   </PropertyGroup>
 
   <ItemGroup>

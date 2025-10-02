@@ -9,28 +9,38 @@ To-Do List
 5) Build and run fc-svc, confirm endpoint parity. [Done]
 6) Set up free, adminless CI (GitHub Actions) to build both backends and WinUI 3. [Done]
 7) Push to GitHub and trigger workflows. [Done]
-8) Fix CI build issues (XAML Spacing attributes, System.Text.Json vulnerability). [Done]
-9) Verify builds pass and artifacts are available. [In Progress]
+8) Fix CI build issues and iterate to green build. [In Progress]
+9) Verify builds pass and artifacts are available. [Pending]
 10) Document how to download and run artifacts locally. [Planned]
-11) Extend WinUI 3 to call /campaigns/summaries and render per-row metrics per redesign. [Planned]
-12) Add Dealer Commission auto/override UI (policy integration). [Planned]
-13) Add debounced inputs and scenario persistence/export. [Planned]
+11) Extend WinUI 3 campaign summaries with full metrics. [Planned]
+12) Add Dealer Commission auto/override UI. [Planned]
 
-Current Status
-- fc-api: implemented (cmd/fc-api) with endpoints for health, parameters, commission/auto, campaigns/catalog, campaigns/summaries, calculate.
-- fc-svc (parallel backend): implemented and built to bin/fc-svc.exe. Modular layers created: internal/config, internal/server, internal/services (adapters, enginesvc), internal/ports/httpserver/router.go.
-- WinUI 3 MVP: implemented with top inputs, campaign list, metrics; hitting /calculate and /campaigns/catalog. Debounced inputs via PropertyChangedHandlers.
-- GitHub Actions CI: workflows created for Go backends and WinUI 3. 
+Current Status - Build #8
 - Repository: https://github.com/lovedropbk/calculator
-- Commits pushed:
-  - bbb684e: feat(mvp): initial commit - WinUI 3 MVP, modular Go backends (fc-api, fc-svc), and CI workflows
-  - 56d1ec4: fix: remove WinUI3 Spacing attributes and upgrade System.Text.Json to fix CI build
+- Go backends: fc-api and fc-svc build successfully in CI
+- WinUI 3: iterating on CI build configuration
+
+Build iterations and fixes applied:
+1. Build #1-4: XAML compiler exit code 1 → Fixed by installing maui-windows workload
+2. Build #5: Minimal XAML test to isolate issue
+3. Build #6: PRI packaging task error (SDK 9.0.305) → Added global.json pinning .NET 8.0
+4. Build #7: PRI task still using SDK 9 → Moved global.json to repo root
+5. Build #8 (current): Explicit workflow pin to .NET 8.0.403 + global.json at root
+
+Commits pushed:
+- bbb684e: feat(mvp): initial commit
+- 56d1ec4: fix: remove WinUI3 Spacing attributes and upgrade System.Text.Json
+- 89f6e81: fix: switch from x:Bind to Binding in DataTemplate
+- 291c22a: test: minimal XAML to isolate XAML compiler CI failure
+- b47b9a1: fix: install maui-windows workload, update WindowsAppSDK, restore full UI
+- 0ff1bc9: fix: pin .NET SDK to 8.0 for WindowsAppSDK compatibility
+- 55ae7f3: fix: move global.json to repo root and pin workflow to .NET 8.0.403
 
 Next Task
-- Monitor https://github.com/lovedropbk/calculator/actions to confirm builds pass.
-- Download artifacts (go-backends and FinancialCalculator.WinUI3).
-- Test end-to-end: run backend, launch WinUI 3 client, verify campaign summaries and metrics.
+- Await Build #8 result from user
+- If pass: download artifacts, test end-to-end, document usage
+- If fail: debug next error and fix immediately
 
-Checkpoint: Iteration 4 completed
-- Progress doc updated after CI setup and first push/fix cycle.
-- Next update after build verification and end-to-end smoke test.
+Checkpoint: Iteration 38 of active development cycle
+- Multiple CI fixes applied autonomously with each build failure
+- Progress doc updated
