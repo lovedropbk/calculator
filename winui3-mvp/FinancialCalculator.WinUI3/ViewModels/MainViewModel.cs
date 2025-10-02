@@ -45,6 +45,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool idcOtherUserEdited = false;
 
     public string DealerCommissionPctText => ((DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct) * 100.0).ToString("0.00", CultureInfo.InvariantCulture);
+    public string DealerCommissionResolvedAmtText => DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture);
 
 
     // MARK: Collections & Selection
