@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "tMYIHRW4Xow=",
+  "dgSpecHash": "lVa5XQa3COo=",
   "success": true,
   "projectFilePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
   "expectedPackageFiles": [
@@ -8,36 +8,8 @@
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.web.webview2\\1.0.2651.64\\microsoft.web.webview2.1.0.2651.64.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.buildtools\\10.0.22621.756\\microsoft.windows.sdk.buildtools.10.0.22621.756.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windowsappsdk\\1.6.241106002\\microsoft.windowsappsdk.1.6.241106002.nupkg.sha512",
-    "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.json\\8.0.4\\system.text.json.8.0.4.nupkg.sha512",
+    "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.57\\microsoft.windows.sdk.net.ref.10.0.22621.57.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "message": "FinancialCalculator.WinUI3 depends on Microsoft.WindowsAppSDK (>= 1.6.241001000) but Microsoft.WindowsAppSDK 1.6.241001000 was not found. Microsoft.WindowsAppSDK 1.6.241106002 was resolved instead.",
-      "projectPath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "libraryId": "Microsoft.WindowsAppSDK",
-      "targetGraphs": [
-        "net8.0-windows10.0.22621",
-        "net8.0-windows10.0.22621/win-x64"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "message": "Package 'System.Text.Json' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
-      "projectPath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
-      "libraryId": "System.Text.Json",
-      "targetGraphs": [
-        "net8.0-windows10.0.22621",
-        "net8.0-windows10.0.22621/win-x64"
-      ]
-    }
-  ]
+  "logs": []
 }
