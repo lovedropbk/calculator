@@ -19,6 +19,10 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Install .NET MAUI workload (includes WinUI 3 support)
+        run: |
+          dotnet workload install maui-windows
+
       - name: Restore
         run: |
           dotnet restore winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj
