@@ -98,7 +98,14 @@
                                         <Run Text=": "/>
                                         <Run Text="{Binding DealerCommissionPctText}"/>
                                         <Run Text="% ("/>
-                                        <Run Text="{Binding DealerCommissionResolvedAmt, StringFormat=N0}"/>
+                                        <Run>
+    <Run.Text>
+        <Binding Path="DealerCommissionResolvedAmt">
+            <Binding.ConverterCulture>en-US</Binding.ConverterCulture>
+            <Binding.StringFormat>{}{0:N0}</Binding.StringFormat>
+        </Binding>
+    </Run.Text>
+</Run>
                                         <Run Text=" THB)"/>
                                     </TextBlock>
                                 </StackPanel>
