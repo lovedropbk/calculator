@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using FinancialCalculator.WinUI3.ViewModels;
+using FinancialCalculator.WinUI3.Services;
 using WinRT.Interop;
 using System.Collections.Generic;
 
@@ -16,7 +17,23 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        InitializeComponent();
+        try
+        {
+            Logger.Info("MainWindow: InitializeComponent start");
+            InitializeComponent();
+            Logger.Info("MainWindow: InitializeComponent end");
+        }
+        catch (Microsoft.UI.Xaml.Markup.XamlParseException xpe)
+        {
+            Logger.Error("XamlParseException in MainWindow.InitializeComponent", xpe);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Exception in MainWindow.InitializeComponent", ex);
+            throw;
+        }
+
         ViewModel = new MainViewModel();
 
         if (this.Content is FrameworkElement fe)

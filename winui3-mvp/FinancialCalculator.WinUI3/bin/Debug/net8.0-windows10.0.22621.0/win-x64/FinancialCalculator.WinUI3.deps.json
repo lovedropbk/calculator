@@ -10,6 +10,7 @@
       "FinancialCalculator.WinUI3/1.0.0": {
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.2.2",
+          "CommunityToolkit.WinUI.UI.Controls.DataGrid": "7.1.2",
           "Microsoft.WindowsAppSDK": "1.6.241106002",
           "System.Text.Json": "8.0.5",
           "Microsoft.Web.WebView2.Core.Projection": "1.0.2651.64",
@@ -36,6 +37,17 @@
           "lib/net6.0/CommunityToolkit.Mvvm.dll": {
             "assemblyVersion": "8.2.0.0",
             "fileVersion": "8.2.2.1"
+          }
+        }
+      },
+      "CommunityToolkit.WinUI.UI.Controls.DataGrid/7.1.2": {
+        "dependencies": {
+          "Microsoft.WindowsAppSDK": "1.6.241106002"
+        },
+        "runtime": {
+          "lib/net5.0-windows10.0.18362/CommunityToolkit.WinUI.UI.Controls.DataGrid.dll": {
+            "assemblyVersion": "7.1.0.0",
+            "fileVersion": "7.1.2.1"
           }
         }
       },
@@ -152,6 +164,13 @@
       "sha512": "sha512-r0g0k9tGYdrnz8R7T3x5UiokDffeevzK/2P/9SBL6fqLgN8B157MIi/bVUWI1KAz6ZorZrK9AdABCWUeXZZsvA==",
       "path": "communitytoolkit.mvvm/8.2.2",
       "hashPath": "communitytoolkit.mvvm.8.2.2.nupkg.sha512"
+    },
+    "CommunityToolkit.WinUI.UI.Controls.DataGrid/7.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-F73oYdYza8zhDwGHdXCZJJMeiDJ6nR97WPe180o7jOX3U90ZIqvU/GtYZdN3/x8DOS48t5GQG70LqxfyIGeaxw==",
+      "path": "communitytoolkit.winui.ui.controls.datagrid/7.1.2",
+      "hashPath": "communitytoolkit.winui.ui.controls.datagrid.7.1.2.nupkg.sha512"
     },
     "Microsoft.Web.WebView2/1.0.2651.64": {
       "type": "package",

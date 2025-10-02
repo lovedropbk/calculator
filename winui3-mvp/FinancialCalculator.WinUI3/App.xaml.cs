@@ -1,5 +1,7 @@
 using System;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Markup;
+using FinancialCalculator.WinUI3.Services;
 
 namespace FinancialCalculator.WinUI3;
 
@@ -7,23 +9,68 @@ public partial class App : Application
 {
     public App()
     {
-        this.InitializeComponent();
+        Logger.Init("ui");
+        this.UnhandledException += App_UnhandledException;
+        AppDomain.CurrentDomain.FirstChanceException += (s, e) =>
+        {
+            try { Logger.Warn($"FirstChance: {e.Exception.GetType().Name}: {e.Exception.Message}"); } catch {}
+        };
+        try
+        {
+            this.InitializeComponent();
+            Logger.Info("App.InitializeComponent loaded resources");
+        }
+        catch (Microsoft.UI.Xaml.Markup.XamlParseException xpe)
+        {
+            Logger.Error("XamlParseException during App.InitializeComponent", xpe);
+            throw;
+        }
+    }
+
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        try
+        {
+            Logger.Error("App UnhandledException", e.Exception);
+        }
+        catch
+        {
+            // ignore logging failures
+        }
+        // allow default behavior
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+        Logger.Info("App.OnLaunched - begin");
+
         // Attempt to start or reuse embedded backend, then set FC_API_BASE for this process
         try
         {
-            var (proc, baseUrl) = await Services.BackendLauncher.TryStartAsync(8223);
+            var (proc, baseUrl) = await BackendLauncher.TryStartAsync(8223);
             Environment.SetEnvironmentVariable("FC_API_BASE", baseUrl);
+            Logger.Info($"Backend ready at {baseUrl} (proc={(proc != null ? "spawned" : "reused")})");
         }
-        catch
+        catch (Exception ex)
         {
-            // Fallback: rely on existing FC_API_BASE or default in ApiClient
+            Logger.Warn($"Backend start failed, falling back to existing FC_API_BASE. {ex}");
         }
 
-        var window = new MainWindow();
-        window.Activate();
+        try
+        {
+            var window = new MainWindow();
+            window.Activate();
+            Logger.Info("MainWindow activated");
+        }
+        catch (XamlParseException xpe)
+        {
+            Logger.Error("XamlParseException creating MainWindow", xpe);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Exception creating MainWindow", ex);
+            throw;
+        }
     }
 }
