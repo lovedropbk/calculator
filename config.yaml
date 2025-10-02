@@ -14,7 +14,7 @@ matchedFundedSpread: 0.0025
 risk:
   costOfRiskPct: 0.0200
 economicCapital:
-  ratio: 0.0774
+  ratio: 0.08
 opex:
   byProductPct:
     HP: 0.0095
