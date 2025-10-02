@@ -24,13 +24,16 @@ jobs:
         run: |
           dotnet workload install maui-windows
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Restore
         run: |
           dotnet restore winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj
 
-      - name: Build (Release win-x64)
+      - name: Build (Release win-x64) using MSBuild
         run: |
-          dotnet build winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 --no-restore
+          msbuild winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj /p:Configuration=Release /p:Platform=x64 /p:RuntimeIdentifier=win-x64 /restore:false
 
       - name: Publish self-contained (optional)
         run: |
