@@ -177,13 +177,13 @@ def request(flow: http.HTTPFlow) -> None:
 
                 if key == 'model':
                     new_body['reasoning_effort'] = 'high'
-                    new_body['verbosity'] = 'high'
+                    new_body['verbosity'] = 'medium'
                     new_body['service_tier'] = 'priority'
                     injected_reasoning = True
             
             if not injected_reasoning:
                  new_body['reasoning_effort'] = 'high'
-                 new_body['verbosity'] = 'high'
+                 new_body['verbosity'] = 'medium'
                  new_body['service_tier'] = 'priority'
 
             new_body['max_completion_tokens'] = 128000

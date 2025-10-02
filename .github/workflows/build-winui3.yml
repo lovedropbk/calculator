@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.403'
-          global-json-file: global.json
 
       - name: Install .NET MAUI workload (includes WinUI 3 support)
         run: |
@@ -35,7 +34,7 @@ jobs:
         run: |
           msbuild winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj /p:Configuration=Release /p:Platform=x64 /p:RuntimeIdentifier=win-x64 /restore:false
 
-      - name: Publish self-contained (optional)
+      - name: Publish self-contained
         run: |
           dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 -o artifacts/winui3 --self-contained false
 
