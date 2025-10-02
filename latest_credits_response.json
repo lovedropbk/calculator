@@ -46,7 +46,6 @@
     }
   },
   "modelUsages": {
-    "claude-sonnet-4-5@20250929": 1866253,
-    "GPT 5": 2624608
+    "claude-sonnet-4-5@20250929": 83414
   }
 }
