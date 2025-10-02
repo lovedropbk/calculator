@@ -52,7 +52,7 @@ public sealed partial class MainWindow : Window
 
     private void TryApplySystemBackdrop()
     {
-        // Apply Mica for a modern look; safely ignore if not supported on this OS
+        // Apply Mica for a modern look; safely ignore if not supported on thisOS
         try
         {
             SystemBackdrop = new MicaBackdrop();
