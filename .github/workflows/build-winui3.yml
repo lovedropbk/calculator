@@ -17,7 +17,8 @@ jobs:
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0.403'
+          global-json-file: global.json
 
       - name: Install .NET MAUI workload (includes WinUI 3 support)
         run: |
