@@ -56,7 +56,7 @@
             },
             "CommunityToolkit.WinUI.UI.Controls.DataGrid": {
               "target": "Package",
-              "version": "[8.2.2, )"
+              "version": "[7.1.2, )"
             },
             "Microsoft.WindowsAppSDK": {
               "target": "Package",

@@ -232,8 +232,7 @@
                                        CanUserResizeColumns="True"
                                        AutoGenerateColumns="False"
                                        IsReadOnly="True"
-                                       GridLinesVisibility="All"
-                                       MinRowHeight="36">
+                                       GridLinesVisibility="All">
                         <controls:DataGrid.Columns>
                             <controls:DataGridTemplateColumn Width="60">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -282,8 +281,7 @@
                                        CanUserResizeColumns="True"
                                        AutoGenerateColumns="False"
                                        IsReadOnly="False"
-                                       GridLinesVisibility="All"
-                                       MinRowHeight="36">
+                                       GridLinesVisibility="All">
                         <controls:DataGrid.Columns>
                             <!-- Placeholder for alignment with Standard Copy column -->
                             <controls:DataGridTemplateColumn Width="60">
