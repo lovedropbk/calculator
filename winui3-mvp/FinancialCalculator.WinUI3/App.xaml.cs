@@ -7,7 +7,7 @@ public partial class App : Application
 {
     public App()
     {
-        TryInitializeComponent();
+        this.InitializeComponent();
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -17,7 +17,6 @@ public partial class App : Application
         {
             var (proc, baseUrl) = await Services.BackendLauncher.TryStartAsync(8223);
             Environment.SetEnvironmentVariable("FC_API_BASE", baseUrl);
-            // Note: we intentionally do not keep a reference; backend will exit on app close because it runs as child.
         }
         catch
         {
@@ -26,27 +25,5 @@ public partial class App : Application
 
         var window = new MainWindow();
         window.Activate();
-    }
-
-    private void TryInitializeComponent()
-    {
-        try
-        {
-            var mi = typeof(App).GetMethod("InitializeComponent", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-            if (mi != null)
-            {
-                mi.Invoke(this, null);
-            }
-            else
-            {
-                // Fallback for environments where XAML generator isn't running (linting contexts)
-                var uri = new Uri("ms-appx:///App.xaml");
-                Application.LoadComponent(this, uri);
-            }
-        }
-        catch
-        {
-            // Safe no-op: app resources may not be fully loaded in lint-only contexts
-        }
     }
 }
