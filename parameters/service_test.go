@@ -77,8 +77,9 @@ func TestLoadParameterSetFromYAML_Sample(t *testing.T) {
 		t.Fatalf("EconomicCapital.BaseCapitalRatio = %v, want 0.08", ps.EconomicCapital.BaseCapitalRatio)
 	}
 	// OPEX mapping (FinanceLease -> F-Lease, OperatingLease -> Op-Lease)
-	if ps.OPEXRates["HP"] != 0.0068 ||
-		ps.OPEXRates["mySTAR"] != 0.0072 ||
+	// NOTE: Expected values align with config.yaml authoritative sample (2025-09-sample)
+	if ps.OPEXRates["HP"] != 0.0095 ||
+		ps.OPEXRates["mySTAR"] != 0.0095 ||
 		ps.OPEXRates["F-Lease"] != 0.0065 ||
 		ps.OPEXRates["Op-Lease"] != 0.0070 {
 		t.Fatalf("OPEXRates mapping mismatch: %v", ps.OPEXRates)
