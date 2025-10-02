@@ -31,7 +31,7 @@
       "experienceId": "rovodev-cli",
       "isExistingBetaUser": true,
       "sessionId": "52186d6d-70a0-4c7b-971a-421c4a568073",
-      "sessionAgentRunId": "52186d6d-70a0-4c7b-971a-421c4a568073_dab73191-cdd7-4d41-b79d-32491c034ab9",
+      "sessionAgentRunId": "52186d6d-70a0-4c7b-971a-421c4a568073_fba28694-15b4-4576-b048-55370c076967",
       "useMockResponse": null,
       "productType": null,
       "ccpEntitlementId": null,
@@ -47,7 +47,7 @@
     }
   },
   "modelUsages": {
-    "GPT 5": 14561310,
+    "GPT 5": 14800472,
     "claude-sonnet-4-5@20250929": 1555179
   }
 }
