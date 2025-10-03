@@ -5,13 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
 
     <!-- MARK: Root Layout -->
     <Grid x:ConnectionId='2' x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/><!-- Bottom Summary -->
+            <RowDefinition Height="Auto"/><!-- Footer -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <!-- Left: Deal Input Mask (narrower) -->
@@ -223,7 +225,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="Standard Campaigns" Style="{StaticResource CardHeaderTextStyle}"/>
-                    <controls:DataGrid x:ConnectionId='6' x:Name="StandardGrid" Grid.Row="1"
+                    <controls:DataGrid x:ConnectionId='8' x:Name="StandardGrid" Grid.Row="1"
                                        ItemsSource="{Binding StandardCampaigns}"
                                        SelectedItem="{Binding SelectedCampaign, Mode=TwoWay}"
                                        HeadersVisibility="Column"
@@ -272,7 +274,7 @@
                         <Button Content="Save All Changes" Command="{Binding SaveAllCampaignsCommand}"/>
                         <Button Content="Clear Campaigns" Command="{Binding ClearCampaignsCommand}"/>
                     </StackPanel>
-                    <controls:DataGrid x:ConnectionId='4' x:Name="MyGrid" Grid.Row="1"
+                    <controls:DataGrid x:ConnectionId='6' x:Name="MyGrid" Grid.Row="1"
                                        ItemsSource="{Binding MyCampaigns}"
                                        SelectedItem="{Binding SelectedMyCampaign, Mode=TwoWay}"
                                        HeadersVisibility="Column"
@@ -318,104 +320,181 @@
 
                     <TextBlock Text="Campaign Insights" Style="{StaticResource CardHeaderTextStyle}"/>
 
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1" Padding="8">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="12*"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-
-                        <!-- Details & Metrics -->
-                        <Grid Grid.Row="0" Padding="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="3*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Campaign Details (left) -->
-                            <StackPanel Grid.Column="0" Spacing="6">
-                                <TextBlock Text="Campaign Details" Style="{StaticResource SectionHeaderTextStyle}"/>
-                                <TextBlock>
-                                    <Run Text="Selected: "/>
-                                    <Run Text="{Binding ActiveCampaign.Title}"/>
-                                </TextBlock>
-                                <TextBlock>
-                                    <Run Text="Type: "/>
-                                    <Run Text="{Binding ActiveCampaign.CampaignType}"/>
-                                </TextBlock>
-                                <TextBlock>
-                                    <Run Text="Dealer Commission: "/>
-                                    <Run Text="{Binding ActiveCampaign.DealerCommission}"/>
-                                </TextBlock>
-                                <TextBlock>
-                                    <Run Text="Subsidy Used: "/>
-                                    <Run Text="{Binding ActiveCampaign.SubsidyUsed}"/>
-                                </TextBlock>
-                                <TextBlock Text="{Binding ActiveCampaign.Notes}" Opacity="0.75"/>
-                            </StackPanel>
-
-                            <!-- Key Metrics (right) -->
-                            <StackPanel Grid.Column="1" Spacing="6">
-                                <TextBlock Text="Key Metrics" Style="{StaticResource SectionHeaderTextStyle}"/>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Monthly Installment:" Style="{StaticResource LabelTextStyle}"/>
-                                    <TextBlock Text="{Binding Metrics.MonthlyInstallment}" FontWeight="SemiBold"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Nominal Rate:" Style="{StaticResource LabelTextStyle}"/>
-                                    <TextBlock Text="{Binding Metrics.NominalRate}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Effective Rate:" Style="{StaticResource LabelTextStyle}"/>
-                                    <TextBlock Text="{Binding Metrics.EffectiveRate}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Financed Amount:" Style="{StaticResource LabelTextStyle}"/>
-                                    <TextBlock Text="{Binding Metrics.FinancedAmount}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Acq. RoRAC:" Style="{StaticResource LabelTextStyle}"/>
-                                    <TextBlock Text="{Binding Metrics.RoRAC}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Cashflows -->
-                        <Grid Grid.Row="1" Padding="8">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Cashflow Schedule" Style="{StaticResource SectionHeaderTextStyle}"/>
-                            <ListView Grid.Row="1" ItemsSource="{Binding Cashflows}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Padding="4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="60"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{Binding Period}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Principal}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Interest}" />
-                                            <TextBlock Grid.Column="3" Text="{Binding Fees}" />
-                                            <TextBlock Grid.Column="4" Text="{Binding Balance}" />
-                                            <TextBlock Grid.Column="5" Text="{Binding Cashflow}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
+                        <TextBlock Text="Cashflow Schedule" Style="{StaticResource SectionHeaderTextStyle}"/>
+                        <ListView Grid.Row="1" ItemsSource="{Binding Cashflows}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Period}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Principal}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Interest}" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Fees}" />
+                                        <TextBlock Grid.Column="4" Text="{Binding Balance}" />
+                                        <TextBlock Grid.Column="5" Text="{Binding Cashflow}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Grid>
                 </Grid>
             </Border>
         </Grid>
 
+        <!-- MARK: BOTTOM SUMMARY: Campaign Details + Key Metrics -->
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource CardContainerStyle}" Margin="12,0,12,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Campaign Details &amp; Key Metrics" Style="{StaticResource CardHeaderTextStyle}"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Campaign Details (left) -->
+                    <StackPanel Grid.Column="0" Spacing="8">
+                        <TextBlock Text="Campaign Details" Style="{StaticResource SectionHeaderTextStyle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Row 0 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Campaign Name:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ActiveCampaign.Title}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Term (months):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="{Binding TermMonths}"/>
+
+                            <!-- Row 1 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Financed Amount:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Metrics.FinancedAmount}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Subsidy budget (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding SubsidyBudget}"/>
+
+                            <!-- Row 2 -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Subsidy utilized (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ActiveSubsidyUtilizedText}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Subsidy remaining (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding SubsidyRemainingText}"/>
+
+                            <!-- Row 3 -->
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Dealer Commissions Paid (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DealerCommissionResolvedAmtText}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="3" Text="IDCs - Others (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="3" Grid.Column="4" Text="{Binding IdcOtherText}"/>
+
+                            <!-- Row 4 -->
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="IDC - Free Insurance (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ActiveFsInsuranceText}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="IDC - Free MBSP (THB):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="4" Grid.Column="4" Text="{Binding ActiveFsMbspText}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Key Metrics Summary (right) -->
+                    <StackPanel Grid.Column="1" Spacing="8">
+                        <TextBlock Text="Key Metrics Summary" Style="{StaticResource SectionHeaderTextStyle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Row 0 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Monthly Installment:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Metrics.MonthlyInstallment}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Nominal Customer Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="0" Grid.Column="4" Text="{Binding Metrics.NominalRate}"/>
+
+                            <!-- Row 1 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Effective Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Metrics.EffectiveRate}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Financed amount:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Metrics.FinancedAmount}"/>
+
+                            <!-- Row 2: Acquisition RoRAC with foldout -->
+                            <ToggleButton x:ConnectionId='3' Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsToggle" HorizontalAlignment="Left" Margin="0,0,0,4">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}"/>
+                                    <TextBlock Text="{Binding Metrics.RoRAC}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="(show details)" Opacity="0.7"/>
+                                </StackPanel>
+                            </ToggleButton>
+                            <Grid x:ConnectionId='4' Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsGrid" Visibility="{Binding IsChecked, ElementName=RoRACDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="= Net EBIT Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="—"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="/ Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="—"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="= Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Metrics.RoRAC}"/>
+                            </Grid>
+
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="IDC Total:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding IdcTotalText}"/>
+
+                            <!-- Row 4 -->
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="IDC - Dealer Comm/other dealer benefits.:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding DealerCommissionResolvedAmtText}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="IDC - Other:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="4" Grid.Column="4" Text="{Binding IdcOtherText}"/>
+
+                            <!-- Row 5: Export action -->
+                            <Button Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Content="Export XLSX" Command="{Binding ExportXlsxCommand}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
         <!-- MARK: FOOTER -->
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
+        <Border Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
