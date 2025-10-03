@@ -230,7 +230,13 @@ public partial class MainViewModel : ObservableObject
                 var calcRes = await _api.CalculateAsync(calcReq);
 
                 var comps = ExtractAuditComponents(calcRes.Quote.CampaignAudit);
-
+                
+                // Derive subsidy components for consistent UI usage and remaining budget math
+                double fsDownAmt = 0;
+                double fsInsAmt = Math.Max(0, comps.freeInsurance);
+                double fsMbspAmt = Math.Max(0, comps.mbsp);
+                double subsidyUtilized = fsDownAmt + fsInsAmt + fsMbspAmt;
+                
                 var vm = new CampaignSummaryViewModel
                 {
                     CampaignId = r.CampaignId,
@@ -240,13 +246,16 @@ public partial class MainViewModel : ObservableObject
                     Monthly = calcRes.Quote.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
                     Effective = (calcRes.Quote.CustomerRateEffective).ToString("0.00%"),
                     Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
-                    SubsidyUsed = SubsidyBudget.ToString("N0", CultureInfo.InvariantCulture),
-                    FSSubDown = "0",
-                    FSSubInterest = comps.freeInsurance.ToString("N0", CultureInfo.InvariantCulture),
-                    FSFreeMBSP = comps.mbsp.ToString("N0", CultureInfo.InvariantCulture),
+                    SubsidyUsed = subsidyUtilized.ToString("N0", CultureInfo.InvariantCulture),
+                    FSSubDown = fsDownAmt.ToString("N0", CultureInfo.InvariantCulture),
+                    FSSubInterest = fsInsAmt.ToString("N0", CultureInfo.InvariantCulture),
+                    FSFreeMBSP = fsMbspAmt.ToString("N0", CultureInfo.InvariantCulture),
                     CashDiscount = comps.cashDiscount.ToString("N0", CultureInfo.InvariantCulture),
                     RoRAC = (calcRes.Quote.Profitability.AcquisitionRoRAC).ToString("0.00%"),
                     Notes = string.Empty,
+                    FSSubDownAmount = fsDownAmt,
+                    FSSubInterestAmount = fsInsAmt,
+                    FSFreeMBSPAmount = fsMbspAmt,
                 };
                 temp.Add((vm, calcRes.Quote.MonthlyInstallment, calcRes.Quote.CustomerRateEffective));
             }
@@ -324,7 +333,91 @@ public partial class MainViewModel : ObservableObject
             FinancedAmount = res.Quote.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture),
             RoRAC = (res.Quote.Profitability.AcquisitionRoRAC).ToString("0.00%"),
         };
+    
+        // Update dependent computed sections (breakdown lines and IDC totals)
+        RefreshProfitabilityDetails(res);
+        OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
+        OnPropertyChanged(nameof(SubsidyRemainingText));
+        OnPropertyChanged(nameof(IdcTotalText));
     }
+// MARK: Bottom Summary Bindings for Details/Key Metrics
+private double _activeFsInsurance;
+private double _activeFsMbsp;
+private double _activeCashDiscount;
+
+public string ActiveFsInsuranceText => _activeFsInsurance.ToString("N0", CultureInfo.InvariantCulture);
+public string ActiveFsMbspText => _activeFsMbsp.ToString("N0", CultureInfo.InvariantCulture);
+public string ActiveSubsidyUtilizedText => (_activeFsInsurance + _activeFsMbsp).ToString("N0", CultureInfo.InvariantCulture);
+public string SubsidyRemainingText => Math.Max(0, SubsidyBudget - (_activeFsInsurance + _activeFsMbsp)).ToString("N0", CultureInfo.InvariantCulture);
+public string IdcOtherText => IdcOther.ToString("N0", CultureInfo.InvariantCulture);
+public string IdcTotalText => (DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture);
+
+private void RefreshProfitabilityDetails(CalculationResponseDto res)
+{
+    var comps = ExtractAuditComponents(res.Quote.CampaignAudit);
+    _activeFsInsurance = Math.Max(0, comps.freeInsurance);
+    _activeFsMbsp = Math.Max(0, comps.mbsp);
+    _activeCashDiscount = comps.cashDiscount;
+
+    OnPropertyChanged(nameof(ActiveFsInsuranceText));
+    OnPropertyChanged(nameof(ActiveFsMbspText));
+    OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
+    OnPropertyChanged(nameof(SubsidyRemainingText));
+}
+
+// MARK: Export - lightweight Excel-friendly CSV (saved as .xlsx for user flow)
+[RelayCommand]
+private async Task ExportXlsxAsync()
+{
+    try
+    {
+        Status = "Preparing export...";
+        var deal = BuildDealFromInputs();
+        var active = ActiveCampaign;
+
+        var req = new CalculationRequestDto
+        {
+            Deal = deal,
+            Campaigns = active != null
+                ? new List<CampaignDto> { new CampaignDto { Id = active.CampaignId, Type = active.CampaignType } }
+                : new List<CampaignDto>(),
+            IdcItems = new(),
+            Options = new() { ["derive_idc_from_cf"] = true },
+        };
+        var res = await _api.CalculateAsync(req);
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Deal Summary");
+        sb.AppendLine("Key,Value");
+        sb.AppendLine($"Selected Campaign,{(active?.Title ?? "-")}");
+        sb.AppendLine($"Monthly Installment (THB),{res.Quote.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Nominal Rate,{res.Quote.CustomerRateNominal.ToString("0.00%")}");
+        sb.AppendLine($"Effective Rate,{res.Quote.CustomerRateEffective.ToString("0.00%")}");
+        sb.AppendLine($"Financed Amount (THB),{res.Quote.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Acq. RoRAC,{res.Quote.Profitability.AcquisitionRoRAC.ToString("0.00%")}");
+        sb.AppendLine($"Dealer Commission (THB),{DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"IDC - Other (THB),{IdcOther.ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"IDC Total (THB),{(DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine();
+        sb.AppendLine("Cashflow Schedule");
+        sb.AppendLine("Period,Principal,Interest,Fees,Balance,Cashflow");
+        foreach (var r in res.Schedule)
+        {
+            sb.AppendLine($"{r.Period},{r.Principal.ToString("0.00", CultureInfo.InvariantCulture)},{r.Interest.ToString("0.00", CultureInfo.InvariantCulture)},{r.Fees.ToString("0.00", CultureInfo.InvariantCulture)},{r.Balance.ToString("0.00", CultureInfo.InvariantCulture)},{r.Cashflow.ToString("0.00", CultureInfo.InvariantCulture)}");
+        }
+
+        var dir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinancialCalculatorExports");
+        System.IO.Directory.CreateDirectory(dir);
+        var file = System.IO.Path.Combine(dir, $"deal_export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+        await System.IO.File.WriteAllTextAsync(file, sb.ToString(), System.Text.Encoding.UTF8);
+
+        Status = $"Exported XLSX to {file}";
+    }
+    catch (Exception ex)
+    {
+        Status = $"Export failed: {ex.Message}";
+    }
+}
 
     private void PopulateCashflows(IReadOnlyList<CashflowRowDto> schedule)
     {

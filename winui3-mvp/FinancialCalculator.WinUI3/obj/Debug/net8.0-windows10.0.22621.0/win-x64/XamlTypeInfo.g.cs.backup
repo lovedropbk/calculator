@@ -226,109 +226,107 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         
         private void InitTypeTables()
         {
-            _typeNameTable = new string[50];
+            _typeNameTable = new string[49];
             _typeNameTable[0] = "Microsoft.UI.Xaml.Controls.XamlControlsResources";
             _typeNameTable[1] = "Microsoft.UI.Xaml.ResourceDictionary";
             _typeNameTable[2] = "Object";
             _typeNameTable[3] = "Boolean";
             _typeNameTable[4] = "FinancialCalculator.WinUI3.Converters.StringEqualsToVisibilityConverter";
-            _typeNameTable[5] = "FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter";
-            _typeNameTable[6] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
-            _typeNameTable[7] = "Microsoft.UI.Xaml.Controls.Control";
-            _typeNameTable[8] = "System.Collections.IEnumerable";
-            _typeNameTable[9] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
-            _typeNameTable[10] = "System.Enum";
-            _typeNameTable[11] = "System.ValueType";
-            _typeNameTable[12] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
-            _typeNameTable[13] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[14] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[15] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
-            _typeNameTable[16] = "Microsoft.UI.Xaml.DependencyObject";
-            _typeNameTable[17] = "Double";
-            _typeNameTable[18] = "Microsoft.UI.Xaml.Style";
-            _typeNameTable[19] = "Microsoft.UI.Xaml.Data.Binding";
-            _typeNameTable[20] = "Int32";
-            _typeNameTable[21] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
-            _typeNameTable[22] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
-            _typeNameTable[23] = "Microsoft.UI.Xaml.Visibility";
-            _typeNameTable[24] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
-            _typeNameTable[25] = "Microsoft.UI.Xaml.Media.Brush";
-            _typeNameTable[26] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
-            _typeNameTable[27] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
-            _typeNameTable[28] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
-            _typeNameTable[29] = "Microsoft.UI.Xaml.DataTemplate";
-            _typeNameTable[30] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
-            _typeNameTable[31] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
-            _typeNameTable[32] = "String";
-            _typeNameTable[33] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[34] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[35] = "System.Collections.IList";
-            _typeNameTable[36] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
-            _typeNameTable[37] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
-            _typeNameTable[38] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
-            _typeNameTable[39] = "Microsoft.UI.Xaml.Media.FontFamily";
-            _typeNameTable[40] = "Windows.UI.Text.FontStyle";
-            _typeNameTable[41] = "Windows.UI.Text.FontWeight";
-            _typeNameTable[42] = "Microsoft.UI.Xaml.Controls.RadioButtons";
-            _typeNameTable[43] = "System.Collections.Generic.IList`1<Object>";
-            _typeNameTable[44] = "FinancialCalculator.WinUI3.MainWindow";
-            _typeNameTable[45] = "Microsoft.UI.Xaml.Window";
-            _typeNameTable[46] = "FinancialCalculator.WinUI3.ViewModels.MainViewModel";
-            _typeNameTable[47] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
-            _typeNameTable[48] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
-            _typeNameTable[49] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
+            _typeNameTable[5] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
+            _typeNameTable[6] = "Microsoft.UI.Xaml.Controls.Control";
+            _typeNameTable[7] = "System.Collections.IEnumerable";
+            _typeNameTable[8] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
+            _typeNameTable[9] = "System.Enum";
+            _typeNameTable[10] = "System.ValueType";
+            _typeNameTable[11] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
+            _typeNameTable[12] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[13] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[14] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
+            _typeNameTable[15] = "Microsoft.UI.Xaml.DependencyObject";
+            _typeNameTable[16] = "Double";
+            _typeNameTable[17] = "Microsoft.UI.Xaml.Style";
+            _typeNameTable[18] = "Microsoft.UI.Xaml.Data.Binding";
+            _typeNameTable[19] = "Int32";
+            _typeNameTable[20] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
+            _typeNameTable[21] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
+            _typeNameTable[22] = "Microsoft.UI.Xaml.Visibility";
+            _typeNameTable[23] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
+            _typeNameTable[24] = "Microsoft.UI.Xaml.Media.Brush";
+            _typeNameTable[25] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
+            _typeNameTable[26] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
+            _typeNameTable[27] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
+            _typeNameTable[28] = "Microsoft.UI.Xaml.DataTemplate";
+            _typeNameTable[29] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
+            _typeNameTable[30] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
+            _typeNameTable[31] = "String";
+            _typeNameTable[32] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[33] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[34] = "System.Collections.IList";
+            _typeNameTable[35] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
+            _typeNameTable[36] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
+            _typeNameTable[37] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
+            _typeNameTable[38] = "Microsoft.UI.Xaml.Media.FontFamily";
+            _typeNameTable[39] = "Windows.UI.Text.FontStyle";
+            _typeNameTable[40] = "Windows.UI.Text.FontWeight";
+            _typeNameTable[41] = "Microsoft.UI.Xaml.Controls.RadioButtons";
+            _typeNameTable[42] = "System.Collections.Generic.IList`1<Object>";
+            _typeNameTable[43] = "FinancialCalculator.WinUI3.MainWindow";
+            _typeNameTable[44] = "Microsoft.UI.Xaml.Window";
+            _typeNameTable[45] = "FinancialCalculator.WinUI3.ViewModels.MainViewModel";
+            _typeNameTable[46] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
+            _typeNameTable[47] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
+            _typeNameTable[48] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
 
-            _typeTable = new global::System.Type[50];
+            _typeTable = new global::System.Type[49];
             _typeTable[0] = typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources);
             _typeTable[1] = typeof(global::Microsoft.UI.Xaml.ResourceDictionary);
             _typeTable[2] = typeof(global::System.Object);
             _typeTable[3] = typeof(global::System.Boolean);
             _typeTable[4] = typeof(global::FinancialCalculator.WinUI3.Converters.StringEqualsToVisibilityConverter);
-            _typeTable[5] = typeof(global::FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter);
-            _typeTable[6] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
-            _typeTable[7] = typeof(global::Microsoft.UI.Xaml.Controls.Control);
-            _typeTable[8] = typeof(global::System.Collections.IEnumerable);
-            _typeTable[9] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
-            _typeTable[10] = typeof(global::System.Enum);
-            _typeTable[11] = typeof(global::System.ValueType);
-            _typeTable[12] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
-            _typeTable[13] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[14] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[15] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
-            _typeTable[16] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
-            _typeTable[17] = typeof(global::System.Double);
-            _typeTable[18] = typeof(global::Microsoft.UI.Xaml.Style);
-            _typeTable[19] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
-            _typeTable[20] = typeof(global::System.Int32);
-            _typeTable[21] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
-            _typeTable[22] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
-            _typeTable[23] = typeof(global::Microsoft.UI.Xaml.Visibility);
-            _typeTable[24] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
-            _typeTable[25] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
-            _typeTable[26] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
-            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
-            _typeTable[28] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
-            _typeTable[29] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
-            _typeTable[30] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
-            _typeTable[31] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
-            _typeTable[32] = typeof(global::System.String);
-            _typeTable[33] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[34] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[35] = typeof(global::System.Collections.IList);
-            _typeTable[36] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
-            _typeTable[37] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
-            _typeTable[38] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
-            _typeTable[39] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
-            _typeTable[40] = typeof(global::Windows.UI.Text.FontStyle);
-            _typeTable[41] = typeof(global::Windows.UI.Text.FontWeight);
-            _typeTable[42] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
-            _typeTable[43] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
-            _typeTable[44] = typeof(global::FinancialCalculator.WinUI3.MainWindow);
-            _typeTable[45] = typeof(global::Microsoft.UI.Xaml.Window);
-            _typeTable[46] = typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel);
-            _typeTable[47] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
-            _typeTable[48] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
-            _typeTable[49] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
+            _typeTable[5] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
+            _typeTable[6] = typeof(global::Microsoft.UI.Xaml.Controls.Control);
+            _typeTable[7] = typeof(global::System.Collections.IEnumerable);
+            _typeTable[8] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
+            _typeTable[9] = typeof(global::System.Enum);
+            _typeTable[10] = typeof(global::System.ValueType);
+            _typeTable[11] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
+            _typeTable[12] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[13] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[14] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
+            _typeTable[15] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
+            _typeTable[16] = typeof(global::System.Double);
+            _typeTable[17] = typeof(global::Microsoft.UI.Xaml.Style);
+            _typeTable[18] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
+            _typeTable[19] = typeof(global::System.Int32);
+            _typeTable[20] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
+            _typeTable[21] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
+            _typeTable[22] = typeof(global::Microsoft.UI.Xaml.Visibility);
+            _typeTable[23] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
+            _typeTable[24] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
+            _typeTable[25] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
+            _typeTable[26] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
+            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
+            _typeTable[28] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
+            _typeTable[29] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
+            _typeTable[30] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
+            _typeTable[31] = typeof(global::System.String);
+            _typeTable[32] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[33] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[34] = typeof(global::System.Collections.IList);
+            _typeTable[35] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
+            _typeTable[36] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
+            _typeTable[37] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
+            _typeTable[38] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
+            _typeTable[39] = typeof(global::Windows.UI.Text.FontStyle);
+            _typeTable[40] = typeof(global::Windows.UI.Text.FontWeight);
+            _typeTable[41] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
+            _typeTable[42] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
+            _typeTable[43] = typeof(global::FinancialCalculator.WinUI3.MainWindow);
+            _typeTable[44] = typeof(global::Microsoft.UI.Xaml.Window);
+            _typeTable[45] = typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel);
+            _typeTable[46] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
+            _typeTable[47] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
+            _typeTable[48] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
         }
 
         private int LookupTypeIndexByName(string typeName)
@@ -365,51 +363,49 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
 
         private object Activate_0_XamlControlsResources() { return new global::Microsoft.UI.Xaml.Controls.XamlControlsResources(); }
         private object Activate_4_StringEqualsToVisibilityConverter() { return new global::FinancialCalculator.WinUI3.Converters.StringEqualsToVisibilityConverter(); }
-        private object Activate_5_BoolToVisibilityConverter() { return new global::FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter(); }
-        private object Activate_6_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
-        private object Activate_13_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_14_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_33_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_34_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_36_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
-        private object Activate_37_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
-        private object Activate_42_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
-        private object Activate_44_MainWindow() { return new global::FinancialCalculator.WinUI3.MainWindow(); }
-        private object Activate_46_MainViewModel() { return new global::FinancialCalculator.WinUI3.ViewModels.MainViewModel(); }
-        private object Activate_48_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
+        private object Activate_5_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
+        private object Activate_12_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_13_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_32_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_33_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_35_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
+        private object Activate_36_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
+        private object Activate_41_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
+        private object Activate_43_MainWindow() { return new global::FinancialCalculator.WinUI3.MainWindow(); }
+        private object Activate_45_MainViewModel() { return new global::FinancialCalculator.WinUI3.ViewModels.MainViewModel(); }
+        private object Activate_47_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
         private void StaticInitializer_0_XamlControlsResources() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources).TypeHandle);
         private void StaticInitializer_4_StringEqualsToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.Converters.StringEqualsToVisibilityConverter).TypeHandle);
-        private void StaticInitializer_5_BoolToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter).TypeHandle);
-        private void StaticInitializer_6_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
-        private void StaticInitializer_8_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
-        private void StaticInitializer_9_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
-        private void StaticInitializer_10_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
-        private void StaticInitializer_11_ValueType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.ValueType).TypeHandle);
-        private void StaticInitializer_12_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
-        private void StaticInitializer_13_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_14_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_15_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
-        private void StaticInitializer_21_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
-        private void StaticInitializer_22_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
-        private void StaticInitializer_24_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
-        private void StaticInitializer_26_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
-        private void StaticInitializer_30_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
-        private void StaticInitializer_31_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
-        private void StaticInitializer_33_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_34_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_35_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
-        private void StaticInitializer_36_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
-        private void StaticInitializer_37_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
-        private void StaticInitializer_38_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
-        private void StaticInitializer_40_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
-        private void StaticInitializer_41_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
-        private void StaticInitializer_42_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
-        private void StaticInitializer_43_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
-        private void StaticInitializer_44_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.MainWindow).TypeHandle);
-        private void StaticInitializer_46_MainViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel).TypeHandle);
-        private void StaticInitializer_47_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
-        private void StaticInitializer_48_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
-        private void StaticInitializer_49_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
+        private void StaticInitializer_5_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
+        private void StaticInitializer_7_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
+        private void StaticInitializer_8_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
+        private void StaticInitializer_9_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
+        private void StaticInitializer_10_ValueType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.ValueType).TypeHandle);
+        private void StaticInitializer_11_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
+        private void StaticInitializer_12_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_13_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_14_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
+        private void StaticInitializer_20_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
+        private void StaticInitializer_21_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
+        private void StaticInitializer_23_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
+        private void StaticInitializer_25_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
+        private void StaticInitializer_29_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
+        private void StaticInitializer_30_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
+        private void StaticInitializer_32_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_33_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_34_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
+        private void StaticInitializer_35_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
+        private void StaticInitializer_36_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
+        private void StaticInitializer_37_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
+        private void StaticInitializer_39_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
+        private void StaticInitializer_40_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
+        private void StaticInitializer_41_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
+        private void StaticInitializer_42_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
+        private void StaticInitializer_43_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.MainWindow).TypeHandle);
+        private void StaticInitializer_45_MainViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel).TypeHandle);
+        private void StaticInitializer_46_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
+        private void StaticInitializer_47_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
+        private void StaticInitializer_48_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
         private void MapAdd_0_XamlControlsResources(object instance, object key, object item)
         {
             var collection = (global::System.Collections.Generic.IDictionary<global::System.Object, global::System.Object>)instance;
@@ -417,37 +413,37 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             var newItem = (global::System.Object)item;
             collection.Add(newKey, newItem);
         }
-        private void VectorAdd_13_ObservableCollection(object instance, object item)
+        private void VectorAdd_12_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_14_Collection(object instance, object item)
+        private void VectorAdd_13_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_33_ObservableCollection(object instance, object item)
+        private void VectorAdd_32_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_34_Collection(object instance, object item)
+        private void VectorAdd_33_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_43_IList(object instance, object item)
+        private void VectorAdd_42_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::System.Object>)instance;
             var newItem = (global::System.Object)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_49_IList(object instance, object item)
+        private void VectorAdd_48_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Controls.TreeViewNode>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)item;
@@ -493,18 +489,10 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 5:   //  FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter
-                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_5_BoolToVisibilityConverter;
-                userType.StaticInitializer = StaticInitializer_5_BoolToVisibilityConverter;
-                userType.SetIsLocalType();
-                xamlType = userType;
-                break;
-
-            case 6:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
+            case 5:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_6_DataGrid;
-                userType.StaticInitializer = StaticInitializer_6_DataGrid;
+                userType.Activator = Activate_5_DataGrid;
+                userType.StaticInitializer = StaticInitializer_5_DataGrid;
                 userType.AddMemberName("ItemsSource");
                 userType.AddMemberName("SelectedItem");
                 userType.AddMemberName("HeadersVisibility");
@@ -554,20 +542,20 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 7:   //  Microsoft.UI.Xaml.Controls.Control
+            case 6:   //  Microsoft.UI.Xaml.Controls.Control
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 8:   //  System.Collections.IEnumerable
+            case 7:   //  System.Collections.IEnumerable
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_8_IEnumerable;
+                userType.StaticInitializer = StaticInitializer_7_IEnumerable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 9:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
+            case 8:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_9_DataGridHeadersVisibility;
+                userType.StaticInitializer = StaticInitializer_8_DataGridHeadersVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.None);
                 userType.AddEnumValue("Column", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Column);
                 userType.AddEnumValue("Row", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Row);
@@ -575,21 +563,21 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 10:   //  System.Enum
+            case 9:   //  System.Enum
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_10_Enum;
+                userType.StaticInitializer = StaticInitializer_9_Enum;
                 xamlType = userType;
                 break;
 
-            case 11:   //  System.ValueType
+            case 10:   //  System.ValueType
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_11_ValueType;
+                userType.StaticInitializer = StaticInitializer_10_ValueType;
                 xamlType = userType;
                 break;
 
-            case 12:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
+            case 11:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_12_DataGridGridLinesVisibility;
+                userType.StaticInitializer = StaticInitializer_11_DataGridGridLinesVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.None);
                 userType.AddEnumValue("Horizontal", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Horizontal);
                 userType.AddEnumValue("Vertical", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Vertical);
@@ -597,25 +585,25 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 13:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 12:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>"));
-                userType.StaticInitializer = StaticInitializer_13_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_13_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_12_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_12_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 14:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 13:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_14_Collection;
-                userType.StaticInitializer = StaticInitializer_14_Collection;
-                userType.CollectionAdd = VectorAdd_14_Collection;
+                userType.Activator = Activate_13_Collection;
+                userType.StaticInitializer = StaticInitializer_13_Collection;
+                userType.CollectionAdd = VectorAdd_13_Collection;
                 xamlType = userType;
                 break;
 
-            case 15:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
+            case 14:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_15_DataGridColumn;
+                userType.StaticInitializer = StaticInitializer_14_DataGridColumn;
                 userType.AddMemberName("ActualWidth");
                 userType.AddMemberName("CanUserReorder");
                 userType.AddMemberName("CanUserResize");
@@ -638,137 +626,137 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 16:   //  Microsoft.UI.Xaml.DependencyObject
+            case 15:   //  Microsoft.UI.Xaml.DependencyObject
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 17:   //  Double
+            case 16:   //  Double
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 18:   //  Microsoft.UI.Xaml.Style
+            case 17:   //  Microsoft.UI.Xaml.Style
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 19:   //  Microsoft.UI.Xaml.Data.Binding
+            case 18:   //  Microsoft.UI.Xaml.Data.Binding
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 20:   //  Int32
+            case 19:   //  Int32
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 21:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
+            case 20:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
                 userType.SetBoxedType(GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection"));
                 userType.BoxInstance = userType.BoxType<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>;
-                userType.StaticInitializer = StaticInitializer_21_Nullable;
+                userType.StaticInitializer = StaticInitializer_20_Nullable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 22:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
+            case 21:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_22_DataGridSortDirection;
+                userType.StaticInitializer = StaticInitializer_21_DataGridSortDirection;
                 userType.AddEnumValue("Ascending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Ascending);
                 userType.AddEnumValue("Descending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Descending);
                 xamlType = userType;
                 break;
 
-            case 23:   //  Microsoft.UI.Xaml.Visibility
+            case 22:   //  Microsoft.UI.Xaml.Visibility
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 24:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
+            case 23:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_24_DataGridLength;
+                userType.StaticInitializer = StaticInitializer_23_DataGridLength;
                 userType.CreateFromStringMethod = x => (global::System.Object)global::CommunityToolkit.WinUI.UI.Controls.DataGridLength.ConvertFromString(x);
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 25:   //  Microsoft.UI.Xaml.Media.Brush
+            case 24:   //  Microsoft.UI.Xaml.Media.Brush
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 26:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
+            case 25:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_26_DataGridClipboardCopyMode;
+                userType.StaticInitializer = StaticInitializer_25_DataGridClipboardCopyMode;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.None);
                 userType.AddEnumValue("ExcludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.ExcludeHeader);
                 userType.AddEnumValue("IncludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.IncludeHeader);
                 xamlType = userType;
                 break;
 
-            case 27:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
+            case 26:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 28:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
+            case 27:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 29:   //  Microsoft.UI.Xaml.DataTemplate
+            case 28:   //  Microsoft.UI.Xaml.DataTemplate
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 30:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
+            case 29:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_30_DataGridRowDetailsVisibilityMode;
+                userType.StaticInitializer = StaticInitializer_29_DataGridRowDetailsVisibilityMode;
                 userType.AddEnumValue("VisibleWhenSelected", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.VisibleWhenSelected);
                 userType.AddEnumValue("Visible", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Visible);
                 userType.AddEnumValue("Collapsed", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Collapsed);
                 xamlType = userType;
                 break;
 
-            case 31:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
+            case 30:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_31_DataGridSelectionMode;
+                userType.StaticInitializer = StaticInitializer_30_DataGridSelectionMode;
                 userType.AddEnumValue("Extended", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Extended);
                 userType.AddEnumValue("Single", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Single);
                 xamlType = userType;
                 break;
 
-            case 32:   //  String
+            case 31:   //  String
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 33:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
+            case 32:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>"));
-                userType.StaticInitializer = StaticInitializer_33_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_33_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_32_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_32_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 34:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
+            case 33:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_34_Collection;
-                userType.StaticInitializer = StaticInitializer_34_Collection;
-                userType.CollectionAdd = VectorAdd_34_Collection;
+                userType.Activator = Activate_33_Collection;
+                userType.StaticInitializer = StaticInitializer_33_Collection;
+                userType.CollectionAdd = VectorAdd_33_Collection;
                 xamlType = userType;
                 break;
 
-            case 35:   //  System.Collections.IList
+            case 34:   //  System.Collections.IList
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_35_IList;
+                userType.StaticInitializer = StaticInitializer_34_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 36:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
+            case 35:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.Activator = Activate_36_DataGridTemplateColumn;
-                userType.StaticInitializer = StaticInitializer_36_DataGridTemplateColumn;
+                userType.Activator = Activate_35_DataGridTemplateColumn;
+                userType.StaticInitializer = StaticInitializer_35_DataGridTemplateColumn;
                 userType.AddMemberName("CellTemplate");
                 userType.AddMemberName("CellEditingTemplate");
                 xamlType = userType;
                 break;
 
-            case 37:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
+            case 36:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn"));
-                userType.Activator = Activate_37_DataGridTextColumn;
-                userType.StaticInitializer = StaticInitializer_37_DataGridTextColumn;
+                userType.Activator = Activate_36_DataGridTextColumn;
+                userType.StaticInitializer = StaticInitializer_36_DataGridTextColumn;
                 userType.AddMemberName("FontFamily");
                 userType.AddMemberName("FontSize");
                 userType.AddMemberName("FontStyle");
@@ -777,9 +765,9 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 38:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
+            case 37:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.StaticInitializer = StaticInitializer_38_DataGridBoundColumn;
+                userType.StaticInitializer = StaticInitializer_37_DataGridBoundColumn;
                 userType.AddMemberName("Binding");
                 userType.AddMemberName("ClipboardContentBinding");
                 userType.AddMemberName("EditingElementStyle");
@@ -787,30 +775,30 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 39:   //  Microsoft.UI.Xaml.Media.FontFamily
+            case 38:   //  Microsoft.UI.Xaml.Media.FontFamily
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 40:   //  Windows.UI.Text.FontStyle
+            case 39:   //  Windows.UI.Text.FontStyle
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_40_FontStyle;
+                userType.StaticInitializer = StaticInitializer_39_FontStyle;
                 userType.AddEnumValue("Normal", global::Windows.UI.Text.FontStyle.Normal);
                 userType.AddEnumValue("Oblique", global::Windows.UI.Text.FontStyle.Oblique);
                 userType.AddEnumValue("Italic", global::Windows.UI.Text.FontStyle.Italic);
                 xamlType = userType;
                 break;
 
-            case 41:   //  Windows.UI.Text.FontWeight
+            case 40:   //  Windows.UI.Text.FontWeight
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_41_FontWeight;
+                userType.StaticInitializer = StaticInitializer_40_FontWeight;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 42:   //  Microsoft.UI.Xaml.Controls.RadioButtons
+            case 41:   //  Microsoft.UI.Xaml.Controls.RadioButtons
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_42_RadioButtons;
-                userType.StaticInitializer = StaticInitializer_42_RadioButtons;
+                userType.Activator = Activate_41_RadioButtons;
+                userType.StaticInitializer = StaticInitializer_41_RadioButtons;
                 userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.RadioButtons.Items");
                 userType.AddMemberName("Items");
                 userType.AddMemberName("SelectedIndex");
@@ -823,45 +811,45 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 43:   //  System.Collections.Generic.IList`1<Object>
+            case 42:   //  System.Collections.Generic.IList`1<Object>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_43_IList;
-                userType.CollectionAdd = VectorAdd_43_IList;
+                userType.StaticInitializer = StaticInitializer_42_IList;
+                userType.CollectionAdd = VectorAdd_42_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 44:   //  FinancialCalculator.WinUI3.MainWindow
+            case 43:   //  FinancialCalculator.WinUI3.MainWindow
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Window"));
-                userType.Activator = Activate_44_MainWindow;
-                userType.StaticInitializer = StaticInitializer_44_MainWindow;
+                userType.Activator = Activate_43_MainWindow;
+                userType.StaticInitializer = StaticInitializer_43_MainWindow;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 45:   //  Microsoft.UI.Xaml.Window
+            case 44:   //  Microsoft.UI.Xaml.Window
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 46:   //  FinancialCalculator.WinUI3.ViewModels.MainViewModel
+            case 45:   //  FinancialCalculator.WinUI3.ViewModels.MainViewModel
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_46_MainViewModel;
+                userType.StaticInitializer = StaticInitializer_45_MainViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 47:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+            case 46:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_47_ObservableObject;
+                userType.StaticInitializer = StaticInitializer_46_ObservableObject;
                 xamlType = userType;
                 break;
 
-            case 48:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
+            case 47:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.Activator = Activate_48_TreeViewNode;
-                userType.StaticInitializer = StaticInitializer_48_TreeViewNode;
+                userType.Activator = Activate_47_TreeViewNode;
+                userType.StaticInitializer = StaticInitializer_47_TreeViewNode;
                 userType.AddMemberName("Children");
                 userType.AddMemberName("Content");
                 userType.AddMemberName("Depth");
@@ -873,10 +861,10 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 49:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
+            case 48:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_49_IList;
-                userType.CollectionAdd = VectorAdd_49_IList;
+                userType.StaticInitializer = StaticInitializer_48_IList;
+                userType.CollectionAdd = VectorAdd_48_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;

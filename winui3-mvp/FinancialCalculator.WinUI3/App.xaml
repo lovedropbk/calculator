@@ -28,6 +28,7 @@
 
             <!-- Converters -->
             <conv:StringEqualsToVisibilityConverter x:Key="StringEqualsToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <!-- MARK: Card Container Style -->
             <Style x:Key="CardContainerStyle" TargetType="Border">

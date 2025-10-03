@@ -15,7 +15,12 @@ public partial class MainViewModel
     partial void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
     partial void OnTermMonthsChanged(int value) => ScheduleSummariesRefresh();
     partial void OnCustomerRatePctChanged(double value) => ScheduleSummariesRefresh();
-    partial void OnSubsidyBudgetChanged(double value) => ScheduleSummariesRefresh();
+    partial void OnSubsidyBudgetChanged(double value)
+    {
+        // Update dependent computed text for bottom summary
+        OnPropertyChanged(nameof(SubsidyRemainingText));
+        ScheduleSummariesRefresh();
+    }
 
     // Additional handlers to keep UI reactive to all inputs (per redesign specs)
     partial void OnTimingChanged(string value) => ScheduleSummariesRefresh();
@@ -68,15 +73,29 @@ public partial class MainViewModel
         OnPropertyChanged(nameof(DealerCommissionPctText));
         ScheduleSummariesRefresh();
     }
-    partial void OnDealerCommissionResolvedAmtChanged(double value) => ScheduleSummariesRefresh();
+    partial void OnDealerCommissionResolvedAmtChanged(double value)
+    {
+        // Reflect derived texts in bottom summary
+        OnPropertyChanged(nameof(DealerCommissionResolvedAmtText));
+        OnPropertyChanged(nameof(IdcTotalText));
+        ScheduleSummariesRefresh();
+    }
 
     partial void OnIdcOtherChanged(double value)
     {
         // Mark as user-edited so campaign selection won't auto-overwrite
         IdcOtherUserEdited = true;
+        // Update dependent computed texts
+        OnPropertyChanged(nameof(IdcOtherText));
+        OnPropertyChanged(nameof(IdcTotalText));
+        OnPropertyChanged(nameof(SubsidyRemainingText));
         ScheduleSummariesRefresh();
     }
-    partial void OnIdcOtherUserEditedChanged(bool value) => ScheduleSummariesRefresh();
+    partial void OnIdcOtherUserEditedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IdcOtherText));
+        ScheduleSummariesRefresh();
+    }
 
     partial void OnSelectedCampaignChanged(CampaignSummaryViewModel? value)
     {
