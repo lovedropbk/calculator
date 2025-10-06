@@ -101,14 +101,33 @@ public partial class MainViewModel : ObservableObject
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
         idcOther = SubsidyBudget; // initial mapping per spec
         
-        // Delay initial API calls to allow backend to fully initialize
-        _ = Task.Run(async () =>
+        // Initialize data on UI thread with proper error handling
+        _ = InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        try
         {
-            await Task.Delay(500); // Give backend time to fully start
+            Status = "Initializing...";
+            
+            // Give backend time to fully start
+            await Task.Delay(500);
+            
+            // Load parameter set first
             await InitializeParameterSetAsync();
+            
+            // Get commission policy
             await RefreshCommissionPolicyAsync();
+            
+            // Load campaign summaries
             await LoadSummariesAsync();
-        });
+        }
+        catch (Exception ex)
+        {
+            Status = $"Initialization error: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"MainViewModel initialization error: {ex}");
+        }
     }
 
     // MARK: Parameter Set Initialization
@@ -233,16 +252,16 @@ public partial class MainViewModel : ObservableObject
             var deal = BuildDealFromInputs();
             var state = new DealStateDto
             {
-                dealerCommission = new DealerCommissionDto { mode = DealerCommissionMode, pct = DealerCommissionPct, amt = DealerCommissionAmt, resolvedAmt = DealerCommissionResolvedAmt },
-                idcOther = new IDCOtherDto { value = IdcOtherUserEdited ? IdcOther : SubsidyBudget, userEdited = IdcOtherUserEdited },
-                budgetTHB = SubsidyBudget
+                DealerCommission = new DealerCommissionDto { Mode = DealerCommissionMode, Pct = DealerCommissionPct, Amt = DealerCommissionAmt, ResolvedAmt = DealerCommissionResolvedAmt },
+                IdcOther = new IDCOtherDto { Value = IdcOtherUserEdited ? IdcOther : SubsidyBudget, UserEdited = IdcOtherUserEdited },
+                BudgetTHB = SubsidyBudget
             };
             var catalog = await _api.GetCampaignCatalogAsync();
             var req = new CampaignSummariesRequestDto
             {
-                deal = deal,
-                state = state,
-                campaigns = catalog.Select(c => new CampaignDto { Id = c.Id, Type = c.Type, Funder = c.Funder, Description = c.Description, Parameters = c.Parameters }).ToList()
+                Deal = deal,
+                State = state,
+                Campaigns = catalog.Select(c => new CampaignDto { Id = c.Id, Type = c.Type, Funder = c.Funder, Description = c.Description, Parameters = c.Parameters }).ToList()
             };
             var rows = await _api.GetCampaignSummariesAsync(req);
 
