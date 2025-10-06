@@ -44,16 +44,24 @@ public partial class App : Application
     {
         Logger.Info("App.OnLaunched - begin");
 
-        // Attempt to start or reuse embedded backend, then set FC_API_BASE for this process
-        try
+        // Respect FC_API_BASE if already set by launcher, otherwise try auto-start on 8123
+        var existingBase = Environment.GetEnvironmentVariable("FC_API_BASE");
+        if (string.IsNullOrWhiteSpace(existingBase))
         {
-            var (proc, baseUrl) = await BackendLauncher.TryStartAsync(8223);
-            Environment.SetEnvironmentVariable("FC_API_BASE", baseUrl);
-            Logger.Info($"Backend ready at {baseUrl} (proc={(proc != null ? "spawned" : "reused")})");
+            try
+            {
+                var (proc, baseUrl) = await BackendLauncher.TryStartAsync(8123);
+                Environment.SetEnvironmentVariable("FC_API_BASE", baseUrl);
+                Logger.Info($"Backend ready at {baseUrl} (proc={(proc != null ? "spawned" : "reused")})");
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"Backend start failed, falling back to default. {ex}");
+            }
         }
-        catch (Exception ex)
+        else
         {
-            Logger.Warn($"Backend start failed, falling back to existing FC_API_BASE. {ex}");
+            Logger.Info($"Using existing FC_API_BASE: {existingBase}");
         }
 
         try

@@ -143,7 +143,11 @@ Epic B — WinUI Campaigns Grids Completion
 - B1. Add missing columns: Subdown, Free Insurance, MBSP, Cash Discount; ensure widths and order match specs. [DONE for Standard + My grids]
 - B2. Implement default sorting: Monthly asc, then Effective asc. Add toggle (viable only). [Default sort implemented; viable toggle pending]
 - B3. Display Notes and disabled row visuals with tooltip for reason. [Notes present; viability pending]
-- B4. Adopt CommunityToolkit DataGrid for both grids with identical columns/widths; enable user reordering/resizing but do not persist; double-click resets to defaults. [DONE]
+- B4. Adopt CommunityToolkit DataGrid for both grids with identical columns/widths; enable user reordering/resizing but do not persist. [DONE]
+- B5. Merge Subsidy, IDCs & Rate into the single Deal Inputs section (left tile). No separate subsection or header; these are part of Deal Inputs. [DONE]
+- B6. Enforce strict left alignment and consistent value-area widths across all rows (Product, Term, Payment Mode equal to Price/Downpayment). [IN PROGRESS]
+- B7. Display thousands separators for Price, Down payment, Subsidy budget, IDC Other (e.g., 100,000) via NumberBox/formatters. [IN PROGRESS]
+
 
 Acceptance: Visual parity with spec grid; sort toggle works; disabled rows show reason.
 

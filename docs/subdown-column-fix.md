@@ -59,15 +59,17 @@ type MyCampaignRow struct {
 Columns: []TableViewColumn{
     {Title: "", Width: 60},           // Copy button
     {Title: "Select", Width: 50},
-    {Title: "Campaign", Width: 120},
+    {Title: "Campaign Nameok,", Width: 120},
     {Title: "Monthly Installment", Width: 100},
+    {Title: "Cust. Interest Rate", Width: 100},
     {Title: "Downpayment", Width: 80},
-    {Title: "Subdown", Width: 70},    // NEW COLUMN
     {Title: "Cash Discount", Width: 80},
-    {Title: "Free MBSP THB", Width: 80},
+    {Title: "FS SubDown", Width: 70},    // NEW COLUMN
+    {Title: "FS SubInterest", Width: 80},
+    {Title: "FS FreeMBSP", Width: 80},
     {Title: "Subsidy utilized", Width: 90},
-    {Title: "Acq. RoRAC", Width: 80},
     {Title: "Dealer Comm.", Width: 90},
+    {Title: "Acq. RoRAC", Width: 80},
     {Title: "Notes"},                  // Stretched
 },
 ```

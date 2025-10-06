@@ -273,10 +273,31 @@ type CampaignAuditEntry struct {
 // DealerCommissionAmt and DealerCommissionPct are computed per-option per the Dealer Commission Policy
 // (see architecture doc). Cash Discount options are forced to 0 THB (0%).
 type CampaignSummary struct {
-	CampaignID          string       `json:"campaign_id"`
-	CampaignType        CampaignType `json:"campaign_type"`
-	DealerCommissionAmt float64      `json:"dealerCommissionAmt"`
-	DealerCommissionPct float64      `json:"dealerCommissionPct"`
+	// Identity
+	CampaignID   string       `json:"campaign_id"`
+	CampaignType CampaignType `json:"campaign_type"`
+
+	// Dealer commission (policy/override resolved)
+	DealerCommissionAmt float64 `json:"dealerCommissionAmt"` // THB
+	DealerCommissionPct float64 `json:"dealerCommissionPct"` // fraction
+
+	// Enriched KPI fields for UI (all numbers are raw; clients format)
+	MonthlyInstallment    float64 `json:"monthlyInstallment"`    // THB
+	CustomerRateNominal   float64 `json:"customerRateNominal"`   // fraction p.a.
+	CustomerRateEffective float64 `json:"customerRateEffective"` // fraction p.a.
+	AcquisitionRoRAC      float64 `json:"acquisitionRoRAC"`      // fraction
+
+	// Subsidy components (THB)
+	FSSubDownTHB     float64 `json:"fsSubDownTHB"`
+	FreeInsuranceTHB float64 `json:"freeInsuranceTHB"`
+	FreeMBSPTHB      float64 `json:"freeMBSPTHB"`
+	CashDiscountTHB  float64 `json:"cashDiscountTHB"`
+	SubsidyUsedTHB   float64 `json:"subsidyUsedTHB"`
+
+	// Viability and notes
+	Viable          bool   `json:"viable"`
+	ViabilityReason string `json:"viabilityReason"`
+	Notes           string `json:"notes"`
 }
 
 // CalculationRequest represents the main API input
@@ -425,4 +446,8 @@ type IDCOther struct {
 type DealState struct {
 	DealerCommission DealerCommission `json:"dealerCommission"`
 	IDCOther         IDCOther         `json:"idcOther"`
+
+	// Optional: budget used for viability checks in summaries (THB).
+	// When omitted or <= 0, server may treat all rows as viable.
+	BudgetTHB float64 `json:"budgetTHB,omitempty"`
 }

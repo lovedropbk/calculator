@@ -19,6 +19,7 @@ namespace FinancialCalculator.WinUI3.Services
         public ApiClient()
         {
             var baseUrl = Environment.GetEnvironmentVariable("FC_API_BASE") ?? "http://localhost:8123/";
+            if (!baseUrl.EndsWith("/")) baseUrl += "/";
             _http = new HttpClient { BaseAddress = new Uri(baseUrl) };
         }
 
@@ -56,15 +57,50 @@ namespace FinancialCalculator.WinUI3.Services
                 Schedule = new List<CashflowRowDto>()
             };
 
-            // Basic numbers
-            result.Quote.MonthlyInstallment = quoteElem.GetProperty("monthly_installment").GetDouble();
-            result.Quote.CustomerRateNominal = quoteElem.GetProperty("customer_rate_nominal").GetDouble();
-            result.Quote.CustomerRateEffective = quoteElem.GetProperty("customer_rate_effective").GetDouble();
+            // Basic numbers - handle both string and number types from backend
+            double GetDoubleOrParse(JsonElement elem, string propName)
+            {
+                if (!elem.TryGetProperty(propName, out var prop)) return 0.0;
+                if (prop.ValueKind == JsonValueKind.Number) return prop.GetDouble();
+                if (prop.ValueKind == JsonValueKind.String)
+                {
+                    var str = prop.GetString();
+                    if (double.TryParse(str, out var val)) return val;
+                }
+                return 0.0;
+            }
+            
+            result.Quote.MonthlyInstallment = GetDoubleOrParse(quoteElem, "monthly_installment");
+            result.Quote.CustomerRateNominal = GetDoubleOrParse(quoteElem, "customer_rate_nominal");
+            result.Quote.CustomerRateEffective = GetDoubleOrParse(quoteElem, "customer_rate_effective");
             if (quoteElem.TryGetProperty("profitability", out var prof))
             {
+                double GetProfOrZero(string name) => prof.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number ? v.GetDouble() : 0.0;
+
                 result.Quote.Profitability = new ProfitabilityDto
                 {
-                    AcquisitionRoRAC = prof.GetProperty("acquisition_rorac").GetDouble()
+                    DealIRREffective       = GetProfOrZero("deal_irr_effective"),
+                    DealIRRNominal         = GetProfOrZero("deal_irr_nominal"),
+                    CostOfDebtMatched      = GetProfOrZero("cost_of_debt_matched"),
+                    MatchedFundedSpread    = GetProfOrZero("matched_funded_spread"),
+                    GrossInterestMargin    = GetProfOrZero("gross_interest_margin"),
+                    CapitalAdvantage       = GetProfOrZero("capital_advantage"),
+                    NetInterestMargin      = GetProfOrZero("net_interest_margin"),
+                    CostOfCreditRisk       = GetProfOrZero("cost_of_credit_risk"),
+                    OPEX                   = GetProfOrZero("opex"),
+                    IDCSubsidiesFeesUpfront  = GetProfOrZero("idc_subsidies_fees_upfront"),
+                    IDCSubsidiesFeesPeriodic = GetProfOrZero("idc_subsidies_fees_periodic"),
+                    
+                    // Safely extract the new separated IDC/Subsidy fields
+                    // These fields may not exist in older responses, so we default to 0
+                    IDCUpfrontCostPct      = prof.TryGetProperty("idc_upfront_cost_pct", out var iucPct) && iucPct.ValueKind == JsonValueKind.Number ? iucPct.GetDouble() : 0.0,
+                    IDCPeriodicCostPct     = prof.TryGetProperty("idc_periodic_cost_pct", out var ipcPct) && ipcPct.ValueKind == JsonValueKind.Number ? ipcPct.GetDouble() : 0.0,
+                    SubsidyUpfrontPct      = prof.TryGetProperty("subsidy_upfront_pct", out var suPct) && suPct.ValueKind == JsonValueKind.Number ? suPct.GetDouble() : 0.0,
+                    SubsidyPeriodicPct     = prof.TryGetProperty("subsidy_periodic_pct", out var spPct) && spPct.ValueKind == JsonValueKind.Number ? spPct.GetDouble() : 0.0,
+                    
+                    NetEBITMargin          = GetProfOrZero("net_ebit_margin"),
+                    EconomicCapital        = GetProfOrZero("economic_capital"),
+                    AcquisitionRoRAC       = GetProfOrZero("acquisition_rorac"),
                 };
             }
 
@@ -94,7 +130,17 @@ namespace FinancialCalculator.WinUI3.Services
                 foreach (var e in scheduleElem.EnumerateArray())
                 {
                     period++;
-                    double GetOr0(string name) => e.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number ? v.GetDouble() : 0.0;
+                    double GetOr0(string name)
+                    {
+                        if (!e.TryGetProperty(name, out var v)) return 0.0;
+                        if (v.ValueKind == JsonValueKind.Number) return v.GetDouble();
+                        if (v.ValueKind == JsonValueKind.String)
+                        {
+                            var str = v.GetString();
+                            if (double.TryParse(str, out var val)) return val;
+                        }
+                        return 0.0;
+                    }
                     var total = GetOr0("amount");
                     if (Math.Abs(total) < 1e-12) total = GetOr0("cashflow");
                     var feesVal = GetOr0("fee");
@@ -133,6 +179,66 @@ namespace FinancialCalculator.WinUI3.Services
                 Percent = node.GetProperty("percent").GetDouble(),
                 PolicyVersion = node.TryGetProperty("policyVersion", out var pv) ? pv.GetString() ?? string.Empty : string.Empty
             };
+        }
+
+        public async Task<Dictionary<string, object>> GetCurrentParametersAsync()
+        {
+            var resp = await _http.GetAsync("api/v1/parameters/current");
+            resp.EnsureSuccessStatusCode();
+            var stream = await resp.Content.ReadAsStreamAsync();
+            
+            // Parse as JsonElement first to handle flexible parameter structure
+            var jsonElement = await JsonSerializer.DeserializeAsync<JsonElement>(stream, _json);
+            
+            // Convert JsonElement to Dictionary<string, object>
+            var parameters = new Dictionary<string, object>();
+            
+            if (jsonElement.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var property in jsonElement.EnumerateObject())
+                {
+                    parameters[property.Name] = ParseJsonElement(property.Value);
+                }
+            }
+            
+            return parameters;
+        }
+
+        private object ParseJsonElement(JsonElement element)
+        {
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return element.GetString() ?? string.Empty;
+                case JsonValueKind.Number:
+                    if (element.TryGetInt32(out var intValue))
+                        return intValue;
+                    if (element.TryGetInt64(out var longValue))
+                        return longValue;
+                    return element.GetDouble();
+                case JsonValueKind.True:
+                    return true;
+                case JsonValueKind.False:
+                    return false;
+                case JsonValueKind.Null:
+                    return null!;
+                case JsonValueKind.Array:
+                    var list = new List<object>();
+                    foreach (var item in element.EnumerateArray())
+                    {
+                        list.Add(ParseJsonElement(item));
+                    }
+                    return list;
+                case JsonValueKind.Object:
+                    var dict = new Dictionary<string, object>();
+                    foreach (var prop in element.EnumerateObject())
+                    {
+                        dict[prop.Name] = ParseJsonElement(prop.Value);
+                    }
+                    return dict;
+                default:
+                    return null!;
+            }
         }
     }
 }

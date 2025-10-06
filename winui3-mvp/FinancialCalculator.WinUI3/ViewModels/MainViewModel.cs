@@ -16,6 +16,9 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ApiClient _api = new ApiClient();
     private readonly DebounceDispatcher _debounce = new();
+    
+    // MARK: Parameter Set Caching
+    private Dictionary<string, object>? _cachedParameterSet;
 
     // MARK: Deal Inputs
     [ObservableProperty] private string product = "HP";
@@ -97,8 +100,35 @@ public partial class MainViewModel : ObservableObject
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
         idcOther = SubsidyBudget; // initial mapping per spec
-        _ = RefreshCommissionPolicyAsync();
-        _ = LoadSummariesAsync();
+        
+        // Delay initial API calls to allow backend to fully initialize
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(500); // Give backend time to fully start
+            await InitializeParameterSetAsync();
+            await RefreshCommissionPolicyAsync();
+            await LoadSummariesAsync();
+        });
+    }
+
+    // MARK: Parameter Set Initialization
+    private async Task InitializeParameterSetAsync()
+    {
+        try
+        {
+            _cachedParameterSet = await _api.GetCurrentParametersAsync();
+            if (_cachedParameterSet != null && _cachedParameterSet.Count > 0)
+            {
+                Status = $"Loaded {_cachedParameterSet.Count} parameters";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't block - calculations can proceed without parameter set
+            _cachedParameterSet = null;
+            Status = $"Parameter set load failed (non-blocking): {ex.Message}";
+            // Continue without parameter set - don't throw
+        }
     }
 
     // MARK: Commands - Dealer Commission
@@ -204,7 +234,8 @@ public partial class MainViewModel : ObservableObject
             var state = new DealStateDto
             {
                 dealerCommission = new DealerCommissionDto { mode = DealerCommissionMode, pct = DealerCommissionPct, amt = DealerCommissionAmt, resolvedAmt = DealerCommissionResolvedAmt },
-                idcOther = new IDCOtherDto { value = IdcOtherUserEdited ? IdcOther : SubsidyBudget, userEdited = IdcOtherUserEdited }
+                idcOther = new IDCOtherDto { value = IdcOtherUserEdited ? IdcOther : SubsidyBudget, userEdited = IdcOtherUserEdited },
+                budgetTHB = SubsidyBudget
             };
             var catalog = await _api.GetCampaignCatalogAsync();
             var req = new CampaignSummariesRequestDto
@@ -220,46 +251,29 @@ public partial class MainViewModel : ObservableObject
             CampaignSummaries.Clear();
             foreach (var r in rows)
             {
-                var calcReq = new CalculationRequestDto
-                {
-                    Deal = deal,
-                    Campaigns = new List<CampaignDto> { new CampaignDto { Id = r.CampaignId, Type = r.CampaignType } },
-                    IdcItems = new(),
-                    Options = new() { ["derive_idc_from_cf"] = true }
-                };
-                var calcRes = await _api.CalculateAsync(calcReq);
-
-                var comps = ExtractAuditComponents(calcRes.Quote.CampaignAudit);
-                
-                // Derive subsidy components for consistent UI usage and remaining budget math
-                double fsDownAmt = 0;
-                double fsInsAmt = Math.Max(0, comps.freeInsurance);
-                double fsMbspAmt = Math.Max(0, comps.mbsp);
-                double subsidyUtilized = fsDownAmt + fsInsAmt + fsMbspAmt;
-                
                 var vm = new CampaignSummaryViewModel
                 {
                     CampaignId = r.CampaignId,
                     CampaignType = r.CampaignType,
                     Title = r.CampaignType,
-                    DealerCommission = $"{r.DealerCommissionPct:P2} ({r.DealerCommissionAmt:N0} THB)",
-                    Monthly = calcRes.Quote.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
-                    Effective = (calcRes.Quote.CustomerRateEffective).ToString("0.00%"),
+                    DealerCommission = $"{r.DealerCommissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({r.DealerCommissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
+                    Monthly = r.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
+                    Effective = r.CustomerRateEffective.ToString("0.00%"),
                     Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
-                    SubsidyUsed = subsidyUtilized.ToString("N0", CultureInfo.InvariantCulture),
-                    FSSubDown = fsDownAmt.ToString("N0", CultureInfo.InvariantCulture),
-                    FSSubInterest = fsInsAmt.ToString("N0", CultureInfo.InvariantCulture),
-                    FSFreeMBSP = fsMbspAmt.ToString("N0", CultureInfo.InvariantCulture),
-                    CashDiscount = comps.cashDiscount.ToString("N0", CultureInfo.InvariantCulture),
-                    RoRAC = (calcRes.Quote.Profitability.AcquisitionRoRAC).ToString("0.00%"),
-                    Notes = string.Empty,
-                    FSSubDownAmount = fsDownAmt,
-                    FSSubInterestAmount = fsInsAmt,
-                    FSFreeMBSPAmount = fsMbspAmt,
+                    SubsidyUsed = r.SubsidyUsedTHB.ToString("N0", CultureInfo.InvariantCulture),
+                    FSSubDown = r.FSSubDownTHB.ToString("N0", CultureInfo.InvariantCulture),
+                    FSSubInterest = r.FreeInsuranceTHB.ToString("N0", CultureInfo.InvariantCulture),
+                    FSFreeMBSP = r.FreeMBSPTHB.ToString("N0", CultureInfo.InvariantCulture),
+                    CashDiscount = r.CashDiscountTHB.ToString("N0", CultureInfo.InvariantCulture),
+                    RoRAC = r.AcquisitionRoRAC.ToString("0.00%"),
+                    Notes = string.IsNullOrWhiteSpace(r.ViabilityReason) ? (r.Notes ?? string.Empty) : r.ViabilityReason,
+                    FSSubDownAmount = r.FSSubDownTHB,
+                    FSSubInterestAmount = r.FreeInsuranceTHB,
+                    FSFreeMBSPAmount = r.FreeMBSPTHB,
                 };
-                temp.Add((vm, calcRes.Quote.MonthlyInstallment, calcRes.Quote.CustomerRateEffective));
+                temp.Add((vm, r.MonthlyInstallment, r.CustomerRateEffective));
             }
-
+ 
             foreach (var (vm, _, _) in temp.OrderBy(t => t.monthly).ThenBy(t => t.eff))
             {
                 StandardCampaigns.Add(vm);
@@ -280,12 +294,53 @@ public partial class MainViewModel : ObservableObject
         {
             Status = "Calculating...";
             var deal = BuildDealFromInputs();
+            
+            // Build IDC items list
+            var idcItems = new List<IdcItemDto>();
+            
+            // Add Dealer Commission IDC item
+            // ASSUMPTION: Dealer commission is categorized as "broker_commission" in backend
+            // TODO: Verify category name with backend team - expected values might be:
+            //       - "broker_commission", "dealer_commission", "commission", etc.
+            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            if (DealerCommissionResolvedAmt > 0)
+            {
+                idcItems.Add(new IdcItemDto
+                {
+                    Category = "broker_commission", // ⚠️ CRITICAL: Backend must recognize this category
+                    Amount = DealerCommissionResolvedAmt,
+                    Financed = true,        // ASSUMPTION: All IDC items are financed
+                    Timing = "upfront",     // ASSUMPTION: Commission is always upfront
+                    IsCost = true,          // ASSUMPTION: Commission is a cost, not revenue
+                    IsRevenue = false
+                });
+            }
+            
+            // Add IDC Other item
+            // ASSUMPTION: Other internal costs categorized as "internal_processing"
+            // TODO: Verify category name with backend team - expected values might be:
+            //       - "internal_processing", "processing_fee", "internal_cost", "other_idc", etc.
+            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            if (IdcOther > 0)
+            {
+                idcItems.Add(new IdcItemDto
+                {
+                    Category = "internal_processing", // ⚠️ CRITICAL: Backend must recognize this category
+                    Amount = IdcOther,
+                    Financed = true,        // ASSUMPTION: All IDC items are financed
+                    Timing = "upfront",     // ASSUMPTION: Processing costs are upfront
+                    IsCost = true,          // ASSUMPTION: Processing is a cost, not revenue
+                    IsRevenue = false
+                });
+            }
+            
             var req = new CalculationRequestDto
             {
                 Deal = deal,
                 Campaigns = new(),
-                IdcItems = new(),
+                IdcItems = idcItems,
                 Options = new() { ["derive_idc_from_cf"] = true },
+                ParameterSet = _cachedParameterSet // Pin to cached parameter set
             };
             var res = await _api.CalculateAsync(req);
             PopulateMetrics(res);
@@ -304,14 +359,72 @@ public partial class MainViewModel : ObservableObject
         {
             var active = ActiveCampaign;
             var deal = BuildDealFromInputs();
+            
+            // Build IDC items list
+            var idcItems = new List<IdcItemDto>();
+            
+            // Add Dealer Commission IDC item
+            // ASSUMPTION: Dealer commission is categorized as "broker_commission" in backend
+            // TODO: Verify category name with backend team - expected values might be:
+            //       - "broker_commission", "dealer_commission", "commission", etc.
+            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            if (DealerCommissionResolvedAmt > 0)
+            {
+                idcItems.Add(new IdcItemDto
+                {
+                    Category = "broker_commission", // ⚠️ CRITICAL: Backend must recognize this category
+                    Amount = DealerCommissionResolvedAmt,
+                    Financed = true,        // ASSUMPTION: All IDC items are financed
+                    Timing = "upfront",     // ASSUMPTION: Commission is always upfront
+                    IsCost = true,          // ASSUMPTION: Commission is a cost, not revenue
+                    IsRevenue = false
+                });
+            }
+            
+            // Add IDC Other item
+            // ASSUMPTION: Other internal costs categorized as "internal_processing"
+            // TODO: Verify category name with backend team - expected values might be:
+            //       - "internal_processing", "processing_fee", "internal_cost", "other_idc", etc.
+            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            if (IdcOther > 0)
+            {
+                idcItems.Add(new IdcItemDto
+                {
+                    Category = "internal_processing", // ⚠️ CRITICAL: Backend must recognize this category
+                    Amount = IdcOther,
+                    Financed = true,        // ASSUMPTION: All IDC items are financed
+                    Timing = "upfront",     // ASSUMPTION: Processing costs are upfront
+                    IsCost = true,          // ASSUMPTION: Processing is a cost, not revenue
+                    IsRevenue = false
+                });
+            }
+            
+            // Build campaigns list with parameters for My Campaigns
+            var campaigns = new List<CampaignDto>();
+            if (active != null)
+            {
+                var campaignDto = new CampaignDto
+                {
+                    Id = active.CampaignId,
+                    Type = active.CampaignType
+                };
+                
+                // Add parameters if this is a user-edited campaign from My Campaigns
+                if (IsMyCampaign(active))
+                {
+                    campaignDto.Parameters = BuildCampaignParameters(active);
+                }
+                
+                campaigns.Add(campaignDto);
+            }
+            
             var req = new CalculationRequestDto
             {
                 Deal = deal,
-                Campaigns = active != null
-                    ? new List<CampaignDto> { new CampaignDto { Id = active.CampaignId, Type = active.CampaignType } }
-                    : new List<CampaignDto>(),
-                IdcItems = new(),
+                Campaigns = campaigns,
+                IdcItems = idcItems,
                 Options = new() { ["derive_idc_from_cf"] = true },
+                ParameterSet = _cachedParameterSet // Pin to cached parameter set
             };
             var res = await _api.CalculateAsync(req);
             PopulateMetrics(res);
@@ -321,6 +434,72 @@ public partial class MainViewModel : ObservableObject
         {
             Status = $"Error: {ex.Message}";
         }
+    }
+
+    // MARK: Helper - Check if campaign is from My Campaigns
+    private bool IsMyCampaign(CampaignSummaryViewModel campaign)
+    {
+        // Check if the campaign exists in MyCampaigns collection
+        return MyCampaigns.Contains(campaign);
+    }
+
+    // MARK: Helper - Build campaign parameters based on type
+    // PURPOSE: Maps UI campaign values to backend API parameter keys for My Campaigns
+    // NOTE: Only applies to user-edited campaigns (My Campaigns), not standard catalog campaigns
+    private Dictionary<string, object> BuildCampaignParameters(CampaignSummaryViewModel campaign)
+    {
+        var parameters = new Dictionary<string, object>();
+        
+        var campaignType = campaign.CampaignType?.ToLowerInvariant() ?? "";
+        
+        // IMPORTANT: These parameter mappings are critical for campaign calculations
+        // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for complete mapping reference
+        switch (campaignType)
+        {
+            case "subdown":
+                if (campaign.FSSubDownAmount > 0)
+                {
+                    // TODO: Verify parameter key with backend team
+                    // Expected keys: "subsidy_amount", "subdown_amount", "down_payment_subsidy"
+                    parameters["subsidy_amount"] = campaign.FSSubDownAmount; // ⚠️ CRITICAL: Backend parameter name
+                }
+                break;
+                
+            case "free_insurance":
+                if (campaign.FSSubInterestAmount > 0)
+                {
+                    // TODO: Verify parameter key with backend team
+                    // Expected keys: "insurance_cost", "free_insurance_amount", "insurance_subsidy"
+                    parameters["insurance_cost"] = campaign.FSSubInterestAmount; // ⚠️ CRITICAL: Backend parameter name
+                }
+                break;
+                
+            case "free_mbsp":
+                // Use FSFreeMBSPAmount if available, otherwise fall back to IDC_MBSP_CostAmount
+                // ASSUMPTION: FSFreeMBSPAmount takes precedence over IDC_MBSP_CostAmount
+                var mbspCost = campaign.FSFreeMBSPAmount > 0 ? campaign.FSFreeMBSPAmount : campaign.IDC_MBSP_CostAmount;
+                if (mbspCost > 0)
+                {
+                    // TODO: Verify parameter key with backend team
+                    // Expected keys: "mbsp_cost", "free_mbsp_amount", "service_plan_subsidy"
+                    parameters["mbsp_cost"] = mbspCost; // ⚠️ CRITICAL: Backend parameter name
+                }
+                break;
+                
+            case "cash_discount":
+                if (campaign.CashDiscountAmount > 0)
+                {
+                    // TODO: Verify parameter key with backend team
+                    // Expected keys: "discount_amount", "cash_discount", "price_discount"
+                    parameters["discount_amount"] = campaign.CashDiscountAmount; // ⚠️ CRITICAL: Backend parameter name
+                }
+                break;
+                
+            // NOTE: Additional campaign types may need to be added here
+            // Contact backend team for complete list of supported campaign types
+        }
+        
+        return parameters;
     }
 
     private void PopulateMetrics(CalculationResponseDto res)
@@ -352,6 +531,51 @@ public string SubsidyRemainingText => Math.Max(0, SubsidyBudget - (_activeFsInsu
 public string IdcOtherText => IdcOther.ToString("N0", CultureInfo.InvariantCulture);
 public string IdcTotalText => (DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture);
 
+// MARK: Profitability Waterfall (for RoRAC details panel)
+private double _wfDealIRREffective;
+private double _wfDealIRRNominal;
+private double _wfCostOfDebtMatched;
+private double _wfMatchedFundedSpread;
+private double _wfGrossInterestMargin;
+private double _wfCapitalAdvantage;
+private double _wfNetInterestMargin;
+private double _wfCostOfCreditRisk;
+private double _wfOPEX;
+private double _wfIDCUpfront;
+private double _wfIDCPeriodic;
+private double _wfNetEBITMargin;
+private double _wfEconomicCapital;
+
+// MARK: Separated IDC/Subsidy fields
+private double _wfIDCUpfrontCostPct;
+private double _wfIDCPeriodicCostPct;
+private double _wfSubsidyUpfrontPct;
+private double _wfSubsidyPeriodicPct;
+
+// Percent formatting helper
+private static string Pct(double v) => v.ToString("0.00%", CultureInfo.InvariantCulture);
+
+// Exposed formatted texts
+public string WfDealIRREffectiveText => Pct(_wfDealIRREffective);
+public string WfDealIRRNominalText => Pct(_wfDealIRRNominal);
+public string WfCostOfDebtMatchedText => Pct(_wfCostOfDebtMatched);
+public string WfMatchedFundedSpreadText => Pct(_wfMatchedFundedSpread);
+public string WfGrossInterestMarginText => Pct(_wfGrossInterestMargin);
+public string WfCapitalAdvantageText => Pct(_wfCapitalAdvantage);
+public string WfNetInterestMarginText => Pct(_wfNetInterestMargin);
+public string WfCostOfCreditRiskText => Pct(_wfCostOfCreditRisk);
+public string WfOPEXText => Pct(_wfOPEX);
+public string WfIDCUpfrontText => Pct(_wfIDCUpfront);
+public string WfIDCPeriodicText => Pct(_wfIDCPeriodic);
+public string WfNetEBITMarginText => Pct(_wfNetEBITMargin);
+public string WfEconomicCapitalText => Pct(_wfEconomicCapital);
+
+// Exposed formatted texts for separated IDC/Subsidy fields
+public string WfIDCUpfrontCostPctText => Pct(_wfIDCUpfrontCostPct);
+public string WfIDCPeriodicCostPctText => Pct(_wfIDCPeriodicCostPct);
+public string WfSubsidyUpfrontPctText => Pct(_wfSubsidyUpfrontPct);
+public string WfSubsidyPeriodicPctText => Pct(_wfSubsidyPeriodicPct);
+
 private void RefreshProfitabilityDetails(CalculationResponseDto res)
 {
     var comps = ExtractAuditComponents(res.Quote.CampaignAudit);
@@ -359,10 +583,91 @@ private void RefreshProfitabilityDetails(CalculationResponseDto res)
     _activeFsMbsp = Math.Max(0, comps.mbsp);
     _activeCashDiscount = comps.cashDiscount;
 
+    // Update waterfall fields if available
+    var p = res.Quote?.Profitability;
+    if (p != null)
+    {
+        _wfDealIRREffective    = p.DealIRREffective;
+        _wfDealIRRNominal      = p.DealIRRNominal;
+        _wfCostOfDebtMatched   = p.CostOfDebtMatched;
+        _wfMatchedFundedSpread = p.MatchedFundedSpread;
+        _wfGrossInterestMargin = p.GrossInterestMargin;
+        _wfCapitalAdvantage    = p.CapitalAdvantage;
+        _wfNetInterestMargin   = p.NetInterestMargin;
+        _wfCostOfCreditRisk    = p.CostOfCreditRisk;
+        _wfOPEX                = p.OPEX;
+        _wfIDCUpfront          = p.IDCSubsidiesFeesUpfront;
+        _wfIDCPeriodic         = p.IDCSubsidiesFeesPeriodic;
+        _wfNetEBITMargin       = p.NetEBITMargin;
+        _wfEconomicCapital     = p.EconomicCapital;
+        
+        // Populate separated IDC/Subsidy fields with null safety
+        _wfIDCUpfrontCostPct   = p.IDCUpfrontCostPct ?? 0;
+        _wfIDCPeriodicCostPct  = p.IDCPeriodicCostPct ?? 0;
+        _wfSubsidyUpfrontPct   = p.SubsidyUpfrontPct ?? 0;
+        _wfSubsidyPeriodicPct  = p.SubsidyPeriodicPct ?? 0;
+    }
+    else
+    {
+        _wfDealIRREffective = _wfDealIRRNominal = _wfCostOfDebtMatched = _wfMatchedFundedSpread =
+        _wfGrossInterestMargin = _wfCapitalAdvantage = _wfNetInterestMargin =
+        _wfCostOfCreditRisk = _wfOPEX = _wfIDCUpfront = _wfIDCPeriodic =
+        _wfNetEBITMargin = _wfEconomicCapital = 0;
+        
+        // Reset separated fields
+        _wfIDCUpfrontCostPct = _wfIDCPeriodicCostPct = _wfSubsidyUpfrontPct = _wfSubsidyPeriodicPct = 0;
+    }
+
+    // Notify UI
     OnPropertyChanged(nameof(ActiveFsInsuranceText));
     OnPropertyChanged(nameof(ActiveFsMbspText));
     OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
     OnPropertyChanged(nameof(SubsidyRemainingText));
+    OnPropertyChanged(nameof(IdcOtherText));
+    OnPropertyChanged(nameof(IdcTotalText));
+
+    OnPropertyChanged(nameof(WfDealIRREffectiveText));
+    OnPropertyChanged(nameof(WfDealIRRNominalText));
+    OnPropertyChanged(nameof(WfCostOfDebtMatchedText));
+    OnPropertyChanged(nameof(WfMatchedFundedSpreadText));
+    OnPropertyChanged(nameof(WfGrossInterestMarginText));
+    OnPropertyChanged(nameof(WfCapitalAdvantageText));
+    OnPropertyChanged(nameof(WfNetInterestMarginText));
+    OnPropertyChanged(nameof(WfCostOfCreditRiskText));
+    OnPropertyChanged(nameof(WfOPEXText));
+    OnPropertyChanged(nameof(WfIDCUpfrontText));
+    OnPropertyChanged(nameof(WfIDCPeriodicText));
+    OnPropertyChanged(nameof(WfNetEBITMarginText));
+    OnPropertyChanged(nameof(WfEconomicCapitalText));
+    
+    // Notify UI for separated IDC/Subsidy fields
+    OnPropertyChanged(nameof(WfIDCUpfrontCostPctText));
+    OnPropertyChanged(nameof(WfIDCPeriodicCostPctText));
+    OnPropertyChanged(nameof(WfSubsidyUpfrontPctText));
+    OnPropertyChanged(nameof(WfSubsidyPeriodicPctText));
+}
+
+// MARK: View Cashflows
+[RelayCommand]
+private async Task ViewCashflowsAsync()
+{
+    try
+    {
+        // This will be handled by the view (MainWindow) to show a dialog
+        // The Cashflows collection is already populated via RefreshActiveSelectionAsync
+        if (ActiveCampaign == null)
+        {
+            Status = "No campaign selected";
+            return;
+        }
+        
+        // Trigger refresh to ensure cashflows are current
+        await RefreshActiveSelectionAsync();
+    }
+    catch (Exception ex)
+    {
+        Status = $"Error loading cashflows: {ex.Message}";
+    }
 }
 
 // MARK: Export - lightweight Excel-friendly CSV (saved as .xlsx for user flow)
@@ -385,6 +690,9 @@ private async Task ExportXlsxAsync()
             Options = new() { ["derive_idc_from_cf"] = true },
         };
         var res = await _api.CalculateAsync(req);
+        
+        // Refresh profitability details to ensure we have the latest separated values
+        RefreshProfitabilityDetails(res);
 
         var sb = new System.Text.StringBuilder();
         sb.AppendLine("Deal Summary");
@@ -399,6 +707,33 @@ private async Task ExportXlsxAsync()
         sb.AppendLine($"IDC - Other (THB),{IdcOther.ToString("N0", CultureInfo.InvariantCulture)}");
         sb.AppendLine($"IDC Total (THB),{(DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture)}");
         sb.AppendLine();
+        
+        // Add Profitability Details section with separated IDC/Subsidy values
+        sb.AppendLine("Profitability Details");
+        sb.AppendLine("Metric,Value");
+        sb.AppendLine($"Deal IRR Effective,{_wfDealIRREffective.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Deal IRR Nominal,{_wfDealIRRNominal.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Cost of Debt Matched,{_wfCostOfDebtMatched.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Matched Funded Spread,{_wfMatchedFundedSpread.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Gross Interest Margin,{_wfGrossInterestMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Capital Advantage,{_wfCapitalAdvantage.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Net Interest Margin,{_wfNetInterestMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Cost of Credit Risk,{_wfCostOfCreditRisk.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"OPEX,{_wfOPEX.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Net IDC+Subsidies Upfront,{_wfIDCUpfront.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Net IDC+Subsidies Periodic,{_wfIDCPeriodic.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Net EBIT Margin,{_wfNetEBITMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Economic Capital,{_wfEconomicCapital.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine();
+        
+        // Add separated IDC/Subsidy values with visual separation
+        sb.AppendLine("Separated Values:");
+        sb.AppendLine($"IDC Upfront Cost %,{_wfIDCUpfrontCostPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"IDC Periodic Cost %,{_wfIDCPeriodicCostPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Subsidy Upfront %,{_wfSubsidyUpfrontPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Subsidy Periodic %,{_wfSubsidyPeriodicPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
+        sb.AppendLine();
+        
         sb.AppendLine("Cashflow Schedule");
         sb.AppendLine("Period,Principal,Interest,Fees,Balance,Cashflow");
         foreach (var r in res.Schedule)
