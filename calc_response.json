@@ -1,0 +1,1013 @@
+{
+    "quote": {
+        "deal_id": "DEAL-1759761946",
+        "parameter_set_id": "2025-08",
+        "calculated_at": "2025-10-06T21:45:46.8338347+07:00",
+        "monthly_installment": "20120",
+        "customer_rate_nominal": "0.035",
+        "customer_rate_effective": "0.0356",
+        "schedule": [
+            {
+                "date": "0001-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 1 of 48",
+                "principal": "17495",
+                "interest": "2625",
+                "balance": "882505"
+            },
+            {
+                "date": "0001-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 2 of 48",
+                "principal": "17546",
+                "interest": "2574",
+                "balance": "864959"
+            },
+            {
+                "date": "0001-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 3 of 48",
+                "principal": "17597",
+                "interest": "2523",
+                "balance": "847362"
+            },
+            {
+                "date": "0001-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 4 of 48",
+                "principal": "17649",
+                "interest": "2471",
+                "balance": "829713"
+            },
+            {
+                "date": "0001-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 5 of 48",
+                "principal": "17700",
+                "interest": "2420",
+                "balance": "812013"
+            },
+            {
+                "date": "0001-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 6 of 48",
+                "principal": "17752",
+                "interest": "2368",
+                "balance": "794261"
+            },
+            {
+                "date": "0001-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 7 of 48",
+                "principal": "17803",
+                "interest": "2317",
+                "balance": "776458"
+            },
+            {
+                "date": "0001-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 8 of 48",
+                "principal": "17855",
+                "interest": "2265",
+                "balance": "758603"
+            },
+            {
+                "date": "0001-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 9 of 48",
+                "principal": "17907",
+                "interest": "2213",
+                "balance": "740696"
+            },
+            {
+                "date": "0001-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 10 of 48",
+                "principal": "17960",
+                "interest": "2160",
+                "balance": "722736"
+            },
+            {
+                "date": "0001-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 11 of 48",
+                "principal": "18012",
+                "interest": "2108",
+                "balance": "704724"
+            },
+            {
+                "date": "0002-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 12 of 48",
+                "principal": "18065",
+                "interest": "2055",
+                "balance": "686659"
+            },
+            {
+                "date": "0002-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 13 of 48",
+                "principal": "18117",
+                "interest": "2003",
+                "balance": "668542"
+            },
+            {
+                "date": "0002-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 14 of 48",
+                "principal": "18170",
+                "interest": "1950",
+                "balance": "650372"
+            },
+            {
+                "date": "0002-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 15 of 48",
+                "principal": "18223",
+                "interest": "1897",
+                "balance": "632149"
+            },
+            {
+                "date": "0002-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 16 of 48",
+                "principal": "18276",
+                "interest": "1844",
+                "balance": "613873"
+            },
+            {
+                "date": "0002-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 17 of 48",
+                "principal": "18330",
+                "interest": "1790",
+                "balance": "595543"
+            },
+            {
+                "date": "0002-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 18 of 48",
+                "principal": "18383",
+                "interest": "1737",
+                "balance": "577160"
+            },
+            {
+                "date": "0002-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 19 of 48",
+                "principal": "18437",
+                "interest": "1683",
+                "balance": "558723"
+            },
+            {
+                "date": "0002-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 20 of 48",
+                "principal": "18490",
+                "interest": "1630",
+                "balance": "540233"
+            },
+            {
+                "date": "0002-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 21 of 48",
+                "principal": "18544",
+                "interest": "1576",
+                "balance": "521689"
+            },
+            {
+                "date": "0002-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 22 of 48",
+                "principal": "18598",
+                "interest": "1522",
+                "balance": "503091"
+            },
+            {
+                "date": "0002-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 23 of 48",
+                "principal": "18653",
+                "interest": "1467",
+                "balance": "484438"
+            },
+            {
+                "date": "0003-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 24 of 48",
+                "principal": "18707",
+                "interest": "1413",
+                "balance": "465731"
+            },
+            {
+                "date": "0003-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 25 of 48",
+                "principal": "18762",
+                "interest": "1358",
+                "balance": "446969"
+            },
+            {
+                "date": "0003-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 26 of 48",
+                "principal": "18816",
+                "interest": "1304",
+                "balance": "428153"
+            },
+            {
+                "date": "0003-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 27 of 48",
+                "principal": "18871",
+                "interest": "1249",
+                "balance": "409282"
+            },
+            {
+                "date": "0003-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 28 of 48",
+                "principal": "18926",
+                "interest": "1194",
+                "balance": "390356"
+            },
+            {
+                "date": "0003-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 29 of 48",
+                "principal": "18981",
+                "interest": "1139",
+                "balance": "371375"
+            },
+            {
+                "date": "0003-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 30 of 48",
+                "principal": "19037",
+                "interest": "1083",
+                "balance": "352338"
+            },
+            {
+                "date": "0003-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 31 of 48",
+                "principal": "19092",
+                "interest": "1028",
+                "balance": "333246"
+            },
+            {
+                "date": "0003-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 32 of 48",
+                "principal": "19148",
+                "interest": "972",
+                "balance": "314098"
+            },
+            {
+                "date": "0003-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 33 of 48",
+                "principal": "19204",
+                "interest": "916",
+                "balance": "294894"
+            },
+            {
+                "date": "0003-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 34 of 48",
+                "principal": "19260",
+                "interest": "860",
+                "balance": "275634"
+            },
+            {
+                "date": "0003-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 35 of 48",
+                "principal": "19316",
+                "interest": "804",
+                "balance": "256318"
+            },
+            {
+                "date": "0004-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 36 of 48",
+                "principal": "19372",
+                "interest": "748",
+                "balance": "236946"
+            },
+            {
+                "date": "0004-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 37 of 48",
+                "principal": "19429",
+                "interest": "691",
+                "balance": "217517"
+            },
+            {
+                "date": "0004-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 38 of 48",
+                "principal": "19486",
+                "interest": "634",
+                "balance": "198031"
+            },
+            {
+                "date": "0004-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 39 of 48",
+                "principal": "19542",
+                "interest": "578",
+                "balance": "178489"
+            },
+            {
+                "date": "0004-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 40 of 48",
+                "principal": "19599",
+                "interest": "521",
+                "balance": "158890"
+            },
+            {
+                "date": "0004-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 41 of 48",
+                "principal": "19657",
+                "interest": "463",
+                "balance": "139233"
+            },
+            {
+                "date": "0004-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 42 of 48",
+                "principal": "19714",
+                "interest": "406",
+                "balance": "119519"
+            },
+            {
+                "date": "0004-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 43 of 48",
+                "principal": "19771",
+                "interest": "349",
+                "balance": "99748"
+            },
+            {
+                "date": "0004-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 44 of 48",
+                "principal": "19829",
+                "interest": "291",
+                "balance": "79919"
+            },
+            {
+                "date": "0004-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 45 of 48",
+                "principal": "19887",
+                "interest": "233",
+                "balance": "60032"
+            },
+            {
+                "date": "0004-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 46 of 48",
+                "principal": "19945",
+                "interest": "175",
+                "balance": "40087"
+            },
+            {
+                "date": "0004-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 47 of 48",
+                "principal": "20003",
+                "interest": "117",
+                "balance": "20084"
+            },
+            {
+                "date": "0005-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20143",
+                "memo": "Payment 48 of 48",
+                "principal": "20084",
+                "interest": "59",
+                "balance": "0"
+            }
+        ],
+        "cashflows": [
+            {
+                "date": "0001-01-01T00:00:00Z",
+                "direction": "out",
+                "type": "disbursement",
+                "amount": "900000",
+                "memo": "Dealer disbursement",
+                "principal": "0",
+                "interest": "0",
+                "balance": "0"
+            },
+            {
+                "date": "0001-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 1 of 48",
+                "principal": "17495",
+                "interest": "2625",
+                "balance": "882505"
+            },
+            {
+                "date": "0001-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 2 of 48",
+                "principal": "17546",
+                "interest": "2574",
+                "balance": "864959"
+            },
+            {
+                "date": "0001-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 3 of 48",
+                "principal": "17597",
+                "interest": "2523",
+                "balance": "847362"
+            },
+            {
+                "date": "0001-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 4 of 48",
+                "principal": "17649",
+                "interest": "2471",
+                "balance": "829713"
+            },
+            {
+                "date": "0001-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 5 of 48",
+                "principal": "17700",
+                "interest": "2420",
+                "balance": "812013"
+            },
+            {
+                "date": "0001-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 6 of 48",
+                "principal": "17752",
+                "interest": "2368",
+                "balance": "794261"
+            },
+            {
+                "date": "0001-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 7 of 48",
+                "principal": "17803",
+                "interest": "2317",
+                "balance": "776458"
+            },
+            {
+                "date": "0001-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 8 of 48",
+                "principal": "17855",
+                "interest": "2265",
+                "balance": "758603"
+            },
+            {
+                "date": "0001-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 9 of 48",
+                "principal": "17907",
+                "interest": "2213",
+                "balance": "740696"
+            },
+            {
+                "date": "0001-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 10 of 48",
+                "principal": "17960",
+                "interest": "2160",
+                "balance": "722736"
+            },
+            {
+                "date": "0001-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 11 of 48",
+                "principal": "18012",
+                "interest": "2108",
+                "balance": "704724"
+            },
+            {
+                "date": "0002-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 12 of 48",
+                "principal": "18065",
+                "interest": "2055",
+                "balance": "686659"
+            },
+            {
+                "date": "0002-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 13 of 48",
+                "principal": "18117",
+                "interest": "2003",
+                "balance": "668542"
+            },
+            {
+                "date": "0002-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 14 of 48",
+                "principal": "18170",
+                "interest": "1950",
+                "balance": "650372"
+            },
+            {
+                "date": "0002-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 15 of 48",
+                "principal": "18223",
+                "interest": "1897",
+                "balance": "632149"
+            },
+            {
+                "date": "0002-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 16 of 48",
+                "principal": "18276",
+                "interest": "1844",
+                "balance": "613873"
+            },
+            {
+                "date": "0002-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 17 of 48",
+                "principal": "18330",
+                "interest": "1790",
+                "balance": "595543"
+            },
+            {
+                "date": "0002-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 18 of 48",
+                "principal": "18383",
+                "interest": "1737",
+                "balance": "577160"
+            },
+            {
+                "date": "0002-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 19 of 48",
+                "principal": "18437",
+                "interest": "1683",
+                "balance": "558723"
+            },
+            {
+                "date": "0002-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 20 of 48",
+                "principal": "18490",
+                "interest": "1630",
+                "balance": "540233"
+            },
+            {
+                "date": "0002-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 21 of 48",
+                "principal": "18544",
+                "interest": "1576",
+                "balance": "521689"
+            },
+            {
+                "date": "0002-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 22 of 48",
+                "principal": "18598",
+                "interest": "1522",
+                "balance": "503091"
+            },
+            {
+                "date": "0002-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 23 of 48",
+                "principal": "18653",
+                "interest": "1467",
+                "balance": "484438"
+            },
+            {
+                "date": "0003-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 24 of 48",
+                "principal": "18707",
+                "interest": "1413",
+                "balance": "465731"
+            },
+            {
+                "date": "0003-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 25 of 48",
+                "principal": "18762",
+                "interest": "1358",
+                "balance": "446969"
+            },
+            {
+                "date": "0003-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 26 of 48",
+                "principal": "18816",
+                "interest": "1304",
+                "balance": "428153"
+            },
+            {
+                "date": "0003-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 27 of 48",
+                "principal": "18871",
+                "interest": "1249",
+                "balance": "409282"
+            },
+            {
+                "date": "0003-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 28 of 48",
+                "principal": "18926",
+                "interest": "1194",
+                "balance": "390356"
+            },
+            {
+                "date": "0003-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 29 of 48",
+                "principal": "18981",
+                "interest": "1139",
+                "balance": "371375"
+            },
+            {
+                "date": "0003-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 30 of 48",
+                "principal": "19037",
+                "interest": "1083",
+                "balance": "352338"
+            },
+            {
+                "date": "0003-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 31 of 48",
+                "principal": "19092",
+                "interest": "1028",
+                "balance": "333246"
+            },
+            {
+                "date": "0003-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 32 of 48",
+                "principal": "19148",
+                "interest": "972",
+                "balance": "314098"
+            },
+            {
+                "date": "0003-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 33 of 48",
+                "principal": "19204",
+                "interest": "916",
+                "balance": "294894"
+            },
+            {
+                "date": "0003-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 34 of 48",
+                "principal": "19260",
+                "interest": "860",
+                "balance": "275634"
+            },
+            {
+                "date": "0003-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 35 of 48",
+                "principal": "19316",
+                "interest": "804",
+                "balance": "256318"
+            },
+            {
+                "date": "0004-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 36 of 48",
+                "principal": "19372",
+                "interest": "748",
+                "balance": "236946"
+            },
+            {
+                "date": "0004-02-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 37 of 48",
+                "principal": "19429",
+                "interest": "691",
+                "balance": "217517"
+            },
+            {
+                "date": "0004-03-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 38 of 48",
+                "principal": "19486",
+                "interest": "634",
+                "balance": "198031"
+            },
+            {
+                "date": "0004-04-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 39 of 48",
+                "principal": "19542",
+                "interest": "578",
+                "balance": "178489"
+            },
+            {
+                "date": "0004-05-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 40 of 48",
+                "principal": "19599",
+                "interest": "521",
+                "balance": "158890"
+            },
+            {
+                "date": "0004-06-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 41 of 48",
+                "principal": "19657",
+                "interest": "463",
+                "balance": "139233"
+            },
+            {
+                "date": "0004-07-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 42 of 48",
+                "principal": "19714",
+                "interest": "406",
+                "balance": "119519"
+            },
+            {
+                "date": "0004-08-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 43 of 48",
+                "principal": "19771",
+                "interest": "349",
+                "balance": "99748"
+            },
+            {
+                "date": "0004-09-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 44 of 48",
+                "principal": "19829",
+                "interest": "291",
+                "balance": "79919"
+            },
+            {
+                "date": "0004-10-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 45 of 48",
+                "principal": "19887",
+                "interest": "233",
+                "balance": "60032"
+            },
+            {
+                "date": "0004-11-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 46 of 48",
+                "principal": "19945",
+                "interest": "175",
+                "balance": "40087"
+            },
+            {
+                "date": "0004-12-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20120",
+                "memo": "Payment 47 of 48",
+                "principal": "20003",
+                "interest": "117",
+                "balance": "20084"
+            },
+            {
+                "date": "0005-01-01T00:00:00Z",
+                "direction": "in",
+                "type": "principal",
+                "amount": "20143",
+                "memo": "Payment 48 of 48",
+                "principal": "20084",
+                "interest": "59",
+                "balance": "0"
+            }
+        ],
+        "profitability": {
+            "deal_irr_effective": "0.0354",
+            "deal_irr_nominal": "0.0348",
+            "cost_of_debt_matched": "0.0185",
+            "matched_funded_spread": "0.0025",
+            "gross_interest_margin": "0.0138",
+            "capital_advantage": "0.0014",
+            "net_interest_margin": "0.0152",
+            "cost_of_credit_risk": "0.0025",
+            "opex": "0.0068",
+            "idc_upfront_cost_pct": "0",
+            "idc_periodic_cost_pct": "0",
+            "subsidy_upfront_pct": "0",
+            "subsidy_periodic_pct": "0",
+            "idc_subsidies_fees_upfront": "0",
+            "idc_subsidies_fees_periodic": "0",
+            "net_ebit_margin": "0.0044",
+            "economic_capital": "0.088",
+            "acquisition_rorac": "0.0504"
+        },
+        "campaign_audit": []
+    },
+    "success": true,
+    "metadata": {
+        "calculation_time_ms": 24,
+        "engine_version": "1.0.0",
+        "parameter_set_version": "2025-08"
+    },
+    "input_hash": "abd7956f820d13a1c4853da82c40d4094d32bf2d36ddff6a140891cf7ba38ebf",
+    "output_hash": "9958b20b4907f7f90550e7ec8bac06c1328273f546b68fa681db6289fe5b91a9"
+}

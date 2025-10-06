@@ -9,7 +9,7 @@ namespace FinancialCalculator.WinUI3.Services
 {
     public static class BackendLauncher
     {
-        public static async Task<(Process? process, string baseUrl)> TryStartAsync(int port = 8223, CancellationToken ct = default)
+        public static async Task<(Process? process, string baseUrl)> TryStartAsync(int port = 8123, CancellationToken ct = default)
         {
             string exePath = Path.Combine(AppContext.BaseDirectory, "fc-svc.exe");
             string baseUrl = $"http://127.0.0.1:{port}/";

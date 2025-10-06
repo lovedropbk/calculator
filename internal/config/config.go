@@ -15,7 +15,7 @@ type Config struct {
 func FromEnv() Config {
 	port := os.Getenv("FC_SVC_PORT")
 	if port == "" {
-		port = "8223"
+		port = "8123"
 	}
 	return Config{
 		Port:          port,

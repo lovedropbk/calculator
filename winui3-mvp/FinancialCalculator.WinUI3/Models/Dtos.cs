@@ -67,6 +67,9 @@ namespace FinancialCalculator.WinUI3.Models
     {
         [JsonPropertyName("dealerCommission")] public DealerCommissionDto dealerCommission { get; set; } = new();
         [JsonPropertyName("idcOther")] public IDCOtherDto idcOther { get; set; } = new();
+
+        // Budget provided by UI for viability checks (THB)
+        [JsonPropertyName("budgetTHB")] public double budgetTHB { get; set; }
     }
 
     public class DealerCommissionDto
@@ -85,10 +88,31 @@ namespace FinancialCalculator.WinUI3.Models
 
     public class CampaignSummaryDto
     {
+        // Identity
         [JsonPropertyName("campaign_id")] public string CampaignId { get; set; } = "";
         [JsonPropertyName("campaign_type")] public string CampaignType { get; set; } = "";
+
+        // Dealer commission (policy/override resolved)
         [JsonPropertyName("dealerCommissionAmt")] public double DealerCommissionAmt { get; set; }
         [JsonPropertyName("dealerCommissionPct")] public double DealerCommissionPct { get; set; }
+
+        // Enriched KPI fields for grid
+        [JsonPropertyName("monthlyInstallment")] public double MonthlyInstallment { get; set; }
+        [JsonPropertyName("customerRateNominal")] public double CustomerRateNominal { get; set; }
+        [JsonPropertyName("customerRateEffective")] public double CustomerRateEffective { get; set; }
+        [JsonPropertyName("acquisitionRoRAC")] public double AcquisitionRoRAC { get; set; }
+
+        // Subsidy components (THB)
+        [JsonPropertyName("fsSubDownTHB")] public double FSSubDownTHB { get; set; }
+        [JsonPropertyName("freeInsuranceTHB")] public double FreeInsuranceTHB { get; set; }
+        [JsonPropertyName("freeMBSPTHB")] public double FreeMBSPTHB { get; set; }
+        [JsonPropertyName("cashDiscountTHB")] public double CashDiscountTHB { get; set; }
+        [JsonPropertyName("subsidyUsedTHB")] public double SubsidyUsedTHB { get; set; }
+
+        // Viability and notes
+        [JsonPropertyName("viable")] public bool Viable { get; set; }
+        [JsonPropertyName("viabilityReason")] public string? ViabilityReason { get; set; }
+        [JsonPropertyName("notes")] public string? Notes { get; set; }
     }
 
     public class CalculationResponseDto
@@ -119,6 +143,33 @@ namespace FinancialCalculator.WinUI3.Models
 
     public class ProfitabilityDto
     {
+        // Waterfall breakdown fields (fractions for rates, e.g., 0.0123 = 1.23%)
+        public double DealIRREffective { get; set; }
+        public double DealIRRNominal { get; set; }
+        public double CostOfDebtMatched { get; set; }
+        public double MatchedFundedSpread { get; set; }
+        public double GrossInterestMargin { get; set; }
+        public double CapitalAdvantage { get; set; }
+        public double NetInterestMargin { get; set; }
+        public double CostOfCreditRisk { get; set; }
+        public double OPEX { get; set; }
+
+        // Net IDC/Subsidy combined (as provided by current engine contract)
+        public double IDCSubsidiesFeesUpfront { get; set; }
+        public double IDCSubsidiesFeesPeriodic { get; set; }
+
+        // Separated IDC and Subsidy fields for enhanced visibility
+        // These are nullable with default 0 for backward compatibility
+        public double? IDCUpfrontCostPct { get; set; } = 0;
+        public double? IDCPeriodicCostPct { get; set; } = 0;
+        public double? SubsidyUpfrontPct { get; set; } = 0;
+        public double? SubsidyPeriodicPct { get; set; } = 0;
+
+        // Final margins and ratios
+        public double NetEBITMargin { get; set; }
+        public double EconomicCapital { get; set; }
+
+        // Acquisition RoRAC
         public double AcquisitionRoRAC { get; set; }
     }
 

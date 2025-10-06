@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "led8/unohUU=",
+  "dgSpecHash": "mX652q6HWTk=",
   "success": true,
   "projectFilePath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,9 @@
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.buildtools\\10.0.22621.756\\microsoft.windows.sdk.buildtools.10.0.22621.756.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windowsappsdk\\1.6.241106002\\microsoft.windowsappsdk.1.6.241106002.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
+    "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.17\\microsoft.netcore.app.runtime.win-x64.8.0.17.nupkg.sha512",
+    "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.17\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.17.nupkg.sha512",
+    "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.17\\microsoft.aspnetcore.app.runtime.win-x64.8.0.17.nupkg.sha512",
     "C:\\Users\\PATKRAN\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.57\\microsoft.windows.sdk.net.ref.10.0.22621.57.nupkg.sha512"
   ],
   "logs": []

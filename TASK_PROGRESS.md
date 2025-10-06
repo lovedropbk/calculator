@@ -102,8 +102,10 @@ Next Milestones (per docs/authoritative-ui-sot.md)
 - Package as MSIX for easier distribution
 
 Session updates:
-- Fixed linting/IDE analyzer errors by guarding InitializeComponent via reflection for App and MainWindow, and by setting DataContext via Window.Content fallback (avoids Root symbol in tooling-only contexts).
-- Implemented Standard + My grids with CommunityToolkit DataGrid; identical columns & widths; user resize/reorder enabled; double-click resets; no persistence.
+- Converted Subsidy, IDCs & Rate into the single Deal Inputs section (left tile) per SOT; removed separate header/tile.
+- Enforced left alignment and consistent widths resources (Unit/Input/Value area) for perfect row alignment.
+- Added DecimalFormatter resources to support thousands separators for Price, Down payment, Subsidy budget, IDC Other (via NumberBox).
+- Implemented Standard + My grids with CommunityToolkit DataGrid; identical columns & widths; user resize/reorder enabled; no persistence.
 - Implemented Commission unified input (auto | % | THB) with live pill.
 - Replaced Rate Mode ComboBox with RadioButtons; emphasized Recalculate; added unified validation area.
 - Auto-recalc wired across Deal Inputs, Commission, Rate Mode, selections, and My Campaign property changes; refreshes metrics and cashflows.
@@ -116,3 +118,10 @@ Final Status
 ✅ Ready for user testing and feedback.
 
 Checkpoint: Final - Iteration 55
+
+Hotfix - Iteration 56 (2025-10-03)
+- Pinned CommunityToolkit WinUI DataGrid to 7.1.2 (highest available on NuGet).
+- Updated: winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj
+  <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+- Verified XAML namespace updated to: xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"; no other code changes required.
+- Next: dotnet restore/build to confirm package resolves cleanly in your environment.
