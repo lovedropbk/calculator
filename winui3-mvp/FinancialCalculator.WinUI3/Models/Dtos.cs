@@ -58,32 +58,32 @@ namespace FinancialCalculator.WinUI3.Models
 
     public class CampaignSummariesRequestDto
     {
-        [JsonPropertyName("deal")] public DealDto deal { get; set; } = new();
-        [JsonPropertyName("state")] public DealStateDto state { get; set; } = new();
-        [JsonPropertyName("campaigns")] public List<CampaignDto> campaigns { get; set; } = new();
+        [JsonPropertyName("deal")] public DealDto Deal { get; set; } = new();
+        [JsonPropertyName("state")] public DealStateDto State { get; set; } = new();
+        [JsonPropertyName("campaigns")] public List<CampaignDto> Campaigns { get; set; } = new();
     }
 
     public class DealStateDto
     {
-        [JsonPropertyName("dealerCommission")] public DealerCommissionDto dealerCommission { get; set; } = new();
-        [JsonPropertyName("idcOther")] public IDCOtherDto idcOther { get; set; } = new();
+        [JsonPropertyName("dealerCommission")] public DealerCommissionDto DealerCommission { get; set; } = new();
+        [JsonPropertyName("idcOther")] public IDCOtherDto IdcOther { get; set; } = new();
 
         // Budget provided by UI for viability checks (THB)
-        [JsonPropertyName("budgetTHB")] public double budgetTHB { get; set; }
+        [JsonPropertyName("budgetTHB")] public double BudgetTHB { get; set; }
     }
 
     public class DealerCommissionDto
     {
-        [JsonPropertyName("mode")] public string mode { get; set; } = "auto"; // auto|override
-        [JsonPropertyName("pct")] public double? pct { get; set; }
-        [JsonPropertyName("amt")] public double? amt { get; set; }
-        [JsonPropertyName("resolvedAmt")] public double resolvedAmt { get; set; }
+        [JsonPropertyName("mode")] public string Mode { get; set; } = "auto"; // auto|override
+        [JsonPropertyName("pct")] public double? Pct { get; set; }
+        [JsonPropertyName("amt")] public double? Amt { get; set; }
+        [JsonPropertyName("resolvedAmt")] public double ResolvedAmt { get; set; }
     }
 
     public class IDCOtherDto
     {
-        [JsonPropertyName("value")] public double value { get; set; }
-        [JsonPropertyName("userEdited")] public bool userEdited { get; set; }
+        [JsonPropertyName("value")] public double Value { get; set; }
+        [JsonPropertyName("userEdited")] public bool UserEdited { get; set; }
     }
 
     public class CampaignSummaryDto
