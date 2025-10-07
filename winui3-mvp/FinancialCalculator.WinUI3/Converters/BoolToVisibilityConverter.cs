@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace FinancialCalculator.WinUI3.Converters
 {
-    public sealed class BoolToVisibilityConverter : IValueConverter
+    public sealed partial class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

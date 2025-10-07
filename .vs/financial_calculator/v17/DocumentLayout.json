@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|c:\\users\\patkran\\python\\07_controlling\\financial_calculator\\winui3-mvp\\financialcalculator.winui3\\styles\\responsivestyles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|solutionrelative:winui3-mvp\\financialcalculator.winui3\\styles\\responsivestyles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|c:\\users\\patkran\\python\\07_controlling\\financial_calculator\\winui3-mvp\\financialcalculator.winui3\\styles\\defaultstyles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|solutionrelative:winui3-mvp\\financialcalculator.winui3\\styles\\defaultstyles.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|c:\\users\\patkran\\python\\07_controlling\\financial_calculator\\winui3-mvp\\financialcalculator.winui3\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|solutionrelative:winui3-mvp\\financialcalculator.winui3\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|c:\\users\\patkran\\python\\07_controlling\\financial_calculator\\winui3-mvp\\financialcalculator.winui3\\financialcalculator.winui3.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|solutionrelative:winui3-mvp\\financialcalculator.winui3\\financialcalculator.winui3.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -13,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\App.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\App.g.i.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|c:\\users\\patkran\\python\\07_controlling\\financial_calculator\\winui3-mvp\\financialcalculator.winui3\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}|winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj|solutionrelative:winui3-mvp\\financialcalculator.winui3\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,11 +34,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ResponsiveStyles.xaml",
+              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
+              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
+              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
+              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAAwFQAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-07T09:40:04.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "DefaultStyles.xaml",
+              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
+              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
+              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
+              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
+              "ViewState": "AgIAAM8AAAAAAAAAAAAlwOEAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-07T09:32:02.895Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "MainWindow.g.i.cs",
               "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\MainWindow.g.i.cs",
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\MainWindow.g.i.cs",
@@ -38,12 +72,11 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\MainWindow.g.i.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAD4vxsAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T06:37:18.601Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-03T06:37:18.601Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "App.g.i.cs",
               "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\App.g.i.cs",
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\App.g.i.cs",
@@ -51,24 +84,24 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.22621.0\\win-x64\\App.g.i.cs",
               "ViewState": "AgIAABwAAAAAAAAAAAArwCkAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-02T14:26:12.492Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-02T14:26:12.492Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-02T12:33:31.063Z"
+              "WhenOpened": "2025-10-02T12:33:31.063Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "FinancialCalculator.WinUI3.csproj",
               "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
@@ -76,8 +109,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\FinancialCalculator.WinUI3.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-10-02T11:09:37.214Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-02T11:09:37.214Z"
             }
           ]
         }
