@@ -7,16 +7,42 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Title="Financial Calculator Pro">
 
-    <!-- MARK: Root TabView -->
-    <TabView x:ConnectionId='2' x:Name="MainTabView" TabWidthMode="Equal" IsAddTabButtonVisible="False" CanDragTabs="False" CanReorderTabs="False"
-             VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        
-        <!-- MARK: Main Tab -->
-        <TabView.TabItems>
-            <TabViewItem Header="Main" IsClosable="False">
-                <Grid x:ConnectionId='4' x:Name="LayoutRoot" Background="Transparent">
+    <Grid>
+        <!-- InfoBar for notifications -->
+        <muxc:InfoBar x:ConnectionId='2' x:Name="NotificationBar"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Stretch"
+                      Margin="12,12,12,0"
+                      IsOpen="False"
+                      IsClosable="True"
+                      Severity="Informational"
+                      Title="Notification"
+                      Message=""
+                      Style="{StaticResource NotificationInfoBarStyle}"/>
+
+        <!-- MARK: Root TabView with Icons -->
+        <TabView x:ConnectionId='3' x:Name="MainTabView"
+                 TabWidthMode="Equal"
+                 IsAddTabButtonVisible="False"
+                 CanDragTabs="False"
+                 CanReorderTabs="False"
+                 VerticalAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 Margin="0,60,0,0">
+            
+            <!-- MARK: Main Tab with Icon -->
+            <TabView.TabItems>
+                <TabViewItem IsClosable="False" Style="{StaticResource IconTabViewItemStyle}">
+                    <TabViewItem.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE80F;" FontSize="16"/>
+                            <TextBlock Text="Main Calculator" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </TabViewItem.Header>
+                <Grid x:ConnectionId='6' x:Name="LayoutRoot" Background="Transparent">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto" MinHeight="150"/><!-- Bottom Summary -->
@@ -29,9 +55,15 @@
                         <ColumnDefinition Width="2*" MinWidth="600"/>
                     </Grid.ColumnDefinitions>
 
-        <!-- MARK: LEFT - Deal Input Mask -->
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="12,12,8,12" Style="{StaticResource CardContainerStyle}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- MARK: LEFT - Deal Input Mask with Responsive Constraints -->
+        <Border Grid.Row="0" Grid.Column="0"
+                Margin="12,12,8,12"
+                Style="{StaticResource CardContainerStyle}"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                MinWidth="320"
+                MaxWidth="500">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource ResponsiveScrollViewer}">
                 <StackPanel Spacing="12">
         
                     <!-- Deal Inputs -->
@@ -70,9 +102,16 @@
                             <ComboBoxItem Content="OL" Tag="Op-Lease"/>
                         </ComboBox>
         
-                        <!-- Term (months) -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Term (months)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" SelectedItem="{Binding TermMonths, Mode=TwoWay}" MinWidth="220" Margin="8,0,0,0">
+                        <!-- Term with Tooltip -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Term (months)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Loan term duration in months" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                  SelectedItem="{Binding TermMonths, Mode=TwoWay}"
+                                  MinWidth="220"
+                                  Margin="8,0,0,0">
                             <x:Int32>12</x:Int32>
                             <x:Int32>24</x:Int32>
                             <x:Int32>36</x:Int32>
@@ -103,9 +142,20 @@
                             <TextBox Grid.Column="1" Text="{Binding BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding BalloonPlaceholder}" IsEnabled="{Binding IsBalloonEnabled}"/>
                         </Grid>
         
-                        <!-- Price: THB only (input spans two columns) -->
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <muxc:NumberBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Value="{Binding PriceExTax, Mode=TwoWay}" PlaceholderText="{Binding PricePlaceholder}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Width="{StaticResource ValueAreaWidth}" Margin="8,0,0,0"/>
+                        <!-- Price with Tooltip -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Enter the price excluding tax" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <muxc:NumberBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Value="{Binding PriceExTax, Mode=TwoWay}"
+                                        PlaceholderText="{Binding PricePlaceholder}"
+                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                        Width="{StaticResource ValueAreaWidth}"
+                                        Margin="8,0,0,0"
+                                        MinWidth="200"
+                                        MaxWidth="400"/>
         
                         <!-- Down Payment: unit first then value (inside value area) -->
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -121,9 +171,21 @@
                             <muxc:NumberBox Grid.Column="1" Value="{Binding DownPaymentValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DownPaymentPlaceholder}" NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
                         </Grid>
         
-                        <!-- Subsidy budget -->
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <muxc:NumberBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Value="{Binding SubsidyBudget, Mode=TwoWay}" PlaceholderText="THB" NumberFormatter="{StaticResource GroupedZeroFormatter}" Width="{StaticResource ValueAreaWidth}" Margin="8,0,0,0" IsEnabled="{Binding SubsidyBudgetIsEnabled}"/>
+                        <!-- Subsidy budget with Tooltip -->
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Available subsidy budget for this deal" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <muxc:NumberBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Value="{Binding SubsidyBudget, Mode=TwoWay}"
+                                        PlaceholderText="THB"
+                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                        Width="{StaticResource ValueAreaWidth}"
+                                        Margin="8,0,0,0"
+                                        IsEnabled="{Binding SubsidyBudgetIsEnabled}"
+                                        MinWidth="200"
+                                        MaxWidth="400"/>
         
                         <!-- IDCs - Dealer Commission -->
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -167,9 +229,20 @@
                             <TextBox Width="140" Text="{Binding DealerCommissionAmt, Mode=TwoWay}"/>
                         </StackPanel>
         
-                        <!-- IDCs - Other (THB) -->
-                        <TextBlock Grid.Row="10" Grid.Column="0" Text="IDCs – Other (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <muxc:NumberBox Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Value="{Binding IdcOther, Mode=TwoWay}" PlaceholderText="THB" NumberFormatter="{StaticResource GroupedZeroFormatter}" Width="{StaticResource ValueAreaWidth}" Margin="8,0,0,0"/>
+                        <!-- IDCs - Other with Tooltip -->
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="IDCs – Other (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Other indirect costs" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <muxc:NumberBox Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Value="{Binding IdcOther, Mode=TwoWay}"
+                                        PlaceholderText="THB"
+                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                        Width="{StaticResource ValueAreaWidth}"
+                                        Margin="8,0,0,0"
+                                        MinWidth="200"
+                                        MaxWidth="400"/>
         
                         <!-- Rate mode: RadioButtons (bind SelectedIndex) -->
                         <TextBlock Grid.Row="11" Grid.Column="0" Text="Rate mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -190,70 +263,106 @@
                         <TextBox Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TargetInstallment, Mode=TwoWay}" MinWidth="180" Margin="8,0,0,0"
                                  Visibility="{Binding IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
         
-                        <!-- Primary action (emphasized) -->
+                        <!-- Primary action with loading indicator -->
                         <StackPanel Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Margin="8,16,0,0">
-                            <Button Content="Recalculate" Command="{Binding RecalculateCommand}" HorizontalAlignment="Left" Style="{StaticResource AccentButtonStyle}"/>
-                            <!-- Unified validation summary (optional, binds to Status) -->
-                            <TextBlock Text="{Binding Status}" Style="{StaticResource ErrorTextStyle}"/>
+                            <Grid>
+                                <Button x:ConnectionId='14' x:Name="RecalculateButton"
+                                        Content="Recalculate"
+                                        Command="{Binding RecalculateCommand}"
+                                        HorizontalAlignment="Left"
+                                        Style="{StaticResource PrimaryActionButtonStyle}"
+                                        MinWidth="120">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="Click to recalculate with current parameters" Style="{StaticResource InformativeToolTipStyle}"/>
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                                <!-- Loading indicator overlay -->
+                                <ProgressRing x:ConnectionId='15' x:Name="CalculationProgress"
+                                              IsActive="{Binding IsCalculating}"
+                                              Width="20"
+                                              Height="20"
+                                              HorizontalAlignment="Left"
+                                              Margin="130,0,0,0"
+                                              Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            </Grid>
+                            <!-- Unified validation summary -->
+                            <TextBlock Text="{Binding Status}" Style="{StaticResource ErrorTextStyle}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
         </Border>
 
-        <!-- MARK: RIGHT - Standard Campaigns, My Campaigns -->
-        <Grid x:ConnectionId='5' x:Name="CampaignsGrid" Grid.Row="0" Grid.Column="1" Margin="8,12,12,12">
+        <!-- MARK: RIGHT - Standard Campaigns, My Campaigns with Responsive Layout -->
+        <Grid x:ConnectionId='7' x:Name="CampaignsGrid" Grid.Row="0" Grid.Column="1" Margin="8,12,12,12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MaxHeight="350"/>   <!-- Standard Campaigns (7 rows) -->
-                <RowDefinition Height="*"/> <!-- My Campaigns (rest) -->
+                <RowDefinition Height="Auto" MaxHeight="400" MinHeight="200"/>   <!-- Standard Campaigns -->
+                <RowDefinition Height="*" MinHeight="200"/> <!-- My Campaigns -->
             </Grid.RowDefinitions>
 
-            <!-- Standard Campaigns -->
+            <!-- Standard Campaigns with Enhanced Styling -->
             <Border Grid.Row="0" Style="{StaticResource CardContainerStyle}" Margin="0,0,0,8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Standard Campaigns" Style="{StaticResource CardHeaderTextStyle}"/>
-                    <controls:DataGrid x:ConnectionId='10' x:Name="StandardGrid" Grid.Row="1"
-                                       VerticalAlignment="Stretch"
-                                       HorizontalAlignment="Stretch"
-                                       ItemsSource="{Binding StandardCampaigns}"
-                                       SelectedItem="{Binding SelectedCampaign, Mode=TwoWay}"
-                                       HeadersVisibility="Column"
-                                       CanUserSortColumns="False"
-                                       CanUserReorderColumns="True"
-                                       CanUserResizeColumns="True"
-                                       AutoGenerateColumns="False"
-                                       IsReadOnly="True"
-                                       GridLinesVisibility="All">
-                        <controls:DataGrid.Columns>
-                            <controls:DataGridTemplateColumn Width="60">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Copy" Command="{Binding DataContext.CopyToMyCampaignsCommand, ElementName=CampaignsGrid}" CommandParameter="{Binding}"/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-                            <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title}" Width="200"/>
-                            <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120"/>
-                            <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140"/>
-                            <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120"/>
-                            <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120"/>
-                            <controls:DataGridTextColumn Header="FS SubDown" Binding="{Binding FSSubDown}" Width="120"/>
-                            <controls:DataGridTextColumn Header="FS SubInterest" Binding="{Binding FSSubInterest}" Width="140"/>
-                            <controls:DataGridTextColumn Header="FS FreeMBSP" Binding="{Binding FSFreeMBSP}" Width="120"/>
-                            <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140"/>
-                            <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140"/>
-                            <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120"/>
-                            <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="220"/>
-                        </controls:DataGrid.Columns>
-                    </controls:DataGrid>
+                    <TextBlock Text="Standard Campaigns" Style="{StaticResource CardHeaderTextStyle}">
+                        <ToolTipService.ToolTip>
+                            <ToolTip Content="Pre-configured campaign templates" Style="{StaticResource InformativeToolTipStyle}"/>
+                        </ToolTipService.ToolTip>
+                    </TextBlock>
+                    <ScrollViewer Grid.Row="1"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Style="{StaticResource ResponsiveScrollViewer}">
+                        <controls:DataGrid x:ConnectionId='12' x:Name="StandardGrid"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Stretch"
+                                           ItemsSource="{Binding StandardCampaigns}"
+                                           SelectedItem="{Binding SelectedCampaign, Mode=TwoWay}"
+                                           HeadersVisibility="Column"
+                                           CanUserSortColumns="False"
+                                           CanUserReorderColumns="True"
+                                           CanUserResizeColumns="True"
+                                           AutoGenerateColumns="False"
+                                           IsReadOnly="True"
+                                           GridLinesVisibility="All"
+                                           MinHeight="150">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTemplateColumn Width="70">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Copy"
+                                                    Command="{Binding DataContext.CopyToMyCampaignsCommand, ElementName=Root}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource CopyButtonStyle}">
+                                                <ToolTipService.ToolTip>
+                                                    <ToolTip Content="Copy to My Campaigns" Style="{StaticResource InformativeToolTipStyle}"/>
+                                                </ToolTipService.ToolTip>
+                                            </Button>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title}" Width="200"/>
+                                <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120"/>
+                                <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140"/>
+                                <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120"/>
+                                <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120"/>
+                                <controls:DataGridTextColumn Header="FS SubDown" Binding="{Binding FSSubDown}" Width="120"/>
+                                <controls:DataGridTextColumn Header="FS SubInterest" Binding="{Binding FSSubInterest}" Width="140"/>
+                                <controls:DataGridTextColumn Header="FS FreeMBSP" Binding="{Binding FSFreeMBSP}" Width="120"/>
+                                <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140"/>
+                                <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140"/>
+                                <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120"/>
+                                <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="220"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
                 </Grid>
             </Border>
 
-            <!-- My Campaigns -->
+            <!-- My Campaigns with Enhanced Controls -->
             <Border Grid.Row="1" Style="{StaticResource CardContainerStyle}" Margin="0,0,0,8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -261,24 +370,58 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="My Campaigns" Style="{StaticResource CardHeaderTextStyle}"/>
-                        <Button Content="+ New Bank Campaign" Command="{Binding NewBankCampaignCommand}" Margin="12,0,0,0"/>
-                        <Button Content="Load Campaigns" Command="{Binding LoadCampaignsCommand}"/>
-                        <Button Content="Save All Changes" Command="{Binding SaveAllCampaignsCommand}"/>
-                        <Button Content="Clear Campaigns" Command="{Binding ClearCampaignsCommand}"/>
+                        <TextBlock Text="My Campaigns" Style="{StaticResource CardHeaderTextStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Your custom campaign configurations" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <Button Content="+ New Bank Campaign"
+                                Command="{Binding NewBankCampaignCommand}"
+                                Margin="12,0,0,0"
+                                Style="{StaticResource SecondaryButtonStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Create a new bank campaign" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Button>
+                        <Button Content="Load Campaigns"
+                                Command="{Binding LoadCampaignsCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Load saved campaigns from file" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Button>
+                        <Button Content="Save All Changes"
+                                Command="{Binding SaveAllCampaignsCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Save all campaign changes" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Button>
+                        <Button Content="Clear Campaigns"
+                                Command="{Binding ClearCampaignsCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Clear all campaigns (requires confirmation)" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </StackPanel>
-                    <controls:DataGrid x:ConnectionId='8' x:Name="MyGrid" Grid.Row="1"
-                                       ItemsSource="{Binding MyCampaigns}"
-                                       SelectedItem="{Binding SelectedMyCampaign, Mode=TwoWay}"
-                                       HeadersVisibility="Column"
-                                       CanUserSortColumns="False"
-                                       CanUserReorderColumns="True"
-                                       CanUserResizeColumns="True"
-                                       AutoGenerateColumns="False"
-                                       IsReadOnly="False"
-                                       GridLinesVisibility="All"
-                                       VerticalAlignment="Stretch"
-                                       HorizontalAlignment="Stretch">
+                    <ScrollViewer Grid.Row="1"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Style="{StaticResource ResponsiveScrollViewer}">
+                        <controls:DataGrid x:ConnectionId='10' x:Name="MyGrid"
+                                           ItemsSource="{Binding MyCampaigns}"
+                                           SelectedItem="{Binding SelectedMyCampaign, Mode=TwoWay}"
+                                           HeadersVisibility="Column"
+                                           CanUserSortColumns="False"
+                                           CanUserReorderColumns="True"
+                                           CanUserResizeColumns="True"
+                                           AutoGenerateColumns="False"
+                                           IsReadOnly="False"
+                                           GridLinesVisibility="All"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Stretch"
+                                           MinHeight="150">
                         <controls:DataGrid.Columns>
                             <!-- Placeholder for alignment with Standard Copy column -->
                             <controls:DataGridTemplateColumn Width="60">
@@ -302,13 +445,23 @@
                             <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes, Mode=TwoWay}" Width="220"/>
                         </controls:DataGrid.Columns>
                     </controls:DataGrid>
+                </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- MARK: BOTTOM SUMMARY: Campaign Details + Key Metrics -->
-        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource CardContainerStyle}" Margin="8,0,12,8" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Grid>
+        <!-- MARK: BOTTOM SUMMARY with Responsive Layout -->
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                Style="{StaticResource CardContainerStyle}"
+                Margin="8,0,12,8"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                MinHeight="120"
+                MaxHeight="250">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          Style="{StaticResource ResponsiveScrollViewer}">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -398,14 +551,14 @@
                             <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Metrics.FinancedAmount}"/>
 
                             <!-- Row 2: Acquisition RoRAC with foldout -->
-                            <ToggleButton x:ConnectionId='6' Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsToggle" HorizontalAlignment="Left" Margin="0,0,0,4">
+                            <ToggleButton x:ConnectionId='8' Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsToggle" HorizontalAlignment="Left" Margin="0,0,0,4">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}"/>
                                     <TextBlock Text="{Binding Metrics.RoRAC}" FontWeight="SemiBold"/>
                                     <TextBlock Text="(show details)" Opacity="0.7"/>
                                 </StackPanel>
                             </ToggleButton>
-                            <Grid x:ConnectionId='7' Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsGrid" Visibility="{Binding IsChecked, ElementName=RoRACDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid x:ConnectionId='9' Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsGrid" Visibility="{Binding IsChecked, ElementName=RoRACDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
@@ -505,11 +658,24 @@
                             <TextBlock Grid.Row="4" Grid.Column="3" Text="IDC - Other:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                             <TextBlock Grid.Row="4" Grid.Column="4" Text="{Binding IdcOtherText}"/>
 
-                            <!-- Row 5: Export action -->
-                            <Button Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Content="Export XLSX" Command="{Binding ExportXlsxCommand}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                            <!-- Row 5: Export action with Icon -->
+                            <Button Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2"
+                                    Command="{Binding ExportXlsxCommand}"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,8,0,0"
+                                    Style="{StaticResource SecondaryButtonStyle}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE8A5;" FontSize="14"/>
+                                    <TextBlock Text="Export XLSX"/>
+                                </StackPanel>
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="Export data to Excel file" Style="{StaticResource InformativeToolTipStyle}"/>
+                                </ToolTipService.ToolTip>
+                            </Button>
                         </Grid>
                     </StackPanel>
-            </Grid>
+                </Grid>
+            </ScrollViewer>
         </Border>
 
                     <!-- MARK: FOOTER -->
@@ -519,64 +685,163 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Opacity="0.8"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="Export PDF" />
-                    <Button Content="Save Scenario" />
+                <TextBlock Text="{Binding Status}"
+                           VerticalAlignment="Center"
+                           Opacity="0.8"
+                           Style="{StaticResource StatusTextStyle}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Style="{StaticResource SecondaryButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE8A2;" FontSize="14"/>
+                            <TextBlock Text="Export PDF"/>
+                        </StackPanel>
+                        <ToolTipService.ToolTip>
+                            <ToolTip Content="Export report as PDF" Style="{StaticResource InformativeToolTipStyle}"/>
+                        </ToolTipService.ToolTip>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE74E;" FontSize="14"/>
+                            <TextBlock Text="Save Scenario"/>
+                        </StackPanel>
+                        <ToolTipService.ToolTip>
+                            <ToolTip Content="Save current scenario for later" Style="{StaticResource InformativeToolTipStyle}"/>
+                        </ToolTipService.ToolTip>
+                    </Button>
                 </StackPanel>
             </Grid>
-                    </Border>
+        </Border>
                 </Grid>
             </TabViewItem>
             
-            <!-- MARK: Cashflows Tab -->
-            <TabViewItem Header="Cashflows" IsClosable="False">
+            <!-- MARK: Cashflows Tab with Icon -->
+            <TabViewItem IsClosable="False" Style="{StaticResource IconTabViewItemStyle}">
+                <TabViewItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE8C8;" FontSize="16"/>
+                        <TextBlock Text="Cashflows" VerticalAlignment="Center"/>
+                        <!-- Refresh indicator -->
+                        <Border x:ConnectionId='4' x:Name="CashflowRefreshIndicator"
+                                Background="{ThemeResource WarningBrush}"
+                                CornerRadius="4"
+                                Width="8"
+                                Height="8"
+                                Visibility="{Binding CashflowNeedsRefresh, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Cashflow data needs refresh" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Border>
+                    </StackPanel>
+                </TabViewItem.Header>
                 <Grid Background="Transparent" Padding="12">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
-                    <!-- Header with export button -->
+                    <!-- Header with export button and campaign info -->
                     <Grid Grid.Row="0" Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Cashflow Schedule" Style="{StaticResource CardHeaderTextStyle}" FontSize="24"/>
-                        <Button Grid.Column="1" Content="Export XLSX" Command="{Binding ExportXlsxCommand}" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <TextBlock Text="Cashflow Schedule" Style="{StaticResource CardHeaderTextStyle}" FontSize="24"/>
+                            <TextBlock Text="{Binding CashflowCampaignName}" FontSize="14" Opacity="0.8" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Command="{Binding ExportXlsxCommand}"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource SecondaryButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A5;" FontSize="14"/>
+                                <TextBlock Text="Export XLSX"/>
+                            </StackPanel>
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Export cashflow data to Excel" Style="{StaticResource InformativeToolTipStyle}"/>
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </Grid>
                     
-                    <!-- Cashflow Table -->
-                    <Border Grid.Row="1" Style="{StaticResource CardContainerStyle}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <controls:DataGrid x:ConnectionId='3' x:Name="CashflowGrid"
-                                           ItemsSource="{Binding Cashflows}"
-                                           HeadersVisibility="Column"
-                                           CanUserSortColumns="True"
-                                           CanUserReorderColumns="True"
-                                           CanUserResizeColumns="True"
-                                           AutoGenerateColumns="False"
-                                           IsReadOnly="True"
-                                           GridLinesVisibility="All"
-                                           VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch">
-                            <controls:DataGrid.Columns>
-                                <controls:DataGridTextColumn Header="Period" Binding="{Binding Period}" Width="100"/>
-                                <controls:DataGridTextColumn Header="Principal" Binding="{Binding Principal}" Width="150"/>
-                                <controls:DataGridTextColumn Header="Interest" Binding="{Binding Interest}" Width="150"/>
-                                <controls:DataGridTextColumn Header="Fees" Binding="{Binding Fees}" Width="150"/>
-                                <controls:DataGridTextColumn Header="Balance" Binding="{Binding Balance}" Width="150"/>
-                                <controls:DataGridTextColumn Header="Cashflow" Binding="{Binding Cashflow}" Width="150"/>
-                            </controls:DataGrid.Columns>
-                        </controls:DataGrid>
+                    <!-- Enhanced Cashflow Table with Responsive Scrolling -->
+                    <Border Grid.Row="1"
+                            Style="{StaticResource CardContainerStyle}"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            MinHeight="200">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto"
+                                      Style="{StaticResource ResponsiveScrollViewer}">
+                            <controls:DataGrid x:ConnectionId='5' x:Name="CashflowGrid"
+                                               ItemsSource="{Binding Cashflows}"
+                                               HeadersVisibility="Column"
+                                               CanUserSortColumns="True"
+                                               CanUserReorderColumns="True"
+                                               CanUserResizeColumns="True"
+                                               AutoGenerateColumns="False"
+                                               IsReadOnly="True"
+                                               GridLinesVisibility="All"
+                                               VerticalAlignment="Stretch"
+                                               HorizontalAlignment="Stretch"
+                                               MinHeight="150">
+                                <controls:DataGrid.Columns>
+                                    <controls:DataGridTextColumn Header="Period" Binding="{Binding Period}" Width="60"/>
+                                    <controls:DataGridTextColumn Header="Principal" Binding="{Binding Principal}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Interest" Binding="{Binding Interest}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Fees" Binding="{Binding Fees}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Total Payment" Binding="{Binding TotalPayment}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Balance" Binding="{Binding Balance}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Cashflow" Binding="{Binding Cashflow}" Width="120"/>
+                                    <controls:DataGridTextColumn Header="Principal Runoff" Binding="{Binding PrincipalRunoff}" Width="130"/>
+                                    <controls:DataGridTextColumn Header="Interest Runoff" Binding="{Binding InterestRunoff}" Width="130"/>
+                                    <controls:DataGridTextColumn Header="Subsidy Allocation" Binding="{Binding SubsidyAllocation}" Width="130"/>
+                                    <controls:DataGridTextColumn Header="IDC Breakdown" Binding="{Binding IdcBreakdown}" Width="120"/>
+                                </controls:DataGrid.Columns>
+                            </controls:DataGrid>
+                        </ScrollViewer>
+                    </Border>
+                    
+                    <!-- Summary Totals -->
+                    <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="Gray" BorderThickness="1" Margin="0,8,0,0" Padding="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Total Principal Paid" FontSize="12" Opacity="0.7"/>
+                                <TextBlock Text="{Binding TotalPrincipalPaid}" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Total Interest Paid" FontSize="12" Opacity="0.7"/>
+                                <TextBlock Text="{Binding TotalInterestPaid}" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Total Fees/IDCs" FontSize="12" Opacity="0.7"/>
+                                <TextBlock Text="{Binding TotalFeesPaid}" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="Net Amount Financed" FontSize="12" Opacity="0.7"/>
+                                <TextBlock Text="{Binding NetAmountFinanced}" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                     
                     <!-- Footer info -->
-                    <TextBlock Grid.Row="2" Text="{Binding Status}" Margin="0,12,0,0" Opacity="0.8"/>
+                    <TextBlock Grid.Row="3" Text="{Binding Status}" Margin="0,8,0,0" Opacity="0.8"/>
                 </Grid>
             </TabViewItem>
         </TabView.TabItems>
     </TabView>
+</Grid>
 </Window>
 

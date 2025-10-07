@@ -86,6 +86,13 @@ public partial class MainViewModel : ObservableObject
 
     // Cashflows grid for active selection
     public ObservableCollection<CashflowRowViewModel> Cashflows { get; } = new();
+    
+    // Cashflow summary properties
+    [ObservableProperty] private string cashflowCampaignName = "";
+    [ObservableProperty] private string totalPrincipalPaid = "0";
+    [ObservableProperty] private string totalInterestPaid = "0";
+    [ObservableProperty] private string totalFeesPaid = "0";
+    [ObservableProperty] private string netAmountFinanced = "0";
 
     // Active selection prefers MyCampaigns, else Standard
     public CampaignSummaryViewModel? ActiveCampaign => SelectedMyCampaign ?? SelectedCampaign;
@@ -250,6 +257,14 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var deal = BuildDealFromInputs();
+            
+            // Validate deal for RoRAC calculation requirements
+            if (deal.PriceExTax <= 0)
+            {
+                Status = "Error: Invalid price for RoRAC calculation";
+                return;
+            }
+            
             var state = new DealStateDto
             {
                 DealerCommission = new DealerCommissionDto { Mode = DealerCommissionMode, Pct = DealerCommissionPct, Amt = DealerCommissionAmt, ResolvedAmt = DealerCommissionResolvedAmt },
@@ -268,29 +283,95 @@ public partial class MainViewModel : ObservableObject
             var temp = new List<(CampaignSummaryViewModel vm, double monthly, double eff)>();
             StandardCampaigns.Clear();
             CampaignSummaries.Clear();
+            
+            // Create "No Campaign" baseline option
+            // Calculate baseline monthly installment without any campaign modifications
+            var baselineReq = new CalculationRequestDto
+            {
+                Deal = deal,
+                Campaigns = new(), // Empty campaigns list for baseline
+                IdcItems = new List<IdcItemDto>(), // No IDC items for baseline
+                Options = new() { ["derive_idc_from_cf"] = true },
+                ParameterSet = _cachedParameterSet
+            };
+            
+            try
+            {
+                var baselineRes = await _api.CalculateAsync(baselineReq);
+                
+                // Create the baseline CampaignSummaryViewModel
+                var baselineVm = new CampaignSummaryViewModel
+                {
+                    CampaignId = "baseline",
+                    CampaignType = "No Campaign (Baseline)",
+                    Title = "No Campaign (Baseline)",
+                    DealerCommission = $"{0.00.ToString("0.00%", CultureInfo.InvariantCulture)} ({0.ToString("N0", CultureInfo.InvariantCulture)} THB)",
+                    Monthly = baselineRes.Quote.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
+                    Effective = baselineRes.Quote.CustomerRateEffective.ToString("0.00%"),
+                    Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
+                    SubsidyUsed = "0",
+                    FSSubDown = "0",
+                    FSSubInterest = "0",
+                    FSFreeMBSP = "0",
+                    CashDiscount = "0",
+                    RoRAC = "0.00%", // No RoRAC for baseline
+                    Notes = "Baseline scenario without any promotional campaigns",
+                    FSSubDownAmount = 0,
+                    FSSubInterestAmount = 0,
+                    FSFreeMBSPAmount = 0,
+                };
+                
+                // Add baseline as the first item
+                StandardCampaigns.Add(baselineVm);
+                CampaignSummaries.Add(baselineVm);
+            }
+            catch (Exception ex)
+            {
+                // Log error but continue with other campaigns
+                System.Diagnostics.Debug.WriteLine($"Error creating baseline campaign: {ex.Message}");
+            }
+            
             foreach (var r in rows)
             {
-                var vm = new CampaignSummaryViewModel
+                try
                 {
-                    CampaignId = r.CampaignId,
-                    CampaignType = r.CampaignType,
-                    Title = r.CampaignType,
-                    DealerCommission = $"{r.DealerCommissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({r.DealerCommissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
-                    Monthly = r.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
-                    Effective = r.CustomerRateEffective.ToString("0.00%"),
-                    Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
-                    SubsidyUsed = r.SubsidyUsedTHB.ToString("N0", CultureInfo.InvariantCulture),
-                    FSSubDown = r.FSSubDownTHB.ToString("N0", CultureInfo.InvariantCulture),
-                    FSSubInterest = r.FreeInsuranceTHB.ToString("N0", CultureInfo.InvariantCulture),
-                    FSFreeMBSP = r.FreeMBSPTHB.ToString("N0", CultureInfo.InvariantCulture),
-                    CashDiscount = r.CashDiscountTHB.ToString("N0", CultureInfo.InvariantCulture),
-                    RoRAC = r.AcquisitionRoRAC.ToString("0.00%"),
-                    Notes = string.IsNullOrWhiteSpace(r.ViabilityReason) ? (r.Notes ?? string.Empty) : r.ViabilityReason,
-                    FSSubDownAmount = r.FSSubDownTHB,
-                    FSSubInterestAmount = r.FreeInsuranceTHB,
-                    FSFreeMBSPAmount = r.FreeMBSPTHB,
-                };
-                temp.Add((vm, r.MonthlyInstallment, r.CustomerRateEffective));
+                    // Validate RoRAC campaign data before adding
+                    var roracValue = r.AcquisitionRoRAC;
+                    
+                    // Set default value if RoRAC is invalid or missing
+                    if (double.IsNaN(roracValue) || double.IsInfinity(roracValue))
+                    {
+                        roracValue = 0.0;
+                    }
+                    
+                    var vm = new CampaignSummaryViewModel
+                    {
+                        CampaignId = r.CampaignId,
+                        CampaignType = r.CampaignType,
+                        Title = r.CampaignType,
+                        DealerCommission = $"{r.DealerCommissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({r.DealerCommissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
+                        Monthly = r.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
+                        Effective = r.CustomerRateEffective.ToString("0.00%"),
+                        Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
+                        SubsidyUsed = r.SubsidyUsedTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        FSSubDown = r.FSSubDownTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        FSSubInterest = r.FreeInsuranceTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        FSFreeMBSP = r.FreeMBSPTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        CashDiscount = r.CashDiscountTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        RoRAC = roracValue.ToString("0.00%"),
+                        Notes = string.IsNullOrWhiteSpace(r.ViabilityReason) ? (r.Notes ?? string.Empty) : r.ViabilityReason,
+                        FSSubDownAmount = r.FSSubDownTHB,
+                        FSSubInterestAmount = r.FreeInsuranceTHB,
+                        FSFreeMBSPAmount = r.FreeMBSPTHB,
+                    };
+                    temp.Add((vm, r.MonthlyInstallment, r.CustomerRateEffective));
+                }
+                catch (Exception ex)
+                {
+                    // Log error but continue with other campaigns
+                    System.Diagnostics.Debug.WriteLine($"Error processing campaign {r.CampaignId}: {ex.Message}");
+                    continue;
+                }
             }
  
             foreach (var (vm, _, _) in temp.OrderBy(t => t.monthly).ThenBy(t => t.eff))
@@ -318,37 +399,33 @@ public partial class MainViewModel : ObservableObject
             var idcItems = new List<IdcItemDto>();
             
             // Add Dealer Commission IDC item
-            // ASSUMPTION: Dealer commission is categorized as "broker_commission" in backend
-            // TODO: Verify category name with backend team - expected values might be:
-            //       - "broker_commission", "dealer_commission", "commission", etc.
-            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            // Using "broker_commission" category to match backend constants (types.IDCBrokerCommission)
             if (DealerCommissionResolvedAmt > 0)
             {
                 idcItems.Add(new IdcItemDto
                 {
-                    Category = "broker_commission", // ⚠️ CRITICAL: Backend must recognize this category
+                    Category = "broker_commission", // Matches backend constant: types.IDCBrokerCommission
                     Amount = DealerCommissionResolvedAmt,
-                    Financed = true,        // ASSUMPTION: All IDC items are financed
-                    Timing = "upfront",     // ASSUMPTION: Commission is always upfront
-                    IsCost = true,          // ASSUMPTION: Commission is a cost, not revenue
+                    Description = "Dealer Commission",
+                    Financed = true,        // All IDC items are financed
+                    Timing = "upfront",     // Commission is always upfront
+                    IsCost = true,          // Commission is a cost, not revenue
                     IsRevenue = false
                 });
             }
             
             // Add IDC Other item
-            // ASSUMPTION: Other internal costs categorized as "internal_processing"
-            // TODO: Verify category name with backend team - expected values might be:
-            //       - "internal_processing", "processing_fee", "internal_cost", "other_idc", etc.
-            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            // Using "internal_processing" category to match backend constants (types.IDCInternalProcessing)
             if (IdcOther > 0)
             {
                 idcItems.Add(new IdcItemDto
                 {
-                    Category = "internal_processing", // ⚠️ CRITICAL: Backend must recognize this category
+                    Category = "internal_processing", // Matches backend constant: types.IDCInternalProcessing
                     Amount = IdcOther,
-                    Financed = true,        // ASSUMPTION: All IDC items are financed
-                    Timing = "upfront",     // ASSUMPTION: Processing costs are upfront
-                    IsCost = true,          // ASSUMPTION: Processing is a cost, not revenue
+                    Description = "Other IDC",
+                    Financed = true,        // All IDC items are financed
+                    Timing = "upfront",     // Processing costs are upfront
+                    IsCost = true,          // Processing is a cost, not revenue
                     IsRevenue = false
                 });
             }
@@ -379,41 +456,52 @@ public partial class MainViewModel : ObservableObject
             var active = ActiveCampaign;
             var deal = BuildDealFromInputs();
             
+            // Validate deal for RoRAC calculation requirements
+            if (deal.PriceExTax <= 0)
+            {
+                Status = "Error: Invalid price for RoRAC calculation";
+                return;
+            }
+            
+            // Validate financed amount for RoRAC calculations
+            var financedAmount = deal.PriceExTax - deal.DownPaymentAmount;
+            if (financedAmount <= 0)
+            {
+                Status = "Error: Invalid financed amount for RoRAC calculation";
+                return;
+            }
+            
             // Build IDC items list
             var idcItems = new List<IdcItemDto>();
             
             // Add Dealer Commission IDC item
-            // ASSUMPTION: Dealer commission is categorized as "broker_commission" in backend
-            // TODO: Verify category name with backend team - expected values might be:
-            //       - "broker_commission", "dealer_commission", "commission", etc.
-            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            // Using "broker_commission" category to match backend constants (types.IDCBrokerCommission)
             if (DealerCommissionResolvedAmt > 0)
             {
                 idcItems.Add(new IdcItemDto
                 {
-                    Category = "broker_commission", // ⚠️ CRITICAL: Backend must recognize this category
+                    Category = "broker_commission", // Matches backend constant: types.IDCBrokerCommission
                     Amount = DealerCommissionResolvedAmt,
-                    Financed = true,        // ASSUMPTION: All IDC items are financed
-                    Timing = "upfront",     // ASSUMPTION: Commission is always upfront
-                    IsCost = true,          // ASSUMPTION: Commission is a cost, not revenue
+                    Description = "Dealer Commission",
+                    Financed = true,        // All IDC items are financed
+                    Timing = "upfront",     // Commission is always upfront
+                    IsCost = true,          // Commission is a cost, not revenue
                     IsRevenue = false
                 });
             }
             
             // Add IDC Other item
-            // ASSUMPTION: Other internal costs categorized as "internal_processing"
-            // TODO: Verify category name with backend team - expected values might be:
-            //       - "internal_processing", "processing_fee", "internal_cost", "other_idc", etc.
-            // See docs/IDC_SUBSIDY_IMPLEMENTATION.md for mapping details
+            // Using "internal_processing" category to match backend constants (types.IDCInternalProcessing)
             if (IdcOther > 0)
             {
                 idcItems.Add(new IdcItemDto
                 {
-                    Category = "internal_processing", // ⚠️ CRITICAL: Backend must recognize this category
+                    Category = "internal_processing", // Matches backend constant: types.IDCInternalProcessing
                     Amount = IdcOther,
-                    Financed = true,        // ASSUMPTION: All IDC items are financed
-                    Timing = "upfront",     // ASSUMPTION: Processing costs are upfront
-                    IsCost = true,          // ASSUMPTION: Processing is a cost, not revenue
+                    Description = "Other IDC",
+                    Financed = true,        // All IDC items are financed
+                    Timing = "upfront",     // Processing costs are upfront
+                    IsCost = true,          // Processing is a cost, not revenue
                     IsRevenue = false
                 });
             }
@@ -523,20 +611,45 @@ public partial class MainViewModel : ObservableObject
 
     private void PopulateMetrics(CalculationResponseDto res)
     {
-        Metrics = new MetricsViewModel
+        try
         {
-            MonthlyInstallment = res.Quote.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
-            NominalRate = (res.Quote.CustomerRateNominal).ToString("0.00%"),
-            EffectiveRate = (res.Quote.CustomerRateEffective).ToString("0.00%"),
-            FinancedAmount = res.Quote.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture),
-            RoRAC = (res.Quote.Profitability.AcquisitionRoRAC).ToString("0.00%"),
-        };
-    
-        // Update dependent computed sections (breakdown lines and IDC totals)
-        RefreshProfitabilityDetails(res);
-        OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
-        OnPropertyChanged(nameof(SubsidyRemainingText));
-        OnPropertyChanged(nameof(IdcTotalText));
+            // Validate and handle RoRAC value
+            var roracValue = res.Quote?.Profitability?.AcquisitionRoRAC ?? 0;
+            if (double.IsNaN(roracValue) || double.IsInfinity(roracValue))
+            {
+                roracValue = 0.0;
+            }
+            
+            Metrics = new MetricsViewModel
+            {
+                MonthlyInstallment = res.Quote?.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture) ?? "0",
+                NominalRate = res.Quote?.CustomerRateNominal.ToString("0.00%") ?? "0.00%",
+                EffectiveRate = res.Quote?.CustomerRateEffective.ToString("0.00%") ?? "0.00%",
+                FinancedAmount = res.Quote?.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture) ?? "0",
+                RoRAC = roracValue.ToString("0.00%"),
+            };
+        
+            // Update dependent computed sections (breakdown lines and IDC totals)
+            RefreshProfitabilityDetails(res);
+            OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
+            OnPropertyChanged(nameof(SubsidyRemainingText));
+            OnPropertyChanged(nameof(IdcTotalText));
+        }
+        catch (Exception ex)
+        {
+            // Handle errors in RoRAC calculations gracefully
+            System.Diagnostics.Debug.WriteLine($"Error populating metrics: {ex.Message}");
+            
+            // Set default values on error
+            Metrics = new MetricsViewModel
+            {
+                MonthlyInstallment = "0",
+                NominalRate = "0.00%",
+                EffectiveRate = "0.00%",
+                FinancedAmount = "0",
+                RoRAC = "0.00%",
+            };
+        }
     }
 // MARK: Bottom Summary Bindings for Details/Key Metrics
 private double _activeFsInsurance;
@@ -777,8 +890,52 @@ private async Task ExportXlsxAsync()
     {
         Cashflows.Clear();
         if (schedule == null) return;
+        
+        // Track cumulative values and totals
+        double cumulativePrincipal = 0;
+        double cumulativeInterest = 0;
+        double totalPrincipal = 0;
+        double totalInterest = 0;
+        double totalFees = 0;
+        
         foreach (var r in schedule)
         {
+            cumulativePrincipal += r.Principal;
+            cumulativeInterest += r.Interest;
+            totalPrincipal += r.Principal;
+            totalInterest += r.Interest;
+            totalFees += r.Fees;
+            
+            var totalPayment = r.Principal + r.Interest + r.Fees;
+            
+            // Calculate IDC breakdown for first period (upfront costs)
+            string idcBreakdown = "";
+            if (r.Period == 1)
+            {
+                var idcTotal = DealerCommissionResolvedAmt + IdcOther;
+                if (idcTotal > 0)
+                {
+                    idcBreakdown = idcTotal.ToString("N0", CultureInfo.InvariantCulture);
+                }
+            }
+            
+            // Calculate subsidy allocation (simplified - could be enhanced based on campaign type)
+            string subsidyAllocation = "";
+            if (r.Period == 1 && ActiveCampaign != null)
+            {
+                double subsidyAmount = 0;
+                if (IsMyCampaign(ActiveCampaign))
+                {
+                    subsidyAmount = ActiveCampaign.FSSubDownAmount +
+                                  ActiveCampaign.FSSubInterestAmount +
+                                  ActiveCampaign.FSFreeMBSPAmount;
+                }
+                if (subsidyAmount > 0)
+                {
+                    subsidyAllocation = subsidyAmount.ToString("N0", CultureInfo.InvariantCulture);
+                }
+            }
+            
             Cashflows.Add(new CashflowRowViewModel
             {
                 Period = r.Period,
@@ -787,7 +944,32 @@ private async Task ExportXlsxAsync()
                 Fees = r.Fees.ToString("N0", CultureInfo.InvariantCulture),
                 Balance = r.Balance.ToString("N0", CultureInfo.InvariantCulture),
                 Cashflow = r.Cashflow.ToString("N0", CultureInfo.InvariantCulture),
+                PrincipalRunoff = cumulativePrincipal.ToString("N0", CultureInfo.InvariantCulture),
+                InterestRunoff = cumulativeInterest.ToString("N0", CultureInfo.InvariantCulture),
+                SubsidyAllocation = subsidyAllocation,
+                IdcBreakdown = idcBreakdown,
+                TotalPayment = totalPayment.ToString("N0", CultureInfo.InvariantCulture)
             });
+        }
+        
+        // Update summary properties
+        TotalPrincipalPaid = totalPrincipal.ToString("N0", CultureInfo.InvariantCulture);
+        TotalInterestPaid = totalInterest.ToString("N0", CultureInfo.InvariantCulture);
+        TotalFeesPaid = totalFees.ToString("N0", CultureInfo.InvariantCulture);
+        
+        // Calculate net amount financed
+        var netFinanced = Math.Max(0, PriceExTax - DownPaymentAmount);
+        NetAmountFinanced = netFinanced.ToString("N0", CultureInfo.InvariantCulture);
+        
+        // Update campaign name display
+        if (ActiveCampaign != null)
+        {
+            var campaignType = IsMyCampaign(ActiveCampaign) ? "My Campaign" : "Standard Campaign";
+            CashflowCampaignName = $"{campaignType}: {ActiveCampaign.CampaignId}";
+        }
+        else
+        {
+            CashflowCampaignName = "No Campaign Selected";
         }
     }
 
@@ -887,7 +1069,7 @@ private async Task ExportXlsxAsync()
 
 }
 
-public class MetricsViewModel : ObservableObject
+public partial class MetricsViewModel : ObservableObject
 {
     public string MonthlyInstallment { get; set; } = "";
     public string NominalRate { get; set; } = "";
@@ -896,7 +1078,7 @@ public class MetricsViewModel : ObservableObject
     public string RoRAC { get; set; } = "";
 }
 
-public class CampaignSummaryViewModel : ObservableObject
+public partial class CampaignSummaryViewModel : ObservableObject
 {
     public string CampaignId { get; set; } = string.Empty;
     public string CampaignType { get; set; } = string.Empty;
@@ -949,12 +1131,19 @@ public class CampaignSummaryViewModel : ObservableObject
     };
 }
 
-public class CashflowRowViewModel : ObservableObject
+public partial class CashflowRowViewModel : ObservableObject
 {
-   public int Period { get; set; }
-   public string Principal { get; set; } = "";
-   public string Interest { get; set; } = "";
-   public string Fees { get; set; } = "";
-   public string Balance { get; set; } = "";
-   public string Cashflow { get; set; } = "";
+    public int Period { get; set; }
+    public string Principal { get; set; } = "";
+    public string Interest { get; set; } = "";
+    public string Fees { get; set; } = "";
+    public string Balance { get; set; } = "";
+    public string Cashflow { get; set; } = "";
+    
+    // New detailed breakdown properties
+    public string PrincipalRunoff { get; set; } = "";  // Cumulative principal paid
+    public string InterestRunoff { get; set; } = "";   // Cumulative interest paid
+    public string SubsidyAllocation { get; set; } = ""; // Subsidy amount if any
+    public string IdcBreakdown { get; set; } = "";      // Commission and other IDCs per period
+    public string TotalPayment { get; set; } = "";      // Principal + Interest + Fees
 }

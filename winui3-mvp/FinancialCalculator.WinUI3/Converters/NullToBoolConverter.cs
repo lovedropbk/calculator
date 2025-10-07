@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace FinancialCalculator.WinUI3.Converters
 {
-    public sealed class NullToBoolConverter : IValueConverter
+    public sealed partial class NullToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

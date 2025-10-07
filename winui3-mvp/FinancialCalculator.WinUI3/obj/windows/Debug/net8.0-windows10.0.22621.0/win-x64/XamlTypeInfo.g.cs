@@ -226,7 +226,7 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         
         private void InitTypeTables()
         {
-            _typeNameTable = new string[71];
+            _typeNameTable = new string[81];
             _typeNameTable[0] = "Microsoft.UI.Xaml.Controls.XamlControlsResources";
             _typeNameTable[1] = "Microsoft.UI.Xaml.ResourceDictionary";
             _typeNameTable[2] = "Object";
@@ -239,67 +239,77 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             _typeNameTable[9] = "String";
             _typeNameTable[10] = "System.Collections.Generic.IReadOnlyList`1<String>";
             _typeNameTable[11] = "Windows.Globalization.NumberFormatting.INumberRounder";
-            _typeNameTable[12] = "Microsoft.UI.Xaml.Controls.TabView";
+            _typeNameTable[12] = "Microsoft.UI.Xaml.Controls.ProgressRing";
             _typeNameTable[13] = "Microsoft.UI.Xaml.Controls.Control";
-            _typeNameTable[14] = "System.Collections.Generic.IList`1<Object>";
-            _typeNameTable[15] = "Microsoft.UI.Xaml.Controls.TabViewWidthMode";
-            _typeNameTable[16] = "System.Enum";
-            _typeNameTable[17] = "System.ValueType";
-            _typeNameTable[18] = "System.Windows.Input.ICommand";
-            _typeNameTable[19] = "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode";
-            _typeNameTable[20] = "Microsoft.UI.Xaml.DataTemplate";
-            _typeNameTable[21] = "Microsoft.UI.Xaml.Controls.DataTemplateSelector";
-            _typeNameTable[22] = "Microsoft.UI.Xaml.Controls.TabViewItem";
-            _typeNameTable[23] = "Microsoft.UI.Xaml.Controls.ListViewItem";
-            _typeNameTable[24] = "Microsoft.UI.Xaml.Controls.ContentControl";
+            _typeNameTable[14] = "Double";
+            _typeNameTable[15] = "Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings";
+            _typeNameTable[16] = "Microsoft.UI.Xaml.DependencyObject";
+            _typeNameTable[17] = "Microsoft.UI.Xaml.Controls.InfoBar";
+            _typeNameTable[18] = "Microsoft.UI.Xaml.Controls.InfoBarSeverity";
+            _typeNameTable[19] = "System.Enum";
+            _typeNameTable[20] = "System.ValueType";
+            _typeNameTable[21] = "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase";
+            _typeNameTable[22] = "System.Windows.Input.ICommand";
+            _typeNameTable[23] = "Microsoft.UI.Xaml.Style";
+            _typeNameTable[24] = "Microsoft.UI.Xaml.DataTemplate";
             _typeNameTable[25] = "Microsoft.UI.Xaml.Controls.IconSource";
-            _typeNameTable[26] = "Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings";
-            _typeNameTable[27] = "Microsoft.UI.Xaml.DependencyObject";
-            _typeNameTable[28] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
-            _typeNameTable[29] = "System.Collections.IEnumerable";
-            _typeNameTable[30] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
-            _typeNameTable[31] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
-            _typeNameTable[32] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[33] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[34] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
-            _typeNameTable[35] = "Double";
-            _typeNameTable[36] = "Microsoft.UI.Xaml.Style";
-            _typeNameTable[37] = "Microsoft.UI.Xaml.Data.Binding";
-            _typeNameTable[38] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
-            _typeNameTable[39] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
-            _typeNameTable[40] = "Microsoft.UI.Xaml.Visibility";
-            _typeNameTable[41] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
-            _typeNameTable[42] = "Microsoft.UI.Xaml.Media.Brush";
-            _typeNameTable[43] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
-            _typeNameTable[44] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
-            _typeNameTable[45] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
-            _typeNameTable[46] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
-            _typeNameTable[47] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
-            _typeNameTable[48] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[49] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[50] = "System.Collections.IList";
-            _typeNameTable[51] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
-            _typeNameTable[52] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
-            _typeNameTable[53] = "Microsoft.UI.Xaml.Media.FontFamily";
-            _typeNameTable[54] = "Windows.UI.Text.FontStyle";
-            _typeNameTable[55] = "Windows.UI.Text.FontWeight";
-            _typeNameTable[56] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
-            _typeNameTable[57] = "Microsoft.UI.Xaml.Controls.NumberBox";
-            _typeNameTable[58] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
-            _typeNameTable[59] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
-            _typeNameTable[60] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
-            _typeNameTable[61] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
-            _typeNameTable[62] = "Microsoft.UI.Xaml.TextReadingOrder";
-            _typeNameTable[63] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
-            _typeNameTable[64] = "Microsoft.UI.Xaml.Controls.RadioButtons";
-            _typeNameTable[65] = "FinancialCalculator.WinUI3.MainWindow";
-            _typeNameTable[66] = "Microsoft.UI.Xaml.Window";
-            _typeNameTable[67] = "FinancialCalculator.WinUI3.ViewModels.MainViewModel";
-            _typeNameTable[68] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
-            _typeNameTable[69] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
-            _typeNameTable[70] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
+            _typeNameTable[26] = "Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings";
+            _typeNameTable[27] = "Microsoft.UI.Xaml.Controls.TabView";
+            _typeNameTable[28] = "System.Collections.Generic.IList`1<Object>";
+            _typeNameTable[29] = "Microsoft.UI.Xaml.Controls.TabViewWidthMode";
+            _typeNameTable[30] = "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode";
+            _typeNameTable[31] = "Microsoft.UI.Xaml.Controls.DataTemplateSelector";
+            _typeNameTable[32] = "Microsoft.UI.Xaml.Controls.TabViewItem";
+            _typeNameTable[33] = "Microsoft.UI.Xaml.Controls.ListViewItem";
+            _typeNameTable[34] = "Microsoft.UI.Xaml.Controls.ContentControl";
+            _typeNameTable[35] = "Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings";
+            _typeNameTable[36] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
+            _typeNameTable[37] = "System.Collections.IEnumerable";
+            _typeNameTable[38] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
+            _typeNameTable[39] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
+            _typeNameTable[40] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[41] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[42] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
+            _typeNameTable[43] = "Microsoft.UI.Xaml.Data.Binding";
+            _typeNameTable[44] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
+            _typeNameTable[45] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
+            _typeNameTable[46] = "Microsoft.UI.Xaml.Visibility";
+            _typeNameTable[47] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
+            _typeNameTable[48] = "Microsoft.UI.Xaml.Media.Brush";
+            _typeNameTable[49] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
+            _typeNameTable[50] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
+            _typeNameTable[51] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
+            _typeNameTable[52] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
+            _typeNameTable[53] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
+            _typeNameTable[54] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[55] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[56] = "System.Collections.IList";
+            _typeNameTable[57] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
+            _typeNameTable[58] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
+            _typeNameTable[59] = "Microsoft.UI.Xaml.Media.FontFamily";
+            _typeNameTable[60] = "Windows.UI.Text.FontStyle";
+            _typeNameTable[61] = "Windows.UI.Text.FontWeight";
+            _typeNameTable[62] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
+            _typeNameTable[63] = "Microsoft.UI.Xaml.Controls.NumberBox";
+            _typeNameTable[64] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
+            _typeNameTable[65] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
+            _typeNameTable[66] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
+            _typeNameTable[67] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
+            _typeNameTable[68] = "Microsoft.UI.Xaml.TextReadingOrder";
+            _typeNameTable[69] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
+            _typeNameTable[70] = "Microsoft.UI.Xaml.Controls.RadioButtons";
+            _typeNameTable[71] = "FinancialCalculator.WinUI3.MainWindow";
+            _typeNameTable[72] = "Microsoft.UI.Xaml.Window";
+            _typeNameTable[73] = "FinancialCalculator.WinUI3.ViewModels.MainViewModel";
+            _typeNameTable[74] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
+            _typeNameTable[75] = "Microsoft.UI.Xaml.GridLength";
+            _typeNameTable[76] = "Microsoft.UI.Xaml.GridUnitType";
+            _typeNameTable[77] = "Microsoft.UI.Xaml.Controls.Button";
+            _typeNameTable[78] = "Microsoft.UI.Xaml.Thickness";
+            _typeNameTable[79] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
+            _typeNameTable[80] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
 
-            _typeTable = new global::System.Type[71];
+            _typeTable = new global::System.Type[81];
             _typeTable[0] = typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources);
             _typeTable[1] = typeof(global::Microsoft.UI.Xaml.ResourceDictionary);
             _typeTable[2] = typeof(global::System.Object);
@@ -312,65 +322,75 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             _typeTable[9] = typeof(global::System.String);
             _typeTable[10] = typeof(global::System.Collections.Generic.IReadOnlyList<global::System.String>);
             _typeTable[11] = typeof(global::Windows.Globalization.NumberFormatting.INumberRounder);
-            _typeTable[12] = typeof(global::Microsoft.UI.Xaml.Controls.TabView);
+            _typeTable[12] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing);
             _typeTable[13] = typeof(global::Microsoft.UI.Xaml.Controls.Control);
-            _typeTable[14] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
-            _typeTable[15] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewWidthMode);
-            _typeTable[16] = typeof(global::System.Enum);
-            _typeTable[17] = typeof(global::System.ValueType);
-            _typeTable[18] = typeof(global::System.Windows.Input.ICommand);
-            _typeTable[19] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode);
-            _typeTable[20] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
-            _typeTable[21] = typeof(global::Microsoft.UI.Xaml.Controls.DataTemplateSelector);
-            _typeTable[22] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewItem);
-            _typeTable[23] = typeof(global::Microsoft.UI.Xaml.Controls.ListViewItem);
-            _typeTable[24] = typeof(global::Microsoft.UI.Xaml.Controls.ContentControl);
+            _typeTable[14] = typeof(global::System.Double);
+            _typeTable[15] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings);
+            _typeTable[16] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
+            _typeTable[17] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBar);
+            _typeTable[18] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity);
+            _typeTable[19] = typeof(global::System.Enum);
+            _typeTable[20] = typeof(global::System.ValueType);
+            _typeTable[21] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.ButtonBase);
+            _typeTable[22] = typeof(global::System.Windows.Input.ICommand);
+            _typeTable[23] = typeof(global::Microsoft.UI.Xaml.Style);
+            _typeTable[24] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
             _typeTable[25] = typeof(global::Microsoft.UI.Xaml.Controls.IconSource);
-            _typeTable[26] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings);
-            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
-            _typeTable[28] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
-            _typeTable[29] = typeof(global::System.Collections.IEnumerable);
-            _typeTable[30] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
-            _typeTable[31] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
-            _typeTable[32] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[33] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[34] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
-            _typeTable[35] = typeof(global::System.Double);
-            _typeTable[36] = typeof(global::Microsoft.UI.Xaml.Style);
-            _typeTable[37] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
-            _typeTable[38] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
-            _typeTable[39] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
-            _typeTable[40] = typeof(global::Microsoft.UI.Xaml.Visibility);
-            _typeTable[41] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
-            _typeTable[42] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
-            _typeTable[43] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
-            _typeTable[44] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
-            _typeTable[45] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
-            _typeTable[46] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
-            _typeTable[47] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
-            _typeTable[48] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[49] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[50] = typeof(global::System.Collections.IList);
-            _typeTable[51] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
-            _typeTable[52] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
-            _typeTable[53] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
-            _typeTable[54] = typeof(global::Windows.UI.Text.FontStyle);
-            _typeTable[55] = typeof(global::Windows.UI.Text.FontWeight);
-            _typeTable[56] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
-            _typeTable[57] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
-            _typeTable[58] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
-            _typeTable[59] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
-            _typeTable[60] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
-            _typeTable[61] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
-            _typeTable[62] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
-            _typeTable[63] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
-            _typeTable[64] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
-            _typeTable[65] = typeof(global::FinancialCalculator.WinUI3.MainWindow);
-            _typeTable[66] = typeof(global::Microsoft.UI.Xaml.Window);
-            _typeTable[67] = typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel);
-            _typeTable[68] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
-            _typeTable[69] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
-            _typeTable[70] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
+            _typeTable[26] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings);
+            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Controls.TabView);
+            _typeTable[28] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
+            _typeTable[29] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewWidthMode);
+            _typeTable[30] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode);
+            _typeTable[31] = typeof(global::Microsoft.UI.Xaml.Controls.DataTemplateSelector);
+            _typeTable[32] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewItem);
+            _typeTable[33] = typeof(global::Microsoft.UI.Xaml.Controls.ListViewItem);
+            _typeTable[34] = typeof(global::Microsoft.UI.Xaml.Controls.ContentControl);
+            _typeTable[35] = typeof(global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings);
+            _typeTable[36] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
+            _typeTable[37] = typeof(global::System.Collections.IEnumerable);
+            _typeTable[38] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
+            _typeTable[39] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
+            _typeTable[40] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[41] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[42] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
+            _typeTable[43] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
+            _typeTable[44] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
+            _typeTable[45] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
+            _typeTable[46] = typeof(global::Microsoft.UI.Xaml.Visibility);
+            _typeTable[47] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
+            _typeTable[48] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
+            _typeTable[49] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
+            _typeTable[50] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
+            _typeTable[51] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
+            _typeTable[52] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
+            _typeTable[53] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
+            _typeTable[54] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[55] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[56] = typeof(global::System.Collections.IList);
+            _typeTable[57] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
+            _typeTable[58] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
+            _typeTable[59] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
+            _typeTable[60] = typeof(global::Windows.UI.Text.FontStyle);
+            _typeTable[61] = typeof(global::Windows.UI.Text.FontWeight);
+            _typeTable[62] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
+            _typeTable[63] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
+            _typeTable[64] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
+            _typeTable[65] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
+            _typeTable[66] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
+            _typeTable[67] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
+            _typeTable[68] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
+            _typeTable[69] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
+            _typeTable[70] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
+            _typeTable[71] = typeof(global::FinancialCalculator.WinUI3.MainWindow);
+            _typeTable[72] = typeof(global::Microsoft.UI.Xaml.Window);
+            _typeTable[73] = typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel);
+            _typeTable[74] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
+            _typeTable[75] = typeof(global::Microsoft.UI.Xaml.GridLength);
+            _typeTable[76] = typeof(global::Microsoft.UI.Xaml.GridUnitType);
+            _typeTable[77] = typeof(global::Microsoft.UI.Xaml.Controls.Button);
+            _typeTable[78] = typeof(global::Microsoft.UI.Xaml.Thickness);
+            _typeTable[79] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
+            _typeTable[80] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
         }
 
         private int LookupTypeIndexByName(string typeName)
@@ -410,21 +430,24 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         private object Activate_5_BoolToVisibilityConverter() { return new global::FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter(); }
         private object Activate_6_NullToBoolConverter() { return new global::FinancialCalculator.WinUI3.Converters.NullToBoolConverter(); }
         private object Activate_7_DecimalFormatter() { return new global::Windows.Globalization.NumberFormatting.DecimalFormatter(); }
-        private object Activate_12_TabView() { return new global::Microsoft.UI.Xaml.Controls.TabView(); }
-        private object Activate_22_TabViewItem() { return new global::Microsoft.UI.Xaml.Controls.TabViewItem(); }
-        private object Activate_26_TabViewItemTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings(); }
-        private object Activate_28_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
-        private object Activate_32_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_33_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_48_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_49_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_51_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
-        private object Activate_56_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
-        private object Activate_57_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
-        private object Activate_64_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
-        private object Activate_65_MainWindow() { return new global::FinancialCalculator.WinUI3.MainWindow(); }
-        private object Activate_67_MainViewModel() { return new global::FinancialCalculator.WinUI3.ViewModels.MainViewModel(); }
-        private object Activate_69_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
+        private object Activate_12_ProgressRing() { return new global::Microsoft.UI.Xaml.Controls.ProgressRing(); }
+        private object Activate_17_InfoBar() { return new global::Microsoft.UI.Xaml.Controls.InfoBar(); }
+        private object Activate_26_InfoBarTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings(); }
+        private object Activate_27_TabView() { return new global::Microsoft.UI.Xaml.Controls.TabView(); }
+        private object Activate_32_TabViewItem() { return new global::Microsoft.UI.Xaml.Controls.TabViewItem(); }
+        private object Activate_35_TabViewItemTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings(); }
+        private object Activate_36_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
+        private object Activate_40_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_41_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_54_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_55_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_57_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
+        private object Activate_62_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
+        private object Activate_63_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
+        private object Activate_70_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
+        private object Activate_71_MainWindow() { return new global::FinancialCalculator.WinUI3.MainWindow(); }
+        private object Activate_73_MainViewModel() { return new global::FinancialCalculator.WinUI3.ViewModels.MainViewModel(); }
+        private object Activate_79_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
         private void StaticInitializer_0_XamlControlsResources() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources).TypeHandle);
         private void StaticInitializer_4_StringEqualsToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.Converters.StringEqualsToVisibilityConverter).TypeHandle);
         private void StaticInitializer_5_BoolToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.Converters.BoolToVisibilityConverter).TypeHandle);
@@ -432,46 +455,54 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         private void StaticInitializer_7_DecimalFormatter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.DecimalFormatter).TypeHandle);
         private void StaticInitializer_10_IReadOnlyList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IReadOnlyList<global::System.String>).TypeHandle);
         private void StaticInitializer_11_INumberRounder() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberRounder).TypeHandle);
-        private void StaticInitializer_12_TabView() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabView).TypeHandle);
-        private void StaticInitializer_14_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
-        private void StaticInitializer_15_TabViewWidthMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewWidthMode).TypeHandle);
-        private void StaticInitializer_16_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
-        private void StaticInitializer_17_ValueType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.ValueType).TypeHandle);
-        private void StaticInitializer_18_ICommand() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Windows.Input.ICommand).TypeHandle);
-        private void StaticInitializer_19_TabViewCloseButtonOverlayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode).TypeHandle);
-        private void StaticInitializer_22_TabViewItem() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewItem).TypeHandle);
-        private void StaticInitializer_26_TabViewItemTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings).TypeHandle);
-        private void StaticInitializer_28_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
-        private void StaticInitializer_29_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
-        private void StaticInitializer_30_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
-        private void StaticInitializer_31_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
-        private void StaticInitializer_32_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_33_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_34_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
-        private void StaticInitializer_38_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
-        private void StaticInitializer_39_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
-        private void StaticInitializer_41_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
-        private void StaticInitializer_43_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
-        private void StaticInitializer_46_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
-        private void StaticInitializer_47_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
-        private void StaticInitializer_48_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_49_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_50_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
-        private void StaticInitializer_51_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
-        private void StaticInitializer_52_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
-        private void StaticInitializer_54_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
-        private void StaticInitializer_55_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
-        private void StaticInitializer_56_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
-        private void StaticInitializer_57_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
-        private void StaticInitializer_58_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
-        private void StaticInitializer_61_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
-        private void StaticInitializer_63_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
-        private void StaticInitializer_64_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
-        private void StaticInitializer_65_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.MainWindow).TypeHandle);
-        private void StaticInitializer_67_MainViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel).TypeHandle);
-        private void StaticInitializer_68_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
-        private void StaticInitializer_69_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
-        private void StaticInitializer_70_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
+        private void StaticInitializer_12_ProgressRing() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing).TypeHandle);
+        private void StaticInitializer_15_ProgressRingTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings).TypeHandle);
+        private void StaticInitializer_17_InfoBar() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBar).TypeHandle);
+        private void StaticInitializer_18_InfoBarSeverity() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity).TypeHandle);
+        private void StaticInitializer_19_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
+        private void StaticInitializer_20_ValueType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.ValueType).TypeHandle);
+        private void StaticInitializer_22_ICommand() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Windows.Input.ICommand).TypeHandle);
+        private void StaticInitializer_26_InfoBarTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings).TypeHandle);
+        private void StaticInitializer_27_TabView() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabView).TypeHandle);
+        private void StaticInitializer_28_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
+        private void StaticInitializer_29_TabViewWidthMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewWidthMode).TypeHandle);
+        private void StaticInitializer_30_TabViewCloseButtonOverlayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode).TypeHandle);
+        private void StaticInitializer_32_TabViewItem() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewItem).TypeHandle);
+        private void StaticInitializer_35_TabViewItemTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings).TypeHandle);
+        private void StaticInitializer_36_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
+        private void StaticInitializer_37_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
+        private void StaticInitializer_38_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
+        private void StaticInitializer_39_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
+        private void StaticInitializer_40_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_41_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_42_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
+        private void StaticInitializer_44_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
+        private void StaticInitializer_45_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
+        private void StaticInitializer_47_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
+        private void StaticInitializer_49_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
+        private void StaticInitializer_52_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
+        private void StaticInitializer_53_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
+        private void StaticInitializer_54_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_55_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_56_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
+        private void StaticInitializer_57_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
+        private void StaticInitializer_58_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
+        private void StaticInitializer_60_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
+        private void StaticInitializer_61_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
+        private void StaticInitializer_62_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
+        private void StaticInitializer_63_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
+        private void StaticInitializer_64_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
+        private void StaticInitializer_67_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
+        private void StaticInitializer_69_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
+        private void StaticInitializer_70_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
+        private void StaticInitializer_71_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.MainWindow).TypeHandle);
+        private void StaticInitializer_73_MainViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel).TypeHandle);
+        private void StaticInitializer_74_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
+        private void StaticInitializer_75_GridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.GridLength).TypeHandle);
+        private void StaticInitializer_76_GridUnitType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.GridUnitType).TypeHandle);
+        private void StaticInitializer_78_Thickness() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Thickness).TypeHandle);
+        private void StaticInitializer_79_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
+        private void StaticInitializer_80_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
         private void MapAdd_0_XamlControlsResources(object instance, object key, object item)
         {
             var collection = (global::System.Collections.Generic.IDictionary<global::System.Object, global::System.Object>)instance;
@@ -479,37 +510,37 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             var newItem = (global::System.Object)item;
             collection.Add(newKey, newItem);
         }
-        private void VectorAdd_14_IList(object instance, object item)
+        private void VectorAdd_28_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::System.Object>)instance;
             var newItem = (global::System.Object)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_32_ObservableCollection(object instance, object item)
+        private void VectorAdd_40_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_33_Collection(object instance, object item)
+        private void VectorAdd_41_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_48_ObservableCollection(object instance, object item)
+        private void VectorAdd_54_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_49_Collection(object instance, object item)
+        private void VectorAdd_55_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_70_IList(object instance, object item)
+        private void VectorAdd_80_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Controls.TreeViewNode>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)item;
@@ -612,10 +643,116 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 12:   //  Microsoft.UI.Xaml.Controls.TabView
+            case 12:   //  Microsoft.UI.Xaml.Controls.ProgressRing
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_12_TabView;
-                userType.StaticInitializer = StaticInitializer_12_TabView;
+                userType.Activator = Activate_12_ProgressRing;
+                userType.StaticInitializer = StaticInitializer_12_ProgressRing;
+                userType.AddMemberName("IsActive");
+                userType.AddMemberName("IsIndeterminate");
+                userType.AddMemberName("Maximum");
+                userType.AddMemberName("Minimum");
+                userType.AddMemberName("TemplateSettings");
+                userType.AddMemberName("Value");
+                xamlType = userType;
+                break;
+
+            case 13:   //  Microsoft.UI.Xaml.Controls.Control
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 14:   //  Double
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 15:   //  Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
+                userType.StaticInitializer = StaticInitializer_15_ProgressRingTemplateSettings;
+                userType.SetIsReturnTypeStub();
+                xamlType = userType;
+                break;
+
+            case 16:   //  Microsoft.UI.Xaml.DependencyObject
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 17:   //  Microsoft.UI.Xaml.Controls.InfoBar
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
+                userType.Activator = Activate_17_InfoBar;
+                userType.StaticInitializer = StaticInitializer_17_InfoBar;
+                userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.InfoBar.Content");
+                userType.AddMemberName("Content");
+                userType.AddMemberName("IsOpen");
+                userType.AddMemberName("IsClosable");
+                userType.AddMemberName("Severity");
+                userType.AddMemberName("Title");
+                userType.AddMemberName("Message");
+                userType.AddMemberName("ActionButton");
+                userType.AddMemberName("CloseButtonCommand");
+                userType.AddMemberName("CloseButtonCommandParameter");
+                userType.AddMemberName("CloseButtonStyle");
+                userType.AddMemberName("ContentTemplate");
+                userType.AddMemberName("IconSource");
+                userType.AddMemberName("IsIconVisible");
+                userType.AddMemberName("TemplateSettings");
+                xamlType = userType;
+                break;
+
+            case 18:   //  Microsoft.UI.Xaml.Controls.InfoBarSeverity
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
+                userType.StaticInitializer = StaticInitializer_18_InfoBarSeverity;
+                userType.AddEnumValue("Informational", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
+                userType.AddEnumValue("Success", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Success);
+                userType.AddEnumValue("Warning", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning);
+                userType.AddEnumValue("Error", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error);
+                xamlType = userType;
+                break;
+
+            case 19:   //  System.Enum
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
+                userType.StaticInitializer = StaticInitializer_19_Enum;
+                xamlType = userType;
+                break;
+
+            case 20:   //  System.ValueType
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
+                userType.StaticInitializer = StaticInitializer_20_ValueType;
+                xamlType = userType;
+                break;
+
+            case 21:   //  Microsoft.UI.Xaml.Controls.Primitives.ButtonBase
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 22:   //  System.Windows.Input.ICommand
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
+                userType.StaticInitializer = StaticInitializer_22_ICommand;
+                userType.SetIsReturnTypeStub();
+                xamlType = userType;
+                break;
+
+            case 23:   //  Microsoft.UI.Xaml.Style
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 24:   //  Microsoft.UI.Xaml.DataTemplate
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 25:   //  Microsoft.UI.Xaml.Controls.IconSource
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 26:   //  Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
+                userType.StaticInitializer = StaticInitializer_26_InfoBarTemplateSettings;
+                userType.SetIsReturnTypeStub();
+                xamlType = userType;
+                break;
+
+            case 27:   //  Microsoft.UI.Xaml.Controls.TabView
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
+                userType.Activator = Activate_27_TabView;
+                userType.StaticInitializer = StaticInitializer_27_TabView;
                 userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.TabView.TabItems");
                 userType.AddMemberName("TabItems");
                 userType.AddMemberName("TabWidthMode");
@@ -639,102 +776,67 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 13:   //  Microsoft.UI.Xaml.Controls.Control
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 14:   //  System.Collections.Generic.IList`1<Object>
+            case 28:   //  System.Collections.Generic.IList`1<Object>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_14_IList;
-                userType.CollectionAdd = VectorAdd_14_IList;
+                userType.StaticInitializer = StaticInitializer_28_IList;
+                userType.CollectionAdd = VectorAdd_28_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 15:   //  Microsoft.UI.Xaml.Controls.TabViewWidthMode
+            case 29:   //  Microsoft.UI.Xaml.Controls.TabViewWidthMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_15_TabViewWidthMode;
+                userType.StaticInitializer = StaticInitializer_29_TabViewWidthMode;
                 userType.AddEnumValue("Equal", global::Microsoft.UI.Xaml.Controls.TabViewWidthMode.Equal);
                 userType.AddEnumValue("SizeToContent", global::Microsoft.UI.Xaml.Controls.TabViewWidthMode.SizeToContent);
                 userType.AddEnumValue("Compact", global::Microsoft.UI.Xaml.Controls.TabViewWidthMode.Compact);
                 xamlType = userType;
                 break;
 
-            case 16:   //  System.Enum
-                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_16_Enum;
-                xamlType = userType;
-                break;
-
-            case 17:   //  System.ValueType
-                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_17_ValueType;
-                xamlType = userType;
-                break;
-
-            case 18:   //  System.Windows.Input.ICommand
-                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_18_ICommand;
-                userType.SetIsReturnTypeStub();
-                xamlType = userType;
-                break;
-
-            case 19:   //  Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode
+            case 30:   //  Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_19_TabViewCloseButtonOverlayMode;
+                userType.StaticInitializer = StaticInitializer_30_TabViewCloseButtonOverlayMode;
                 userType.AddEnumValue("Auto", global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode.Auto);
                 userType.AddEnumValue("OnPointerOver", global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode.OnPointerOver);
                 userType.AddEnumValue("Always", global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode.Always);
                 xamlType = userType;
                 break;
 
-            case 20:   //  Microsoft.UI.Xaml.DataTemplate
+            case 31:   //  Microsoft.UI.Xaml.Controls.DataTemplateSelector
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 21:   //  Microsoft.UI.Xaml.Controls.DataTemplateSelector
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 22:   //  Microsoft.UI.Xaml.Controls.TabViewItem
+            case 32:   //  Microsoft.UI.Xaml.Controls.TabViewItem
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ListViewItem"));
-                userType.Activator = Activate_22_TabViewItem;
-                userType.StaticInitializer = StaticInitializer_22_TabViewItem;
-                userType.AddMemberName("Header");
+                userType.Activator = Activate_32_TabViewItem;
+                userType.StaticInitializer = StaticInitializer_32_TabViewItem;
                 userType.AddMemberName("IsClosable");
+                userType.AddMemberName("Header");
                 userType.AddMemberName("HeaderTemplate");
                 userType.AddMemberName("IconSource");
                 userType.AddMemberName("TabViewTemplateSettings");
                 xamlType = userType;
                 break;
 
-            case 23:   //  Microsoft.UI.Xaml.Controls.ListViewItem
+            case 33:   //  Microsoft.UI.Xaml.Controls.ListViewItem
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 24:   //  Microsoft.UI.Xaml.Controls.ContentControl
+            case 34:   //  Microsoft.UI.Xaml.Controls.ContentControl
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 25:   //  Microsoft.UI.Xaml.Controls.IconSource
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 26:   //  Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings
+            case 35:   //  Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_26_TabViewItemTemplateSettings;
+                userType.StaticInitializer = StaticInitializer_35_TabViewItemTemplateSettings;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 27:   //  Microsoft.UI.Xaml.DependencyObject
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 28:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
+            case 36:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_28_DataGrid;
-                userType.StaticInitializer = StaticInitializer_28_DataGrid;
+                userType.Activator = Activate_36_DataGrid;
+                userType.StaticInitializer = StaticInitializer_36_DataGrid;
                 userType.AddMemberName("ItemsSource");
                 userType.AddMemberName("SelectedItem");
                 userType.AddMemberName("HeadersVisibility");
@@ -784,16 +886,16 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 29:   //  System.Collections.IEnumerable
+            case 37:   //  System.Collections.IEnumerable
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_29_IEnumerable;
+                userType.StaticInitializer = StaticInitializer_37_IEnumerable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 30:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
+            case 38:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_30_DataGridHeadersVisibility;
+                userType.StaticInitializer = StaticInitializer_38_DataGridHeadersVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.None);
                 userType.AddEnumValue("Column", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Column);
                 userType.AddEnumValue("Row", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Row);
@@ -801,9 +903,9 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 31:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
+            case 39:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_31_DataGridGridLinesVisibility;
+                userType.StaticInitializer = StaticInitializer_39_DataGridGridLinesVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.None);
                 userType.AddEnumValue("Horizontal", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Horizontal);
                 userType.AddEnumValue("Vertical", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Vertical);
@@ -811,25 +913,25 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 32:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 40:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>"));
-                userType.StaticInitializer = StaticInitializer_32_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_32_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_40_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_40_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 33:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 41:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_33_Collection;
-                userType.StaticInitializer = StaticInitializer_33_Collection;
-                userType.CollectionAdd = VectorAdd_33_Collection;
+                userType.Activator = Activate_41_Collection;
+                userType.StaticInitializer = StaticInitializer_41_Collection;
+                userType.CollectionAdd = VectorAdd_41_Collection;
                 xamlType = userType;
                 break;
 
-            case 34:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
+            case 42:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_34_DataGridColumn;
+                userType.StaticInitializer = StaticInitializer_42_DataGridColumn;
                 userType.AddMemberName("ActualWidth");
                 userType.AddMemberName("CanUserReorder");
                 userType.AddMemberName("CanUserResize");
@@ -852,112 +954,104 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 35:   //  Double
+            case 43:   //  Microsoft.UI.Xaml.Data.Binding
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 36:   //  Microsoft.UI.Xaml.Style
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 37:   //  Microsoft.UI.Xaml.Data.Binding
-                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
-                break;
-
-            case 38:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
+            case 44:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
                 userType.SetBoxedType(GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection"));
                 userType.BoxInstance = userType.BoxType<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>;
-                userType.StaticInitializer = StaticInitializer_38_Nullable;
+                userType.StaticInitializer = StaticInitializer_44_Nullable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 39:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
+            case 45:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_39_DataGridSortDirection;
+                userType.StaticInitializer = StaticInitializer_45_DataGridSortDirection;
                 userType.AddEnumValue("Ascending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Ascending);
                 userType.AddEnumValue("Descending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Descending);
                 xamlType = userType;
                 break;
 
-            case 40:   //  Microsoft.UI.Xaml.Visibility
+            case 46:   //  Microsoft.UI.Xaml.Visibility
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 41:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
+            case 47:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_41_DataGridLength;
+                userType.StaticInitializer = StaticInitializer_47_DataGridLength;
                 userType.CreateFromStringMethod = x => (global::System.Object)global::CommunityToolkit.WinUI.UI.Controls.DataGridLength.ConvertFromString(x);
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 42:   //  Microsoft.UI.Xaml.Media.Brush
+            case 48:   //  Microsoft.UI.Xaml.Media.Brush
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 43:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
+            case 49:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_43_DataGridClipboardCopyMode;
+                userType.StaticInitializer = StaticInitializer_49_DataGridClipboardCopyMode;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.None);
                 userType.AddEnumValue("ExcludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.ExcludeHeader);
                 userType.AddEnumValue("IncludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.IncludeHeader);
                 xamlType = userType;
                 break;
 
-            case 44:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
+            case 50:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 45:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
+            case 51:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 46:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
+            case 52:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_46_DataGridRowDetailsVisibilityMode;
+                userType.StaticInitializer = StaticInitializer_52_DataGridRowDetailsVisibilityMode;
                 userType.AddEnumValue("VisibleWhenSelected", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.VisibleWhenSelected);
                 userType.AddEnumValue("Visible", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Visible);
                 userType.AddEnumValue("Collapsed", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Collapsed);
                 xamlType = userType;
                 break;
 
-            case 47:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
+            case 53:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_47_DataGridSelectionMode;
+                userType.StaticInitializer = StaticInitializer_53_DataGridSelectionMode;
                 userType.AddEnumValue("Extended", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Extended);
                 userType.AddEnumValue("Single", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Single);
                 xamlType = userType;
                 break;
 
-            case 48:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
+            case 54:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>"));
-                userType.StaticInitializer = StaticInitializer_48_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_48_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_54_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_54_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 49:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
+            case 55:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_49_Collection;
-                userType.StaticInitializer = StaticInitializer_49_Collection;
-                userType.CollectionAdd = VectorAdd_49_Collection;
+                userType.Activator = Activate_55_Collection;
+                userType.StaticInitializer = StaticInitializer_55_Collection;
+                userType.CollectionAdd = VectorAdd_55_Collection;
                 xamlType = userType;
                 break;
 
-            case 50:   //  System.Collections.IList
+            case 56:   //  System.Collections.IList
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_50_IList;
+                userType.StaticInitializer = StaticInitializer_56_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 51:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
+            case 57:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn"));
-                userType.Activator = Activate_51_DataGridTextColumn;
-                userType.StaticInitializer = StaticInitializer_51_DataGridTextColumn;
+                userType.Activator = Activate_57_DataGridTextColumn;
+                userType.StaticInitializer = StaticInitializer_57_DataGridTextColumn;
                 userType.AddMemberName("FontFamily");
                 userType.AddMemberName("FontSize");
                 userType.AddMemberName("FontStyle");
@@ -966,9 +1060,9 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 52:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
+            case 58:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.StaticInitializer = StaticInitializer_52_DataGridBoundColumn;
+                userType.StaticInitializer = StaticInitializer_58_DataGridBoundColumn;
                 userType.AddMemberName("Binding");
                 userType.AddMemberName("ClipboardContentBinding");
                 userType.AddMemberName("EditingElementStyle");
@@ -976,39 +1070,39 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 53:   //  Microsoft.UI.Xaml.Media.FontFamily
+            case 59:   //  Microsoft.UI.Xaml.Media.FontFamily
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 54:   //  Windows.UI.Text.FontStyle
+            case 60:   //  Windows.UI.Text.FontStyle
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_54_FontStyle;
+                userType.StaticInitializer = StaticInitializer_60_FontStyle;
                 userType.AddEnumValue("Normal", global::Windows.UI.Text.FontStyle.Normal);
                 userType.AddEnumValue("Oblique", global::Windows.UI.Text.FontStyle.Oblique);
                 userType.AddEnumValue("Italic", global::Windows.UI.Text.FontStyle.Italic);
                 xamlType = userType;
                 break;
 
-            case 55:   //  Windows.UI.Text.FontWeight
+            case 61:   //  Windows.UI.Text.FontWeight
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_55_FontWeight;
+                userType.StaticInitializer = StaticInitializer_61_FontWeight;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 56:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
+            case 62:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.Activator = Activate_56_DataGridTemplateColumn;
-                userType.StaticInitializer = StaticInitializer_56_DataGridTemplateColumn;
+                userType.Activator = Activate_62_DataGridTemplateColumn;
+                userType.StaticInitializer = StaticInitializer_62_DataGridTemplateColumn;
                 userType.AddMemberName("CellTemplate");
                 userType.AddMemberName("CellEditingTemplate");
                 xamlType = userType;
                 break;
 
-            case 57:   //  Microsoft.UI.Xaml.Controls.NumberBox
+            case 63:   //  Microsoft.UI.Xaml.Controls.NumberBox
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_57_NumberBox;
-                userType.StaticInitializer = StaticInitializer_57_NumberBox;
+                userType.Activator = Activate_63_NumberBox;
+                userType.StaticInitializer = StaticInitializer_63_NumberBox;
                 userType.AddMemberName("Value");
                 userType.AddMemberName("PlaceholderText");
                 userType.AddMemberName("NumberFormatter");
@@ -1031,46 +1125,46 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 58:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
+            case 64:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_58_INumberFormatter2;
+                userType.StaticInitializer = StaticInitializer_64_INumberFormatter2;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 59:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
+            case 65:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 60:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
+            case 66:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 61:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
+            case 67:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_61_NumberBoxSpinButtonPlacementMode;
+                userType.StaticInitializer = StaticInitializer_67_NumberBoxSpinButtonPlacementMode;
                 userType.AddEnumValue("Hidden", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Hidden);
                 userType.AddEnumValue("Compact", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Compact);
                 userType.AddEnumValue("Inline", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Inline);
                 xamlType = userType;
                 break;
 
-            case 62:   //  Microsoft.UI.Xaml.TextReadingOrder
+            case 68:   //  Microsoft.UI.Xaml.TextReadingOrder
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 63:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
+            case 69:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_63_NumberBoxValidationMode;
+                userType.StaticInitializer = StaticInitializer_69_NumberBoxValidationMode;
                 userType.AddEnumValue("InvalidInputOverwritten", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.InvalidInputOverwritten);
                 userType.AddEnumValue("Disabled", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.Disabled);
                 xamlType = userType;
                 break;
 
-            case 64:   //  Microsoft.UI.Xaml.Controls.RadioButtons
+            case 70:   //  Microsoft.UI.Xaml.Controls.RadioButtons
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_64_RadioButtons;
-                userType.StaticInitializer = StaticInitializer_64_RadioButtons;
+                userType.Activator = Activate_70_RadioButtons;
+                userType.StaticInitializer = StaticInitializer_70_RadioButtons;
                 userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.RadioButtons.Items");
                 userType.AddMemberName("Items");
                 userType.AddMemberName("SelectedIndex");
@@ -1083,37 +1177,71 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 65:   //  FinancialCalculator.WinUI3.MainWindow
+            case 71:   //  FinancialCalculator.WinUI3.MainWindow
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Window"));
-                userType.Activator = Activate_65_MainWindow;
-                userType.StaticInitializer = StaticInitializer_65_MainWindow;
+                userType.Activator = Activate_71_MainWindow;
+                userType.StaticInitializer = StaticInitializer_71_MainWindow;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 66:   //  Microsoft.UI.Xaml.Window
+            case 72:   //  Microsoft.UI.Xaml.Window
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 67:   //  FinancialCalculator.WinUI3.ViewModels.MainViewModel
+            case 73:   //  FinancialCalculator.WinUI3.ViewModels.MainViewModel
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_67_MainViewModel;
+                userType.StaticInitializer = StaticInitializer_73_MainViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 68:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+            case 74:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_68_ObservableObject;
+                userType.StaticInitializer = StaticInitializer_74_ObservableObject;
                 xamlType = userType;
                 break;
 
-            case 69:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
+            case 75:   //  Microsoft.UI.Xaml.GridLength
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
+                userType.StaticInitializer = StaticInitializer_75_GridLength;
+                userType.AddMemberName("Value");
+                userType.AddMemberName("GridUnitType");
+                userType.AddMemberName("IsAbsolute");
+                userType.AddMemberName("IsAuto");
+                userType.AddMemberName("IsStar");
+                xamlType = userType;
+                break;
+
+            case 76:   //  Microsoft.UI.Xaml.GridUnitType
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
+                userType.StaticInitializer = StaticInitializer_76_GridUnitType;
+                userType.AddEnumValue("Auto", global::Microsoft.UI.Xaml.GridUnitType.Auto);
+                userType.AddEnumValue("Pixel", global::Microsoft.UI.Xaml.GridUnitType.Pixel);
+                userType.AddEnumValue("Star", global::Microsoft.UI.Xaml.GridUnitType.Star);
+                xamlType = userType;
+                break;
+
+            case 77:   //  Microsoft.UI.Xaml.Controls.Button
+                xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 78:   //  Microsoft.UI.Xaml.Thickness
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
+                userType.StaticInitializer = StaticInitializer_78_Thickness;
+                userType.AddMemberName("Left");
+                userType.AddMemberName("Top");
+                userType.AddMemberName("Right");
+                userType.AddMemberName("Bottom");
+                xamlType = userType;
+                break;
+
+            case 79:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.Activator = Activate_69_TreeViewNode;
-                userType.StaticInitializer = StaticInitializer_69_TreeViewNode;
+                userType.Activator = Activate_79_TreeViewNode;
+                userType.StaticInitializer = StaticInitializer_79_TreeViewNode;
                 userType.AddMemberName("Children");
                 userType.AddMemberName("Content");
                 userType.AddMemberName("Depth");
@@ -1125,10 +1253,10 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 70:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
+            case 80:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_70_IList;
-                userType.CollectionAdd = VectorAdd_70_IList;
+                userType.StaticInitializer = StaticInitializer_80_IList;
+                userType.CollectionAdd = VectorAdd_80_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
@@ -1303,1277 +1431,1532 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             var that = (global::Windows.Globalization.NumberFormatting.DecimalFormatter)instance;
             that.SignificantDigits = (global::System.Int32)Value;
         }
-        private object get_13_TabView_TabItems(object instance)
+        private object get_13_ProgressRing_IsActive(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.IsActive;
+        }
+        private void set_13_ProgressRing_IsActive(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            that.IsActive = (global::System.Boolean)Value;
+        }
+        private object get_14_ProgressRing_IsIndeterminate(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.IsIndeterminate;
+        }
+        private void set_14_ProgressRing_IsIndeterminate(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            that.IsIndeterminate = (global::System.Boolean)Value;
+        }
+        private object get_15_ProgressRing_Maximum(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.Maximum;
+        }
+        private void set_15_ProgressRing_Maximum(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            that.Maximum = (global::System.Double)Value;
+        }
+        private object get_16_ProgressRing_Minimum(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.Minimum;
+        }
+        private void set_16_ProgressRing_Minimum(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            that.Minimum = (global::System.Double)Value;
+        }
+        private object get_17_ProgressRing_TemplateSettings(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.TemplateSettings;
+        }
+        private object get_18_ProgressRing_Value(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            return that.Value;
+        }
+        private void set_18_ProgressRing_Value(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.ProgressRing)instance;
+            that.Value = (global::System.Double)Value;
+        }
+        private object get_19_InfoBar_Content(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.Content;
+        }
+        private void set_19_InfoBar_Content(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.Content = (global::System.Object)Value;
+        }
+        private object get_20_InfoBar_IsOpen(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.IsOpen;
+        }
+        private void set_20_InfoBar_IsOpen(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.IsOpen = (global::System.Boolean)Value;
+        }
+        private object get_21_InfoBar_IsClosable(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.IsClosable;
+        }
+        private void set_21_InfoBar_IsClosable(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.IsClosable = (global::System.Boolean)Value;
+        }
+        private object get_22_InfoBar_Severity(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.Severity;
+        }
+        private void set_22_InfoBar_Severity(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.Severity = (global::Microsoft.UI.Xaml.Controls.InfoBarSeverity)Value;
+        }
+        private object get_23_InfoBar_Title(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.Title;
+        }
+        private void set_23_InfoBar_Title(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.Title = (global::System.String)Value;
+        }
+        private object get_24_InfoBar_Message(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.Message;
+        }
+        private void set_24_InfoBar_Message(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.Message = (global::System.String)Value;
+        }
+        private object get_25_InfoBar_ActionButton(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.ActionButton;
+        }
+        private void set_25_InfoBar_ActionButton(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.ActionButton = (global::Microsoft.UI.Xaml.Controls.Primitives.ButtonBase)Value;
+        }
+        private object get_26_InfoBar_CloseButtonCommand(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.CloseButtonCommand;
+        }
+        private void set_26_InfoBar_CloseButtonCommand(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.CloseButtonCommand = (global::System.Windows.Input.ICommand)Value;
+        }
+        private object get_27_InfoBar_CloseButtonCommandParameter(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.CloseButtonCommandParameter;
+        }
+        private void set_27_InfoBar_CloseButtonCommandParameter(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.CloseButtonCommandParameter = (global::System.Object)Value;
+        }
+        private object get_28_InfoBar_CloseButtonStyle(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.CloseButtonStyle;
+        }
+        private void set_28_InfoBar_CloseButtonStyle(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.CloseButtonStyle = (global::Microsoft.UI.Xaml.Style)Value;
+        }
+        private object get_29_InfoBar_ContentTemplate(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.ContentTemplate;
+        }
+        private void set_29_InfoBar_ContentTemplate(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.ContentTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
+        }
+        private object get_30_InfoBar_IconSource(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.IconSource;
+        }
+        private void set_30_InfoBar_IconSource(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.IconSource = (global::Microsoft.UI.Xaml.Controls.IconSource)Value;
+        }
+        private object get_31_InfoBar_IsIconVisible(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.IsIconVisible;
+        }
+        private void set_31_InfoBar_IsIconVisible(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            that.IsIconVisible = (global::System.Boolean)Value;
+        }
+        private object get_32_InfoBar_TemplateSettings(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.InfoBar)instance;
+            return that.TemplateSettings;
+        }
+        private object get_33_TabView_TabItems(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabItems;
         }
-        private object get_14_TabView_TabWidthMode(object instance)
+        private object get_34_TabView_TabWidthMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabWidthMode;
         }
-        private void set_14_TabView_TabWidthMode(object instance, object Value)
+        private void set_34_TabView_TabWidthMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabWidthMode = (global::Microsoft.UI.Xaml.Controls.TabViewWidthMode)Value;
         }
-        private object get_15_TabView_IsAddTabButtonVisible(object instance)
+        private object get_35_TabView_IsAddTabButtonVisible(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.IsAddTabButtonVisible;
         }
-        private void set_15_TabView_IsAddTabButtonVisible(object instance, object Value)
+        private void set_35_TabView_IsAddTabButtonVisible(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.IsAddTabButtonVisible = (global::System.Boolean)Value;
         }
-        private object get_16_TabView_CanDragTabs(object instance)
+        private object get_36_TabView_CanDragTabs(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.CanDragTabs;
         }
-        private void set_16_TabView_CanDragTabs(object instance, object Value)
+        private void set_36_TabView_CanDragTabs(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.CanDragTabs = (global::System.Boolean)Value;
         }
-        private object get_17_TabView_CanReorderTabs(object instance)
+        private object get_37_TabView_CanReorderTabs(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.CanReorderTabs;
         }
-        private void set_17_TabView_CanReorderTabs(object instance, object Value)
+        private void set_37_TabView_CanReorderTabs(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.CanReorderTabs = (global::System.Boolean)Value;
         }
-        private object get_18_TabView_AddTabButtonCommand(object instance)
+        private object get_38_TabView_AddTabButtonCommand(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.AddTabButtonCommand;
         }
-        private void set_18_TabView_AddTabButtonCommand(object instance, object Value)
+        private void set_38_TabView_AddTabButtonCommand(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.AddTabButtonCommand = (global::System.Windows.Input.ICommand)Value;
         }
-        private object get_19_TabView_AddTabButtonCommandParameter(object instance)
+        private object get_39_TabView_AddTabButtonCommandParameter(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.AddTabButtonCommandParameter;
         }
-        private void set_19_TabView_AddTabButtonCommandParameter(object instance, object Value)
+        private void set_39_TabView_AddTabButtonCommandParameter(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.AddTabButtonCommandParameter = (global::System.Object)Value;
         }
-        private object get_20_TabView_AllowDropTabs(object instance)
+        private object get_40_TabView_AllowDropTabs(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.AllowDropTabs;
         }
-        private void set_20_TabView_AllowDropTabs(object instance, object Value)
+        private void set_40_TabView_AllowDropTabs(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.AllowDropTabs = (global::System.Boolean)Value;
         }
-        private object get_21_TabView_CanTearOutTabs(object instance)
+        private object get_41_TabView_CanTearOutTabs(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.CanTearOutTabs;
         }
-        private void set_21_TabView_CanTearOutTabs(object instance, object Value)
+        private void set_41_TabView_CanTearOutTabs(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.CanTearOutTabs = (global::System.Boolean)Value;
         }
-        private object get_22_TabView_CloseButtonOverlayMode(object instance)
+        private object get_42_TabView_CloseButtonOverlayMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.CloseButtonOverlayMode;
         }
-        private void set_22_TabView_CloseButtonOverlayMode(object instance, object Value)
+        private void set_42_TabView_CloseButtonOverlayMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.CloseButtonOverlayMode = (global::Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode)Value;
         }
-        private object get_23_TabView_SelectedIndex(object instance)
+        private object get_43_TabView_SelectedIndex(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.SelectedIndex;
         }
-        private void set_23_TabView_SelectedIndex(object instance, object Value)
+        private void set_43_TabView_SelectedIndex(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.SelectedIndex = (global::System.Int32)Value;
         }
-        private object get_24_TabView_SelectedItem(object instance)
+        private object get_44_TabView_SelectedItem(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.SelectedItem;
         }
-        private void set_24_TabView_SelectedItem(object instance, object Value)
+        private void set_44_TabView_SelectedItem(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.SelectedItem = (global::System.Object)Value;
         }
-        private object get_25_TabView_TabItemTemplate(object instance)
+        private object get_45_TabView_TabItemTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabItemTemplate;
         }
-        private void set_25_TabView_TabItemTemplate(object instance, object Value)
+        private void set_45_TabView_TabItemTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabItemTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_26_TabView_TabItemTemplateSelector(object instance)
+        private object get_46_TabView_TabItemTemplateSelector(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabItemTemplateSelector;
         }
-        private void set_26_TabView_TabItemTemplateSelector(object instance, object Value)
+        private void set_46_TabView_TabItemTemplateSelector(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabItemTemplateSelector = (global::Microsoft.UI.Xaml.Controls.DataTemplateSelector)Value;
         }
-        private object get_27_TabView_TabItemsSource(object instance)
+        private object get_47_TabView_TabItemsSource(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabItemsSource;
         }
-        private void set_27_TabView_TabItemsSource(object instance, object Value)
+        private void set_47_TabView_TabItemsSource(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabItemsSource = (global::System.Object)Value;
         }
-        private object get_28_TabView_TabStripFooter(object instance)
+        private object get_48_TabView_TabStripFooter(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabStripFooter;
         }
-        private void set_28_TabView_TabStripFooter(object instance, object Value)
+        private void set_48_TabView_TabStripFooter(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabStripFooter = (global::System.Object)Value;
         }
-        private object get_29_TabView_TabStripFooterTemplate(object instance)
+        private object get_49_TabView_TabStripFooterTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabStripFooterTemplate;
         }
-        private void set_29_TabView_TabStripFooterTemplate(object instance, object Value)
+        private void set_49_TabView_TabStripFooterTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabStripFooterTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_30_TabView_TabStripHeader(object instance)
+        private object get_50_TabView_TabStripHeader(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabStripHeader;
         }
-        private void set_30_TabView_TabStripHeader(object instance, object Value)
+        private void set_50_TabView_TabStripHeader(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabStripHeader = (global::System.Object)Value;
         }
-        private object get_31_TabView_TabStripHeaderTemplate(object instance)
+        private object get_51_TabView_TabStripHeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             return that.TabStripHeaderTemplate;
         }
-        private void set_31_TabView_TabStripHeaderTemplate(object instance, object Value)
+        private void set_51_TabView_TabStripHeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabView)instance;
             that.TabStripHeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_32_TabViewItem_Header(object instance)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
-            return that.Header;
-        }
-        private void set_32_TabViewItem_Header(object instance, object Value)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
-            that.Header = (global::System.Object)Value;
-        }
-        private object get_33_TabViewItem_IsClosable(object instance)
+        private object get_52_TabViewItem_IsClosable(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             return that.IsClosable;
         }
-        private void set_33_TabViewItem_IsClosable(object instance, object Value)
+        private void set_52_TabViewItem_IsClosable(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             that.IsClosable = (global::System.Boolean)Value;
         }
-        private object get_34_TabViewItem_HeaderTemplate(object instance)
+        private object get_53_TabViewItem_Header(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
+            return that.Header;
+        }
+        private void set_53_TabViewItem_Header(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
+            that.Header = (global::System.Object)Value;
+        }
+        private object get_54_TabViewItem_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             return that.HeaderTemplate;
         }
-        private void set_34_TabViewItem_HeaderTemplate(object instance, object Value)
+        private void set_54_TabViewItem_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_35_TabViewItem_IconSource(object instance)
+        private object get_55_TabViewItem_IconSource(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             return that.IconSource;
         }
-        private void set_35_TabViewItem_IconSource(object instance, object Value)
+        private void set_55_TabViewItem_IconSource(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             that.IconSource = (global::Microsoft.UI.Xaml.Controls.IconSource)Value;
         }
-        private object get_36_TabViewItem_TabViewTemplateSettings(object instance)
+        private object get_56_TabViewItem_TabViewTemplateSettings(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TabViewItem)instance;
             return that.TabViewTemplateSettings;
         }
-        private object get_37_DataGrid_ItemsSource(object instance)
+        private object get_57_DataGrid_ItemsSource(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.ItemsSource;
         }
-        private void set_37_DataGrid_ItemsSource(object instance, object Value)
+        private void set_57_DataGrid_ItemsSource(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.ItemsSource = (global::System.Collections.IEnumerable)Value;
         }
-        private object get_38_DataGrid_SelectedItem(object instance)
+        private object get_58_DataGrid_SelectedItem(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.SelectedItem;
         }
-        private void set_38_DataGrid_SelectedItem(object instance, object Value)
+        private void set_58_DataGrid_SelectedItem(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.SelectedItem = (global::System.Object)Value;
         }
-        private object get_39_DataGrid_HeadersVisibility(object instance)
+        private object get_59_DataGrid_HeadersVisibility(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.HeadersVisibility;
         }
-        private void set_39_DataGrid_HeadersVisibility(object instance, object Value)
+        private void set_59_DataGrid_HeadersVisibility(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.HeadersVisibility = (global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility)Value;
         }
-        private object get_40_DataGrid_CanUserSortColumns(object instance)
+        private object get_60_DataGrid_CanUserSortColumns(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.CanUserSortColumns;
         }
-        private void set_40_DataGrid_CanUserSortColumns(object instance, object Value)
+        private void set_60_DataGrid_CanUserSortColumns(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.CanUserSortColumns = (global::System.Boolean)Value;
         }
-        private object get_41_DataGrid_CanUserReorderColumns(object instance)
+        private object get_61_DataGrid_CanUserReorderColumns(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.CanUserReorderColumns;
         }
-        private void set_41_DataGrid_CanUserReorderColumns(object instance, object Value)
+        private void set_61_DataGrid_CanUserReorderColumns(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.CanUserReorderColumns = (global::System.Boolean)Value;
         }
-        private object get_42_DataGrid_CanUserResizeColumns(object instance)
+        private object get_62_DataGrid_CanUserResizeColumns(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.CanUserResizeColumns;
         }
-        private void set_42_DataGrid_CanUserResizeColumns(object instance, object Value)
+        private void set_62_DataGrid_CanUserResizeColumns(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.CanUserResizeColumns = (global::System.Boolean)Value;
         }
-        private object get_43_DataGrid_AutoGenerateColumns(object instance)
+        private object get_63_DataGrid_AutoGenerateColumns(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.AutoGenerateColumns;
         }
-        private void set_43_DataGrid_AutoGenerateColumns(object instance, object Value)
+        private void set_63_DataGrid_AutoGenerateColumns(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.AutoGenerateColumns = (global::System.Boolean)Value;
         }
-        private object get_44_DataGrid_IsReadOnly(object instance)
+        private object get_64_DataGrid_IsReadOnly(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.IsReadOnly;
         }
-        private void set_44_DataGrid_IsReadOnly(object instance, object Value)
+        private void set_64_DataGrid_IsReadOnly(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.IsReadOnly = (global::System.Boolean)Value;
         }
-        private object get_45_DataGrid_GridLinesVisibility(object instance)
+        private object get_65_DataGrid_GridLinesVisibility(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.GridLinesVisibility;
         }
-        private void set_45_DataGrid_GridLinesVisibility(object instance, object Value)
+        private void set_65_DataGrid_GridLinesVisibility(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.GridLinesVisibility = (global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility)Value;
         }
-        private object get_46_DataGrid_Columns(object instance)
+        private object get_66_DataGrid_Columns(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.Columns;
         }
-        private object get_47_DataGridColumn_ActualWidth(object instance)
+        private object get_67_DataGridColumn_ActualWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.ActualWidth;
         }
-        private object get_48_DataGridColumn_CanUserReorder(object instance)
+        private object get_68_DataGridColumn_CanUserReorder(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.CanUserReorder;
         }
-        private void set_48_DataGridColumn_CanUserReorder(object instance, object Value)
+        private void set_68_DataGridColumn_CanUserReorder(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.CanUserReorder = (global::System.Boolean)Value;
         }
-        private object get_49_DataGridColumn_CanUserResize(object instance)
+        private object get_69_DataGridColumn_CanUserResize(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.CanUserResize;
         }
-        private void set_49_DataGridColumn_CanUserResize(object instance, object Value)
+        private void set_69_DataGridColumn_CanUserResize(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.CanUserResize = (global::System.Boolean)Value;
         }
-        private object get_50_DataGridColumn_CanUserSort(object instance)
+        private object get_70_DataGridColumn_CanUserSort(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.CanUserSort;
         }
-        private void set_50_DataGridColumn_CanUserSort(object instance, object Value)
+        private void set_70_DataGridColumn_CanUserSort(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.CanUserSort = (global::System.Boolean)Value;
         }
-        private object get_51_DataGridColumn_CellStyle(object instance)
+        private object get_71_DataGridColumn_CellStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.CellStyle;
         }
-        private void set_51_DataGridColumn_CellStyle(object instance, object Value)
+        private void set_71_DataGridColumn_CellStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.CellStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_52_DataGridColumn_ClipboardContentBinding(object instance)
+        private object get_72_DataGridColumn_ClipboardContentBinding(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.ClipboardContentBinding;
         }
-        private void set_52_DataGridColumn_ClipboardContentBinding(object instance, object Value)
+        private void set_72_DataGridColumn_ClipboardContentBinding(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.ClipboardContentBinding = (global::Microsoft.UI.Xaml.Data.Binding)Value;
         }
-        private object get_53_DataGridColumn_DisplayIndex(object instance)
+        private object get_73_DataGridColumn_DisplayIndex(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.DisplayIndex;
         }
-        private void set_53_DataGridColumn_DisplayIndex(object instance, object Value)
+        private void set_73_DataGridColumn_DisplayIndex(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.DisplayIndex = (global::System.Int32)Value;
         }
-        private object get_54_DataGridColumn_DragIndicatorStyle(object instance)
+        private object get_74_DataGridColumn_DragIndicatorStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.DragIndicatorStyle;
         }
-        private void set_54_DataGridColumn_DragIndicatorStyle(object instance, object Value)
+        private void set_74_DataGridColumn_DragIndicatorStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.DragIndicatorStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_55_DataGridColumn_HeaderStyle(object instance)
+        private object get_75_DataGridColumn_HeaderStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.HeaderStyle;
         }
-        private void set_55_DataGridColumn_HeaderStyle(object instance, object Value)
+        private void set_75_DataGridColumn_HeaderStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.HeaderStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_56_DataGridColumn_Header(object instance)
+        private object get_76_DataGridColumn_Header(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.Header;
         }
-        private void set_56_DataGridColumn_Header(object instance, object Value)
+        private void set_76_DataGridColumn_Header(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_57_DataGridColumn_IsAutoGenerated(object instance)
+        private object get_77_DataGridColumn_IsAutoGenerated(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.IsAutoGenerated;
         }
-        private object get_58_DataGridColumn_IsFrozen(object instance)
+        private object get_78_DataGridColumn_IsFrozen(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.IsFrozen;
         }
-        private object get_59_DataGridColumn_IsReadOnly(object instance)
+        private object get_79_DataGridColumn_IsReadOnly(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.IsReadOnly;
         }
-        private void set_59_DataGridColumn_IsReadOnly(object instance, object Value)
+        private void set_79_DataGridColumn_IsReadOnly(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.IsReadOnly = (global::System.Boolean)Value;
         }
-        private object get_60_DataGridColumn_MaxWidth(object instance)
+        private object get_80_DataGridColumn_MaxWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.MaxWidth;
         }
-        private void set_60_DataGridColumn_MaxWidth(object instance, object Value)
+        private void set_80_DataGridColumn_MaxWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.MaxWidth = (global::System.Double)Value;
         }
-        private object get_61_DataGridColumn_MinWidth(object instance)
+        private object get_81_DataGridColumn_MinWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.MinWidth;
         }
-        private void set_61_DataGridColumn_MinWidth(object instance, object Value)
+        private void set_81_DataGridColumn_MinWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.MinWidth = (global::System.Double)Value;
         }
-        private object get_62_DataGridColumn_SortDirection(object instance)
+        private object get_82_DataGridColumn_SortDirection(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.SortDirection;
         }
-        private void set_62_DataGridColumn_SortDirection(object instance, object Value)
+        private void set_82_DataGridColumn_SortDirection(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.SortDirection = (global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>)Value;
         }
-        private object get_63_DataGridColumn_Tag(object instance)
+        private object get_83_DataGridColumn_Tag(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.Tag;
         }
-        private void set_63_DataGridColumn_Tag(object instance, object Value)
+        private void set_83_DataGridColumn_Tag(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.Tag = (global::System.Object)Value;
         }
-        private object get_64_DataGridColumn_Visibility(object instance)
+        private object get_84_DataGridColumn_Visibility(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.Visibility;
         }
-        private void set_64_DataGridColumn_Visibility(object instance, object Value)
+        private void set_84_DataGridColumn_Visibility(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.Visibility = (global::Microsoft.UI.Xaml.Visibility)Value;
         }
-        private object get_65_DataGridColumn_Width(object instance)
+        private object get_85_DataGridColumn_Width(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             return that.Width;
         }
-        private void set_65_DataGridColumn_Width(object instance, object Value)
+        private void set_85_DataGridColumn_Width(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)instance;
             that.Width = (global::CommunityToolkit.WinUI.UI.Controls.DataGridLength)Value;
         }
-        private object get_66_DataGrid_AlternatingRowBackground(object instance)
+        private object get_86_DataGrid_AlternatingRowBackground(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.AlternatingRowBackground;
         }
-        private void set_66_DataGrid_AlternatingRowBackground(object instance, object Value)
+        private void set_86_DataGrid_AlternatingRowBackground(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.AlternatingRowBackground = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_67_DataGrid_AlternatingRowForeground(object instance)
+        private object get_87_DataGrid_AlternatingRowForeground(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.AlternatingRowForeground;
         }
-        private void set_67_DataGrid_AlternatingRowForeground(object instance, object Value)
+        private void set_87_DataGrid_AlternatingRowForeground(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.AlternatingRowForeground = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_68_DataGrid_AreRowDetailsFrozen(object instance)
+        private object get_88_DataGrid_AreRowDetailsFrozen(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.AreRowDetailsFrozen;
         }
-        private void set_68_DataGrid_AreRowDetailsFrozen(object instance, object Value)
+        private void set_88_DataGrid_AreRowDetailsFrozen(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.AreRowDetailsFrozen = (global::System.Boolean)Value;
         }
-        private object get_69_DataGrid_AreRowGroupHeadersFrozen(object instance)
+        private object get_89_DataGrid_AreRowGroupHeadersFrozen(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.AreRowGroupHeadersFrozen;
         }
-        private void set_69_DataGrid_AreRowGroupHeadersFrozen(object instance, object Value)
+        private void set_89_DataGrid_AreRowGroupHeadersFrozen(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.AreRowGroupHeadersFrozen = (global::System.Boolean)Value;
         }
-        private object get_70_DataGrid_CellStyle(object instance)
+        private object get_90_DataGrid_CellStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.CellStyle;
         }
-        private void set_70_DataGrid_CellStyle(object instance, object Value)
+        private void set_90_DataGrid_CellStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.CellStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_71_DataGrid_ClipboardCopyMode(object instance)
+        private object get_91_DataGrid_ClipboardCopyMode(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.ClipboardCopyMode;
         }
-        private void set_71_DataGrid_ClipboardCopyMode(object instance, object Value)
+        private void set_91_DataGrid_ClipboardCopyMode(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.ClipboardCopyMode = (global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode)Value;
         }
-        private object get_72_DataGrid_ColumnHeaderHeight(object instance)
+        private object get_92_DataGrid_ColumnHeaderHeight(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.ColumnHeaderHeight;
         }
-        private void set_72_DataGrid_ColumnHeaderHeight(object instance, object Value)
+        private void set_92_DataGrid_ColumnHeaderHeight(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.ColumnHeaderHeight = (global::System.Double)Value;
         }
-        private object get_73_DataGrid_ColumnHeaderStyle(object instance)
+        private object get_93_DataGrid_ColumnHeaderStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.ColumnHeaderStyle;
         }
-        private void set_73_DataGrid_ColumnHeaderStyle(object instance, object Value)
+        private void set_93_DataGrid_ColumnHeaderStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.ColumnHeaderStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_74_DataGrid_ColumnWidth(object instance)
+        private object get_94_DataGrid_ColumnWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.ColumnWidth;
         }
-        private void set_74_DataGrid_ColumnWidth(object instance, object Value)
+        private void set_94_DataGrid_ColumnWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.ColumnWidth = (global::CommunityToolkit.WinUI.UI.Controls.DataGridLength)Value;
         }
-        private object get_75_DataGrid_DataFetchSize(object instance)
+        private object get_95_DataGrid_DataFetchSize(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.DataFetchSize;
         }
-        private void set_75_DataGrid_DataFetchSize(object instance, object Value)
+        private void set_95_DataGrid_DataFetchSize(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.DataFetchSize = (global::System.Double)Value;
         }
-        private object get_76_DataGrid_DragIndicatorStyle(object instance)
+        private object get_96_DataGrid_DragIndicatorStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.DragIndicatorStyle;
         }
-        private void set_76_DataGrid_DragIndicatorStyle(object instance, object Value)
+        private void set_96_DataGrid_DragIndicatorStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.DragIndicatorStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_77_DataGrid_DropLocationIndicatorStyle(object instance)
+        private object get_97_DataGrid_DropLocationIndicatorStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.DropLocationIndicatorStyle;
         }
-        private void set_77_DataGrid_DropLocationIndicatorStyle(object instance, object Value)
+        private void set_97_DataGrid_DropLocationIndicatorStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.DropLocationIndicatorStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_78_DataGrid_FrozenColumnCount(object instance)
+        private object get_98_DataGrid_FrozenColumnCount(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.FrozenColumnCount;
         }
-        private void set_78_DataGrid_FrozenColumnCount(object instance, object Value)
+        private void set_98_DataGrid_FrozenColumnCount(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.FrozenColumnCount = (global::System.Int32)Value;
         }
-        private object get_79_DataGrid_HorizontalGridLinesBrush(object instance)
+        private object get_99_DataGrid_HorizontalGridLinesBrush(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.HorizontalGridLinesBrush;
         }
-        private void set_79_DataGrid_HorizontalGridLinesBrush(object instance, object Value)
+        private void set_99_DataGrid_HorizontalGridLinesBrush(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.HorizontalGridLinesBrush = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_80_DataGrid_HorizontalScrollBarVisibility(object instance)
+        private object get_100_DataGrid_HorizontalScrollBarVisibility(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.HorizontalScrollBarVisibility;
         }
-        private void set_80_DataGrid_HorizontalScrollBarVisibility(object instance, object Value)
+        private void set_100_DataGrid_HorizontalScrollBarVisibility(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.HorizontalScrollBarVisibility = (global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility)Value;
         }
-        private object get_81_DataGrid_IsValid(object instance)
+        private object get_101_DataGrid_IsValid(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.IsValid;
         }
-        private object get_82_DataGrid_IncrementalLoadingThreshold(object instance)
+        private object get_102_DataGrid_IncrementalLoadingThreshold(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.IncrementalLoadingThreshold;
         }
-        private void set_82_DataGrid_IncrementalLoadingThreshold(object instance, object Value)
+        private void set_102_DataGrid_IncrementalLoadingThreshold(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.IncrementalLoadingThreshold = (global::System.Double)Value;
         }
-        private object get_83_DataGrid_IncrementalLoadingTrigger(object instance)
+        private object get_103_DataGrid_IncrementalLoadingTrigger(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.IncrementalLoadingTrigger;
         }
-        private void set_83_DataGrid_IncrementalLoadingTrigger(object instance, object Value)
+        private void set_103_DataGrid_IncrementalLoadingTrigger(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.IncrementalLoadingTrigger = (global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger)Value;
         }
-        private object get_84_DataGrid_MaxColumnWidth(object instance)
+        private object get_104_DataGrid_MaxColumnWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.MaxColumnWidth;
         }
-        private void set_84_DataGrid_MaxColumnWidth(object instance, object Value)
+        private void set_104_DataGrid_MaxColumnWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.MaxColumnWidth = (global::System.Double)Value;
         }
-        private object get_85_DataGrid_MinColumnWidth(object instance)
+        private object get_105_DataGrid_MinColumnWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.MinColumnWidth;
         }
-        private void set_85_DataGrid_MinColumnWidth(object instance, object Value)
+        private void set_105_DataGrid_MinColumnWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.MinColumnWidth = (global::System.Double)Value;
         }
-        private object get_86_DataGrid_RowBackground(object instance)
+        private object get_106_DataGrid_RowBackground(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowBackground;
         }
-        private void set_86_DataGrid_RowBackground(object instance, object Value)
+        private void set_106_DataGrid_RowBackground(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowBackground = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_87_DataGrid_RowDetailsTemplate(object instance)
+        private object get_107_DataGrid_RowDetailsTemplate(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowDetailsTemplate;
         }
-        private void set_87_DataGrid_RowDetailsTemplate(object instance, object Value)
+        private void set_107_DataGrid_RowDetailsTemplate(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowDetailsTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_88_DataGrid_RowDetailsVisibilityMode(object instance)
+        private object get_108_DataGrid_RowDetailsVisibilityMode(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowDetailsVisibilityMode;
         }
-        private void set_88_DataGrid_RowDetailsVisibilityMode(object instance, object Value)
+        private void set_108_DataGrid_RowDetailsVisibilityMode(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowDetailsVisibilityMode = (global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode)Value;
         }
-        private object get_89_DataGrid_RowForeground(object instance)
+        private object get_109_DataGrid_RowForeground(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowForeground;
         }
-        private void set_89_DataGrid_RowForeground(object instance, object Value)
+        private void set_109_DataGrid_RowForeground(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowForeground = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_90_DataGrid_RowHeight(object instance)
+        private object get_110_DataGrid_RowHeight(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowHeight;
         }
-        private void set_90_DataGrid_RowHeight(object instance, object Value)
+        private void set_110_DataGrid_RowHeight(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowHeight = (global::System.Double)Value;
         }
-        private object get_91_DataGrid_RowHeaderWidth(object instance)
+        private object get_111_DataGrid_RowHeaderWidth(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowHeaderWidth;
         }
-        private void set_91_DataGrid_RowHeaderWidth(object instance, object Value)
+        private void set_111_DataGrid_RowHeaderWidth(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowHeaderWidth = (global::System.Double)Value;
         }
-        private object get_92_DataGrid_RowHeaderStyle(object instance)
+        private object get_112_DataGrid_RowHeaderStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowHeaderStyle;
         }
-        private void set_92_DataGrid_RowHeaderStyle(object instance, object Value)
+        private void set_112_DataGrid_RowHeaderStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowHeaderStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_93_DataGrid_RowStyle(object instance)
+        private object get_113_DataGrid_RowStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowStyle;
         }
-        private void set_93_DataGrid_RowStyle(object instance, object Value)
+        private void set_113_DataGrid_RowStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_94_DataGrid_SelectionMode(object instance)
+        private object get_114_DataGrid_SelectionMode(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.SelectionMode;
         }
-        private void set_94_DataGrid_SelectionMode(object instance, object Value)
+        private void set_114_DataGrid_SelectionMode(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.SelectionMode = (global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode)Value;
         }
-        private object get_95_DataGrid_SelectedIndex(object instance)
+        private object get_115_DataGrid_SelectedIndex(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.SelectedIndex;
         }
-        private void set_95_DataGrid_SelectedIndex(object instance, object Value)
+        private void set_115_DataGrid_SelectedIndex(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.SelectedIndex = (global::System.Int32)Value;
         }
-        private object get_96_DataGrid_VerticalGridLinesBrush(object instance)
+        private object get_116_DataGrid_VerticalGridLinesBrush(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.VerticalGridLinesBrush;
         }
-        private void set_96_DataGrid_VerticalGridLinesBrush(object instance, object Value)
+        private void set_116_DataGrid_VerticalGridLinesBrush(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.VerticalGridLinesBrush = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_97_DataGrid_VerticalScrollBarVisibility(object instance)
+        private object get_117_DataGrid_VerticalScrollBarVisibility(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.VerticalScrollBarVisibility;
         }
-        private void set_97_DataGrid_VerticalScrollBarVisibility(object instance, object Value)
+        private void set_117_DataGrid_VerticalScrollBarVisibility(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.VerticalScrollBarVisibility = (global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility)Value;
         }
-        private object get_98_DataGrid_CurrentColumn(object instance)
+        private object get_118_DataGrid_CurrentColumn(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.CurrentColumn;
         }
-        private void set_98_DataGrid_CurrentColumn(object instance, object Value)
+        private void set_118_DataGrid_CurrentColumn(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.CurrentColumn = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)Value;
         }
-        private object get_99_DataGrid_RowGroupHeaderPropertyNameAlternative(object instance)
+        private object get_119_DataGrid_RowGroupHeaderPropertyNameAlternative(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowGroupHeaderPropertyNameAlternative;
         }
-        private void set_99_DataGrid_RowGroupHeaderPropertyNameAlternative(object instance, object Value)
+        private void set_119_DataGrid_RowGroupHeaderPropertyNameAlternative(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             that.RowGroupHeaderPropertyNameAlternative = (global::System.String)Value;
         }
-        private object get_100_DataGrid_RowGroupHeaderStyles(object instance)
+        private object get_120_DataGrid_RowGroupHeaderStyles(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.RowGroupHeaderStyles;
         }
-        private object get_101_DataGrid_SelectedItems(object instance)
+        private object get_121_DataGrid_SelectedItems(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGrid)instance;
             return that.SelectedItems;
         }
-        private object get_102_DataGridBoundColumn_Binding(object instance)
+        private object get_122_DataGridBoundColumn_Binding(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             return that.Binding;
         }
-        private void set_102_DataGridBoundColumn_Binding(object instance, object Value)
+        private void set_122_DataGridBoundColumn_Binding(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             that.Binding = (global::Microsoft.UI.Xaml.Data.Binding)Value;
         }
-        private object get_103_DataGridTextColumn_FontFamily(object instance)
+        private object get_123_DataGridTextColumn_FontFamily(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             return that.FontFamily;
         }
-        private void set_103_DataGridTextColumn_FontFamily(object instance, object Value)
+        private void set_123_DataGridTextColumn_FontFamily(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             that.FontFamily = (global::Microsoft.UI.Xaml.Media.FontFamily)Value;
         }
-        private object get_104_DataGridTextColumn_FontSize(object instance)
+        private object get_124_DataGridTextColumn_FontSize(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             return that.FontSize;
         }
-        private void set_104_DataGridTextColumn_FontSize(object instance, object Value)
+        private void set_124_DataGridTextColumn_FontSize(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             that.FontSize = (global::System.Double)Value;
         }
-        private object get_105_DataGridTextColumn_FontStyle(object instance)
+        private object get_125_DataGridTextColumn_FontStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             return that.FontStyle;
         }
-        private void set_105_DataGridTextColumn_FontStyle(object instance, object Value)
+        private void set_125_DataGridTextColumn_FontStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             that.FontStyle = (global::Windows.UI.Text.FontStyle)Value;
         }
-        private object get_106_DataGridTextColumn_FontWeight(object instance)
+        private object get_126_DataGridTextColumn_FontWeight(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             return that.FontWeight;
         }
-        private void set_106_DataGridTextColumn_FontWeight(object instance, object Value)
+        private void set_126_DataGridTextColumn_FontWeight(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             that.FontWeight = (global::Windows.UI.Text.FontWeight)Value;
         }
-        private object get_107_DataGridTextColumn_Foreground(object instance)
+        private object get_127_DataGridTextColumn_Foreground(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             return that.Foreground;
         }
-        private void set_107_DataGridTextColumn_Foreground(object instance, object Value)
+        private void set_127_DataGridTextColumn_Foreground(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn)instance;
             that.Foreground = (global::Microsoft.UI.Xaml.Media.Brush)Value;
         }
-        private object get_108_DataGridBoundColumn_ClipboardContentBinding(object instance)
+        private object get_128_DataGridBoundColumn_ClipboardContentBinding(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             return that.ClipboardContentBinding;
         }
-        private void set_108_DataGridBoundColumn_ClipboardContentBinding(object instance, object Value)
+        private void set_128_DataGridBoundColumn_ClipboardContentBinding(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             that.ClipboardContentBinding = (global::Microsoft.UI.Xaml.Data.Binding)Value;
         }
-        private object get_109_DataGridBoundColumn_EditingElementStyle(object instance)
+        private object get_129_DataGridBoundColumn_EditingElementStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             return that.EditingElementStyle;
         }
-        private void set_109_DataGridBoundColumn_EditingElementStyle(object instance, object Value)
+        private void set_129_DataGridBoundColumn_EditingElementStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             that.EditingElementStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_110_DataGridBoundColumn_ElementStyle(object instance)
+        private object get_130_DataGridBoundColumn_ElementStyle(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             return that.ElementStyle;
         }
-        private void set_110_DataGridBoundColumn_ElementStyle(object instance, object Value)
+        private void set_130_DataGridBoundColumn_ElementStyle(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             that.ElementStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_111_DataGridTemplateColumn_CellTemplate(object instance)
+        private object get_131_DataGridTemplateColumn_CellTemplate(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
             return that.CellTemplate;
         }
-        private void set_111_DataGridTemplateColumn_CellTemplate(object instance, object Value)
+        private void set_131_DataGridTemplateColumn_CellTemplate(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
             that.CellTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_112_DataGridTemplateColumn_CellEditingTemplate(object instance)
+        private object get_132_DataGridTemplateColumn_CellEditingTemplate(object instance)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
             return that.CellEditingTemplate;
         }
-        private void set_112_DataGridTemplateColumn_CellEditingTemplate(object instance, object Value)
+        private void set_132_DataGridTemplateColumn_CellEditingTemplate(object instance, object Value)
         {
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
             that.CellEditingTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_113_NumberBox_Value(object instance)
+        private object get_133_NumberBox_Value(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Value;
         }
-        private void set_113_NumberBox_Value(object instance, object Value)
+        private void set_133_NumberBox_Value(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Value = (global::System.Double)Value;
         }
-        private object get_114_NumberBox_PlaceholderText(object instance)
+        private object get_134_NumberBox_PlaceholderText(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.PlaceholderText;
         }
-        private void set_114_NumberBox_PlaceholderText(object instance, object Value)
+        private void set_134_NumberBox_PlaceholderText(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.PlaceholderText = (global::System.String)Value;
         }
-        private object get_115_NumberBox_NumberFormatter(object instance)
+        private object get_135_NumberBox_NumberFormatter(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.NumberFormatter;
         }
-        private void set_115_NumberBox_NumberFormatter(object instance, object Value)
+        private void set_135_NumberBox_NumberFormatter(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.NumberFormatter = (global::Windows.Globalization.NumberFormatting.INumberFormatter2)Value;
         }
-        private object get_116_NumberBox_AcceptsExpression(object instance)
+        private object get_136_NumberBox_AcceptsExpression(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.AcceptsExpression;
         }
-        private void set_116_NumberBox_AcceptsExpression(object instance, object Value)
+        private void set_136_NumberBox_AcceptsExpression(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.AcceptsExpression = (global::System.Boolean)Value;
         }
-        private object get_117_NumberBox_Description(object instance)
+        private object get_137_NumberBox_Description(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Description;
         }
-        private void set_117_NumberBox_Description(object instance, object Value)
+        private void set_137_NumberBox_Description(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Description = (global::System.Object)Value;
         }
-        private object get_118_NumberBox_Header(object instance)
+        private object get_138_NumberBox_Header(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Header;
         }
-        private void set_118_NumberBox_Header(object instance, object Value)
+        private void set_138_NumberBox_Header(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_119_NumberBox_HeaderTemplate(object instance)
+        private object get_139_NumberBox_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.HeaderTemplate;
         }
-        private void set_119_NumberBox_HeaderTemplate(object instance, object Value)
+        private void set_139_NumberBox_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_120_NumberBox_IsWrapEnabled(object instance)
+        private object get_140_NumberBox_IsWrapEnabled(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.IsWrapEnabled;
         }
-        private void set_120_NumberBox_IsWrapEnabled(object instance, object Value)
+        private void set_140_NumberBox_IsWrapEnabled(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.IsWrapEnabled = (global::System.Boolean)Value;
         }
-        private object get_121_NumberBox_LargeChange(object instance)
+        private object get_141_NumberBox_LargeChange(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.LargeChange;
         }
-        private void set_121_NumberBox_LargeChange(object instance, object Value)
+        private void set_141_NumberBox_LargeChange(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.LargeChange = (global::System.Double)Value;
         }
-        private object get_122_NumberBox_Maximum(object instance)
+        private object get_142_NumberBox_Maximum(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Maximum;
         }
-        private void set_122_NumberBox_Maximum(object instance, object Value)
+        private void set_142_NumberBox_Maximum(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Maximum = (global::System.Double)Value;
         }
-        private object get_123_NumberBox_Minimum(object instance)
+        private object get_143_NumberBox_Minimum(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Minimum;
         }
-        private void set_123_NumberBox_Minimum(object instance, object Value)
+        private void set_143_NumberBox_Minimum(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Minimum = (global::System.Double)Value;
         }
-        private object get_124_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance)
+        private object get_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.PreventKeyboardDisplayOnProgrammaticFocus;
         }
-        private void set_124_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance, object Value)
+        private void set_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.PreventKeyboardDisplayOnProgrammaticFocus = (global::System.Boolean)Value;
         }
-        private object get_125_NumberBox_SelectionFlyout(object instance)
+        private object get_145_NumberBox_SelectionFlyout(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SelectionFlyout;
         }
-        private void set_125_NumberBox_SelectionFlyout(object instance, object Value)
+        private void set_145_NumberBox_SelectionFlyout(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SelectionFlyout = (global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase)Value;
         }
-        private object get_126_NumberBox_SelectionHighlightColor(object instance)
+        private object get_146_NumberBox_SelectionHighlightColor(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SelectionHighlightColor;
         }
-        private void set_126_NumberBox_SelectionHighlightColor(object instance, object Value)
+        private void set_146_NumberBox_SelectionHighlightColor(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SelectionHighlightColor = (global::Microsoft.UI.Xaml.Media.SolidColorBrush)Value;
         }
-        private object get_127_NumberBox_SmallChange(object instance)
+        private object get_147_NumberBox_SmallChange(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SmallChange;
         }
-        private void set_127_NumberBox_SmallChange(object instance, object Value)
+        private void set_147_NumberBox_SmallChange(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SmallChange = (global::System.Double)Value;
         }
-        private object get_128_NumberBox_SpinButtonPlacementMode(object instance)
+        private object get_148_NumberBox_SpinButtonPlacementMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SpinButtonPlacementMode;
         }
-        private void set_128_NumberBox_SpinButtonPlacementMode(object instance, object Value)
+        private void set_148_NumberBox_SpinButtonPlacementMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SpinButtonPlacementMode = (global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode)Value;
         }
-        private object get_129_NumberBox_Text(object instance)
+        private object get_149_NumberBox_Text(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Text;
         }
-        private void set_129_NumberBox_Text(object instance, object Value)
+        private void set_149_NumberBox_Text(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Text = (global::System.String)Value;
         }
-        private object get_130_NumberBox_TextReadingOrder(object instance)
+        private object get_150_NumberBox_TextReadingOrder(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.TextReadingOrder;
         }
-        private void set_130_NumberBox_TextReadingOrder(object instance, object Value)
+        private void set_150_NumberBox_TextReadingOrder(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.TextReadingOrder = (global::Microsoft.UI.Xaml.TextReadingOrder)Value;
         }
-        private object get_131_NumberBox_ValidationMode(object instance)
+        private object get_151_NumberBox_ValidationMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.ValidationMode;
         }
-        private void set_131_NumberBox_ValidationMode(object instance, object Value)
+        private void set_151_NumberBox_ValidationMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.ValidationMode = (global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode)Value;
         }
-        private object get_132_RadioButtons_Items(object instance)
+        private object get_152_RadioButtons_Items(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.Items;
         }
-        private object get_133_RadioButtons_SelectedIndex(object instance)
+        private object get_153_RadioButtons_SelectedIndex(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.SelectedIndex;
         }
-        private void set_133_RadioButtons_SelectedIndex(object instance, object Value)
+        private void set_153_RadioButtons_SelectedIndex(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.SelectedIndex = (global::System.Int32)Value;
         }
-        private object get_134_RadioButtons_Header(object instance)
+        private object get_154_RadioButtons_Header(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.Header;
         }
-        private void set_134_RadioButtons_Header(object instance, object Value)
+        private void set_154_RadioButtons_Header(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_135_RadioButtons_HeaderTemplate(object instance)
+        private object get_155_RadioButtons_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.HeaderTemplate;
         }
-        private void set_135_RadioButtons_HeaderTemplate(object instance, object Value)
+        private void set_155_RadioButtons_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_136_RadioButtons_ItemTemplate(object instance)
+        private object get_156_RadioButtons_ItemTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.ItemTemplate;
         }
-        private void set_136_RadioButtons_ItemTemplate(object instance, object Value)
+        private void set_156_RadioButtons_ItemTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.ItemTemplate = (global::System.Object)Value;
         }
-        private object get_137_RadioButtons_ItemsSource(object instance)
+        private object get_157_RadioButtons_ItemsSource(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.ItemsSource;
         }
-        private void set_137_RadioButtons_ItemsSource(object instance, object Value)
+        private void set_157_RadioButtons_ItemsSource(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.ItemsSource = (global::System.Object)Value;
         }
-        private object get_138_RadioButtons_MaxColumns(object instance)
+        private object get_158_RadioButtons_MaxColumns(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.MaxColumns;
         }
-        private void set_138_RadioButtons_MaxColumns(object instance, object Value)
+        private void set_158_RadioButtons_MaxColumns(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.MaxColumns = (global::System.Int32)Value;
         }
-        private object get_139_RadioButtons_SelectedItem(object instance)
+        private object get_159_RadioButtons_SelectedItem(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.SelectedItem;
         }
-        private void set_139_RadioButtons_SelectedItem(object instance, object Value)
+        private void set_159_RadioButtons_SelectedItem(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.SelectedItem = (global::System.Object)Value;
         }
-        private object get_140_MainWindow_ViewModel(object instance)
+        private object get_160_MainWindow_ViewModel(object instance)
         {
             var that = (global::FinancialCalculator.WinUI3.MainWindow)instance;
             return that.ViewModel;
         }
-        private object get_141_TreeViewNode_Children(object instance)
+        private object get_161_GridLength_Value(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.GridLength)instance;
+            return that.Value;
+        }
+        private object get_162_GridLength_GridUnitType(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.GridLength)instance;
+            return that.GridUnitType;
+        }
+        private object get_163_GridLength_IsAbsolute(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.GridLength)instance;
+            return that.IsAbsolute;
+        }
+        private object get_164_GridLength_IsAuto(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.GridLength)instance;
+            return that.IsAuto;
+        }
+        private object get_165_GridLength_IsStar(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.GridLength)instance;
+            return that.IsStar;
+        }
+        private object get_166_Thickness_Left(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            return that.Left;
+        }
+        private void set_166_Thickness_Left(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            that.Left = (global::System.Double)Value;
+        }
+        private object get_167_Thickness_Top(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            return that.Top;
+        }
+        private void set_167_Thickness_Top(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            that.Top = (global::System.Double)Value;
+        }
+        private object get_168_Thickness_Right(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            return that.Right;
+        }
+        private void set_168_Thickness_Right(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            that.Right = (global::System.Double)Value;
+        }
+        private object get_169_Thickness_Bottom(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            return that.Bottom;
+        }
+        private void set_169_Thickness_Bottom(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Thickness)instance;
+            that.Bottom = (global::System.Double)Value;
+        }
+        private object get_170_TreeViewNode_Children(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Children;
         }
-        private object get_142_TreeViewNode_Content(object instance)
+        private object get_171_TreeViewNode_Content(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Content;
         }
-        private void set_142_TreeViewNode_Content(object instance, object Value)
+        private void set_171_TreeViewNode_Content(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.Content = (global::System.Object)Value;
         }
-        private object get_143_TreeViewNode_Depth(object instance)
+        private object get_172_TreeViewNode_Depth(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Depth;
         }
-        private object get_144_TreeViewNode_HasChildren(object instance)
+        private object get_173_TreeViewNode_HasChildren(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.HasChildren;
         }
-        private object get_145_TreeViewNode_HasUnrealizedChildren(object instance)
+        private object get_174_TreeViewNode_HasUnrealizedChildren(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.HasUnrealizedChildren;
         }
-        private void set_145_TreeViewNode_HasUnrealizedChildren(object instance, object Value)
+        private void set_174_TreeViewNode_HasUnrealizedChildren(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.HasUnrealizedChildren = (global::System.Boolean)Value;
         }
-        private object get_146_TreeViewNode_IsExpanded(object instance)
+        private object get_175_TreeViewNode_IsExpanded(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.IsExpanded;
         }
-        private void set_146_TreeViewNode_IsExpanded(object instance, object Value)
+        private void set_175_TreeViewNode_IsExpanded(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.IsExpanded = (global::System.Boolean)Value;
         }
-        private object get_147_TreeViewNode_Parent(object instance)
+        private object get_176_TreeViewNode_Parent(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Parent;
@@ -2665,911 +3048,1104 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlMember.Getter = get_12_DecimalFormatter_SignificantDigits;
                 xamlMember.Setter = set_12_DecimalFormatter_SignificantDigits;
                 break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.IsActive":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsActive", "Boolean");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_13_ProgressRing_IsActive;
+                xamlMember.Setter = set_13_ProgressRing_IsActive;
+                break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.IsIndeterminate":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsIndeterminate", "Boolean");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_14_ProgressRing_IsIndeterminate;
+                xamlMember.Setter = set_14_ProgressRing_IsIndeterminate;
+                break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.Maximum":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Maximum", "Double");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_15_ProgressRing_Maximum;
+                xamlMember.Setter = set_15_ProgressRing_Maximum;
+                break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.Minimum":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_16_ProgressRing_Minimum;
+                xamlMember.Setter = set_16_ProgressRing_Minimum;
+                break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.TemplateSettings":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TemplateSettings", "Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings");
+                xamlMember.Getter = get_17_ProgressRing_TemplateSettings;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.Controls.ProgressRing.Value":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ProgressRing");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Value", "Double");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_18_ProgressRing_Value;
+                xamlMember.Setter = set_18_ProgressRing_Value;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.Content":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Content", "Object");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_19_InfoBar_Content;
+                xamlMember.Setter = set_19_InfoBar_Content;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.IsOpen":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsOpen", "Boolean");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_20_InfoBar_IsOpen;
+                xamlMember.Setter = set_20_InfoBar_IsOpen;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.IsClosable":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsClosable", "Boolean");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_21_InfoBar_IsClosable;
+                xamlMember.Setter = set_21_InfoBar_IsClosable;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.Severity":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Severity", "Microsoft.UI.Xaml.Controls.InfoBarSeverity");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_22_InfoBar_Severity;
+                xamlMember.Setter = set_22_InfoBar_Severity;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.Title":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Title", "String");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_23_InfoBar_Title;
+                xamlMember.Setter = set_23_InfoBar_Title;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.Message":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Message", "String");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_24_InfoBar_Message;
+                xamlMember.Setter = set_24_InfoBar_Message;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.ActionButton":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ActionButton", "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_25_InfoBar_ActionButton;
+                xamlMember.Setter = set_25_InfoBar_ActionButton;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.CloseButtonCommand":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CloseButtonCommand", "System.Windows.Input.ICommand");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_26_InfoBar_CloseButtonCommand;
+                xamlMember.Setter = set_26_InfoBar_CloseButtonCommand;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.CloseButtonCommandParameter":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CloseButtonCommandParameter", "Object");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_27_InfoBar_CloseButtonCommandParameter;
+                xamlMember.Setter = set_27_InfoBar_CloseButtonCommandParameter;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.CloseButtonStyle":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CloseButtonStyle", "Microsoft.UI.Xaml.Style");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_28_InfoBar_CloseButtonStyle;
+                xamlMember.Setter = set_28_InfoBar_CloseButtonStyle;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.ContentTemplate":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ContentTemplate", "Microsoft.UI.Xaml.DataTemplate");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_29_InfoBar_ContentTemplate;
+                xamlMember.Setter = set_29_InfoBar_ContentTemplate;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.IconSource":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IconSource", "Microsoft.UI.Xaml.Controls.IconSource");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_30_InfoBar_IconSource;
+                xamlMember.Setter = set_30_InfoBar_IconSource;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.IsIconVisible":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsIconVisible", "Boolean");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_31_InfoBar_IsIconVisible;
+                xamlMember.Setter = set_31_InfoBar_IsIconVisible;
+                break;
+            case "Microsoft.UI.Xaml.Controls.InfoBar.TemplateSettings":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.InfoBar");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TemplateSettings", "Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_32_InfoBar_TemplateSettings;
+                xamlMember.SetIsReadOnly();
+                break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabItems":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabItems", "System.Collections.Generic.IList`1<Object>");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_13_TabView_TabItems;
+                xamlMember.Getter = get_33_TabView_TabItems;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabWidthMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabWidthMode", "Microsoft.UI.Xaml.Controls.TabViewWidthMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_14_TabView_TabWidthMode;
-                xamlMember.Setter = set_14_TabView_TabWidthMode;
+                xamlMember.Getter = get_34_TabView_TabWidthMode;
+                xamlMember.Setter = set_34_TabView_TabWidthMode;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.IsAddTabButtonVisible":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsAddTabButtonVisible", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_15_TabView_IsAddTabButtonVisible;
-                xamlMember.Setter = set_15_TabView_IsAddTabButtonVisible;
+                xamlMember.Getter = get_35_TabView_IsAddTabButtonVisible;
+                xamlMember.Setter = set_35_TabView_IsAddTabButtonVisible;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.CanDragTabs":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanDragTabs", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_16_TabView_CanDragTabs;
-                xamlMember.Setter = set_16_TabView_CanDragTabs;
+                xamlMember.Getter = get_36_TabView_CanDragTabs;
+                xamlMember.Setter = set_36_TabView_CanDragTabs;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.CanReorderTabs":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanReorderTabs", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_17_TabView_CanReorderTabs;
-                xamlMember.Setter = set_17_TabView_CanReorderTabs;
+                xamlMember.Getter = get_37_TabView_CanReorderTabs;
+                xamlMember.Setter = set_37_TabView_CanReorderTabs;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.AddTabButtonCommand":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AddTabButtonCommand", "System.Windows.Input.ICommand");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_18_TabView_AddTabButtonCommand;
-                xamlMember.Setter = set_18_TabView_AddTabButtonCommand;
+                xamlMember.Getter = get_38_TabView_AddTabButtonCommand;
+                xamlMember.Setter = set_38_TabView_AddTabButtonCommand;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.AddTabButtonCommandParameter":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AddTabButtonCommandParameter", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_19_TabView_AddTabButtonCommandParameter;
-                xamlMember.Setter = set_19_TabView_AddTabButtonCommandParameter;
+                xamlMember.Getter = get_39_TabView_AddTabButtonCommandParameter;
+                xamlMember.Setter = set_39_TabView_AddTabButtonCommandParameter;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.AllowDropTabs":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AllowDropTabs", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_20_TabView_AllowDropTabs;
-                xamlMember.Setter = set_20_TabView_AllowDropTabs;
+                xamlMember.Getter = get_40_TabView_AllowDropTabs;
+                xamlMember.Setter = set_40_TabView_AllowDropTabs;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.CanTearOutTabs":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanTearOutTabs", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_21_TabView_CanTearOutTabs;
-                xamlMember.Setter = set_21_TabView_CanTearOutTabs;
+                xamlMember.Getter = get_41_TabView_CanTearOutTabs;
+                xamlMember.Setter = set_41_TabView_CanTearOutTabs;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.CloseButtonOverlayMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CloseButtonOverlayMode", "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_22_TabView_CloseButtonOverlayMode;
-                xamlMember.Setter = set_22_TabView_CloseButtonOverlayMode;
+                xamlMember.Getter = get_42_TabView_CloseButtonOverlayMode;
+                xamlMember.Setter = set_42_TabView_CloseButtonOverlayMode;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.SelectedIndex":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedIndex", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_23_TabView_SelectedIndex;
-                xamlMember.Setter = set_23_TabView_SelectedIndex;
+                xamlMember.Getter = get_43_TabView_SelectedIndex;
+                xamlMember.Setter = set_43_TabView_SelectedIndex;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.SelectedItem":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedItem", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_24_TabView_SelectedItem;
-                xamlMember.Setter = set_24_TabView_SelectedItem;
+                xamlMember.Getter = get_44_TabView_SelectedItem;
+                xamlMember.Setter = set_44_TabView_SelectedItem;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabItemTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabItemTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_25_TabView_TabItemTemplate;
-                xamlMember.Setter = set_25_TabView_TabItemTemplate;
+                xamlMember.Getter = get_45_TabView_TabItemTemplate;
+                xamlMember.Setter = set_45_TabView_TabItemTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabItemTemplateSelector":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabItemTemplateSelector", "Microsoft.UI.Xaml.Controls.DataTemplateSelector");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_26_TabView_TabItemTemplateSelector;
-                xamlMember.Setter = set_26_TabView_TabItemTemplateSelector;
+                xamlMember.Getter = get_46_TabView_TabItemTemplateSelector;
+                xamlMember.Setter = set_46_TabView_TabItemTemplateSelector;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabItemsSource":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabItemsSource", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_27_TabView_TabItemsSource;
-                xamlMember.Setter = set_27_TabView_TabItemsSource;
+                xamlMember.Getter = get_47_TabView_TabItemsSource;
+                xamlMember.Setter = set_47_TabView_TabItemsSource;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabStripFooter":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabStripFooter", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_28_TabView_TabStripFooter;
-                xamlMember.Setter = set_28_TabView_TabStripFooter;
+                xamlMember.Getter = get_48_TabView_TabStripFooter;
+                xamlMember.Setter = set_48_TabView_TabStripFooter;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabStripFooterTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabStripFooterTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_29_TabView_TabStripFooterTemplate;
-                xamlMember.Setter = set_29_TabView_TabStripFooterTemplate;
+                xamlMember.Getter = get_49_TabView_TabStripFooterTemplate;
+                xamlMember.Setter = set_49_TabView_TabStripFooterTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabStripHeader":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabStripHeader", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_30_TabView_TabStripHeader;
-                xamlMember.Setter = set_30_TabView_TabStripHeader;
+                xamlMember.Getter = get_50_TabView_TabStripHeader;
+                xamlMember.Setter = set_50_TabView_TabStripHeader;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabView.TabStripHeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabView");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabStripHeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_31_TabView_TabStripHeaderTemplate;
-                xamlMember.Setter = set_31_TabView_TabStripHeaderTemplate;
-                break;
-            case "Microsoft.UI.Xaml.Controls.TabViewItem.Header":
-                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
-                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
-                xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_32_TabViewItem_Header;
-                xamlMember.Setter = set_32_TabViewItem_Header;
+                xamlMember.Getter = get_51_TabView_TabStripHeaderTemplate;
+                xamlMember.Setter = set_51_TabView_TabStripHeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabViewItem.IsClosable":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsClosable", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_33_TabViewItem_IsClosable;
-                xamlMember.Setter = set_33_TabViewItem_IsClosable;
+                xamlMember.Getter = get_52_TabViewItem_IsClosable;
+                xamlMember.Setter = set_52_TabViewItem_IsClosable;
+                break;
+            case "Microsoft.UI.Xaml.Controls.TabViewItem.Header":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_53_TabViewItem_Header;
+                xamlMember.Setter = set_53_TabViewItem_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabViewItem.HeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_34_TabViewItem_HeaderTemplate;
-                xamlMember.Setter = set_34_TabViewItem_HeaderTemplate;
+                xamlMember.Getter = get_54_TabViewItem_HeaderTemplate;
+                xamlMember.Setter = set_54_TabViewItem_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabViewItem.IconSource":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IconSource", "Microsoft.UI.Xaml.Controls.IconSource");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_35_TabViewItem_IconSource;
-                xamlMember.Setter = set_35_TabViewItem_IconSource;
+                xamlMember.Getter = get_55_TabViewItem_IconSource;
+                xamlMember.Setter = set_55_TabViewItem_IconSource;
                 break;
             case "Microsoft.UI.Xaml.Controls.TabViewItem.TabViewTemplateSettings":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TabViewItem");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TabViewTemplateSettings", "Microsoft.UI.Xaml.Controls.TabViewItemTemplateSettings");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_36_TabViewItem_TabViewTemplateSettings;
+                xamlMember.Getter = get_56_TabViewItem_TabViewTemplateSettings;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.ItemsSource":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ItemsSource", "System.Collections.IEnumerable");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_37_DataGrid_ItemsSource;
-                xamlMember.Setter = set_37_DataGrid_ItemsSource;
+                xamlMember.Getter = get_57_DataGrid_ItemsSource;
+                xamlMember.Setter = set_57_DataGrid_ItemsSource;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.SelectedItem":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedItem", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_38_DataGrid_SelectedItem;
-                xamlMember.Setter = set_38_DataGrid_SelectedItem;
+                xamlMember.Getter = get_58_DataGrid_SelectedItem;
+                xamlMember.Setter = set_58_DataGrid_SelectedItem;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.HeadersVisibility":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeadersVisibility", "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_39_DataGrid_HeadersVisibility;
-                xamlMember.Setter = set_39_DataGrid_HeadersVisibility;
+                xamlMember.Getter = get_59_DataGrid_HeadersVisibility;
+                xamlMember.Setter = set_59_DataGrid_HeadersVisibility;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.CanUserSortColumns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserSortColumns", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_40_DataGrid_CanUserSortColumns;
-                xamlMember.Setter = set_40_DataGrid_CanUserSortColumns;
+                xamlMember.Getter = get_60_DataGrid_CanUserSortColumns;
+                xamlMember.Setter = set_60_DataGrid_CanUserSortColumns;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.CanUserReorderColumns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserReorderColumns", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_41_DataGrid_CanUserReorderColumns;
-                xamlMember.Setter = set_41_DataGrid_CanUserReorderColumns;
+                xamlMember.Getter = get_61_DataGrid_CanUserReorderColumns;
+                xamlMember.Setter = set_61_DataGrid_CanUserReorderColumns;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.CanUserResizeColumns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserResizeColumns", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_42_DataGrid_CanUserResizeColumns;
-                xamlMember.Setter = set_42_DataGrid_CanUserResizeColumns;
+                xamlMember.Getter = get_62_DataGrid_CanUserResizeColumns;
+                xamlMember.Setter = set_62_DataGrid_CanUserResizeColumns;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.AutoGenerateColumns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AutoGenerateColumns", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_43_DataGrid_AutoGenerateColumns;
-                xamlMember.Setter = set_43_DataGrid_AutoGenerateColumns;
+                xamlMember.Getter = get_63_DataGrid_AutoGenerateColumns;
+                xamlMember.Setter = set_63_DataGrid_AutoGenerateColumns;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.IsReadOnly":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsReadOnly", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_44_DataGrid_IsReadOnly;
-                xamlMember.Setter = set_44_DataGrid_IsReadOnly;
+                xamlMember.Getter = get_64_DataGrid_IsReadOnly;
+                xamlMember.Setter = set_64_DataGrid_IsReadOnly;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.GridLinesVisibility":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "GridLinesVisibility", "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_45_DataGrid_GridLinesVisibility;
-                xamlMember.Setter = set_45_DataGrid_GridLinesVisibility;
+                xamlMember.Getter = get_65_DataGrid_GridLinesVisibility;
+                xamlMember.Setter = set_65_DataGrid_GridLinesVisibility;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.Columns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Columns", "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>");
-                xamlMember.Getter = get_46_DataGrid_Columns;
+                xamlMember.Getter = get_66_DataGrid_Columns;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.ActualWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ActualWidth", "Double");
-                xamlMember.Getter = get_47_DataGridColumn_ActualWidth;
+                xamlMember.Getter = get_67_DataGridColumn_ActualWidth;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.CanUserReorder":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserReorder", "Boolean");
-                xamlMember.Getter = get_48_DataGridColumn_CanUserReorder;
-                xamlMember.Setter = set_48_DataGridColumn_CanUserReorder;
+                xamlMember.Getter = get_68_DataGridColumn_CanUserReorder;
+                xamlMember.Setter = set_68_DataGridColumn_CanUserReorder;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.CanUserResize":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserResize", "Boolean");
-                xamlMember.Getter = get_49_DataGridColumn_CanUserResize;
-                xamlMember.Setter = set_49_DataGridColumn_CanUserResize;
+                xamlMember.Getter = get_69_DataGridColumn_CanUserResize;
+                xamlMember.Setter = set_69_DataGridColumn_CanUserResize;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.CanUserSort":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CanUserSort", "Boolean");
-                xamlMember.Getter = get_50_DataGridColumn_CanUserSort;
-                xamlMember.Setter = set_50_DataGridColumn_CanUserSort;
+                xamlMember.Getter = get_70_DataGridColumn_CanUserSort;
+                xamlMember.Setter = set_70_DataGridColumn_CanUserSort;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.CellStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellStyle", "Microsoft.UI.Xaml.Style");
-                xamlMember.Getter = get_51_DataGridColumn_CellStyle;
-                xamlMember.Setter = set_51_DataGridColumn_CellStyle;
+                xamlMember.Getter = get_71_DataGridColumn_CellStyle;
+                xamlMember.Setter = set_71_DataGridColumn_CellStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.ClipboardContentBinding":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ClipboardContentBinding", "Microsoft.UI.Xaml.Data.Binding");
-                xamlMember.Getter = get_52_DataGridColumn_ClipboardContentBinding;
-                xamlMember.Setter = set_52_DataGridColumn_ClipboardContentBinding;
+                xamlMember.Getter = get_72_DataGridColumn_ClipboardContentBinding;
+                xamlMember.Setter = set_72_DataGridColumn_ClipboardContentBinding;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.DisplayIndex":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "DisplayIndex", "Int32");
-                xamlMember.Getter = get_53_DataGridColumn_DisplayIndex;
-                xamlMember.Setter = set_53_DataGridColumn_DisplayIndex;
+                xamlMember.Getter = get_73_DataGridColumn_DisplayIndex;
+                xamlMember.Setter = set_73_DataGridColumn_DisplayIndex;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.DragIndicatorStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "DragIndicatorStyle", "Microsoft.UI.Xaml.Style");
-                xamlMember.Getter = get_54_DataGridColumn_DragIndicatorStyle;
-                xamlMember.Setter = set_54_DataGridColumn_DragIndicatorStyle;
+                xamlMember.Getter = get_74_DataGridColumn_DragIndicatorStyle;
+                xamlMember.Setter = set_74_DataGridColumn_DragIndicatorStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.HeaderStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderStyle", "Microsoft.UI.Xaml.Style");
-                xamlMember.Getter = get_55_DataGridColumn_HeaderStyle;
-                xamlMember.Setter = set_55_DataGridColumn_HeaderStyle;
+                xamlMember.Getter = get_75_DataGridColumn_HeaderStyle;
+                xamlMember.Setter = set_75_DataGridColumn_HeaderStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.Header":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
-                xamlMember.Getter = get_56_DataGridColumn_Header;
-                xamlMember.Setter = set_56_DataGridColumn_Header;
+                xamlMember.Getter = get_76_DataGridColumn_Header;
+                xamlMember.Setter = set_76_DataGridColumn_Header;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.IsAutoGenerated":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsAutoGenerated", "Boolean");
-                xamlMember.Getter = get_57_DataGridColumn_IsAutoGenerated;
+                xamlMember.Getter = get_77_DataGridColumn_IsAutoGenerated;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.IsFrozen":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsFrozen", "Boolean");
-                xamlMember.Getter = get_58_DataGridColumn_IsFrozen;
+                xamlMember.Getter = get_78_DataGridColumn_IsFrozen;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.IsReadOnly":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsReadOnly", "Boolean");
-                xamlMember.Getter = get_59_DataGridColumn_IsReadOnly;
-                xamlMember.Setter = set_59_DataGridColumn_IsReadOnly;
+                xamlMember.Getter = get_79_DataGridColumn_IsReadOnly;
+                xamlMember.Setter = set_79_DataGridColumn_IsReadOnly;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.MaxWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "MaxWidth", "Double");
-                xamlMember.Getter = get_60_DataGridColumn_MaxWidth;
-                xamlMember.Setter = set_60_DataGridColumn_MaxWidth;
+                xamlMember.Getter = get_80_DataGridColumn_MaxWidth;
+                xamlMember.Setter = set_80_DataGridColumn_MaxWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.MinWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "MinWidth", "Double");
-                xamlMember.Getter = get_61_DataGridColumn_MinWidth;
-                xamlMember.Setter = set_61_DataGridColumn_MinWidth;
+                xamlMember.Getter = get_81_DataGridColumn_MinWidth;
+                xamlMember.Setter = set_81_DataGridColumn_MinWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.SortDirection":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SortDirection", "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>");
-                xamlMember.Getter = get_62_DataGridColumn_SortDirection;
-                xamlMember.Setter = set_62_DataGridColumn_SortDirection;
+                xamlMember.Getter = get_82_DataGridColumn_SortDirection;
+                xamlMember.Setter = set_82_DataGridColumn_SortDirection;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.Tag":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Tag", "Object");
-                xamlMember.Getter = get_63_DataGridColumn_Tag;
-                xamlMember.Setter = set_63_DataGridColumn_Tag;
+                xamlMember.Getter = get_83_DataGridColumn_Tag;
+                xamlMember.Setter = set_83_DataGridColumn_Tag;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.Visibility":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Visibility", "Microsoft.UI.Xaml.Visibility");
-                xamlMember.Getter = get_64_DataGridColumn_Visibility;
-                xamlMember.Setter = set_64_DataGridColumn_Visibility;
+                xamlMember.Getter = get_84_DataGridColumn_Visibility;
+                xamlMember.Setter = set_84_DataGridColumn_Visibility;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridColumn.Width":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Width", "CommunityToolkit.WinUI.UI.Controls.DataGridLength");
-                xamlMember.Getter = get_65_DataGridColumn_Width;
-                xamlMember.Setter = set_65_DataGridColumn_Width;
+                xamlMember.Getter = get_85_DataGridColumn_Width;
+                xamlMember.Setter = set_85_DataGridColumn_Width;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.AlternatingRowBackground":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AlternatingRowBackground", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_66_DataGrid_AlternatingRowBackground;
-                xamlMember.Setter = set_66_DataGrid_AlternatingRowBackground;
+                xamlMember.Getter = get_86_DataGrid_AlternatingRowBackground;
+                xamlMember.Setter = set_86_DataGrid_AlternatingRowBackground;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.AlternatingRowForeground":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AlternatingRowForeground", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_67_DataGrid_AlternatingRowForeground;
-                xamlMember.Setter = set_67_DataGrid_AlternatingRowForeground;
+                xamlMember.Getter = get_87_DataGrid_AlternatingRowForeground;
+                xamlMember.Setter = set_87_DataGrid_AlternatingRowForeground;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.AreRowDetailsFrozen":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AreRowDetailsFrozen", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_68_DataGrid_AreRowDetailsFrozen;
-                xamlMember.Setter = set_68_DataGrid_AreRowDetailsFrozen;
+                xamlMember.Getter = get_88_DataGrid_AreRowDetailsFrozen;
+                xamlMember.Setter = set_88_DataGrid_AreRowDetailsFrozen;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.AreRowGroupHeadersFrozen":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AreRowGroupHeadersFrozen", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_69_DataGrid_AreRowGroupHeadersFrozen;
-                xamlMember.Setter = set_69_DataGrid_AreRowGroupHeadersFrozen;
+                xamlMember.Getter = get_89_DataGrid_AreRowGroupHeadersFrozen;
+                xamlMember.Setter = set_89_DataGrid_AreRowGroupHeadersFrozen;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.CellStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_70_DataGrid_CellStyle;
-                xamlMember.Setter = set_70_DataGrid_CellStyle;
+                xamlMember.Getter = get_90_DataGrid_CellStyle;
+                xamlMember.Setter = set_90_DataGrid_CellStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.ClipboardCopyMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ClipboardCopyMode", "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_71_DataGrid_ClipboardCopyMode;
-                xamlMember.Setter = set_71_DataGrid_ClipboardCopyMode;
+                xamlMember.Getter = get_91_DataGrid_ClipboardCopyMode;
+                xamlMember.Setter = set_91_DataGrid_ClipboardCopyMode;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.ColumnHeaderHeight":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ColumnHeaderHeight", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_72_DataGrid_ColumnHeaderHeight;
-                xamlMember.Setter = set_72_DataGrid_ColumnHeaderHeight;
+                xamlMember.Getter = get_92_DataGrid_ColumnHeaderHeight;
+                xamlMember.Setter = set_92_DataGrid_ColumnHeaderHeight;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.ColumnHeaderStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ColumnHeaderStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_73_DataGrid_ColumnHeaderStyle;
-                xamlMember.Setter = set_73_DataGrid_ColumnHeaderStyle;
+                xamlMember.Getter = get_93_DataGrid_ColumnHeaderStyle;
+                xamlMember.Setter = set_93_DataGrid_ColumnHeaderStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.ColumnWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ColumnWidth", "CommunityToolkit.WinUI.UI.Controls.DataGridLength");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_74_DataGrid_ColumnWidth;
-                xamlMember.Setter = set_74_DataGrid_ColumnWidth;
+                xamlMember.Getter = get_94_DataGrid_ColumnWidth;
+                xamlMember.Setter = set_94_DataGrid_ColumnWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.DataFetchSize":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "DataFetchSize", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_75_DataGrid_DataFetchSize;
-                xamlMember.Setter = set_75_DataGrid_DataFetchSize;
+                xamlMember.Getter = get_95_DataGrid_DataFetchSize;
+                xamlMember.Setter = set_95_DataGrid_DataFetchSize;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.DragIndicatorStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "DragIndicatorStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_76_DataGrid_DragIndicatorStyle;
-                xamlMember.Setter = set_76_DataGrid_DragIndicatorStyle;
+                xamlMember.Getter = get_96_DataGrid_DragIndicatorStyle;
+                xamlMember.Setter = set_96_DataGrid_DragIndicatorStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.DropLocationIndicatorStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "DropLocationIndicatorStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_77_DataGrid_DropLocationIndicatorStyle;
-                xamlMember.Setter = set_77_DataGrid_DropLocationIndicatorStyle;
+                xamlMember.Getter = get_97_DataGrid_DropLocationIndicatorStyle;
+                xamlMember.Setter = set_97_DataGrid_DropLocationIndicatorStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.FrozenColumnCount":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "FrozenColumnCount", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_78_DataGrid_FrozenColumnCount;
-                xamlMember.Setter = set_78_DataGrid_FrozenColumnCount;
+                xamlMember.Getter = get_98_DataGrid_FrozenColumnCount;
+                xamlMember.Setter = set_98_DataGrid_FrozenColumnCount;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.HorizontalGridLinesBrush":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HorizontalGridLinesBrush", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_79_DataGrid_HorizontalGridLinesBrush;
-                xamlMember.Setter = set_79_DataGrid_HorizontalGridLinesBrush;
+                xamlMember.Getter = get_99_DataGrid_HorizontalGridLinesBrush;
+                xamlMember.Setter = set_99_DataGrid_HorizontalGridLinesBrush;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.HorizontalScrollBarVisibility":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HorizontalScrollBarVisibility", "Microsoft.UI.Xaml.Controls.ScrollBarVisibility");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_80_DataGrid_HorizontalScrollBarVisibility;
-                xamlMember.Setter = set_80_DataGrid_HorizontalScrollBarVisibility;
+                xamlMember.Getter = get_100_DataGrid_HorizontalScrollBarVisibility;
+                xamlMember.Setter = set_100_DataGrid_HorizontalScrollBarVisibility;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.IsValid":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsValid", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_81_DataGrid_IsValid;
+                xamlMember.Getter = get_101_DataGrid_IsValid;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.IncrementalLoadingThreshold":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IncrementalLoadingThreshold", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_82_DataGrid_IncrementalLoadingThreshold;
-                xamlMember.Setter = set_82_DataGrid_IncrementalLoadingThreshold;
+                xamlMember.Getter = get_102_DataGrid_IncrementalLoadingThreshold;
+                xamlMember.Setter = set_102_DataGrid_IncrementalLoadingThreshold;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.IncrementalLoadingTrigger":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IncrementalLoadingTrigger", "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_83_DataGrid_IncrementalLoadingTrigger;
-                xamlMember.Setter = set_83_DataGrid_IncrementalLoadingTrigger;
+                xamlMember.Getter = get_103_DataGrid_IncrementalLoadingTrigger;
+                xamlMember.Setter = set_103_DataGrid_IncrementalLoadingTrigger;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.MaxColumnWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "MaxColumnWidth", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_84_DataGrid_MaxColumnWidth;
-                xamlMember.Setter = set_84_DataGrid_MaxColumnWidth;
+                xamlMember.Getter = get_104_DataGrid_MaxColumnWidth;
+                xamlMember.Setter = set_104_DataGrid_MaxColumnWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.MinColumnWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "MinColumnWidth", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_85_DataGrid_MinColumnWidth;
-                xamlMember.Setter = set_85_DataGrid_MinColumnWidth;
+                xamlMember.Getter = get_105_DataGrid_MinColumnWidth;
+                xamlMember.Setter = set_105_DataGrid_MinColumnWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowBackground":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowBackground", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_86_DataGrid_RowBackground;
-                xamlMember.Setter = set_86_DataGrid_RowBackground;
+                xamlMember.Getter = get_106_DataGrid_RowBackground;
+                xamlMember.Setter = set_106_DataGrid_RowBackground;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowDetailsTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowDetailsTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_87_DataGrid_RowDetailsTemplate;
-                xamlMember.Setter = set_87_DataGrid_RowDetailsTemplate;
+                xamlMember.Getter = get_107_DataGrid_RowDetailsTemplate;
+                xamlMember.Setter = set_107_DataGrid_RowDetailsTemplate;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowDetailsVisibilityMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowDetailsVisibilityMode", "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_88_DataGrid_RowDetailsVisibilityMode;
-                xamlMember.Setter = set_88_DataGrid_RowDetailsVisibilityMode;
+                xamlMember.Getter = get_108_DataGrid_RowDetailsVisibilityMode;
+                xamlMember.Setter = set_108_DataGrid_RowDetailsVisibilityMode;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowForeground":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowForeground", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_89_DataGrid_RowForeground;
-                xamlMember.Setter = set_89_DataGrid_RowForeground;
+                xamlMember.Getter = get_109_DataGrid_RowForeground;
+                xamlMember.Setter = set_109_DataGrid_RowForeground;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowHeight":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowHeight", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_90_DataGrid_RowHeight;
-                xamlMember.Setter = set_90_DataGrid_RowHeight;
+                xamlMember.Getter = get_110_DataGrid_RowHeight;
+                xamlMember.Setter = set_110_DataGrid_RowHeight;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowHeaderWidth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowHeaderWidth", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_91_DataGrid_RowHeaderWidth;
-                xamlMember.Setter = set_91_DataGrid_RowHeaderWidth;
+                xamlMember.Getter = get_111_DataGrid_RowHeaderWidth;
+                xamlMember.Setter = set_111_DataGrid_RowHeaderWidth;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowHeaderStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowHeaderStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_92_DataGrid_RowHeaderStyle;
-                xamlMember.Setter = set_92_DataGrid_RowHeaderStyle;
+                xamlMember.Getter = get_112_DataGrid_RowHeaderStyle;
+                xamlMember.Setter = set_112_DataGrid_RowHeaderStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowStyle", "Microsoft.UI.Xaml.Style");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_93_DataGrid_RowStyle;
-                xamlMember.Setter = set_93_DataGrid_RowStyle;
+                xamlMember.Getter = get_113_DataGrid_RowStyle;
+                xamlMember.Setter = set_113_DataGrid_RowStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.SelectionMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectionMode", "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_94_DataGrid_SelectionMode;
-                xamlMember.Setter = set_94_DataGrid_SelectionMode;
+                xamlMember.Getter = get_114_DataGrid_SelectionMode;
+                xamlMember.Setter = set_114_DataGrid_SelectionMode;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.SelectedIndex":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedIndex", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_95_DataGrid_SelectedIndex;
-                xamlMember.Setter = set_95_DataGrid_SelectedIndex;
+                xamlMember.Getter = get_115_DataGrid_SelectedIndex;
+                xamlMember.Setter = set_115_DataGrid_SelectedIndex;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.VerticalGridLinesBrush":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "VerticalGridLinesBrush", "Microsoft.UI.Xaml.Media.Brush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_96_DataGrid_VerticalGridLinesBrush;
-                xamlMember.Setter = set_96_DataGrid_VerticalGridLinesBrush;
+                xamlMember.Getter = get_116_DataGrid_VerticalGridLinesBrush;
+                xamlMember.Setter = set_116_DataGrid_VerticalGridLinesBrush;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.VerticalScrollBarVisibility":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "VerticalScrollBarVisibility", "Microsoft.UI.Xaml.Controls.ScrollBarVisibility");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_97_DataGrid_VerticalScrollBarVisibility;
-                xamlMember.Setter = set_97_DataGrid_VerticalScrollBarVisibility;
+                xamlMember.Getter = get_117_DataGrid_VerticalScrollBarVisibility;
+                xamlMember.Setter = set_117_DataGrid_VerticalScrollBarVisibility;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.CurrentColumn":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CurrentColumn", "CommunityToolkit.WinUI.UI.Controls.DataGridColumn");
-                xamlMember.Getter = get_98_DataGrid_CurrentColumn;
-                xamlMember.Setter = set_98_DataGrid_CurrentColumn;
+                xamlMember.Getter = get_118_DataGrid_CurrentColumn;
+                xamlMember.Setter = set_118_DataGrid_CurrentColumn;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowGroupHeaderPropertyNameAlternative":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowGroupHeaderPropertyNameAlternative", "String");
-                xamlMember.Getter = get_99_DataGrid_RowGroupHeaderPropertyNameAlternative;
-                xamlMember.Setter = set_99_DataGrid_RowGroupHeaderPropertyNameAlternative;
+                xamlMember.Getter = get_119_DataGrid_RowGroupHeaderPropertyNameAlternative;
+                xamlMember.Setter = set_119_DataGrid_RowGroupHeaderPropertyNameAlternative;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.RowGroupHeaderStyles":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "RowGroupHeaderStyles", "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>");
-                xamlMember.Getter = get_100_DataGrid_RowGroupHeaderStyles;
+                xamlMember.Getter = get_120_DataGrid_RowGroupHeaderStyles;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGrid.SelectedItems":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGrid");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedItems", "System.Collections.IList");
-                xamlMember.Getter = get_101_DataGrid_SelectedItems;
+                xamlMember.Getter = get_121_DataGrid_SelectedItems;
                 xamlMember.SetIsReadOnly();
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn.Binding":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Binding", "Microsoft.UI.Xaml.Data.Binding");
-                xamlMember.Getter = get_102_DataGridBoundColumn_Binding;
-                xamlMember.Setter = set_102_DataGridBoundColumn_Binding;
+                xamlMember.Getter = get_122_DataGridBoundColumn_Binding;
+                xamlMember.Setter = set_122_DataGridBoundColumn_Binding;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn.FontFamily":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "FontFamily", "Microsoft.UI.Xaml.Media.FontFamily");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_103_DataGridTextColumn_FontFamily;
-                xamlMember.Setter = set_103_DataGridTextColumn_FontFamily;
+                xamlMember.Getter = get_123_DataGridTextColumn_FontFamily;
+                xamlMember.Setter = set_123_DataGridTextColumn_FontFamily;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn.FontSize":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "FontSize", "Double");
-                xamlMember.Getter = get_104_DataGridTextColumn_FontSize;
-                xamlMember.Setter = set_104_DataGridTextColumn_FontSize;
+                xamlMember.Getter = get_124_DataGridTextColumn_FontSize;
+                xamlMember.Setter = set_124_DataGridTextColumn_FontSize;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn.FontStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "FontStyle", "Windows.UI.Text.FontStyle");
-                xamlMember.Getter = get_105_DataGridTextColumn_FontStyle;
-                xamlMember.Setter = set_105_DataGridTextColumn_FontStyle;
+                xamlMember.Getter = get_125_DataGridTextColumn_FontStyle;
+                xamlMember.Setter = set_125_DataGridTextColumn_FontStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn.FontWeight":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "FontWeight", "Windows.UI.Text.FontWeight");
-                xamlMember.Getter = get_106_DataGridTextColumn_FontWeight;
-                xamlMember.Setter = set_106_DataGridTextColumn_FontWeight;
+                xamlMember.Getter = get_126_DataGridTextColumn_FontWeight;
+                xamlMember.Setter = set_126_DataGridTextColumn_FontWeight;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn.Foreground":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Foreground", "Microsoft.UI.Xaml.Media.Brush");
-                xamlMember.Getter = get_107_DataGridTextColumn_Foreground;
-                xamlMember.Setter = set_107_DataGridTextColumn_Foreground;
+                xamlMember.Getter = get_127_DataGridTextColumn_Foreground;
+                xamlMember.Setter = set_127_DataGridTextColumn_Foreground;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn.ClipboardContentBinding":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ClipboardContentBinding", "Microsoft.UI.Xaml.Data.Binding");
-                xamlMember.Getter = get_108_DataGridBoundColumn_ClipboardContentBinding;
-                xamlMember.Setter = set_108_DataGridBoundColumn_ClipboardContentBinding;
+                xamlMember.Getter = get_128_DataGridBoundColumn_ClipboardContentBinding;
+                xamlMember.Setter = set_128_DataGridBoundColumn_ClipboardContentBinding;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn.EditingElementStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "EditingElementStyle", "Microsoft.UI.Xaml.Style");
-                xamlMember.Getter = get_109_DataGridBoundColumn_EditingElementStyle;
-                xamlMember.Setter = set_109_DataGridBoundColumn_EditingElementStyle;
+                xamlMember.Getter = get_129_DataGridBoundColumn_EditingElementStyle;
+                xamlMember.Setter = set_129_DataGridBoundColumn_EditingElementStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn.ElementStyle":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ElementStyle", "Microsoft.UI.Xaml.Style");
-                xamlMember.Getter = get_110_DataGridBoundColumn_ElementStyle;
-                xamlMember.Setter = set_110_DataGridBoundColumn_ElementStyle;
+                xamlMember.Getter = get_130_DataGridBoundColumn_ElementStyle;
+                xamlMember.Setter = set_130_DataGridBoundColumn_ElementStyle;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellTemplate", "Microsoft.UI.Xaml.DataTemplate");
-                xamlMember.Getter = get_111_DataGridTemplateColumn_CellTemplate;
-                xamlMember.Setter = set_111_DataGridTemplateColumn_CellTemplate;
+                xamlMember.Getter = get_131_DataGridTemplateColumn_CellTemplate;
+                xamlMember.Setter = set_131_DataGridTemplateColumn_CellTemplate;
                 break;
             case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellEditingTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellEditingTemplate", "Microsoft.UI.Xaml.DataTemplate");
-                xamlMember.Getter = get_112_DataGridTemplateColumn_CellEditingTemplate;
-                xamlMember.Setter = set_112_DataGridTemplateColumn_CellEditingTemplate;
+                xamlMember.Getter = get_132_DataGridTemplateColumn_CellEditingTemplate;
+                xamlMember.Setter = set_132_DataGridTemplateColumn_CellEditingTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Value":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Value", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_113_NumberBox_Value;
-                xamlMember.Setter = set_113_NumberBox_Value;
+                xamlMember.Getter = get_133_NumberBox_Value;
+                xamlMember.Setter = set_133_NumberBox_Value;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.PlaceholderText":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "PlaceholderText", "String");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_114_NumberBox_PlaceholderText;
-                xamlMember.Setter = set_114_NumberBox_PlaceholderText;
+                xamlMember.Getter = get_134_NumberBox_PlaceholderText;
+                xamlMember.Setter = set_134_NumberBox_PlaceholderText;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.NumberFormatter":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "NumberFormatter", "Windows.Globalization.NumberFormatting.INumberFormatter2");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_115_NumberBox_NumberFormatter;
-                xamlMember.Setter = set_115_NumberBox_NumberFormatter;
+                xamlMember.Getter = get_135_NumberBox_NumberFormatter;
+                xamlMember.Setter = set_135_NumberBox_NumberFormatter;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.AcceptsExpression":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AcceptsExpression", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_116_NumberBox_AcceptsExpression;
-                xamlMember.Setter = set_116_NumberBox_AcceptsExpression;
+                xamlMember.Getter = get_136_NumberBox_AcceptsExpression;
+                xamlMember.Setter = set_136_NumberBox_AcceptsExpression;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Description":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Description", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_117_NumberBox_Description;
-                xamlMember.Setter = set_117_NumberBox_Description;
+                xamlMember.Getter = get_137_NumberBox_Description;
+                xamlMember.Setter = set_137_NumberBox_Description;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Header":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_118_NumberBox_Header;
-                xamlMember.Setter = set_118_NumberBox_Header;
+                xamlMember.Getter = get_138_NumberBox_Header;
+                xamlMember.Setter = set_138_NumberBox_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.HeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_119_NumberBox_HeaderTemplate;
-                xamlMember.Setter = set_119_NumberBox_HeaderTemplate;
+                xamlMember.Getter = get_139_NumberBox_HeaderTemplate;
+                xamlMember.Setter = set_139_NumberBox_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.IsWrapEnabled":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsWrapEnabled", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_120_NumberBox_IsWrapEnabled;
-                xamlMember.Setter = set_120_NumberBox_IsWrapEnabled;
+                xamlMember.Getter = get_140_NumberBox_IsWrapEnabled;
+                xamlMember.Setter = set_140_NumberBox_IsWrapEnabled;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.LargeChange":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "LargeChange", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_121_NumberBox_LargeChange;
-                xamlMember.Setter = set_121_NumberBox_LargeChange;
+                xamlMember.Getter = get_141_NumberBox_LargeChange;
+                xamlMember.Setter = set_141_NumberBox_LargeChange;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Maximum":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Maximum", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_122_NumberBox_Maximum;
-                xamlMember.Setter = set_122_NumberBox_Maximum;
+                xamlMember.Getter = get_142_NumberBox_Maximum;
+                xamlMember.Setter = set_142_NumberBox_Maximum;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Minimum":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_123_NumberBox_Minimum;
-                xamlMember.Setter = set_123_NumberBox_Minimum;
+                xamlMember.Getter = get_143_NumberBox_Minimum;
+                xamlMember.Setter = set_143_NumberBox_Minimum;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.PreventKeyboardDisplayOnProgrammaticFocus":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "PreventKeyboardDisplayOnProgrammaticFocus", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_124_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
-                xamlMember.Setter = set_124_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
+                xamlMember.Getter = get_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
+                xamlMember.Setter = set_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SelectionFlyout":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectionFlyout", "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_125_NumberBox_SelectionFlyout;
-                xamlMember.Setter = set_125_NumberBox_SelectionFlyout;
+                xamlMember.Getter = get_145_NumberBox_SelectionFlyout;
+                xamlMember.Setter = set_145_NumberBox_SelectionFlyout;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SelectionHighlightColor":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectionHighlightColor", "Microsoft.UI.Xaml.Media.SolidColorBrush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_126_NumberBox_SelectionHighlightColor;
-                xamlMember.Setter = set_126_NumberBox_SelectionHighlightColor;
+                xamlMember.Getter = get_146_NumberBox_SelectionHighlightColor;
+                xamlMember.Setter = set_146_NumberBox_SelectionHighlightColor;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SmallChange":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SmallChange", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_127_NumberBox_SmallChange;
-                xamlMember.Setter = set_127_NumberBox_SmallChange;
+                xamlMember.Getter = get_147_NumberBox_SmallChange;
+                xamlMember.Setter = set_147_NumberBox_SmallChange;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SpinButtonPlacementMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SpinButtonPlacementMode", "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_128_NumberBox_SpinButtonPlacementMode;
-                xamlMember.Setter = set_128_NumberBox_SpinButtonPlacementMode;
+                xamlMember.Getter = get_148_NumberBox_SpinButtonPlacementMode;
+                xamlMember.Setter = set_148_NumberBox_SpinButtonPlacementMode;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Text":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Text", "String");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_129_NumberBox_Text;
-                xamlMember.Setter = set_129_NumberBox_Text;
+                xamlMember.Getter = get_149_NumberBox_Text;
+                xamlMember.Setter = set_149_NumberBox_Text;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.TextReadingOrder":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TextReadingOrder", "Microsoft.UI.Xaml.TextReadingOrder");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_130_NumberBox_TextReadingOrder;
-                xamlMember.Setter = set_130_NumberBox_TextReadingOrder;
+                xamlMember.Getter = get_150_NumberBox_TextReadingOrder;
+                xamlMember.Setter = set_150_NumberBox_TextReadingOrder;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.ValidationMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ValidationMode", "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_131_NumberBox_ValidationMode;
-                xamlMember.Setter = set_131_NumberBox_ValidationMode;
+                xamlMember.Getter = get_151_NumberBox_ValidationMode;
+                xamlMember.Setter = set_151_NumberBox_ValidationMode;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.Items":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Items", "System.Collections.Generic.IList`1<Object>");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_132_RadioButtons_Items;
+                xamlMember.Getter = get_152_RadioButtons_Items;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.SelectedIndex":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedIndex", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_133_RadioButtons_SelectedIndex;
-                xamlMember.Setter = set_133_RadioButtons_SelectedIndex;
+                xamlMember.Getter = get_153_RadioButtons_SelectedIndex;
+                xamlMember.Setter = set_153_RadioButtons_SelectedIndex;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.Header":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_134_RadioButtons_Header;
-                xamlMember.Setter = set_134_RadioButtons_Header;
+                xamlMember.Getter = get_154_RadioButtons_Header;
+                xamlMember.Setter = set_154_RadioButtons_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.HeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_135_RadioButtons_HeaderTemplate;
-                xamlMember.Setter = set_135_RadioButtons_HeaderTemplate;
+                xamlMember.Getter = get_155_RadioButtons_HeaderTemplate;
+                xamlMember.Setter = set_155_RadioButtons_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.ItemTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ItemTemplate", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_136_RadioButtons_ItemTemplate;
-                xamlMember.Setter = set_136_RadioButtons_ItemTemplate;
+                xamlMember.Getter = get_156_RadioButtons_ItemTemplate;
+                xamlMember.Setter = set_156_RadioButtons_ItemTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.ItemsSource":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ItemsSource", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_137_RadioButtons_ItemsSource;
-                xamlMember.Setter = set_137_RadioButtons_ItemsSource;
+                xamlMember.Getter = get_157_RadioButtons_ItemsSource;
+                xamlMember.Setter = set_157_RadioButtons_ItemsSource;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.MaxColumns":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "MaxColumns", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_138_RadioButtons_MaxColumns;
-                xamlMember.Setter = set_138_RadioButtons_MaxColumns;
+                xamlMember.Getter = get_158_RadioButtons_MaxColumns;
+                xamlMember.Setter = set_158_RadioButtons_MaxColumns;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.SelectedItem":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectedItem", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_139_RadioButtons_SelectedItem;
-                xamlMember.Setter = set_139_RadioButtons_SelectedItem;
+                xamlMember.Getter = get_159_RadioButtons_SelectedItem;
+                xamlMember.Setter = set_159_RadioButtons_SelectedItem;
                 break;
             case "FinancialCalculator.WinUI3.MainWindow.ViewModel":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("FinancialCalculator.WinUI3.MainWindow");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ViewModel", "FinancialCalculator.WinUI3.ViewModels.MainViewModel");
-                xamlMember.Getter = get_140_MainWindow_ViewModel;
+                xamlMember.Getter = get_160_MainWindow_ViewModel;
                 xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.GridLength.Value":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.GridLength");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Value", "Double");
+                xamlMember.Getter = get_161_GridLength_Value;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.GridLength.GridUnitType":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.GridLength");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "GridUnitType", "Microsoft.UI.Xaml.GridUnitType");
+                xamlMember.Getter = get_162_GridLength_GridUnitType;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.GridLength.IsAbsolute":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.GridLength");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsAbsolute", "Boolean");
+                xamlMember.Getter = get_163_GridLength_IsAbsolute;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.GridLength.IsAuto":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.GridLength");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsAuto", "Boolean");
+                xamlMember.Getter = get_164_GridLength_IsAuto;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.GridLength.IsStar":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.GridLength");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsStar", "Boolean");
+                xamlMember.Getter = get_165_GridLength_IsStar;
+                xamlMember.SetIsReadOnly();
+                break;
+            case "Microsoft.UI.Xaml.Thickness.Left":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Thickness");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Left", "Double");
+                xamlMember.Getter = get_166_Thickness_Left;
+                xamlMember.Setter = set_166_Thickness_Left;
+                break;
+            case "Microsoft.UI.Xaml.Thickness.Top":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Thickness");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Top", "Double");
+                xamlMember.Getter = get_167_Thickness_Top;
+                xamlMember.Setter = set_167_Thickness_Top;
+                break;
+            case "Microsoft.UI.Xaml.Thickness.Right":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Thickness");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Right", "Double");
+                xamlMember.Getter = get_168_Thickness_Right;
+                xamlMember.Setter = set_168_Thickness_Right;
+                break;
+            case "Microsoft.UI.Xaml.Thickness.Bottom":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Thickness");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Bottom", "Double");
+                xamlMember.Getter = get_169_Thickness_Bottom;
+                xamlMember.Setter = set_169_Thickness_Bottom;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Children":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Children", "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>");
-                xamlMember.Getter = get_141_TreeViewNode_Children;
+                xamlMember.Getter = get_170_TreeViewNode_Children;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Content":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Content", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_142_TreeViewNode_Content;
-                xamlMember.Setter = set_142_TreeViewNode_Content;
+                xamlMember.Getter = get_171_TreeViewNode_Content;
+                xamlMember.Setter = set_171_TreeViewNode_Content;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Depth":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Depth", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_143_TreeViewNode_Depth;
+                xamlMember.Getter = get_172_TreeViewNode_Depth;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.HasChildren":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HasChildren", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_144_TreeViewNode_HasChildren;
+                xamlMember.Getter = get_173_TreeViewNode_HasChildren;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.HasUnrealizedChildren":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HasUnrealizedChildren", "Boolean");
-                xamlMember.Getter = get_145_TreeViewNode_HasUnrealizedChildren;
-                xamlMember.Setter = set_145_TreeViewNode_HasUnrealizedChildren;
+                xamlMember.Getter = get_174_TreeViewNode_HasUnrealizedChildren;
+                xamlMember.Setter = set_174_TreeViewNode_HasUnrealizedChildren;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.IsExpanded":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsExpanded", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_146_TreeViewNode_IsExpanded;
-                xamlMember.Setter = set_146_TreeViewNode_IsExpanded;
+                xamlMember.Getter = get_175_TreeViewNode_IsExpanded;
+                xamlMember.Setter = set_175_TreeViewNode_IsExpanded;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Parent":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Parent", "Microsoft.UI.Xaml.Controls.TreeViewNode");
-                xamlMember.Getter = get_147_TreeViewNode_Parent;
+                xamlMember.Getter = get_176_TreeViewNode_Parent;
                 xamlMember.SetIsReadOnly();
                 break;
             }

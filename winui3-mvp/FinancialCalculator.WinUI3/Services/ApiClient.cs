@@ -39,13 +39,13 @@ namespace FinancialCalculator.WinUI3.Services
                 {
                     return await operation();
                 }
-                catch (HttpRequestException ex) when (attempt < MaxRetryAttempts - 1)
+                catch (HttpRequestException) when (attempt < MaxRetryAttempts - 1)
                 {
                     attempt++;
                     await Task.Delay(RetryDelayMs * attempt); // Exponential backoff
                     continue;
                 }
-                catch (TaskCanceledException ex) when (attempt < MaxRetryAttempts - 1)
+                catch (TaskCanceledException) when (attempt < MaxRetryAttempts - 1)
                 {
                     attempt++;
                     await Task.Delay(RetryDelayMs * attempt);
