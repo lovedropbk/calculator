@@ -61,6 +61,9 @@ namespace FinancialCalculator.WinUI3.Models
         [JsonPropertyName("deal")] public DealDto Deal { get; set; } = new();
         [JsonPropertyName("state")] public DealStateDto State { get; set; } = new();
         [JsonPropertyName("campaigns")] public List<CampaignDto> Campaigns { get; set; } = new();
+        [JsonPropertyName("timestamp")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Timestamp { get; set; }
     }
 
     public class DealStateDto

@@ -31,7 +31,7 @@
                  CanReorderTabs="False"
                  VerticalAlignment="Stretch"
                  HorizontalAlignment="Stretch"
-                 Margin="0,60,0,0">
+                 Margin="0,0,0,0">
             
             <!-- MARK: Main Tab with Icon -->
             <TabView.TabItems>
@@ -63,7 +63,9 @@
                 HorizontalAlignment="Stretch"
                 MinWidth="320"
                 MaxWidth="500">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource ResponsiveScrollViewer}">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Style="{StaticResource ResponsiveScrollViewer}">
                 <StackPanel Spacing="12">
         
                     <!-- Deal Inputs -->
