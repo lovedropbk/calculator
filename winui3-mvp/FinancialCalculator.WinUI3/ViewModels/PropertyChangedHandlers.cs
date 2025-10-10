@@ -133,6 +133,8 @@ public partial class MainViewModel
             SubsidyBudgetIsEnabled = ExceedsInitialSubsidy(mc);
             // Auto-recalc when adjustments change
             _debounce.Debounce(200, async _ => { await RefreshActiveSelectionAsync(); });
+            // Also refresh summaries to reflect changes in Standard grid metrics
+            _debounce.Debounce(400, async _ => { await LoadSummariesAsync(); });
         }
     }
 

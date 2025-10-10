@@ -1106,7 +1106,6 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 userType.AddMemberName("Value");
                 userType.AddMemberName("PlaceholderText");
                 userType.AddMemberName("NumberFormatter");
-                userType.AddMemberName("Minimum");
                 userType.AddMemberName("AcceptsExpression");
                 userType.AddMemberName("Description");
                 userType.AddMemberName("Header");
@@ -1114,6 +1113,7 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 userType.AddMemberName("IsWrapEnabled");
                 userType.AddMemberName("LargeChange");
                 userType.AddMemberName("Maximum");
+                userType.AddMemberName("Minimum");
                 userType.AddMemberName("PreventKeyboardDisplayOnProgrammaticFocus");
                 userType.AddMemberName("SelectionFlyout");
                 userType.AddMemberName("SelectionHighlightColor");
@@ -2606,85 +2606,85 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.NumberFormatter = (global::Windows.Globalization.NumberFormatting.INumberFormatter2)Value;
         }
-        private object get_136_NumberBox_Minimum(object instance)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
-            return that.Minimum;
-        }
-        private void set_136_NumberBox_Minimum(object instance, object Value)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
-            that.Minimum = (global::System.Double)Value;
-        }
-        private object get_137_NumberBox_AcceptsExpression(object instance)
+        private object get_136_NumberBox_AcceptsExpression(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.AcceptsExpression;
         }
-        private void set_137_NumberBox_AcceptsExpression(object instance, object Value)
+        private void set_136_NumberBox_AcceptsExpression(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.AcceptsExpression = (global::System.Boolean)Value;
         }
-        private object get_138_NumberBox_Description(object instance)
+        private object get_137_NumberBox_Description(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Description;
         }
-        private void set_138_NumberBox_Description(object instance, object Value)
+        private void set_137_NumberBox_Description(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Description = (global::System.Object)Value;
         }
-        private object get_139_NumberBox_Header(object instance)
+        private object get_138_NumberBox_Header(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Header;
         }
-        private void set_139_NumberBox_Header(object instance, object Value)
+        private void set_138_NumberBox_Header(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_140_NumberBox_HeaderTemplate(object instance)
+        private object get_139_NumberBox_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.HeaderTemplate;
         }
-        private void set_140_NumberBox_HeaderTemplate(object instance, object Value)
+        private void set_139_NumberBox_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_141_NumberBox_IsWrapEnabled(object instance)
+        private object get_140_NumberBox_IsWrapEnabled(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.IsWrapEnabled;
         }
-        private void set_141_NumberBox_IsWrapEnabled(object instance, object Value)
+        private void set_140_NumberBox_IsWrapEnabled(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.IsWrapEnabled = (global::System.Boolean)Value;
         }
-        private object get_142_NumberBox_LargeChange(object instance)
+        private object get_141_NumberBox_LargeChange(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.LargeChange;
         }
-        private void set_142_NumberBox_LargeChange(object instance, object Value)
+        private void set_141_NumberBox_LargeChange(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.LargeChange = (global::System.Double)Value;
         }
-        private object get_143_NumberBox_Maximum(object instance)
+        private object get_142_NumberBox_Maximum(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Maximum;
         }
-        private void set_143_NumberBox_Maximum(object instance, object Value)
+        private void set_142_NumberBox_Maximum(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Maximum = (global::System.Double)Value;
+        }
+        private object get_143_NumberBox_Minimum(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
+            return that.Minimum;
+        }
+        private void set_143_NumberBox_Minimum(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
+            that.Minimum = (global::System.Double)Value;
         }
         private object get_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance)
         {
@@ -3874,61 +3874,61 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlMember.Getter = get_135_NumberBox_NumberFormatter;
                 xamlMember.Setter = set_135_NumberBox_NumberFormatter;
                 break;
-            case "Microsoft.UI.Xaml.Controls.NumberBox.Minimum":
-                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
-                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
-                xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_136_NumberBox_Minimum;
-                xamlMember.Setter = set_136_NumberBox_Minimum;
-                break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.AcceptsExpression":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AcceptsExpression", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_137_NumberBox_AcceptsExpression;
-                xamlMember.Setter = set_137_NumberBox_AcceptsExpression;
+                xamlMember.Getter = get_136_NumberBox_AcceptsExpression;
+                xamlMember.Setter = set_136_NumberBox_AcceptsExpression;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Description":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Description", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_138_NumberBox_Description;
-                xamlMember.Setter = set_138_NumberBox_Description;
+                xamlMember.Getter = get_137_NumberBox_Description;
+                xamlMember.Setter = set_137_NumberBox_Description;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Header":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_139_NumberBox_Header;
-                xamlMember.Setter = set_139_NumberBox_Header;
+                xamlMember.Getter = get_138_NumberBox_Header;
+                xamlMember.Setter = set_138_NumberBox_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.HeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_140_NumberBox_HeaderTemplate;
-                xamlMember.Setter = set_140_NumberBox_HeaderTemplate;
+                xamlMember.Getter = get_139_NumberBox_HeaderTemplate;
+                xamlMember.Setter = set_139_NumberBox_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.IsWrapEnabled":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsWrapEnabled", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_141_NumberBox_IsWrapEnabled;
-                xamlMember.Setter = set_141_NumberBox_IsWrapEnabled;
+                xamlMember.Getter = get_140_NumberBox_IsWrapEnabled;
+                xamlMember.Setter = set_140_NumberBox_IsWrapEnabled;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.LargeChange":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "LargeChange", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_142_NumberBox_LargeChange;
-                xamlMember.Setter = set_142_NumberBox_LargeChange;
+                xamlMember.Getter = get_141_NumberBox_LargeChange;
+                xamlMember.Setter = set_141_NumberBox_LargeChange;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Maximum":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Maximum", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_143_NumberBox_Maximum;
-                xamlMember.Setter = set_143_NumberBox_Maximum;
+                xamlMember.Getter = get_142_NumberBox_Maximum;
+                xamlMember.Setter = set_142_NumberBox_Maximum;
+                break;
+            case "Microsoft.UI.Xaml.Controls.NumberBox.Minimum":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_143_NumberBox_Minimum;
+                xamlMember.Setter = set_143_NumberBox_Minimum;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.PreventKeyboardDisplayOnProgrammaticFocus":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");

@@ -195,31 +195,41 @@ namespace FinancialCalculator.WinUI3.Services
                     
                     if (quoteElem.TryGetProperty("profitability", out var prof))
                     {
-                        double GetProfOrZero(string name) => prof.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number ? v.GetDouble() : 0.0;
+                        double GetProfOrParse(string name)
+                        {
+                            if (!prof.TryGetProperty(name, out var v)) return 0.0;
+                            if (v.ValueKind == JsonValueKind.Number) return v.GetDouble();
+                            if (v.ValueKind == JsonValueKind.String)
+                            {
+                                var s = v.GetString();
+                                if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv)) return dv;
+                            }
+                            return 0.0;
+                        }
 
                         result.Quote.Profitability = new ProfitabilityDto
                         {
-                            DealIRREffective       = GetProfOrZero("deal_irr_effective"),
-                            DealIRRNominal         = GetProfOrZero("deal_irr_nominal"),
-                            CostOfDebtMatched      = GetProfOrZero("cost_of_debt_matched"),
-                            MatchedFundedSpread    = GetProfOrZero("matched_funded_spread"),
-                            GrossInterestMargin    = GetProfOrZero("gross_interest_margin"),
-                            CapitalAdvantage       = GetProfOrZero("capital_advantage"),
-                            NetInterestMargin      = GetProfOrZero("net_interest_margin"),
-                            CostOfCreditRisk       = GetProfOrZero("cost_of_credit_risk"),
-                            OPEX                   = GetProfOrZero("opex"),
-                            IDCSubsidiesFeesUpfront  = GetProfOrZero("idc_subsidies_fees_upfront"),
-                            IDCSubsidiesFeesPeriodic = GetProfOrZero("idc_subsidies_fees_periodic"),
+                            DealIRREffective         = GetProfOrParse("deal_irr_effective"),
+                            DealIRRNominal           = GetProfOrParse("deal_irr_nominal"),
+                            CostOfDebtMatched        = GetProfOrParse("cost_of_debt_matched"),
+                            MatchedFundedSpread      = GetProfOrParse("matched_funded_spread"),
+                            GrossInterestMargin      = GetProfOrParse("gross_interest_margin"),
+                            CapitalAdvantage         = GetProfOrParse("capital_advantage"),
+                            NetInterestMargin        = GetProfOrParse("net_interest_margin"),
+                            CostOfCreditRisk         = GetProfOrParse("cost_of_credit_risk"),
+                            OPEX                     = GetProfOrParse("opex"),
+                            IDCSubsidiesFeesUpfront  = GetProfOrParse("idc_subsidies_fees_upfront"),
+                            IDCSubsidiesFeesPeriodic = GetProfOrParse("idc_subsidies_fees_periodic"),
                             
-                            // Safely extract the new separated IDC/Subsidy fields
-                            IDCUpfrontCostPct      = prof.TryGetProperty("idc_upfront_cost_pct", out var iucPct) && iucPct.ValueKind == JsonValueKind.Number ? iucPct.GetDouble() : 0.0,
-                            IDCPeriodicCostPct     = prof.TryGetProperty("idc_periodic_cost_pct", out var ipcPct) && ipcPct.ValueKind == JsonValueKind.Number ? ipcPct.GetDouble() : 0.0,
-                            SubsidyUpfrontPct      = prof.TryGetProperty("subsidy_upfront_pct", out var suPct) && suPct.ValueKind == JsonValueKind.Number ? suPct.GetDouble() : 0.0,
-                            SubsidyPeriodicPct     = prof.TryGetProperty("subsidy_periodic_pct", out var spPct) && spPct.ValueKind == JsonValueKind.Number ? spPct.GetDouble() : 0.0,
+                            // Separated IDC/Subsidy fields (parse string or number)
+                            IDCUpfrontCostPct        = GetProfOrParse("idc_upfront_cost_pct"),
+                            IDCPeriodicCostPct       = GetProfOrParse("idc_periodic_cost_pct"),
+                            SubsidyUpfrontPct        = GetProfOrParse("subsidy_upfront_pct"),
+                            SubsidyPeriodicPct       = GetProfOrParse("subsidy_periodic_pct"),
                             
-                            NetEBITMargin          = GetProfOrZero("net_ebit_margin"),
-                            EconomicCapital        = GetProfOrZero("economic_capital"),
-                            AcquisitionRoRAC       = GetProfOrZero("acquisition_rorac"),
+                            NetEBITMargin            = GetProfOrParse("net_ebit_margin"),
+                            EconomicCapital          = GetProfOrParse("economic_capital"),
+                            AcquisitionRoRAC         = GetProfOrParse("acquisition_rorac"),
                         };
                     }
 

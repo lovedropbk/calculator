@@ -44,7 +44,7 @@ public partial class MainViewModel : ObservableObject
 
     // MARK: Subsidy & IDC
     [ObservableProperty] private double subsidyBudget = 100_000;
-    [ObservableProperty] private bool subsidyBudgetIsEnabled = false; // enabled only if MyCampaign selected and total allocation exceeds initial budget
+    [ObservableProperty] private bool subsidyBudgetIsEnabled = true; // allow editing by default (user can always adjust budget)
     [ObservableProperty] private string dealerCommissionMode = "auto"; // auto|override
     [ObservableProperty] private double? dealerCommissionPct;
     [ObservableProperty] private double? dealerCommissionAmt;
@@ -201,7 +201,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Copy a standard campaign to My Campaigns
-    [RelayCommand(CanExecute = nameof(CanCopy))]
+    [RelayCommand(CanExecute = nameof(CanCopyToMyCampaigns))]
     private void CopyToMyCampaigns(CampaignSummaryViewModel? item)
     {
         if (item is null) item = SelectedCampaign;
@@ -212,10 +212,12 @@ public partial class MainViewModel : ObservableObject
             clone.Title = $"Custom: {clone.Title}";
         MyCampaigns.Add(clone);
         SelectedMyCampaign = clone;
+        Logger.Info($"MyCampaigns: copied from standard '{clone.Title}' (ID={clone.CampaignId})");
         ScheduleSummariesRefresh();
     }
 
-    public bool CanCopy => SelectedCampaign != null;
+    private bool CanCopyToMyCampaigns(CampaignSummaryViewModel? item) => item != null;
+
 
     // MARK: My Campaigns persistence
     private static string MyCampaignsPath => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FinancialCalculator", "my_campaigns.json");
@@ -377,10 +379,10 @@ public partial class MainViewModel : ObservableObject
                         DealerCommission = $"{r.DealerCommissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({r.DealerCommissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
                         Monthly = r.MonthlyInstallment.ToString("N0", CultureInfo.InvariantCulture),
                         Effective = r.CustomerRateEffective.ToString("0.00%"),
-                        Downpayment = DownPaymentAmount.ToString("N0", CultureInfo.InvariantCulture),
+                        Downpayment = (deal.DownPaymentAmount > 0 ? deal.DownPaymentAmount : deal.DownPaymentPercent * deal.PriceExTax).ToString("N0", CultureInfo.InvariantCulture),
                         SubsidyUsed = r.SubsidyUsedTHB.ToString("N0", CultureInfo.InvariantCulture),
                         FSSubDown = r.FSSubDownTHB.ToString("N0", CultureInfo.InvariantCulture),
-                        FSSubInterest = r.FreeInsuranceTHB.ToString("N0", CultureInfo.InvariantCulture),
+                        FSSubInterest = r.FreeInsuranceTHB.ToString("N0", CultureInfo.InvariantCulture), // insurance shown here per current mapping
                         FSFreeMBSP = r.FreeMBSPTHB.ToString("N0", CultureInfo.InvariantCulture),
                         CashDiscount = r.CashDiscountTHB.ToString("N0", CultureInfo.InvariantCulture),
                         RoRAC = roracValue.ToString("0.00%"),

@@ -36,3 +36,4 @@ jobs:
         with:
           name: oneclick-win-x64
           path: artifacts/oneclick/win-x64
+

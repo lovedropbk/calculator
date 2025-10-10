@@ -34,12 +34,15 @@ jobs:
         run: |
           msbuild winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj /p:Configuration=Release /p:Platform=x64 /p:RuntimeIdentifier=win-x64 /restore:false
 
-      - name: Publish self-contained
+
+      - name: Publish self-contained (no external dependencies)
         run: |
-          dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 -o artifacts/winui3 --self-contained false
+          dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 -p:WindowsAppSDKSelfContained=true -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:WindowsPackageType=None -o artifacts/winui3-scd
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FinancialCalculator.WinUI3
-          path: artifacts/winui3
+          name: FinancialCalculator.WinUI3-scd
+          path: artifacts/winui3-scd
+

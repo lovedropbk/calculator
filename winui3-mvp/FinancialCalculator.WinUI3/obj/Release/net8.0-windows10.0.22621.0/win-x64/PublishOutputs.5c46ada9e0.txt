@@ -1,0 +1,2 @@
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\publish\win-x64\scd\FinancialCalculator.WinUI3.pdb
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\publish\win-x64\scd\FinancialCalculator.WinUI3.exe

@@ -3,6 +3,7 @@ param(
   [string]$Runtime = "win-x64"
 )
 
+
 $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
@@ -15,9 +16,10 @@ Write-Host "==> Building Go backend (fc-svc)"
 Write-Host "==> Restoring and building WinUI app with MSBuild ($Configuration, $Runtime)"
 & msbuild $winuiProj /p:Configuration=$Configuration /p:Platform=x64 /p:RuntimeIdentifier=$Runtime /restore:true | Write-Host
 
-Write-Host "==> Publishing WinUI app (self-contained single-file)"
+Write-Host "==> Publishing WinUI app (self-contained single-file + Windows App Runtime)"
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-& dotnet publish $winuiProj -c $Configuration -r $Runtime --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $outDir | Write-Host
+& dotnet publish $winuiProj -c $Configuration -r $Runtime -p:WindowsAppSDKSelfContained=true -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:WindowsPackageType=None -o $outDir | Write-Host
+
 
 Write-Host "==> Staging embedded backend"
 if (!(Test-Path "$root/bin/fc-svc.exe")) { throw "fc-svc.exe missing at $root/bin/fc-svc.exe" }

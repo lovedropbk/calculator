@@ -1,3 +1,6 @@
+dotnet publish winui3-mvp/FinancialCalculator.WinUI3/FinancialCalculator.WinUI3.csproj -c Release -r win-x64 -p:WindowsAppSDKSelfContained=true -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:WindowsPackageType=None -o publish/win-x64/scd
+
+
 # Financial Calculator — Native Walk UI (Canonical)
 
 This repository delivers a Windows-native desktop Financial Calculator using the Walk toolkit. The previous Wails/React UI remains checked in for legacy reference but is not maintained or tested. Build and use the Walk UI for all current work.

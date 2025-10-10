@@ -268,7 +268,7 @@
                         <!-- Primary action with loading indicator -->
                         <StackPanel Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Margin="8,16,0,0">
                             <Grid>
-                                <Button x:ConnectionId='14' x:Name="RecalculateButton"
+                                <Button x:ConnectionId='18' x:Name="RecalculateButton"
                                         Content="Recalculate"
                                         Command="{Binding RecalculateCommand}"
                                         HorizontalAlignment="Left"
@@ -279,7 +279,7 @@
                                     </ToolTipService.ToolTip>
                                 </Button>
                                 <!-- Loading indicator overlay -->
-                                <ProgressRing x:ConnectionId='15' x:Name="CalculationProgress"
+                                <ProgressRing x:ConnectionId='19' x:Name="CalculationProgress"
                                               IsActive="{Binding IsCalculating}"
                                               Width="20"
                                               Height="20"
@@ -318,7 +318,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Auto"
                                   Style="{StaticResource ResponsiveScrollViewer}">
-                        <controls:DataGrid x:ConnectionId='12' x:Name="StandardGrid"
+                        <controls:DataGrid x:ConnectionId='16' x:Name="StandardGrid"
                                            VerticalAlignment="Stretch"
                                            HorizontalAlignment="Stretch"
                                            ItemsSource="{Binding StandardCampaigns}"
@@ -328,9 +328,10 @@
                                            CanUserReorderColumns="True"
                                            CanUserResizeColumns="True"
                                            AutoGenerateColumns="False"
-                                           IsReadOnly="True"
-                                           GridLinesVisibility="All"
-                                           MinHeight="150">
+                                            IsReadOnly="True"
+                                            GridLinesVisibility="All"
+                                            MinHeight="150">
+
                             <controls:DataGrid.Columns>
                                 <controls:DataGridTemplateColumn Width="70">
                                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -424,7 +425,7 @@
                                            VerticalAlignment="Stretch"
                                            HorizontalAlignment="Stretch"
                                            MinHeight="150">
-                        <controls:DataGrid.Columns>
+                            <controls:DataGrid.Columns>
                             <!-- Placeholder for alignment with Standard Copy column -->
                             <controls:DataGridTemplateColumn Width="60">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -437,10 +438,34 @@
                             <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS SubDown" Binding="{Binding FSSubDown}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS SubInterest" Binding="{Binding FSSubInterest}" Width="140" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS FreeMBSP" Binding="{Binding FSFreeMBSP}" Width="120" IsReadOnly="True"/>
+                            <controls:DataGridTemplateColumn Header="Cash Discount (THB)" Width="140">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding CashDiscountAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS SubDown (THB)" Width="140">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSSubDownAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS Free Insurance (THB)" Width="160">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSSubInterestAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS Free MBSP (THB)" Width="150">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSFreeMBSPAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120" IsReadOnly="True"/>
@@ -783,7 +808,7 @@
                                                CanUserReorderColumns="True"
                                                CanUserResizeColumns="True"
                                                AutoGenerateColumns="False"
-                                               IsReadOnly="True"
+                                               IsReadOnly="False"
                                                GridLinesVisibility="All"
                                                VerticalAlignment="Stretch"
                                                HorizontalAlignment="Stretch"
