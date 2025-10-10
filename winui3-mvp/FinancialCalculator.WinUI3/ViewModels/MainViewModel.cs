@@ -145,7 +145,8 @@ public partial class MainViewModel : ObservableObject
             _cachedParameterSet = await _api.GetCurrentParametersAsync();
             if (_cachedParameterSet != null && _cachedParameterSet.Count > 0)
             {
-                Status = $"Loaded {_cachedParameterSet.Count} parameters";
+                // Prefer engine_parameter_set for calculation calls; fall back handled in helper.
+                Status = $"Loaded parameter metadata (keys: {_cachedParameterSet.Count})";
             }
         }
         catch (Exception ex)
@@ -155,6 +156,30 @@ public partial class MainViewModel : ObservableObject
             Status = $"Parameter set load failed (non-blocking): {ex.Message}";
             // Continue without parameter set - don't throw
         }
+    }
+
+    // Extracts the engine-facing parameter_set object to send back to Go.
+    private Dictionary<string, object>? GetEngineParameterSetOrNull()
+    {
+        try
+        {
+            if (_cachedParameterSet == null) return null;
+            if (_cachedParameterSet.TryGetValue("engine_parameter_set", out var eps) && eps is Dictionary<string, object> epsDict)
+            {
+                return epsDict;
+            }
+            // Backward compatibility: some backends may return just parameter_set already in engine shape
+            if (_cachedParameterSet.TryGetValue("parameter_set", out var ps) && ps is Dictionary<string, object> psDict)
+            {
+                // Heuristic: engine set includes cost_of_funds_curve array
+            	if (psDict.ContainsKey("cost_of_funds_curve"))
+                {
+                    return psDict;
+                }
+            }
+        }
+        catch { }
+        return null;
     }
 
     // MARK: Commands - Dealer Commission
@@ -286,14 +311,14 @@ public partial class MainViewModel : ObservableObject
             
             // Create "No Campaign" baseline option
             // Calculate baseline monthly installment without any campaign modifications
-            var baselineReq = new CalculationRequestDto
-            {
-                Deal = deal,
-                Campaigns = new(), // Empty campaigns list for baseline
-                IdcItems = new List<IdcItemDto>(), // No IDC items for baseline
-                Options = new() { ["derive_idc_from_cf"] = true },
-                ParameterSet = _cachedParameterSet
-            };
+                var baselineReq = new CalculationRequestDto
+                {
+                    Deal = deal,
+                    Campaigns = new(), // Empty campaigns list for baseline
+                    IdcItems = new List<IdcItemDto>(), // No IDC items for baseline
+                    Options = new() { ["derive_idc_from_cf"] = true },
+                    ParameterSet = GetEngineParameterSetOrNull()
+                };
             
             try
             {
@@ -430,14 +455,14 @@ public partial class MainViewModel : ObservableObject
                 });
             }
             
-            var req = new CalculationRequestDto
-            {
-                Deal = deal,
-                Campaigns = new(),
-                IdcItems = idcItems,
-                Options = new() { ["derive_idc_from_cf"] = true },
-                ParameterSet = _cachedParameterSet // Pin to cached parameter set
-            };
+                var req = new CalculationRequestDto
+                {
+                    Deal = deal,
+                    Campaigns = new(),
+                    IdcItems = idcItems,
+                    Options = new() { ["derive_idc_from_cf"] = true },
+                    ParameterSet = GetEngineParameterSetOrNull() // Pin to engine parameter set
+                };
             var res = await _api.CalculateAsync(req);
             PopulateMetrics(res);
             // Do not override Cashflows here; selection-specific refresh handles that
@@ -531,7 +556,7 @@ public partial class MainViewModel : ObservableObject
                 Campaigns = campaigns,
                 IdcItems = idcItems,
                 Options = new() { ["derive_idc_from_cf"] = true },
-                ParameterSet = _cachedParameterSet // Pin to cached parameter set
+                ParameterSet = GetEngineParameterSetOrNull() // Pin to engine parameter set
             };
             var res = await _api.CalculateAsync(req);
             PopulateMetrics(res);

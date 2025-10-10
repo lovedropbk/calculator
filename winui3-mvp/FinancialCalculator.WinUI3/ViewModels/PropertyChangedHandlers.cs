@@ -145,6 +145,9 @@ public partial class MainViewModel
 
     private void ScheduleSummariesRefresh()
     {
-        _debounce.Debounce(300, async _ => { await LoadSummariesAsync(); await RecalculateAsync(); });
+        // Immediate refresh for the active selection to keep metrics/cashflows snappy
+        _ = RefreshActiveSelectionAsync();
+        // Debounce summaries grid refresh to avoid flooding API while typing
+        _debounce.Debounce(250, async _ => { await LoadSummariesAsync(); });
     }
 }
