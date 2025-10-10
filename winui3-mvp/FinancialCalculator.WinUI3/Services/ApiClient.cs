@@ -42,27 +42,31 @@ namespace FinancialCalculator.WinUI3.Services
             };
         }
 
-        private async Task<T> ExecuteWithRetryAsync<T>(Func<Task<T>> operation)
+        private async Task<T> ExecuteWithRetryAsync<T>(Func<CancellationToken, Task<T>> operation, CancellationToken ct = default)
         {
             int attempt = 0;
-            while (attempt < MaxRetryAttempts)
+            while (attempt < MaxRetryAttempts && !ct.IsCancellationRequested)
             {
                 try
                 {
-                    return await operation();
+                    return await operation(ct).ConfigureAwait(false);
                 }
-                catch (HttpRequestException ex) when (attempt < MaxRetryAttempts - 1)
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (HttpRequestException ex) when (attempt < MaxRetryAttempts - 1 && !ct.IsCancellationRequested)
                 {
                     attempt++;
                     Logger.Warn($"HTTP request failed (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
-                    await Task.Delay(RetryDelayMs * attempt);
+                    await Task.Delay(RetryDelayMs * attempt, ct).ConfigureAwait(false);
                     continue;
                 }
-                catch (TaskCanceledException ex) when (attempt < MaxRetryAttempts - 1)
+                catch (TaskCanceledException ex) when (attempt < MaxRetryAttempts - 1 && !ct.IsCancellationRequested)
                 {
                     attempt++;
                     Logger.Warn($"Request timeout (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
-                    await Task.Delay(RetryDelayMs * attempt);
+                    await Task.Delay(RetryDelayMs * attempt, ct).ConfigureAwait(false);
                     continue;
                 }
                 catch (Exception ex)
@@ -79,13 +83,13 @@ namespace FinancialCalculator.WinUI3.Services
 
         public async Task<List<CampaignCatalogItemDto>> GetCampaignCatalogAsync()
         {
-            return await ExecuteWithRetryAsync(async () =>
+            return await ExecuteWithRetryAsync<List<CampaignCatalogItemDto>>(async ct =>
             {
                 var url = "api/v1/campaigns/catalog";
                 Logger.ApiRequest("GET", url);
                 
-                var resp = await _http.GetAsync(url);
-                var responseBody = await resp.Content.ReadAsStringAsync();
+                var resp = await _http.GetAsync(url, ct);
+                var responseBody = await resp.Content.ReadAsStringAsync(ct);
                 
                 Logger.ApiResponse("GET", url, (int)resp.StatusCode, responseBody);
                 
@@ -94,31 +98,29 @@ namespace FinancialCalculator.WinUI3.Services
                     throw new HttpRequestException($"API Error {resp.StatusCode}: {responseBody}");
                 }
                 
-                var stream = await resp.Content.ReadAsStreamAsync();
-                var items = await JsonSerializer.DeserializeAsync<List<CampaignCatalogItemDto>>(stream, _json);
+                var stream = await resp.Content.ReadAsStreamAsync(ct);
+                var items = await JsonSerializer.DeserializeAsync<List<CampaignCatalogItemDto>>(stream, _json, ct);
                 return items ?? new();
             });
         }
 
         public async Task<List<CampaignSummaryDto>> GetCampaignSummariesAsync(CampaignSummariesRequestDto req)
         {
-            return await ExecuteWithRetryAsync(async () =>
+            return await ExecuteWithRetryAsync<List<CampaignSummaryDto>>(async ct =>
             {
                 var url = "api/v1/campaigns/summaries";
                 
-                // Clean up the request object - don't send timestamp at all
-                // The backend will generate its own timestamp if needed
                 if (req != null && req.Timestamp != null)
                 {
-                    req.Timestamp = null;  // Never send timestamp, let backend handle it
+                    req.Timestamp = null;
                 }
                 
                 Logger.ApiRequest("POST", url, req);
                 
                 var json = JsonSerializer.Serialize(req, _json);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var resp = await _http.PostAsync(url, content);
-                var responseBody = await resp.Content.ReadAsStringAsync();
+                var resp = await _http.PostAsync(url, content, ct);
+                var responseBody = await resp.Content.ReadAsStringAsync(ct);
                 
                 Logger.ApiResponse("POST", url, (int)resp.StatusCode, responseBody);
                 
@@ -129,19 +131,18 @@ namespace FinancialCalculator.WinUI3.Services
                     throw new HttpRequestException(errorMsg);
                 }
                 
-                var stream = await resp.Content.ReadAsStreamAsync();
-                var rows = await JsonSerializer.DeserializeAsync<List<CampaignSummaryDto>>(stream, _json);
+                var stream = await resp.Content.ReadAsStreamAsync(ct);
+                var rows = await JsonSerializer.DeserializeAsync<List<CampaignSummaryDto>>(stream, _json, ct);
                 return rows ?? new();
             });
         }
 
         public async Task<CalculationResponseDto> CalculateAsync(CalculationRequestDto req)
         {
-            return await ExecuteWithRetryAsync(async () =>
+            return await ExecuteWithRetryAsync<CalculationResponseDto>(async ct =>
             {
                 var url = "api/v1/calculate";
                 
-                // Sanitize the parameter_set to ensure all date/time values are in UTC ISO 8601 format
                 if (req.ParameterSet != null)
                 {
                     req.ParameterSet = DateTimeSanitizer.SanitizeDictionary(req.ParameterSet);
@@ -151,8 +152,8 @@ namespace FinancialCalculator.WinUI3.Services
                 
                 var json = JsonSerializer.Serialize(req, _json);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var resp = await _http.PostAsync(url, content);
-                var responseBody = await resp.Content.ReadAsStringAsync();
+                var resp = await _http.PostAsync(url, content, ct);
+                var responseBody = await resp.Content.ReadAsStringAsync(ct);
                 
                 Logger.ApiResponse("POST", url, (int)resp.StatusCode, responseBody);
                 
@@ -165,8 +166,8 @@ namespace FinancialCalculator.WinUI3.Services
                 
                 try
                 {
-                    var stream = await resp.Content.ReadAsStreamAsync();
-                    var node = await JsonSerializer.DeserializeAsync<JsonElement>(stream);
+                    var stream = await resp.Content.ReadAsStreamAsync(ct);
+                    var node = await JsonSerializer.DeserializeAsync<JsonElement>(stream, _json, ct);
                     var quoteElem = node.GetProperty("quote");
 
                     var result = new CalculationResponseDto
@@ -294,13 +295,13 @@ namespace FinancialCalculator.WinUI3.Services
 
         public async Task<CommissionAutoResponseDto> GetCommissionAutoAsync(string product)
         {
-            return await ExecuteWithRetryAsync(async () =>
+            return await ExecuteWithRetryAsync<CommissionAutoResponseDto>(async ct =>
             {
                 var url = $"api/v1/commission/auto?product={Uri.EscapeDataString(product ?? string.Empty)}";
                 Logger.ApiRequest("GET", url);
                 
-                var resp = await _http.GetAsync(url);
-                var responseBody = await resp.Content.ReadAsStringAsync();
+                var resp = await _http.GetAsync(url, ct);
+                var responseBody = await resp.Content.ReadAsStringAsync(ct);
                 
                 Logger.ApiResponse("GET", url, (int)resp.StatusCode, responseBody);
                 
@@ -321,13 +322,13 @@ namespace FinancialCalculator.WinUI3.Services
 
         public async Task<Dictionary<string, object>> GetCurrentParametersAsync()
         {
-            return await ExecuteWithRetryAsync(async () =>
+            return await ExecuteWithRetryAsync<Dictionary<string, object>>(async ct =>
             {
                 var url = "api/v1/parameters/current";
                 Logger.ApiRequest("GET", url);
                 
-                var resp = await _http.GetAsync(url);
-                var responseBody = await resp.Content.ReadAsStringAsync();
+                var resp = await _http.GetAsync(url, ct);
+                var responseBody = await resp.Content.ReadAsStringAsync(ct);
                 
                 Logger.ApiResponse("GET", url, (int)resp.StatusCode, responseBody);
                 
@@ -336,10 +337,10 @@ namespace FinancialCalculator.WinUI3.Services
                     throw new HttpRequestException($"API Error {resp.StatusCode}: {responseBody}");
                 }
                 
-                var stream = await resp.Content.ReadAsStreamAsync();
+                var stream = await resp.Content.ReadAsStreamAsync(ct);
                 
                 // Parse as JsonElement first to handle flexible parameter structure
-                var jsonElement = await JsonSerializer.DeserializeAsync<JsonElement>(stream, _json);
+                var jsonElement = await JsonSerializer.DeserializeAsync<JsonElement>(stream, _json, ct);
                 
                 // Convert JsonElement to Dictionary<string, object>
                 var parameters = new Dictionary<string, object>();

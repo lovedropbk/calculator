@@ -47,15 +47,20 @@ func NewRouter(app *server.App) http.Handler {
 
 	mux.HandleFunc("/api/v1/parameters/current", func(w http.ResponseWriter, r *http.Request) {
 		params, _ := app.Svcs.Adapters.Params.LoadLatest()
-		writeJSON(w, http.StatusOK, params)
+		writeJSON(w, http.StatusOK, map[string]any{
+			"parameter_set":             params,
+			"engine_parameter_set":      app.Svcs.Engines.EngineParameterSet(),
+			"commission_policy_version": app.Svcs.Adapters.Params.CommissionPolicyVersion(),
+		})
 	})
 
 	mux.HandleFunc("/api/v1/commission/auto", func(w http.ResponseWriter, r *http.Request) {
 		product := r.URL.Query().Get("product")
 		pct := app.Svcs.Adapters.Params.CommissionPercentByProduct(product)
 		writeJSON(w, http.StatusOK, map[string]any{
-			"product": product,
-			"percent": pct,
+			"product":       product,
+			"percent":       pct,
+			"policyVersion": app.Svcs.Adapters.Params.CommissionPolicyVersion(),
 		})
 	})
 
@@ -64,7 +69,10 @@ func NewRouter(app *server.App) http.Handler {
 	})
 
 	mux.HandleFunc("/api/v1/campaigns/summaries", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
 		var req struct {
 			Deal      enginetypes.Deal       `json:"deal"`
 			State     enginetypes.DealState  `json:"state"`
@@ -79,7 +87,10 @@ func NewRouter(app *server.App) http.Handler {
 	})
 
 	mux.HandleFunc("/api/v1/calculate", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
 		var req enginetypes.CalculationRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": fmt.Sprintf("invalid json: %v", err)})
