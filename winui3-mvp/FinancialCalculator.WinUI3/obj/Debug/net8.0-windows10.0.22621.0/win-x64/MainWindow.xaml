@@ -63,7 +63,7 @@
                 HorizontalAlignment="Stretch"
                 MinWidth="320"
                 MaxWidth="500">
-            <ScrollViewer VerticalScrollBarVisibility="Hidden"
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled"
                           Style="{StaticResource ResponsiveScrollViewer}">
                 <StackPanel Spacing="12">
@@ -71,6 +71,10 @@
                     <!-- Deal Inputs -->
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -144,24 +148,35 @@
                             <TextBox Grid.Column="1" Text="{Binding BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding BalloonPlaceholder}" IsEnabled="{Binding IsBalloonEnabled}"/>
                         </Grid>
         
-                        <!-- Price with Tooltip -->
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <ToolTipService.ToolTip>
-                                <ToolTip Content="Enter the price excluding tax" Style="{StaticResource InformativeToolTipStyle}"/>
-                            </ToolTipService.ToolTip>
-                        </TextBlock>
-                        <muxc:NumberBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
-                                        Value="{Binding PriceExTax, Mode=TwoWay}"
-                                        PlaceholderText="{Binding PricePlaceholder}"
-                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                        Width="{StaticResource ValueAreaWidth}"
-                                        Margin="8,0,0,0"
-                                        MinWidth="200"
-                                        MaxWidth="400"/>
-        
-                        <!-- Down Payment: unit first then value (inside value area) -->
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}">
+                         <!-- Price with Tooltip -->
+                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                             <ToolTipService.ToolTip>
+                                 <ToolTip Content="Enter the price excluding tax" Style="{StaticResource InformativeToolTipStyle}"/>
+                             </ToolTipService.ToolTip>
+                         </TextBlock>
+                         <muxc:NumberBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                                         Value="{Binding PriceExTax, Mode=TwoWay}"
+                                         PlaceholderText="{Binding PricePlaceholder}"
+                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                         Width="{StaticResource ValueAreaWidth}"
+                                         Margin="8,0,0,0"
+                                         MinWidth="200"
+                                         MaxWidth="400"/>
+
+                         <!-- Additional Financed Items -->
+                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Additional Financed Items" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                         <muxc:NumberBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
+                                         Value="{Binding AdditionalFinancedItems, Mode=TwoWay}"
+                                         PlaceholderText="THB"
+                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                         Width="{StaticResource ValueAreaWidth}"
+                                         Margin="8,0,0,0"
+                                         MinWidth="200"
+                                         MaxWidth="400"/>
+         
+                         <!-- Down Payment: unit first then value (inside value area) -->
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="72"/>
                                 <ColumnDefinition Width="288"/>
@@ -174,12 +189,12 @@
                         </Grid>
         
                         <!-- Subsidy budget with Tooltip -->
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="Available subsidy budget for this deal" Style="{StaticResource InformativeToolTipStyle}"/>
                             </ToolTipService.ToolTip>
                         </TextBlock>
-                        <muxc:NumberBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
+                        <muxc:NumberBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
                                         Value="{Binding SubsidyBudget, Mode=TwoWay}"
                                         PlaceholderText="THB"
                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
@@ -190,8 +205,8 @@
                                         MaxWidth="400"/>
         
                         <!-- IDCs - Dealer Commission -->
-                        <TextBlock Grid.Row="8" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0">
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -223,7 +238,7 @@
                         </Grid>
         
                         <!-- Optional override editors (shown only when override) -->
-                        <StackPanel Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="8,0,0,0"
+                        <StackPanel Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="8,0,0,0"
                                     Visibility="{Binding DealerCommissionMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=override}">
                             <TextBlock Text="Pct %" Style="{StaticResource LabelTextStyle}"/>
                             <TextBox Width="100" Text="{Binding DealerCommissionPct, Mode=TwoWay}"/>
@@ -232,12 +247,12 @@
                         </StackPanel>
         
                         <!-- IDCs - Other with Tooltip -->
-                        <TextBlock Grid.Row="10" Grid.Column="0" Text="IDCs – Other (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Grid.Row="11" Grid.Column="0" Text="IDCs – Other (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="Other indirect costs" Style="{StaticResource InformativeToolTipStyle}"/>
                             </ToolTipService.ToolTip>
                         </TextBlock>
-                        <muxc:NumberBox Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2"
+                        <muxc:NumberBox Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2"
                                         Value="{Binding IdcOther, Mode=TwoWay}"
                                         PlaceholderText="THB"
                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
@@ -247,28 +262,65 @@
                                         MaxWidth="400"/>
         
                         <!-- Rate mode: RadioButtons (bind SelectedIndex) -->
-                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Rate mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <RadioButtons Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="{Binding RateModeIndex, Mode=TwoWay}" Margin="8,0,0,0">
+                        <!-- Upfront Subsidies and Costs -->
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Upfront Subsidies (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <muxc:NumberBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Value="{Binding UpfrontSubsidies, Mode=TwoWay}"
+                                        PlaceholderText="THB"
+                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                        Width="{StaticResource ValueAreaWidth}"
+                                        Margin="8,0,0,0"
+                                        MinWidth="200"
+                                        MaxWidth="400"/>
+                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Upfront IDC/Costs (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <muxc:NumberBox Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Value="{Binding UpfrontCosts, Mode=TwoWay}"
+                                        PlaceholderText="THB"
+                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                        Width="{StaticResource ValueAreaWidth}"
+                                        Margin="8,0,0,0"
+                                        MinWidth="200"
+                                        MaxWidth="400"/>
+
+                        <!-- Subdown Campaign (optional) -->
+                        <TextBlock Grid.Row="14" Grid.Column="0" Text="Subdown" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Grid Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="72"/>
+                                <ColumnDefinition Width="288"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" SelectedItem="{Binding SubdownIsPercent, Mode=TwoWay}">
+                                <x:Boolean>False</x:Boolean>
+                                <x:Boolean>True</x:Boolean>
+                            </ComboBox>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                <muxc:NumberBox Value="{Binding SubdownAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Visibility="{Binding SubdownIsPercent, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=False}"/>
+                                <muxc:NumberBox Value="{Binding SubdownPercent, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Visibility="{Binding SubdownIsPercent, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Grid.Row="15" Grid.Column="0" Text="Rate mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButtons Grid.Row="15" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="{Binding RateModeIndex, Mode=TwoWay}" Margin="8,0,0,0">
                             <x:String>Fixed Rate</x:String>
                             <x:String>Target Installment</x:String>
                         </RadioButtons>
         
                         <!-- Customer rate (visible if fixed rate) -->
-                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Customer rate (% p.a.)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        <TextBlock Grid.Row="16" Grid.Column="0" Text="Customer rate (% p.a.)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
                                    Visibility="{Binding IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
-                        <TextBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding CustomerRatePct, Mode=TwoWay}" MinWidth="160" Margin="8,0,0,0"
+                        <TextBox Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding CustomerRatePct, Mode=TwoWay}" MinWidth="160" Margin="8,0,0,0"
                                  Visibility="{Binding IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
         
                         <!-- Target installment (visible if target installment) -->
-                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        <TextBlock Grid.Row="17" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
                                    Visibility="{Binding IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
-                        <TextBox Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TargetInstallment, Mode=TwoWay}" MinWidth="180" Margin="8,0,0,0"
+                        <TextBox Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TargetInstallment, Mode=TwoWay}" MinWidth="180" Margin="8,0,0,0"
                                  Visibility="{Binding IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
         
                         <!-- Primary action with loading indicator -->
-                        <StackPanel Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Margin="8,16,0,0">
-                            <Grid>
-                                <Button x:ConnectionId='14' x:Name="RecalculateButton"
+                        <StackPanel Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Margin="8,16,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button x:ConnectionId='18' x:Name="RecalculateButton"
                                         Content="Recalculate"
                                         Command="{Binding RecalculateCommand}"
                                         HorizontalAlignment="Left"
@@ -278,17 +330,16 @@
                                         <ToolTip Content="Click to recalculate with current parameters" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </Button>
-                                <!-- Loading indicator overlay -->
-                                <ProgressRing x:ConnectionId='15' x:Name="CalculationProgress"
+                                <!-- Loading indicator next to button -->
+                                <ProgressRing x:ConnectionId='19' x:Name="CalculationProgress"
                                               IsActive="{Binding IsCalculating}"
                                               Width="20"
                                               Height="20"
-                                              HorizontalAlignment="Left"
-                                              Margin="130,0,0,0"
+                                              VerticalAlignment="Center"
                                               Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            </Grid>
+                            </StackPanel>
                             <!-- Unified validation summary -->
-                            <TextBlock Text="{Binding Status}" Style="{StaticResource ErrorTextStyle}" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Status}" Style="{StaticResource ErrorTextStyle}" TextWrapping="Wrap" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
@@ -318,7 +369,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Auto"
                                   Style="{StaticResource ResponsiveScrollViewer}">
-                        <controls:DataGrid x:ConnectionId='12' x:Name="StandardGrid"
+                        <controls:DataGrid x:ConnectionId='16' x:Name="StandardGrid"
                                            VerticalAlignment="Stretch"
                                            HorizontalAlignment="Stretch"
                                            ItemsSource="{Binding StandardCampaigns}"
@@ -328,15 +379,16 @@
                                            CanUserReorderColumns="True"
                                            CanUserResizeColumns="True"
                                            AutoGenerateColumns="False"
-                                           IsReadOnly="True"
-                                           GridLinesVisibility="All"
-                                           MinHeight="150">
+                                            IsReadOnly="True"
+                                            GridLinesVisibility="All"
+                                            MinHeight="150">
+
                             <controls:DataGrid.Columns>
                                 <controls:DataGridTemplateColumn Width="70">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Content="Copy"
-                                                    Command="{Binding DataContext.CopyToMyCampaignsCommand, ElementName=Root}"
+                                                    Command="{Binding DataContext.CopyToMyCampaignsCommand, ElementName=LayoutRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{StaticResource CopyButtonStyle}">
                                                 <ToolTipService.ToolTip>
@@ -424,7 +476,7 @@
                                            VerticalAlignment="Stretch"
                                            HorizontalAlignment="Stretch"
                                            MinHeight="150">
-                        <controls:DataGrid.Columns>
+                            <controls:DataGrid.Columns>
                             <!-- Placeholder for alignment with Standard Copy column -->
                             <controls:DataGridTemplateColumn Width="60">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -437,10 +489,34 @@
                             <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS SubDown" Binding="{Binding FSSubDown}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS SubInterest" Binding="{Binding FSSubInterest}" Width="140" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="FS FreeMBSP" Binding="{Binding FSFreeMBSP}" Width="120" IsReadOnly="True"/>
+                            <controls:DataGridTemplateColumn Header="Cash Discount (THB)" Width="140">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding CashDiscountAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS SubDown (THB)" Width="140">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSSubDownAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS Free Insurance (THB)" Width="160">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSSubInterestAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="FS Free MBSP (THB)" Width="150">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <muxc:NumberBox Value="{Binding FSFreeMBSPAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Minimum="0"/>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120" IsReadOnly="True"/>
@@ -783,7 +859,7 @@
                                                CanUserReorderColumns="True"
                                                CanUserResizeColumns="True"
                                                AutoGenerateColumns="False"
-                                               IsReadOnly="True"
+                                               IsReadOnly="False"
                                                GridLinesVisibility="All"
                                                VerticalAlignment="Stretch"
                                                HorizontalAlignment="Stretch"
@@ -792,8 +868,8 @@
                                     <controls:DataGridTextColumn Header="Period" Binding="{Binding Period}" Width="60"/>
                                     <controls:DataGridTextColumn Header="Principal" Binding="{Binding Principal}" Width="120"/>
                                     <controls:DataGridTextColumn Header="Interest" Binding="{Binding Interest}" Width="120"/>
-                                    <controls:DataGridTextColumn Header="Fees" Binding="{Binding Fees}" Width="120"/>
                                     <controls:DataGridTextColumn Header="Total Payment" Binding="{Binding TotalPayment}" Width="120"/>
+
                                     <controls:DataGridTextColumn Header="Balance" Binding="{Binding Balance}" Width="120"/>
                                     <controls:DataGridTextColumn Header="Cashflow" Binding="{Binding Cashflow}" Width="120"/>
                                     <controls:DataGridTextColumn Header="Principal Runoff" Binding="{Binding PrincipalRunoff}" Width="130"/>
@@ -827,7 +903,7 @@
                             </StackPanel>
                             
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="Total Fees/IDCs" FontSize="12" Opacity="0.7"/>
+                                <TextBlock Text="Upfront IDC/Subsidy (t0)" FontSize="12" Opacity="0.7"/>
                                 <TextBlock Text="{Binding TotalFeesPaid}" FontSize="16" FontWeight="SemiBold"/>
                             </StackPanel>
                             

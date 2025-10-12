@@ -6,12 +6,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winui3-mvp", "winui3-mvp", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialCalculator.WinUI3", "winui3-mvp\FinancialCalculator.WinUI3\FinancialCalculator.WinUI3.csproj", "{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialCalculator.Engine", "winui3-mvp\FinancialCalculator.Engine\FinancialCalculator.Engine.csproj", "{1A3E9D2C-6C6F-48C0-AD8B-7F5E6F0F1234}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A3E9D2C-6C6F-48C0-AD8B-7F5E6F0F1234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3E9D2C-6C6F-48C0-AD8B-7F5E6F0F1234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3E9D2C-6C6F-48C0-AD8B-7F5E6F0F1234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3E9D2C-6C6F-48C0-AD8B-7F5E6F0F1234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FB2D4D7-DF1C-DBDE-31B2-22E2095ED34F}.Release|Any CPU.ActiveCfg = Release|Any CPU

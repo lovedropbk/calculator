@@ -20,7 +20,15 @@ public sealed class DebounceDispatcher
                 await Task.Delay(millisecondsDelay, cts.Token);
                 if (!cts.IsCancellationRequested)
                 {
-                    await action(cts.Token);
+                    var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+                    if (dispatcherQueue != null)
+                    {
+                        dispatcherQueue.TryEnqueue(async () => { if (!cts.IsCancellationRequested) await action(cts.Token); });
+                    }
+                    else
+                    {
+                        await action(cts.Token);
+                    }
                 }
             }
             catch (TaskCanceledException)

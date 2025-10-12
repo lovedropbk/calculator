@@ -272,15 +272,12 @@ namespace FinancialCalculator.WinUI3.Services
                             }
                             var total = GetOr0("amount");
                             if (Math.Abs(total) < 1e-12) total = GetOr0("cashflow");
-                            var feesVal = GetOr0("fee");
-                            if (Math.Abs(feesVal) < 1e-12) feesVal = GetOr0("fees");
 
                             result.Schedule.Add(new CashflowRowDto
                             {
                                 Period = period,
                                 Principal = GetOr0("principal"),
                                 Interest = GetOr0("interest"),
-                                Fees = feesVal,
                                 Balance = GetOr0("balance"),
                                 Cashflow = total,
                             });

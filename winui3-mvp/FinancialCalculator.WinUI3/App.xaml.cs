@@ -68,15 +68,6 @@ public partial class App : Application
         try
         {
             Logger.LogUnhandledException(e.Exception);
-            
-            // Try to prevent app crash for recoverable errors
-            if (e.Exception is HttpRequestException || 
-                e.Exception is TaskCanceledException ||
-                e.Exception.Message.Contains("API Error"))
-            {
-                e.Handled = true;
-                Logger.Info("Handled recoverable exception - app continues");
-            }
         }
         catch
         {
@@ -84,31 +75,9 @@ public partial class App : Application
         }
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         Logger.Info("App.OnLaunched - begin");
-
-        // Respect FC_API_BASE if already set by launcher, otherwise try auto-start on 8123
-        var existingBase = Environment.GetEnvironmentVariable("FC_API_BASE");
-        if (string.IsNullOrWhiteSpace(existingBase))
-        {
-            try
-            {
-                var (proc, baseUrl) = await BackendLauncher.TryStartAsync(8123);
-                Environment.SetEnvironmentVariable("FC_API_BASE", baseUrl);
-                Logger.Info($"Backend ready at {baseUrl} (proc={(proc != null ? "spawned" : "reused")})");
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn($"Backend start failed, falling back to default. {ex.Message}");
-                // Set a default value to prevent null reference
-                Environment.SetEnvironmentVariable("FC_API_BASE", "http://localhost:8123/");
-            }
-        }
-        else
-        {
-            Logger.Info($"Using existing FC_API_BASE: {existingBase}");
-        }
 
         try
         {

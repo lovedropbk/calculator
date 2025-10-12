@@ -32,21 +32,11 @@ Get-Process -Name 'fc-svc','FinancialCalculator.WinUI3' -ErrorAction SilentlyCon
 Start-Sleep -Seconds 1
 
 # Validate package contents
-$svcPath = Join-Path $AppDir 'fc-svc.exe'
 $uiPath  = Join-Path $AppDir 'FinancialCalculator.WinUI3.exe'
-if (!(Test-Path $svcPath)) { throw "Missing fc-svc.exe in $AppDir" }
 if (!(Test-Path $uiPath))  { throw "Missing FinancialCalculator.WinUI3.exe in $AppDir" }
 
-# Start backend
-Write-Host "==> Starting backend (fc-svc) on port $BackendPort..."
-$svcProc = Start-Process -FilePath $svcPath -WorkingDirectory $AppDir -PassThru
-$base = "http://localhost:$BackendPort"
-if (-not (Wait-HttpOk -Url ("$base/healthz") -TimeoutSec 30)) { throw "Backend health check failed at $base/healthz" }
-Write-Host "==> Backend is healthy: $base"
-
-# Launch UI pointing to backend
-Write-Host "==> Launching UI..."
-$env:FC_API_BASE = $base
+# Launch UI (no backend required)
+Write-Host "==> Launching UI (local engine)..."
 $beforeLog = Get-UiLogFile
 $uiProc = Start-Process -FilePath $uiPath -WorkingDirectory $AppDir -PassThru
 Start-Sleep -Seconds 2
@@ -66,18 +56,9 @@ else { Write-Host "==> UI log: $logFile" }
 Write-Host "==> Waiting for UI API activity..."
 Start-Sleep -Seconds 5
 
-# Summarize backend API smoke checks that UI would also trigger
-Write-Host "==> Backend API smokes" -ForegroundColor Yellow
-function PostJson($path,$obj){ $json=$obj|ConvertTo-Json -Depth 12; Invoke-WebRequest -UseBasicParsing -Method Post -Uri ($base+$path) -Body $json -ContentType 'application/json' }
-$dealBase = @{ market='TH'; currency='THB'; product='HP'; price_ex_tax=1000000; down_payment_amount=100000; down_payment_percent=0.1; down_payment_locked='amount'; financed_amount=900000; term_months=48; balloon_percent=0; balloon_amount=0; timing='arrears'; rate_mode='fixed_rate'; customer_nominal_rate=0.035; target_installment=0 }
-
-$rParams = Invoke-WebRequest -UseBasicParsing -Uri ("$base/api/v1/parameters/current"); Write-Host ("  parameters/current: {0}" -f $rParams.StatusCode)
-$rAuto   = Invoke-WebRequest -UseBasicParsing -Uri ("$base/api/v1/commission/auto?product=HP"); Write-Host ("  commission/auto: {0}" -f $rAuto.StatusCode)
-$rCat    = Invoke-WebRequest -UseBasicParsing -Uri ("$base/api/v1/campaigns/catalog"); $cat = $rCat.Content | ConvertFrom-Json; Write-Host ("  catalog: {0} items" -f $cat.Count)
-
-$rCalc1  = PostJson '/api/v1/calculate' @{ deal=$dealBase; campaigns=@(); idc_items=@(); options=@{ derive_idc_from_cf=$true } }; $n1 = $rCalc1.Content | ConvertFrom-Json; Write-Host ("  calculate: MI={0} Eff={1}" -f $n1.quote.monthly_installment,$n1.quote.customer_rate_effective)
-$rSum    = PostJson '/api/v1/campaigns/summaries' @{ deal=$dealBase; state=@{ dealerCommission=@{ mode='auto' }; idcOther=@{ value=0; userEdited=$false }; budgetTHB=50000 }; campaigns=($cat | ForEach-Object { @{ id=$_.id; type=$_.type; parameters=$_.parameters; eligibility=$_.eligibility; funder=$_.funder; stacking=0 } }) };
-$sum = $rSum.Content | ConvertFrom-Json; Write-Host ("  summaries: {0} rows" -f $sum.Count)
+# No backend; simple process smoke
+Write-Host "==> UI started. Waiting briefly to ensure no immediate crashes..."
+Start-Sleep -Seconds 3
 
 # UI log analysis
 $errors = @(); $warnings = @(); $apiSeen = @{}

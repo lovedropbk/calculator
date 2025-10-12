@@ -74,3 +74,5 @@ C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\Financial
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\obj\Debug\net8.0-windows10.0.22621.0\win-x64\qualifiers.txt
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\obj\Debug\net8.0-windows10.0.22621.0\win-x64\qualifiers.txt.intermediate
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\obj\Debug\net8.0-windows10.0.22621.0\win-x64\MultipleQualifiersPerDimensionFound.txt
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Debug\net8.0-windows10.0.22621.0\win-x64\FinancialCalculator.Engine.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Debug\net8.0-windows10.0.22621.0\win-x64\FinancialCalculator.Engine.pdb

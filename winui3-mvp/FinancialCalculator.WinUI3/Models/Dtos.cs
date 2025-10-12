@@ -181,7 +181,7 @@ namespace FinancialCalculator.WinUI3.Models
         public int Period { get; set; }
         public double Principal { get; set; }
         public double Interest { get; set; }
-        public double Fees { get; set; }
+
         public double Balance { get; set; }
         public double Cashflow { get; set; }
     }

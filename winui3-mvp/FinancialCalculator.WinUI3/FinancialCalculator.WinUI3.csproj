@@ -2,13 +2,16 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+	<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>FinancialCalculator.WinUI3</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PlatformTarget>x64</PlatformTarget>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <WindowsPackageType>None</WindowsPackageType>
+	  
     <EnableMsixTooling>true</EnableMsixTooling>
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
@@ -22,12 +25,12 @@
     <SelfContained>false</SelfContained>
   </PropertyGroup>
 
-  <!-- Release: self-contained (bundle Windows App Runtime + .NET) -->
+  <!-- Release: fully self-contained (bundle Windows App Runtime + .NET). Avoid SingleFile to simplify runtime loading. -->
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishSingleFile>false</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
 
@@ -37,6 +40,16 @@
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FinancialCalculator.Engine\FinancialCalculator.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\ApiClient.cs" />
+  </ItemGroup>
+
+
 
   <ItemGroup>
     <Manifest Include="app.manifest" />

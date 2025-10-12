@@ -7,7 +7,7 @@ public partial class MainViewModel
 {
     partial void OnProductChanged(string value)
     {
-        _ = RefreshCommissionPolicyAsync();
+        RefreshCommissionPolicyLocal();
         OnPropertyChanged(nameof(IsBalloonEnabled));
         ScheduleSummariesRefresh();
     }
@@ -99,7 +99,29 @@ public partial class MainViewModel
 
     partial void OnSelectedCampaignChanged(CampaignSummaryViewModel? value)
     {
-        // Refresh details/metrics/cashflows for the selected Standard campaign without reloading lists
+        // When selecting a Standard campaign, clear MyCampaign selection so ActiveCampaign reflects this grid
+        if (value != null && SelectedMyCampaign != null)
+        {
+            SelectedMyCampaign = null;
+        }
+        // Notify ActiveCampaign bindings (e.g., ActiveCampaign.Title)
+        OnPropertyChanged(nameof(ActiveCampaign));
+        
+        // Update IDC Other if not user-edited and campaign has specific values
+        if (value != null && !IdcOtherUserEdited)
+        {
+            // Map campaign-specific IDCs to IDC Other
+            if (value.IDC_MBSP_CostAmount > 0)
+            {
+                IdcOther = value.IDC_MBSP_CostAmount;
+            }
+            else
+            {
+                IdcOther = SubsidyBudget; // default mapping per spec
+            }
+        }
+        
+        // Refresh details/metrics/cashflows for the active selection
         _debounce.Debounce(0, async _ => { await RefreshActiveSelectionAsync(); });
     }
 
@@ -107,6 +129,12 @@ public partial class MainViewModel
 
     partial void OnSelectedMyCampaignChanged(CampaignSummaryViewModel? value)
     {
+        // When selecting a MyCampaign, clear Standard selection so ActiveCampaign reflects this grid
+        if (value != null && SelectedCampaign != null)
+        {
+            SelectedCampaign = null;
+        }
+
         // Unhook prior
         if (_subscribedMyCampaign != null)
         {
@@ -116,6 +144,21 @@ public partial class MainViewModel
 
         // Enable subsidy budget editing only when a My Campaign is selected AND allocations exceed initial budget
         SubsidyBudgetIsEnabled = value != null && ExceedsInitialSubsidy(value);
+        
+        // Update IDC Other from campaign if not user-edited
+        if (value != null && !IdcOtherUserEdited)
+        {
+            // Map campaign-specific IDCs to IDC Other for My Campaigns
+            if (value.IDC_MBSP_CostAmount > 0)
+            {
+                IdcOther = value.IDC_MBSP_CostAmount;
+            }
+            else if (value.FSSubInterestAmount > 0 || value.FSFreeMBSPAmount > 0)
+            {
+                // If campaign has subsidies but no IDC, use subsidy budget as IDC
+                IdcOther = SubsidyBudget;
+            }
+        }
 
         if (value != null)
         {
@@ -123,6 +166,10 @@ public partial class MainViewModel
             _subscribedMyCampaign.PropertyChanged += OnMyCampaignPropertyChanged;
         }
 
+        // Notify ActiveCampaign bindings (e.g., ActiveCampaign.Title)
+        OnPropertyChanged(nameof(ActiveCampaign));
+        
+        // Refresh details/metrics/cashflows for the active selection
         _debounce.Debounce(0, async _ => { await RefreshActiveSelectionAsync(); });
     }
 
@@ -134,7 +181,7 @@ public partial class MainViewModel
             // Auto-recalc when adjustments change
             _debounce.Debounce(200, async _ => { await RefreshActiveSelectionAsync(); });
             // Also refresh summaries to reflect changes in Standard grid metrics
-            _debounce.Debounce(400, async _ => { await LoadSummariesAsync(); });
+            _debounce.Debounce(400, async _ => { await LoadSummariesLocalAsync(); });
         }
     }
 
@@ -150,6 +197,10 @@ public partial class MainViewModel
         // Immediate refresh for the active selection to keep metrics/cashflows snappy
         _ = RefreshActiveSelectionAsync();
         // Debounce summaries grid refresh to avoid flooding API while typing
-        _debounce.Debounce(250, async _ => { await LoadSummariesAsync(); });
+        _debounce.Debounce(250, async _ => { await LoadSummariesLocalAsync(); });
+        
+        // Update dependent properties
+        OnPropertyChanged(nameof(Metrics));
+        OnPropertyChanged(nameof(ActiveCampaign));
     }
 }

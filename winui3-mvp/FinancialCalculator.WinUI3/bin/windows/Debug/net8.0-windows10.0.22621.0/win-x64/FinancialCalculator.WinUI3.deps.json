@@ -11,6 +11,7 @@
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.2.2",
           "CommunityToolkit.WinUI.UI.Controls.DataGrid": "7.1.2",
+          "FinancialCalculator.Engine": "1.0.0",
           "Microsoft.WindowsAppSDK": "1.6.241106002",
           "System.Text.Json": "8.0.5",
           "Microsoft.Web.WebView2.Core.Projection": "1.0.2651.64",
@@ -137,6 +138,14 @@
         }
       },
       "System.Text.Json/8.0.5": {},
+      "FinancialCalculator.Engine/1.0.0": {
+        "runtime": {
+          "FinancialCalculator.Engine.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Microsoft.Web.WebView2.Core.Projection/1.0.2651.64": {
         "runtime": {
           "Microsoft.Web.WebView2.Core.Projection.dll": {
@@ -199,6 +208,11 @@
       "sha512": "sha512-0f1B50Ss7rqxXiaBJyzUu9bWFOO2/zSlifZ/UNMdiIpDYe4cY4LQQicP4nirK1OS31I43rn062UIJ1Q9bpmHpg==",
       "path": "system.text.json/8.0.5",
       "hashPath": "system.text.json.8.0.5.nupkg.sha512"
+    },
+    "FinancialCalculator.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Microsoft.Web.WebView2.Core.Projection/1.0.2651.64": {
       "type": "reference",
