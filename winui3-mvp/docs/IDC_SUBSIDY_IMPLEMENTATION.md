@@ -1,7 +1,7 @@
 # IDC vs Subsidy Separation Implementation Summary
 
 ## Overview
-This document summarizes the implementation of IDC (Internal Deal Costs) vs Subsidy separation in the Financial Calculator WinUI3 application. The implementation enables distinct tracking and reporting of IDC costs and subsidies in profitability calculations.
+This document summarizes the current simplified implementation of IDC (Internal Deal Costs) vs Subsidy handling in the Financial Calculator WinUI3 application. IDCs are modeled as costs that reduce IRR; subsidy budget is treated as income to increase IRR, with subdown and cash discount consuming budget explicitly.
 
 ## Architecture Changes
 
@@ -29,10 +29,10 @@ public class IdcItemDto
 
 #### Extended `ProfitabilityDto`
 New fields for separated tracking:
-- `IDCUpfrontCostPct`: IDC upfront costs as percentage
-- `IDCPeriodicCostPct`: IDC periodic costs as percentage
-- `SubsidyUpfrontPct`: Subsidy upfront as percentage
-- `SubsidyPeriodicPct`: Subsidy periodic as percentage
+- `IDCUpfrontCostPct`: IDC upfront costs as percentage (derived locally, simplified)
+- `IDCPeriodicCostPct`: IDC periodic costs as percentage (0 in current model)
+- `SubsidyUpfrontPct`: Subsidy upfront as percentage (remaining budget applied as income)
+- `SubsidyPeriodicPct`: Subsidy periodic as percentage (0 in current model)
 
 ### API Contract Mappings
 

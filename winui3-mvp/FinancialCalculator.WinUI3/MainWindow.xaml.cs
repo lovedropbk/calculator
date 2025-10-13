@@ -45,6 +45,24 @@ public sealed partial class MainWindow : Window
         CustomizeTitleBar();
     }
 
+    private void OnStandardCopyClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button btn && btn.DataContext is CampaignSummaryViewModel row)
+            {
+                if (ViewModel.CopyToMyCampaignsCommand.CanExecute(row))
+                {
+                    ViewModel.CopyToMyCampaignsCommand.Execute(row);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Copy click handler failed", ex);
+        }
+    }
+
     private void TryApplySystemBackdrop()
     {
         // Apply Mica for a modern look; safely ignore if not supported on thisOS

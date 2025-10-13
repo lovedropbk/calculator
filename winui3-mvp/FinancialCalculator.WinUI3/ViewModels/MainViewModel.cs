@@ -374,10 +374,23 @@ public partial class MainViewModel : ObservableObject
                             break;
                     }
 
+                    // Leftover budget after explicit consumers (subdown + cash discount)
+                    var leftoverBudget = Math.Max(0, SubsidyBudget - (fsSubDownThb + cashDiscountThb));
+
+                    // For subinterest, compute required subsidy (interest shortfall from base to target). Not counted in SubsidyUsed display.
+                    if (c.Type == "subinterest" && rateOverride.HasValue)
+                    {
+                        _ = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
+                    }
+
+                    // Apply leftover budget as upfront subsidy income (simplified model)
+                    upSubDelta = (decimal)leftoverBudget;
+
                     var outc = ComputeScenarioWithCommission(vehiclePrice, subIsPct, subVal, upCostDelta, upSubDelta, rateOverride);
                     var dp = ComputeDownpaymentDisplay(vehiclePrice);
 
-                    var subsidyUsed = freeInsuranceThb + freeMbspThb; // cash discount not counted; subdown excluded
+                    // Display Subsidy Utilized = Subdown + Cash Discount only (per simplified model)
+                    var subsidyUsed = fsSubDownThb + cashDiscountThb;
                     var vm = new CampaignSummaryViewModel
                     {
                         CampaignId = c.Id,
@@ -392,6 +405,7 @@ public partial class MainViewModel : ObservableObject
                         FSSubInterest = freeInsuranceThb.ToString("N0", CultureInfo.InvariantCulture),
                         FSFreeMBSP = freeMbspThb.ToString("N0", CultureInfo.InvariantCulture),
                         CashDiscount = cashDiscountThb.ToString("N0", CultureInfo.InvariantCulture),
+                        TargetRatePct = (c.Type == "subinterest" ? (rateOverride.HasValue ? rateOverride.Value / 100.0 : (double?)null) : null),
                         RoRAC = ((double)outc.profit.AcquisitionRoRac).ToString("0.00%"),
                         Notes = string.Empty,
                         FSSubDownAmount = fsSubDownThb,
@@ -514,6 +528,7 @@ public partial class MainViewModel : ObservableObject
             decimal upSubDelta = 0m;
             double? rateOverride = null;
 
+            _activeSubsidyUsed = 0;
             if (active != null)
             {
                 var type = active.CampaignType?.ToLowerInvariant() ?? string.Empty;
@@ -521,35 +536,56 @@ public partial class MainViewModel : ObservableObject
                 {
                     var disc = (decimal)active.CashDiscountAmount;
                     vehiclePrice = Math.Max(0m, vehiclePrice - disc);
+                    _activeSubsidyUsed += active.CashDiscountAmount;
                 }
                 if (active.FSSubDownAmount > 0)
                 {
-                    subIsPct = false; // treat MyCampaign input as THB by default
-                    subVal = (decimal)active.FSSubDownAmount;
+                    subIsPct = false; // treat MyCampaign input as THB by defaultn                    subVal = (decimal)active.FSSubDownAmount;
+                    _activeSubsidyUsed += active.FSSubDownAmount;
                 }
-                if (active.FSSubInterestAmount > 0)
+                // Treat Free Insurance/MBSP as IDC costs only (no subsidy netting here)
+                if (active.FSSubInterestAmount > 0) { upCostDelta += (decimal)active.FSSubInterestAmount; }
+                if (active.FSFreeMBSPAmount > 0) { upCostDelta += (decimal)active.FSFreeMBSPAmount; }
+                if (active.IDC_MBSP_CostAmount > 0) { upCostDelta += (decimal)active.IDC_MBSP_CostAmount; }
+
+                // Subinterest: use editable row TargetRate if present; else from catalog
+                if (type == "subinterest")
                 {
-                    upCostDelta += (decimal)active.FSSubInterestAmount;
+                    double? targetRatePct = active.TargetRatePct;
+                    if (!targetRatePct.HasValue)
+                    {
+                        var cat = _campaigns.GetStandard().FirstOrDefault(c => c.Id == active.CampaignId)?.TargetRate;
+                        if (cat.HasValue) targetRatePct = cat.Value;
+                    }
+                    if (targetRatePct.HasValue)
+                    {
+                        rateOverride = targetRatePct.Value * 100.0;
+                    }
                 }
-                if (active.FSFreeMBSPAmount > 0)
-                {
-                    upCostDelta += (decimal)active.FSFreeMBSPAmount;
-                }
-                
-                // Map IDC_MBSP_CostAmount to upfront costs for MyCampaigns
-                if (active.IDC_MBSP_CostAmount > 0)
-                {
-                    upCostDelta += (decimal)active.IDC_MBSP_CostAmount;
-                }
+            }
+
+            // For subinterest: compute required subsidy for rate buydown (interest shortfall vs base) and apply, capped by leftover budget
+            if (active != null && string.Equals(active.CampaignType, "subinterest", StringComparison.OrdinalIgnoreCase) && rateOverride.HasValue)
+            {
+                var required = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
+                var leftoverBudgetLocal = Math.Max(0, SubsidyBudget - _activeSubsidyUsed);
+                upSubDelta = (decimal)Math.Min(required, leftoverBudgetLocal);
+            }
+            else
+            {
+                // Leftover budget (not used by subdown/cash discount) becomes subsidy income to improve IRR (simplified model)
+                var leftoverBudget = Math.Max(0, SubsidyBudget - _activeSubsidyUsed);
+                upSubDelta = (decimal)leftoverBudget;
             }
 
             var res = ComputeScenarioWithCommission(vehiclePrice, subIsPct, subVal, upCostDelta, upSubDelta, rateOverride);
 
             // Update metrics with current campaign's calculated values
+            var nominalDisplayPct = rateOverride.HasValue ? rateOverride.Value / 100.0 : CustomerRatePct / 100.0;
             Metrics = new MetricsViewModel
             {
                 MonthlyInstallment = ((double)res.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                NominalRate = (double.IsFinite(CustomerRatePct) ? (CustomerRatePct / 100.0).ToString("0.00%", CultureInfo.InvariantCulture) : "0.00%"),
+                NominalRate = nominalDisplayPct.ToString("0.00%", CultureInfo.InvariantCulture),
                 EffectiveRate = ((double)res.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
                 FinancedAmount = ((double)res.outputs.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
                 RoRAC = ((double)res.profit.AcquisitionRoRac).ToString("0.00%"),
@@ -990,6 +1026,19 @@ public partial class MainViewModel : ObservableObject
         return (pct, Math.Max(0, amt));
     }
 
+    // Compute subsidy required to buy down from baseRatePct to targetRatePct by interest shortfall (approximation)
+    private double ComputeRequiredSubsidyForRateBuydown(decimal vehiclePrice, bool subdownIsPercent, decimal subdownValue, decimal upfrontCostsDelta, double baseRatePct, double targetRatePct)
+    {
+        // Compute monthly at base rate
+        var baseRes = ComputeScenarioWithCommission(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, baseRatePct);
+        var targetRes = ComputeScenarioWithCommission(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, targetRatePct);
+        // Interest shortfall over the term: approximate as sum of (base interest - target interest)
+        var baseInt = baseRes.outputs.Schedule.Sum(r => (double)r.Interest);
+        var tgtInt = targetRes.outputs.Schedule.Sum(r => (double)r.Interest);
+        var shortfall = Math.Max(0, baseInt - tgtInt);
+        return shortfall;
+    }
+
     // MARK: Bottom Summary Bindings for Details/Key Metrics
     private double _activeFsInsurance;
     private double _activeFsMbsp;
@@ -997,8 +1046,9 @@ public partial class MainViewModel : ObservableObject
 
     public string ActiveFsInsuranceText => _activeFsInsurance.ToString("N0", CultureInfo.InvariantCulture);
     public string ActiveFsMbspText => _activeFsMbsp.ToString("N0", CultureInfo.InvariantCulture);
-    public string ActiveSubsidyUtilizedText => (_activeFsInsurance + _activeFsMbsp).ToString("N0", CultureInfo.InvariantCulture);
-    public string SubsidyRemainingText => Math.Max(0, SubsidyBudget - (_activeFsInsurance + _activeFsMbsp)).ToString("N0", CultureInfo.InvariantCulture);
+    private double _activeSubsidyUsed;
+    public string ActiveSubsidyUtilizedText => _activeSubsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
+    public string SubsidyRemainingText => Math.Max(0, SubsidyBudget - _activeSubsidyUsed).ToString("N0", CultureInfo.InvariantCulture);
     public string IdcOtherText => IdcOther.ToString("N0", CultureInfo.InvariantCulture);
     public string IdcTotalText => (DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture);
 
@@ -1086,6 +1136,10 @@ public partial class CampaignSummaryViewModel : ObservableObject
     private double _fsFreeMbspAmount;
     public double FSFreeMBSPAmount { get => _fsFreeMbspAmount; set { if (_fsFreeMbspAmount != value) { _fsFreeMbspAmount = value; OnPropertyChanged(nameof(FSFreeMBSPAmount)); } } }
 
+    // Editable Target Rate for subinterest campaigns (% p.a., e.g., 0.99, 2.99)
+    private double? _targetRatePct;
+    public double? TargetRatePct { get => _targetRatePct; set { if (_targetRatePct != value) { _targetRatePct = value; OnPropertyChanged(nameof(TargetRatePct)); } } }
+
     public CampaignSummaryViewModel Clone() => new CampaignSummaryViewModel
     {
         CampaignId = this.CampaignId,
@@ -1106,7 +1160,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
         FSSubDownAmount = this.FSSubDownAmount,
         FSSubInterestAmount = this.FSSubInterestAmount,
         IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
-        FSFreeMBSPAmount = this.FSFreeMBSPAmount
+        FSFreeMBSPAmount = this.FSFreeMBSPAmount,
+        TargetRatePct = this.TargetRatePct
     };
 }
 

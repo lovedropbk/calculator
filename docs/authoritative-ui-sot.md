@@ -70,7 +70,7 @@ MARK: Target Architecture (UI and Engines)
 MARK: Spec vs Implementation Crosswalk (Gaps and Confirmations)
 
 - Subsidy and IDCs (gross presentation)
-  - Spec: Show cost and subsidy separately; cap subsidy at budget; Net effect for finance company in profitability only.
+  - Spec: Show costs separately; Subsidy Used displays only subdown + cash discount. Remaining budget is applied as subsidy income (upfront) to improve IRR; IDCs reduce IRR independently.
   - Walk: Implemented gross presentation for subdown and included in Subsidy utilized; My Campaigns supports combined adjustments. Confirmed via [subdown-column-fix.md](docs/subdown-column-fix.md) and [data-linking-fix.md](docs/data-linking-fix.md).
   - WinUI status: Grid columns present at a summary level; detailed gross breakdown and budget remaining to be computed shown in Insights; pending wiring.
 

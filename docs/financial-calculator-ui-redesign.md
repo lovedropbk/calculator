@@ -38,7 +38,7 @@ Date: 2025-09-19
 | ( ) Free MBSP    | Monthly: 23,920 (eff 4.18%) | Downpayment: 200,000 (20%) | Subsidy / Acq.RoRAC: 75,000 / 12.3% |
 | ( ) Cash Discount| Monthly: 24,200 (eff 4.35%) | Downpayment: 200,000 (20%) | Subsidy / Acq.RoRAC: 100,000 / 11.7% |
 | ------------------------------------------------------------------------------------------- |
-| Note: "Subsidy" will populate IDCs - Other automatically when selected; initial value equals Subsidy budget but can be edited per row. |
+| Remaining subsidy budget (after subdown or cash discount) is applied as upfront subsidy income to improve IRR; IDC - Other remains a separate cost input. |
 +-------------------------------------------+--------------------------------------------------+
 | Campaign Details                          | Key Metrics & Summary                            |
 | (contextual, appears when a row selected)  | (recomputes for selection)                       |

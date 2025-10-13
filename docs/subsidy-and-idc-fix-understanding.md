@@ -17,10 +17,10 @@ Sales tool for comparing campaign profitability. User enters ONE vehicle deal, c
 - `Financed: false` always
 
 ### Subsidies
-- **Offset IDC costs** to improve finance company profitability
-- Can be applied as T0 upfront OR periodic (amortized over term)
-- **Net IDC = Total IDC Costs - Subsidies**
-- Net IDC impacts Deal IRR → Acquisition RoRAC
+- Treated as income that increases Deal IRR, up to available budget not consumed by subdown or cash discount
+- Applied as upfront subsidy income in the current simplified model
+- IDC costs are treated separately as costs (not netted in UI), they reduce IRR independently of subsidy income
+- Only subdown and cash discount actually consume subsidy budget; remaining budget is applied as subsidy income
 
 ## Gross Presentation (Key Fix)
 
