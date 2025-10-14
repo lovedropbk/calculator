@@ -54,12 +54,13 @@
         <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="12,6,12,6"/>
+        <Setter Property="Padding" Value="10,4,10,4"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="13"/>
         <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="MinWidth" Value="120"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

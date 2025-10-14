@@ -63,7 +63,7 @@
                 HorizontalAlignment="Stretch"
                 MinWidth="320"
                 MaxWidth="500">
-            <ScrollViewer VerticalScrollBarVisibility="Hidden"
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled"
                           Style="{StaticResource ResponsiveScrollViewer}">
                 <StackPanel Spacing="12">
@@ -71,6 +71,10 @@
                     <!-- Deal Inputs -->
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -321,7 +325,7 @@
                                         Command="{Binding RecalculateCommand}"
                                         HorizontalAlignment="Left"
                                         Style="{StaticResource PrimaryActionButtonStyle}"
-                                        MinWidth="140">
+                                        MinWidth="120">
                                     <ToolTipService.ToolTip>
                                         <ToolTip Content="Click to recalculate with current parameters" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
@@ -383,9 +387,8 @@
                                 <controls:DataGridTemplateColumn Width="70">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Copy"
-                                                    Command="{Binding DataContext.CopyToMyCampaignsCommand, ElementName=Root}"
-                                                    CommandParameter="{Binding}"
+                                            <Button x:ConnectionId='17' Content="Copy"
+                                                                               
                                                     Style="{StaticResource CopyButtonStyle}">
                                                 <ToolTipService.ToolTip>
                                                     <ToolTip Content="Copy to My Campaigns" Style="{StaticResource InformativeToolTipStyle}"/>
@@ -396,11 +399,12 @@
                                 </controls:DataGridTemplateColumn>
                                 <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title}" Width="200"/>
                                 <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120"/>
-                                <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140"/>
+                                <controls:DataGridTextColumn Header="Cust. Interest Rate (effective)" Binding="{Binding Effective}" Width="160"/>
+                                <controls:DataGridTextColumn Header="Target Rate (% p.a.)" Binding="{Binding TargetRatePct}" Width="160"/>
                                 <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120"/>
                                 <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120"/>
                                 <controls:DataGridTextColumn Header="FS SubDown" Binding="{Binding FSSubDown}" Width="120"/>
-                                <controls:DataGridTextColumn Header="FS SubInterest" Binding="{Binding FSSubInterest}" Width="140"/>
+                                <controls:DataGridTextColumn Header="FS Free Insurance" Binding="{Binding FSSubInterest}" Width="140"/>
                                 <controls:DataGridTextColumn Header="FS FreeMBSP" Binding="{Binding FSFreeMBSP}" Width="120"/>
                                 <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140"/>
                                 <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140"/>
@@ -483,7 +487,7 @@
                             </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title, Mode=TwoWay}" Width="200"/>
                             <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Cust. Interest Rate" Binding="{Binding Effective}" Width="140" IsReadOnly="True"/>
+                             <controls:DataGridTextColumn Header="Cust. Interest Rate (effective)" Binding="{Binding Effective}" Width="160" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTemplateColumn Header="Cash Discount (THB)" Width="140">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -516,7 +520,8 @@
                             <controls:DataGridTextColumn Header="Subsidy utilized" Binding="{Binding SubsidyUsed}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes, Mode=TwoWay}" Width="220"/>
+                             <controls:DataGridTextColumn Header="Target Rate (% p.a.)" Binding="{Binding TargetRatePct, Mode=TwoWay}" Width="160"/>
+                             <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes, Mode=TwoWay}" Width="220"/>
                         </controls:DataGrid.Columns>
                     </controls:DataGrid>
                 </ScrollViewer>

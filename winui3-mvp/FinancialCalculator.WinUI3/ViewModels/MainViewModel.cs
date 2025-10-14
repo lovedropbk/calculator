@@ -20,7 +20,6 @@ public partial class MainViewModel : ObservableObject
     private readonly LocalScenarioService _scenarios = new();
 
     // MARK: Parameter Set Caching (legacy no-op)
-    private Dictionary<string, object>? _cachedParameterSet;
 
     // MARK: Deal Inputs
     [ObservableProperty] private string product = "HP";
@@ -154,7 +153,7 @@ public partial class MainViewModel : ObservableObject
     // MARK: Parameter Set Initialization
     private async Task InitializeParameterSetAsync()
     {
-        _cachedParameterSet = null;
+        // Legacy no-op - parameter set caching removed
         await Task.CompletedTask;
     }
 
@@ -540,7 +539,8 @@ public partial class MainViewModel : ObservableObject
                 }
                 if (active.FSSubDownAmount > 0)
                 {
-                    subIsPct = false; // treat MyCampaign input as THB by defaultn                    subVal = (decimal)active.FSSubDownAmount;
+                    subIsPct = false; // treat MyCampaign input as THB by default
+                    subVal = (decimal)active.FSSubDownAmount;
                     _activeSubsidyUsed += active.FSSubDownAmount;
                 }
                 // Treat Free Insurance/MBSP as IDC costs only (no subsidy netting here)
