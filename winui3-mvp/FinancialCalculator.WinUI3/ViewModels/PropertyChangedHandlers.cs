@@ -122,7 +122,16 @@ public partial class MainViewModel
         }
         
         // Refresh details/metrics/cashflows for the active selection
-        _debounce.Debounce(0, async _ => { await RefreshActiveSelectionAsync(); });
+        _debounce.DebounceAsync(0, () => RefreshActiveSelectionAsync());
+
+        // Also refresh summaries so Standard grid metrics (incl. RoRAC) recompute under the same IDC/Subsidy mapping
+        _debounce.DebounceAsync(200, async () =>
+        {
+            await LoadSummariesLocalAsync();
+            // Force UI update after recalculation
+            OnPropertyChanged(nameof(StandardCampaigns));
+            OnPropertyChanged(nameof(CampaignSummaries));
+        });
     }
 
     private CampaignSummaryViewModel? _subscribedMyCampaign;
@@ -170,18 +179,19 @@ public partial class MainViewModel
         OnPropertyChanged(nameof(ActiveCampaign));
         
         // Refresh details/metrics/cashflows for the active selection
-        _debounce.Debounce(0, async _ => { await RefreshActiveSelectionAsync(); });
+        _debounce.DebounceAsync(0, () => RefreshActiveSelectionAsync());
     }
 
     private void OnMyCampaignPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (sender is CampaignSummaryViewModel mc)
         {
-            SubsidyBudgetIsEnabled = ExceedsInitialSubsidy(mc);
+            // Subsidy budget is always editable now
+            // SubsidyBudgetIsEnabled = ExceedsInitialSubsidy(mc);
             // Auto-recalc when adjustments change
-            _debounce.Debounce(200, async _ => { await RefreshActiveSelectionAsync(); });
+            _debounce.DebounceAsync(200, () => RefreshActiveSelectionAsync());
             // Also refresh summaries to reflect changes in Standard grid metrics
-            _debounce.Debounce(400, async _ => { await LoadSummariesLocalAsync(); });
+            _debounce.DebounceAsync(400, () => LoadSummariesLocalAsync());
         }
     }
 
@@ -196,8 +206,13 @@ public partial class MainViewModel
     {
         // Immediate refresh for the active selection to keep metrics/cashflows snappy
         _ = RefreshActiveSelectionAsync();
-        // Debounce summaries grid refresh to avoid flooding API while typing
-        _debounce.Debounce(250, async _ => { await LoadSummariesLocalAsync(); });
+        // Debounce summaries grid refresh with shorter delay for better responsiveness (UI-thread safe)
+        _debounce.DebounceAsync(100, async () => {
+            await LoadSummariesLocalAsync();
+            // Force UI update after recalculation
+            OnPropertyChanged(nameof(StandardCampaigns));
+            OnPropertyChanged(nameof(CampaignSummaries));
+        });
         
         // Update dependent properties
         OnPropertyChanged(nameof(Metrics));

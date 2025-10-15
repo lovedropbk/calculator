@@ -14,7 +14,9 @@ namespace FinancialCalculator.WinUI3.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly DebounceDispatcher _debounce = new();
+    // NOTE: Use Services.DebounceDispatcher to capture UI SynchronizationContext.
+    // Do not use ViewModels.DebounceDispatcher (deprecated) to avoid background-thread UI updates.
+    private readonly FinancialCalculator.WinUI3.Services.DebounceDispatcher _debounce = new();
     private readonly LocalEngineService _local = new();
     private readonly LocalCampaignsProvider _campaigns = new();
     private readonly LocalScenarioService _scenarios = new();
@@ -46,7 +48,7 @@ public partial class MainViewModel : ObservableObject
 
     // MARK: Subsidy & IDC
     [ObservableProperty] private double subsidyBudget = 100_000;
-    [ObservableProperty] private bool subsidyBudgetIsEnabled = false; // only enabled when My Campaign exceeds budget
+    [ObservableProperty] private bool subsidyBudgetIsEnabled = true; // Always editable
     [ObservableProperty] private string dealerCommissionMode = "auto"; // auto|override
     [ObservableProperty] private double? dealerCommissionPct;
     [ObservableProperty] private double? dealerCommissionAmt;
@@ -108,6 +110,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private MetricsViewModel metrics = new();
     [ObservableProperty] private string status = "Ready";
     [ObservableProperty] private bool isCalculating = false;
+    [ObservableProperty] private bool isDealInputsCollapsed = false;
 
     public IRelayCommand RecalculateCommand { get; }
 
@@ -176,6 +179,12 @@ public partial class MainViewModel : ObservableObject
     {
         DealerCommissionMode = "override";
         ScheduleSummariesRefresh();
+    }
+
+    [RelayCommand]
+    private void ToggleDealInputsCollapsed()
+    {
+        IsDealInputsCollapsed = !IsDealInputsCollapsed;
     }
 
     // Copy a standard campaign to My Campaigns
@@ -261,6 +270,9 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            // Preserve selection
+            var selectedId = ActiveCampaign?.CampaignId;
+
             // Ensure commission policy is set
             RefreshCommissionPolicyLocal();
 
@@ -268,17 +280,22 @@ public partial class MainViewModel : ObservableObject
             StandardCampaigns.Clear();
             CampaignSummaries.Clear();
 
-            // Baseline (no campaign)
+            // Baseline (no campaign) - but should still apply leftover subsidy budget for consistent calculation!
+            var leftoverBudgetForBaseline = Math.Max(0, SubsidyBudget);  // All budget is available for baseline
             var baseline = ComputeScenarioWithCommission(
                 vehiclePrice: (decimal)PriceExTax,
                 subdownIsPercent: SubdownIsPercent,
                 subdownValue: (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount),
                 upfrontCostsDelta: 0m,
-                upfrontSubsidiesDelta: 0m,
+                upfrontSubsidiesDelta: (decimal)leftoverBudgetForBaseline,  // Apply leftover budget for consistency
                 customerRateOverride: null
             );
 
             var baselineDp = ComputeDownpaymentDisplay((decimal)PriceExTax);
+            
+            // Calculate IDCs Total for baseline (dealer commission + IDC Other)
+            var baselineIdcsTotal = baseline.commissionAmt + IdcOther;
+            
             var baselineVm = new CampaignSummaryViewModel
             {
                 CampaignId = "baseline",
@@ -286,13 +303,15 @@ public partial class MainViewModel : ObservableObject
                 Title = "No Campaign (Baseline)",
                 DealerCommission = $"{baseline.commissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({baseline.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
                 Monthly = ((double)baseline.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                Effective = ((double)baseline.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%"),
+                // Show the customer's NOMINAL rate, not the effective/flat rate!
+                Effective = (CustomerRatePct / 100.0).ToString("0.00%"),
                 Downpayment = baselineDp.ToString("N0", CultureInfo.InvariantCulture),
                 SubsidyUsed = "0",
                 FSSubDown = "0",
                 FSSubInterest = "0",
                 FSFreeMBSP = "0",
                 CashDiscount = "0",
+                IDCsTotal = baselineIdcsTotal.ToString("N0", CultureInfo.InvariantCulture),
                 RoRAC = ((double)baseline.profit.AcquisitionRoRac).ToString("0.00%"),
                 Notes = "Baseline scenario without campaigns",
                 FSSubDownAmount = 0,
@@ -319,6 +338,7 @@ public partial class MainViewModel : ObservableObject
                     double freeInsuranceThb = 0;
                     double freeMbspThb = 0;
                     double cashDiscountThb = 0;
+                    double subinterestSubsidyThb = 0;  // Separate variable for subinterest subsidy
 
                     switch (c.Type)
                     {
@@ -369,27 +389,39 @@ public partial class MainViewModel : ObservableObject
                             if (c.TargetRate.HasValue)
                             {
                                 rateOverride = c.TargetRate.Value * 100.0; // 0.0299 => 2.99
+                                // For subinterest, the customer pays at the target rate
+                                // So we need to calculate with the target rate to get the correct effective rate
                             }
                             break;
                     }
 
                     // Leftover budget after explicit consumers (subdown + cash discount)
                     var leftoverBudget = Math.Max(0, SubsidyBudget - (fsSubDownThb + cashDiscountThb));
-
-                    // For subinterest, compute required subsidy (interest shortfall from base to target). Not counted in SubsidyUsed display.
+                    
+                    // For subinterest, compute required subsidy (interest shortfall from base to target)
                     if (c.Type == "subinterest" && rateOverride.HasValue)
                     {
-                        _ = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
+                        var requiredSubsidy = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
+                        // Use the required subsidy amount (capped by available budget) for rate buydown
+                        upSubDelta = (decimal)Math.Min(requiredSubsidy, leftoverBudget);
+                        // Track the subsidy used for subinterest rate buydown
+                        subinterestSubsidyThb = Math.Min(requiredSubsidy, leftoverBudget);
                     }
-
-                    // Apply leftover budget as upfront subsidy income (simplified model)
-                    upSubDelta = (decimal)leftoverBudget;
+                    else
+                    {
+                        // For other campaigns, apply leftover budget as upfront subsidy income
+                        upSubDelta = (decimal)leftoverBudget;
+                    }
 
                     var outc = ComputeScenarioWithCommission(vehiclePrice, subIsPct, subVal, upCostDelta, upSubDelta, rateOverride);
                     var dp = ComputeDownpaymentDisplay(vehiclePrice);
 
-                    // Display Subsidy Utilized = Subdown + Cash Discount only (per simplified model)
-                    var subsidyUsed = fsSubDownThb + cashDiscountThb;
+                    // Display Subsidy Utilized = All subsidies used (Subdown + Cash Discount + Subinterest)
+                    var subsidyUsed = fsSubDownThb + cashDiscountThb + subinterestSubsidyThb;
+                    
+                    // Calculate IDCs Total = Dealer Commission + all actual IDCs
+                    var idcsTotal = outc.commissionAmt + freeInsuranceThb + freeMbspThb + IdcOther;
+                    
                     var vm = new CampaignSummaryViewModel
                     {
                         CampaignId = c.Id,
@@ -397,20 +429,27 @@ public partial class MainViewModel : ObservableObject
                         Title = c.Type,
                         DealerCommission = $"{outc.commissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({outc.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
                         Monthly = ((double)outc.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                        Effective = ((double)outc.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%"),
+                        // Show the customer's NOMINAL rate that they pay (may be adjusted by campaign)
+                        // For subinterest campaigns with rate override, show the target rate; otherwise show the base customer rate
+                        Effective = ((rateOverride ?? CustomerRatePct) / 100.0).ToString("0.00%"),
                         Downpayment = dp.ToString("N0", CultureInfo.InvariantCulture),
                         SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture),
                         FSSubDown = fsSubDownThb.ToString("N0", CultureInfo.InvariantCulture),
-                        FSSubInterest = freeInsuranceThb.ToString("N0", CultureInfo.InvariantCulture),
+                        FSSubInterest = freeInsuranceThb.ToString("N0", CultureInfo.InvariantCulture),  // Always shows free insurance IDC
+                        SubinterestSubsidy = subinterestSubsidyThb.ToString("N0", CultureInfo.InvariantCulture),  // Shows subsidy for subinterest
                         FSFreeMBSP = freeMbspThb.ToString("N0", CultureInfo.InvariantCulture),
                         CashDiscount = cashDiscountThb.ToString("N0", CultureInfo.InvariantCulture),
-                        TargetRatePct = (c.Type == "subinterest" ? (rateOverride.HasValue ? rateOverride.Value / 100.0 : (double?)null) : null),
+                        IDCsTotal = idcsTotal.ToString("N0", CultureInfo.InvariantCulture),
+                        // Store the target rate in percent units (e.g., 2.99 for 2.99%)
+                        TargetRatePct = (c.Type == "subinterest" && rateOverride.HasValue ? rateOverride.Value : (double?)null),
                         RoRAC = ((double)outc.profit.AcquisitionRoRac).ToString("0.00%"),
                         Notes = string.Empty,
                         FSSubDownAmount = fsSubDownThb,
-                        FSSubInterestAmount = freeInsuranceThb,
+                        FSSubInterestAmount = freeInsuranceThb,  // Always shows free insurance IDC
+                        SubinterestSubsidyAmount = subinterestSubsidyThb,  // Shows subsidy for subinterest
                         FSFreeMBSPAmount = freeMbspThb,
                         CashDiscountAmount = cashDiscountThb,
+                        IDC_MBSP_CostAmount = freeMbspThb, // Set this for consistency
                     };
                     temp.Add((vm, (double)outc.outputs.MonthlyRate, (double)outc.outputs.FlatRatePercentPerAnnum));
                 }
@@ -426,9 +465,19 @@ public partial class MainViewModel : ObservableObject
                 CampaignSummaries.Add(vm);
             }
 
+            // Restore selection
+            if (selectedId != null)
+            {
+                var toRestore = StandardCampaigns.FirstOrDefault(c => c.CampaignId == selectedId);
+                if (toRestore != null)
+                {
+                    SelectedCampaign = toRestore;
+                }
+            }
+
             // Set default selection if none
             if (SelectedCampaign == null && CampaignSummaries.Count > 0)
-                SelectedCampaign = CampaignSummaries[0];
+                SelectedCampaign = CampaignSummaries.FirstOrDefault(c => c.CampaignId == "baseline");
 
             Status = $"Loaded {CampaignSummaries.Count} options";
         }
@@ -484,6 +533,9 @@ public partial class MainViewModel : ObservableObject
             RefreshProfitabilityDetailsLocal(scenario.Profit);
 
             Status = "Done";
+
+            // Also refresh the standard campaigns grid with the new inputs
+            await LoadSummariesLocalAsync();
         }
         catch (Exception ex)
         {
@@ -493,7 +545,6 @@ public partial class MainViewModel : ObservableObject
         {
             IsCalculating = false;
         }
-        await Task.CompletedTask;
     }
 
     private static List<CashflowRowDto> LocalScheduleToDto(IReadOnlyList<FinancialCalculator.Engine.Models.ScheduleRow> rows)
@@ -555,11 +606,11 @@ public partial class MainViewModel : ObservableObject
                     if (!targetRatePct.HasValue)
                     {
                         var cat = _campaigns.GetStandard().FirstOrDefault(c => c.Id == active.CampaignId)?.TargetRate;
-                        if (cat.HasValue) targetRatePct = cat.Value;
+                        if (cat.HasValue) targetRatePct = cat.Value * 100.0; // Convert from fraction to percent
                     }
                     if (targetRatePct.HasValue)
                     {
-                        rateOverride = targetRatePct.Value * 100.0;
+                        rateOverride = targetRatePct.Value; // Already in percent units (e.g., 2.99)
                     }
                 }
             }
@@ -631,49 +682,30 @@ public partial class MainViewModel : ObservableObject
     // MARK: Profitability details (local)
     private void RefreshProfitabilityDetailsLocal(FinancialCalculator.Engine.Models.Profitability p)
     {
+        _wfCustomerRate = (double)p.CustomerRate;
         _wfDealIRREffective = (double)p.DealIrrEffective;
-        _wfDealIRRNominal = (double)p.DealIrrEffective; // proxy
+        _wfDealIRRNominal = (double)p.DealIrrNominal;
+        _wfIDCUpfrontAnnualized = (double)p.IdcUpfrontAnnualizedPct;
+        _wfSubsidyUpfrontAnnualized = (double)p.SubsidyUpfrontAnnualizedPct;
         _wfCostOfDebtMatched = (double)p.MatchedFundingRate;
         _wfMatchedFundedSpread = (double)p.MatchedFundingSpread;
-        _wfGrossInterestMargin = (double)(p.DealIrrEffective - p.MatchedFundingRate); // proxy
-        _wfCapitalAdvantage = 0;
-        _wfNetInterestMargin = (double)(p.DealIrrEffective - (p.MatchedFundingRate + p.MatchedFundingSpread));
-        _wfCostOfCreditRisk = 0;
+        _wfGrossInterestMargin = (double)p.GrossInterestMargin;
+        _wfNetInterestMargin = (double)p.NetInterestMargin;
+        _wfCostOfCreditRisk = (double)p.CostOfRisk;
         _wfOPEX = (double)p.OpexPct;
-        
-        // Calculate IDC upfront and periodic based on active campaign
-        if (ActiveCampaign != null)
-        {
-            // IDC upfront includes dealer commission and other IDCs
-            var totalIdcUpfront = DealerCommissionResolvedAmt + IdcOther;
-            if (ActiveCampaign.IDC_MBSP_CostAmount > 0)
-            {
-                totalIdcUpfront += ActiveCampaign.IDC_MBSP_CostAmount;
-            }
-            _wfIDCUpfront = totalIdcUpfront > 0 ? (totalIdcUpfront / PriceExTax) : 0;
-            _wfIDCPeriodic = 0; // No periodic IDCs in current model
-            
-            // Calculate separated IDC/Subsidy percentages
-            _wfIDCUpfrontCostPct = totalIdcUpfront > 0 ? (totalIdcUpfront / PriceExTax) : 0;
-            _wfIDCPeriodicCostPct = 0;
-            
-            // Calculate subsidy percentages based on campaign allocations
-            var totalSubsidy = ActiveCampaign.FSSubDownAmount + ActiveCampaign.FSSubInterestAmount + ActiveCampaign.FSFreeMBSPAmount;
-            _wfSubsidyUpfrontPct = totalSubsidy > 0 ? (totalSubsidy / PriceExTax) : 0;
-            _wfSubsidyPeriodicPct = 0;
-        }
-        else
-        {
-            _wfIDCUpfront = 0;
-            _wfIDCPeriodic = 0;
-            _wfIDCUpfrontCostPct = 0;
-            _wfIDCPeriodicCostPct = 0;
-            _wfSubsidyUpfrontPct = 0;
-            _wfSubsidyPeriodicPct = 0;
-        }
-        
+        _wfCapitalAdvantage = (double)p.CapitalAdvantage;
         _wfNetEBITMargin = (double)p.NetEbitMargin;
         _wfEconomicCapital = 0.08; // fixed ratio used in local calc
+        
+        // Map separated IDC/Subsidy values
+        _wfIDCUpfrontCostPct = (double)p.IdcUpfrontAnnualizedPct; // Same as annualized for now
+        _wfIDCPeriodicCostPct = (double)p.IdcPeriodicPct;
+        _wfSubsidyUpfrontPct = (double)p.SubsidyUpfrontAnnualizedPct; // Same as annualized for now
+        _wfSubsidyPeriodicPct = (double)p.SubsidyPeriodicPct;
+        
+        // Combined net values (IDC - Subsidy)
+        _wfIDCUpfront = (double)(p.IdcUpfrontAnnualizedPct - p.SubsidyUpfrontAnnualizedPct);
+        _wfIDCPeriodic = (double)(p.IdcPeriodicPct - p.SubsidyPeriodicPct);
 
         // Active campaign allocations for bottom summary (use VM numeric fields)
         if (ActiveCampaign != null)
@@ -695,20 +727,21 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(IdcOtherText));
         OnPropertyChanged(nameof(IdcTotalText));
 
+        OnPropertyChanged(nameof(WfCustomerRateText));
         OnPropertyChanged(nameof(WfDealIRREffectiveText));
-        OnPropertyChanged(nameof(WfDealIRRNominalText));
+        OnPropertyChanged(nameof(WfIDCUpfrontAnnualizedText));
+        OnPropertyChanged(nameof(WfSubsidyUpfrontAnnualizedText));
         OnPropertyChanged(nameof(WfCostOfDebtMatchedText));
         OnPropertyChanged(nameof(WfMatchedFundedSpreadText));
         OnPropertyChanged(nameof(WfGrossInterestMarginText));
-        OnPropertyChanged(nameof(WfCapitalAdvantageText));
         OnPropertyChanged(nameof(WfNetInterestMarginText));
         OnPropertyChanged(nameof(WfCostOfCreditRiskText));
         OnPropertyChanged(nameof(WfOPEXText));
-        OnPropertyChanged(nameof(WfIDCUpfrontText));
-        OnPropertyChanged(nameof(WfIDCPeriodicText));
+        OnPropertyChanged(nameof(WfCapitalAdvantageText));
         OnPropertyChanged(nameof(WfNetEBITMarginText));
         OnPropertyChanged(nameof(WfEconomicCapitalText));
-
+        
+        // Notify for new separated IDC/Subsidy fields
         OnPropertyChanged(nameof(WfIDCUpfrontCostPctText));
         OnPropertyChanged(nameof(WfIDCPeriodicCostPctText));
         OnPropertyChanged(nameof(WfSubsidyUpfrontPctText));
@@ -1053,45 +1086,49 @@ public partial class MainViewModel : ObservableObject
     public string IdcTotalText => (DealerCommissionResolvedAmt + IdcOther).ToString("N0", CultureInfo.InvariantCulture);
 
     // MARK: Profitability Waterfall (for RoRAC details panel)
+    private double _wfCustomerRate;
+    private double _wfIDCUpfrontAnnualized;
+    private double _wfSubsidyUpfrontAnnualized;
     private double _wfDealIRREffective;
-    private double _wfDealIRRNominal;
     private double _wfCostOfDebtMatched;
     private double _wfMatchedFundedSpread;
     private double _wfGrossInterestMargin;
-    private double _wfCapitalAdvantage;
     private double _wfNetInterestMargin;
     private double _wfCostOfCreditRisk;
     private double _wfOPEX;
-    private double _wfIDCUpfront;
-    private double _wfIDCPeriodic;
+    private double _wfCapitalAdvantage;
     private double _wfNetEBITMargin;
     private double _wfEconomicCapital;
-
-    // MARK: Separated IDC/Subsidy fields
-    private double _wfIDCUpfrontCostPct;
-    private double _wfIDCPeriodicCostPct;
-    private double _wfSubsidyUpfrontPct;
-    private double _wfSubsidyPeriodicPct;
+    
+    // Additional waterfall fields for separated IDC/Subsidy values
+    private double _wfDealIRRNominal;
+    private double _wfIDCUpfront;  // Combined IDC+Subsidies upfront (net)
+    private double _wfIDCPeriodic; // Combined IDC+Subsidies periodic (net)
+    private double _wfIDCUpfrontCostPct;  // Separated IDC upfront cost %
+    private double _wfIDCPeriodicCostPct; // Separated IDC periodic cost %
+    private double _wfSubsidyUpfrontPct;  // Separated subsidy upfront %
+    private double _wfSubsidyPeriodicPct; // Separated subsidy periodic %
 
     // Percent formatting helper
     private static string Pct(double v) => v.ToString("0.00%", CultureInfo.InvariantCulture);
 
     // Exposed formatted texts
+    public string WfCustomerRateText => Pct(_wfCustomerRate);
+    public string WfIDCUpfrontAnnualizedText => Pct(_wfIDCUpfrontAnnualized);
+    public string WfSubsidyUpfrontAnnualizedText => Pct(_wfSubsidyUpfrontAnnualized);
     public string WfDealIRREffectiveText => Pct(_wfDealIRREffective);
-    public string WfDealIRRNominalText => Pct(_wfDealIRRNominal);
     public string WfCostOfDebtMatchedText => Pct(_wfCostOfDebtMatched);
     public string WfMatchedFundedSpreadText => Pct(_wfMatchedFundedSpread);
     public string WfGrossInterestMarginText => Pct(_wfGrossInterestMargin);
-    public string WfCapitalAdvantageText => Pct(_wfCapitalAdvantage);
     public string WfNetInterestMarginText => Pct(_wfNetInterestMargin);
     public string WfCostOfCreditRiskText => Pct(_wfCostOfCreditRisk);
     public string WfOPEXText => Pct(_wfOPEX);
-    public string WfIDCUpfrontText => Pct(_wfIDCUpfront);
-    public string WfIDCPeriodicText => Pct(_wfIDCPeriodic);
+    public string WfCapitalAdvantageText => Pct(_wfCapitalAdvantage);
     public string WfNetEBITMarginText => Pct(_wfNetEBITMargin);
     public string WfEconomicCapitalText => Pct(_wfEconomicCapital);
-
-    // Exposed formatted texts for separated IDC/Subsidy fields
+    
+    // Additional separated IDC/Subsidy properties for UI display
+    // These show the breakdown of upfront/periodic IDC and subsidies
     public string WfIDCUpfrontCostPctText => Pct(_wfIDCUpfrontCostPct);
     public string WfIDCPeriodicCostPctText => Pct(_wfIDCPeriodicCostPct);
     public string WfSubsidyUpfrontPctText => Pct(_wfSubsidyUpfrontPct);
@@ -1118,9 +1155,11 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string Downpayment { get; set; } = string.Empty;
     public string CashDiscount { get; set; } = string.Empty;
     public string FSSubDown { get; set; } = string.Empty;
-    public string FSSubInterest { get; set; } = string.Empty;
+    public string FSSubInterest { get; set; } = string.Empty;  // For free insurance IDC amount
+    public string SubinterestSubsidy { get; set; } = string.Empty;  // For subinterest rate buydown subsidy
     public string FSFreeMBSP { get; set; } = string.Empty;
     public string SubsidyUsed { get; set; } = string.Empty;
+    public string IDCsTotal { get; set; } = string.Empty;  // Total of all IDCs (commission + free insurance + free MBSP + other)
     public string RoRAC { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
 
@@ -1131,6 +1170,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public double FSSubDownAmount { get => _fsSubDownAmount; set { if (_fsSubDownAmount != value) { _fsSubDownAmount = value; OnPropertyChanged(nameof(FSSubDownAmount)); } } }
     private double _fsSubInterestAmount;
     public double FSSubInterestAmount { get => _fsSubInterestAmount; set { if (_fsSubInterestAmount != value) { _fsSubInterestAmount = value; OnPropertyChanged(nameof(FSSubInterestAmount)); } } }
+    private double _subinterestSubsidyAmount;
+    public double SubinterestSubsidyAmount { get => _subinterestSubsidyAmount; set { if (_subinterestSubsidyAmount != value) { _subinterestSubsidyAmount = value; OnPropertyChanged(nameof(SubinterestSubsidyAmount)); } } }
     private double _idcMbspCostAmount;
     public double IDC_MBSP_CostAmount { get => _idcMbspCostAmount; set { if (_idcMbspCostAmount != value) { _idcMbspCostAmount = value; OnPropertyChanged(nameof(IDC_MBSP_CostAmount)); } } }
     private double _fsFreeMbspAmount;
@@ -1138,7 +1179,18 @@ public partial class CampaignSummaryViewModel : ObservableObject
 
     // Editable Target Rate for subinterest campaigns (% p.a., e.g., 0.99, 2.99)
     private double? _targetRatePct;
-    public double? TargetRatePct { get => _targetRatePct; set { if (_targetRatePct != value) { _targetRatePct = value; OnPropertyChanged(nameof(TargetRatePct)); } } }
+    public double? TargetRatePct
+    {
+        get => _targetRatePct;
+        set
+        {
+            if (_targetRatePct != value)
+            {
+                _targetRatePct = value;
+                OnPropertyChanged(nameof(TargetRatePct));
+            }
+        }
+    }
 
     public CampaignSummaryViewModel Clone() => new CampaignSummaryViewModel
     {
@@ -1152,13 +1204,16 @@ public partial class CampaignSummaryViewModel : ObservableObject
         CashDiscount = this.CashDiscount,
         FSSubDown = this.FSSubDown,
         FSSubInterest = this.FSSubInterest,
+        SubinterestSubsidy = this.SubinterestSubsidy,
         FSFreeMBSP = this.FSFreeMBSP,
         SubsidyUsed = this.SubsidyUsed,
+        IDCsTotal = this.IDCsTotal,
         RoRAC = this.RoRAC,
         Notes = this.Notes,
         CashDiscountAmount = this.CashDiscountAmount,
         FSSubDownAmount = this.FSSubDownAmount,
         FSSubInterestAmount = this.FSSubInterestAmount,
+        SubinterestSubsidyAmount = this.SubinterestSubsidyAmount,
         IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
         FSFreeMBSPAmount = this.FSFreeMBSPAmount,
         TargetRatePct = this.TargetRatePct

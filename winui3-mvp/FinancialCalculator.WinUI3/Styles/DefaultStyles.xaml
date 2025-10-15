@@ -58,7 +58,7 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontSize" Value="11"/>
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="MinWidth" Value="120"/>
         <Setter Property="Template">
@@ -214,9 +214,9 @@
     <!-- ========================================== -->
     
     <Style x:Key="IconTabViewItemStyle" TargetType="TabViewItem">
-        <Setter Property="MinHeight" Value="48"/>
-        <Setter Property="Padding" Value="12,8,12,8"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="MinHeight" Value="40"/>
+        <Setter Property="Padding" Value="10,6,10,6"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
@@ -243,8 +243,8 @@
         <Setter Property="Background" Value="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="12,8,12,8"/>
-        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="10,6,10,6"/>
+        <Setter Property="FontSize" Value="11"/>
     </Style>
 
     <!-- ========================================== -->
@@ -256,7 +256,7 @@
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Padding" Value="12"/>
         <Setter Property="Margin" Value="4"/>
     </Style>
 
@@ -276,7 +276,7 @@
     <!-- ========================================== -->
     
     <Style x:Key="StatusTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontSize" Value="11"/>
         <Setter Property="Opacity" Value="0.8"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
