@@ -1,6 +1,35 @@
-build/bin
-node_modules
-frontend/dist
-.vs
-.vscode
-__pycache__
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# C# / .NET
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.dll
+*.exe
+*.xbf
+*.cache
+*.pri
+
+# Go
+*.exe
+*.syso
+
+# Rider
+.idea/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# Build artifacts
+publish/
+artifacts/
+
+# Logs
+*.log
