@@ -354,15 +354,15 @@
                     Width="28"
                     Height="28"
                     Padding="0"
-                    Margin="0,18,8,0"
-                    Background="Transparent"
+                    Margin="0,18,4,0"
+                    Background="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
                     BorderBrush="{ThemeResource CardStrokeBrush}"
                     BorderThickness="1"
                     Canvas.ZIndex="100">
                 <Grid>
-                    <FontIcon Glyph="&#xE76B;"
+                    <FontIcon Glyph="&#xE76B;" Foreground="White"
                               Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    <FontIcon Glyph="&#xE76C;"
+                    <FontIcon Glyph="&#xE76C;" Foreground="White"
                               Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Grid>
                 <ToolTipService.ToolTip>
@@ -764,14 +764,14 @@
                     Height="28"
                     Padding="0"
                     Margin="4,18,0,0"
-                    Background="Transparent"
+                    Background="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
                     BorderBrush="{ThemeResource CardStrokeBrush}"
                     BorderThickness="1"
                     Canvas.ZIndex="100">
                 <Grid>
-                    <FontIcon Glyph="&#xE76C;"
+                    <FontIcon Glyph="&#xE76C;" Foreground="White"
                               Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    <FontIcon Glyph="&#xE76B;"
+                    <FontIcon Glyph="&#xE76B;" Foreground="White"
                               Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Grid>
                 <ToolTipService.ToolTip>

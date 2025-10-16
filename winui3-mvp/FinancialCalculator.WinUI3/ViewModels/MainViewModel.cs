@@ -253,6 +253,7 @@ public partial class MainViewModel : ObservableObject
         // Tag as custom for clarity
         if (!clone.Title.StartsWith("Custom:", StringComparison.OrdinalIgnoreCase))
             clone.Title = $"Custom: {clone.Title}";
+        clone.CampaignId = Guid.NewGuid().ToString();
         MyCampaigns.Add(clone);
         SelectedMyCampaign = clone;
         Logger.Info($"MyCampaigns: copied from standard '{clone.Title}' (ID={clone.CampaignId})");
