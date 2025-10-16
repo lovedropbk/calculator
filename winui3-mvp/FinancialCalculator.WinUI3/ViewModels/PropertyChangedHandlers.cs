@@ -5,17 +5,17 @@ namespace FinancialCalculator.WinUI3.ViewModels;
 
 public partial class MainViewModel
 {
-    partial void OnProductChanged(string value)
+    private void OnProductChanged(string value)
     {
         RefreshCommissionPolicyLocal();
         OnPropertyChanged(nameof(IsBalloonEnabled));
         ScheduleSummariesRefresh();
     }
-    partial void OnPriceExTaxChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
-    partial void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
-    partial void OnTermMonthsChanged(int value) => ScheduleSummariesRefresh();
-    partial void OnCustomerRatePctChanged(double value) => ScheduleSummariesRefresh();
-    partial void OnSubsidyBudgetChanged(double value)
+    private void OnPriceExTaxChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
+    private void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
+    private void OnTermMonthsChanged(int value) => ScheduleSummariesRefresh();
+    private void OnCustomerRatePctChanged(double value) => ScheduleSummariesRefresh();
+    private void OnSubsidyBudgetChanged(double value)
     {
         // Update dependent computed text for bottom summary
         OnPropertyChanged(nameof(SubsidyRemainingText));
@@ -23,20 +23,20 @@ public partial class MainViewModel
     }
 
     // Additional handlers to keep UI reactive to all inputs (per redesign specs)
-    partial void OnTimingChanged(string value) => ScheduleSummariesRefresh();
-    partial void OnBalloonPercentChanged(double value) => ScheduleSummariesRefresh();
-    partial void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ScheduleSummariesRefresh(); }
-    partial void OnDownPaymentValueEntryChanged(double value) => ScheduleSummariesRefresh();
-    partial void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ScheduleSummariesRefresh(); }
-    partial void OnBalloonValueEntryChanged(double value) => ScheduleSummariesRefresh();
-    partial void OnLockModeChanged(string value) => ScheduleSummariesRefresh();
+    private void OnTimingChanged(string value) => ScheduleSummariesRefresh();
+    private void OnBalloonPercentChanged(double value) => ScheduleSummariesRefresh();
+    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ScheduleSummariesRefresh(); }
+    private void OnDownPaymentValueEntryChanged(double value) => ScheduleSummariesRefresh();
+    private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ScheduleSummariesRefresh(); }
+    private void OnBalloonValueEntryChanged(double value) => ScheduleSummariesRefresh();
+    private void OnLockModeChanged(string value) => ScheduleSummariesRefresh();
 
-    partial void OnRateModeChanged(string value) { OnPropertyChanged(nameof(IsFixedRateMode)); OnPropertyChanged(nameof(IsTargetInstallmentMode)); RateModeIndex = string.Equals(RateMode, "fixed_rate", System.StringComparison.OrdinalIgnoreCase) ? 0 : 1; ScheduleSummariesRefresh(); }
-    partial void OnRateModeIndexChanged(int value) { RateMode = value == 0 ? "fixed_rate" : "target_installment"; }
-    partial void OnTargetInstallmentChanged(double value) => ScheduleSummariesRefresh();
+    private void OnRateModeChanged(string value) { OnPropertyChanged(nameof(IsFixedRateMode)); OnPropertyChanged(nameof(IsTargetInstallmentMode)); RateModeIndex = string.Equals(RateMode, "fixed_rate", System.StringComparison.OrdinalIgnoreCase) ? 0 : 1; ScheduleSummariesRefresh(); }
+    private void OnRateModeIndexChanged(int value) { RateMode = value == 0 ? "fixed_rate" : "target_installment"; }
+    private void OnTargetInstallmentChanged(double value) => ScheduleSummariesRefresh();
 
-    partial void OnDealerCommissionModeChanged(string value) => ScheduleSummariesRefresh();
-    partial void OnCommissionEntryUnitChanged(string value)
+    private void OnDealerCommissionModeChanged(string value) => ScheduleSummariesRefresh();
+    private void OnCommissionEntryUnitChanged(string value)
     {
         if (string.Equals(value, "auto", System.StringComparison.OrdinalIgnoreCase))
         {
@@ -48,7 +48,7 @@ public partial class MainViewModel
         }
         ScheduleSummariesRefresh();
     }
-    partial void OnCommissionEntryValueChanged(double value)
+    private void OnCommissionEntryValueChanged(double value)
     {
         if (!string.Equals(CommissionEntryUnit, "auto", System.StringComparison.OrdinalIgnoreCase))
         {
@@ -59,21 +59,21 @@ public partial class MainViewModel
         }
         ScheduleSummariesRefresh();
     }
-    partial void OnDealerCommissionPctChanged(double? value)
+    private void OnDealerCommissionPctChanged(double? value)
     {
         if (value.HasValue) DealerCommissionMode = "override";
         UpdateDealerCommissionResolved();
         OnPropertyChanged(nameof(DealerCommissionPctText));
         ScheduleSummariesRefresh();
     }
-    partial void OnDealerCommissionAmtChanged(double? value)
+    private void OnDealerCommissionAmtChanged(double? value)
     {
         if (value.HasValue) DealerCommissionMode = "override";
         UpdateDealerCommissionResolved();
         OnPropertyChanged(nameof(DealerCommissionPctText));
         ScheduleSummariesRefresh();
     }
-    partial void OnDealerCommissionResolvedAmtChanged(double value)
+    private void OnDealerCommissionResolvedAmtChanged(double value)
     {
         // Reflect derived texts in bottom summary
         OnPropertyChanged(nameof(DealerCommissionResolvedAmtText));
@@ -81,7 +81,7 @@ public partial class MainViewModel
         ScheduleSummariesRefresh();
     }
 
-    partial void OnIdcOtherChanged(double value)
+    private void OnIdcOtherChanged(double value)
     {
         // Mark as user-edited so campaign selection won't auto-overwrite
         IdcOtherUserEdited = true;
@@ -91,13 +91,13 @@ public partial class MainViewModel
         OnPropertyChanged(nameof(SubsidyRemainingText));
         ScheduleSummariesRefresh();
     }
-    partial void OnIdcOtherUserEditedChanged(bool value)
+    private void OnIdcOtherUserEditedChanged(bool value)
     {
         OnPropertyChanged(nameof(IdcOtherText));
         ScheduleSummariesRefresh();
     }
 
-    partial void OnSelectedCampaignChanged(CampaignSummaryViewModel? value)
+    private void OnSelectedCampaignChanged(CampaignSummaryViewModel? value)
     {
         // When selecting a Standard campaign, clear MyCampaign selection so ActiveCampaign reflects this grid
         if (value != null && SelectedMyCampaign != null)
@@ -136,7 +136,7 @@ public partial class MainViewModel
 
     private CampaignSummaryViewModel? _subscribedMyCampaign;
 
-    partial void OnSelectedMyCampaignChanged(CampaignSummaryViewModel? value)
+    private void OnSelectedMyCampaignChanged(CampaignSummaryViewModel? value)
     {
         // When selecting a MyCampaign, clear Standard selection so ActiveCampaign reflects this grid
         if (value != null && SelectedCampaign != null)
@@ -204,10 +204,14 @@ public partial class MainViewModel
 
 
     // Collapse/expand left panel and let right tables auto-grow via Grid star sizing
-    partial void OnIsDealInputsCollapsedChanged(bool value)
+    private void OnIsDealInputsCollapsedChanged(bool value)
     {
         // When collapsed show a slim rail with just the arrow; otherwise auto-size to content
-        DealInputsColumnWidth = value ? "36" : "Auto";
+        DealInputsColumnWidth = value ? "36" : "420";
+    }
+    private void OnIsCampaignDetailsCollapsedChanged(bool value)
+    {
+        CampaignDetailsColumnWidth = value ? "36" : "420";
     }
 
     private void ScheduleSummariesRefresh()

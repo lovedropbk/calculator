@@ -24,51 +24,84 @@ public partial class MainViewModel : ObservableObject
     // MARK: Parameter Set Caching (legacy no-op)
 
     // MARK: Deal Inputs
-    [ObservableProperty] private string product = "HP";
-    [ObservableProperty] private double priceExTax = 1_000_000;
-    [ObservableProperty] private double additionalFinancedItems = 0;
-    [ObservableProperty] private double downPaymentAmount = 200_000;
+    private string _product = "HP";
+    public string Product { get => _product; set { if (SetProperty(ref _product, value)) OnProductChanged(value); } }
+    private double _priceExTax = 1_000_000;
+    public double PriceExTax { get => _priceExTax; set { if (SetProperty(ref _priceExTax, value)) OnPriceExTaxChanged(value); } }
+    private double _additionalFinancedItems = 0;
+    public double AdditionalFinancedItems { get => _additionalFinancedItems; set => SetProperty(ref _additionalFinancedItems, value); }
+    private double _downPaymentAmount = 200_000;
+    public double DownPaymentAmount { get => _downPaymentAmount; set { if (SetProperty(ref _downPaymentAmount, value)) OnDownPaymentAmountChanged(value); } }
     // Unified entry + unit for Down Payment and Balloon
-    [ObservableProperty] private string downPaymentUnit = "THB"; // THB | %
-    [ObservableProperty] private double downPaymentValueEntry = 200_000;
-    [ObservableProperty] private string balloonUnit = "%"; // THB | %
-    [ObservableProperty] private double balloonValueEntry = 0;
-    [ObservableProperty] private int termMonths = 36;
-    [ObservableProperty] private string timing = "arrears"; // arrears|advance
-    [ObservableProperty] private double balloonPercent = 0;
-    [ObservableProperty] private string lockMode = "amount"; // amount|percent
+    private string _downPaymentUnit = "THB"; // THB | %
+    public string DownPaymentUnit { get => _downPaymentUnit; set { if (SetProperty(ref _downPaymentUnit, value)) OnDownPaymentUnitChanged(value); } }
+    private double _downPaymentValueEntry = 200_000;
+    public double DownPaymentValueEntry { get => _downPaymentValueEntry; set { if (SetProperty(ref _downPaymentValueEntry, value)) OnDownPaymentValueEntryChanged(value); } }
+    private string _balloonUnit = "%"; // THB | %
+    public string BalloonUnit { get => _balloonUnit; set { if (SetProperty(ref _balloonUnit, value)) OnBalloonUnitChanged(value); } }
+    private double _balloonValueEntry = 0;
+    public double BalloonValueEntry { get => _balloonValueEntry; set { if (SetProperty(ref _balloonValueEntry, value)) OnBalloonValueEntryChanged(value); } }
+    private int _termMonths = 36;
+    public int TermMonths { get => _termMonths; set { if (SetProperty(ref _termMonths, value)) OnTermMonthsChanged(value); } }
+    private string _timing = "arrears"; // arrears|advance
+    public string Timing { get => _timing; set { if (SetProperty(ref _timing, value)) OnTimingChanged(value); } }
+    private double _balloonPercent = 0;
+    public double BalloonPercent { get => _balloonPercent; set { if (SetProperty(ref _balloonPercent, value)) OnBalloonPercentChanged(value); } }
+    private string _lockMode = "amount"; // amount|percent
+    public string LockMode { get => _lockMode; set { if (SetProperty(ref _lockMode, value)) OnLockModeChanged(value); } }
 
     // MARK: Rate Mode
-    [ObservableProperty] private string rateMode = "fixed_rate"; // fixed_rate|target_installment
-    [ObservableProperty] private int rateModeIndex = 0; // 0=fixed_rate, 1=target_installment
+    private string _rateMode = "fixed_rate"; // fixed_rate|target_installment
+    public string RateMode { get => _rateMode; set { if (SetProperty(ref _rateMode, value)) OnRateModeChanged(value); } }
+    private int _rateModeIndex = 0; // 0=fixed_rate, 1=target_installment
+    public int RateModeIndex { get => _rateModeIndex; set { if (SetProperty(ref _rateModeIndex, value)) OnRateModeIndexChanged(value); } }
     public bool IsFixedRateMode => string.Equals(RateMode, "fixed_rate", StringComparison.OrdinalIgnoreCase);
     public bool IsTargetInstallmentMode => string.Equals(RateMode, "target_installment", StringComparison.OrdinalIgnoreCase);
-    [ObservableProperty] private double customerRatePct = 3.99;
-    [ObservableProperty] private double targetInstallment = 0;
+    private double _customerRatePct = 3.99;
+    public double CustomerRatePct { get => _customerRatePct; set { if (SetProperty(ref _customerRatePct, value)) OnCustomerRatePctChanged(value); } }
+    private double _targetInstallment = 0;
+    public double TargetInstallment { get => _targetInstallment; set { if (SetProperty(ref _targetInstallment, value)) OnTargetInstallmentChanged(value); } }
 
     // MARK: Subsidy & IDC
-    [ObservableProperty] private double subsidyBudget = 100_000;
-    [ObservableProperty] private bool subsidyBudgetIsEnabled = true; // Always editable
-    [ObservableProperty] private string dealerCommissionMode = "auto"; // auto|override
-    [ObservableProperty] private double? dealerCommissionPct;
-    [ObservableProperty] private double? dealerCommissionAmt;
-    [ObservableProperty] private double dealerCommissionResolvedAmt;
+    private double _subsidyBudget = 100_000;
+    public double SubsidyBudget { get => _subsidyBudget; set { if (SetProperty(ref _subsidyBudget, value)) OnSubsidyBudgetChanged(value); } }
+    private bool _subsidyBudgetIsEnabled = true; // Always editable
+    public bool SubsidyBudgetIsEnabled { get => _subsidyBudgetIsEnabled; set => SetProperty(ref _subsidyBudgetIsEnabled, value); }
+    private string _dealerCommissionMode = "auto"; // auto|override
+    public string DealerCommissionMode { get => _dealerCommissionMode; set { if (SetProperty(ref _dealerCommissionMode, value)) OnDealerCommissionModeChanged(value); } }
+    private double? _dealerCommissionPct;
+    public double? DealerCommissionPct { get => _dealerCommissionPct; set { if (SetProperty(ref _dealerCommissionPct, value)) OnDealerCommissionPctChanged(value); } }
+    private double? _dealerCommissionAmt;
+    public double? DealerCommissionAmt { get => _dealerCommissionAmt; set { if (SetProperty(ref _dealerCommissionAmt, value)) OnDealerCommissionAmtChanged(value); } }
+    private double _dealerCommissionResolvedAmt;
+    public double DealerCommissionResolvedAmt { get => _dealerCommissionResolvedAmt; set { if (SetProperty(ref _dealerCommissionResolvedAmt, value)) OnDealerCommissionResolvedAmtChanged(value); } }
 
     // Unified commission entry (auto | % | THB)
-    [ObservableProperty] private string commissionEntryUnit = "auto"; // auto | % | THB
-    [ObservableProperty] private double commissionEntryValue = 0;
+    private string _commissionEntryUnit = "auto"; // auto | % | THB
+    public string CommissionEntryUnit { get => _commissionEntryUnit; set { if (SetProperty(ref _commissionEntryUnit, value)) OnCommissionEntryUnitChanged(value); } }
+    private double _commissionEntryValue = 0;
+    public double CommissionEntryValue { get => _commissionEntryValue; set { if (SetProperty(ref _commissionEntryValue, value)) OnCommissionEntryValueChanged(value); } }
 
     // Auto policy (local)
-    [ObservableProperty] private double autoCommissionPct; // fraction (e.g., 0.03)
-    [ObservableProperty] private string commissionPolicyVersion = string.Empty;
+    private double _autoCommissionPct; // fraction (e.g., 0.03)
+    public double AutoCommissionPct { get => _autoCommissionPct; set => SetProperty(ref _autoCommissionPct, value); }
+    private string _commissionPolicyVersion = string.Empty;
+    public string CommissionPolicyVersion { get => _commissionPolicyVersion; set => SetProperty(ref _commissionPolicyVersion, value); }
 
-    [ObservableProperty] private double idcOther = 0;
-    [ObservableProperty] private double upfrontSubsidies = 0;
-    [ObservableProperty] private double upfrontCosts = 0;
-    [ObservableProperty] private double subdownAmount = 0;
-    [ObservableProperty] private double subdownPercent = 0;
-    [ObservableProperty] private bool subdownIsPercent = false;
-    [ObservableProperty] private bool idcOtherUserEdited = false;
+    private double _idcOther = 0;
+    public double IdcOther { get => _idcOther; set { if (SetProperty(ref _idcOther, value)) OnIdcOtherChanged(value); } }
+    private double _upfrontSubsidies = 0;
+    public double UpfrontSubsidies { get => _upfrontSubsidies; set => SetProperty(ref _upfrontSubsidies, value); }
+    private double _upfrontCosts = 0;
+    public double UpfrontCosts { get => _upfrontCosts; set => SetProperty(ref _upfrontCosts, value); }
+    private double _subdownAmount = 0;
+    public double SubdownAmount { get => _subdownAmount; set => SetProperty(ref _subdownAmount, value); }
+    private double _subdownPercent = 0;
+    public double SubdownPercent { get => _subdownPercent; set => SetProperty(ref _subdownPercent, value); }
+    private bool _subdownIsPercent = false;
+    public bool SubdownIsPercent { get => _subdownIsPercent; set => SetProperty(ref _subdownIsPercent, value); }
+    private bool _idcOtherUserEdited = false;
+    public bool IdcOtherUserEdited { get => _idcOtherUserEdited; set { if (SetProperty(ref _idcOtherUserEdited, value)) OnIdcOtherUserEditedChanged(value); } }
 
     public string DealerCommissionPctText => ((DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct) * 100.0).ToString("0.00", CultureInfo.InvariantCulture);
     public string DealerCommissionResolvedAmtText => DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture);
@@ -84,35 +117,57 @@ public partial class MainViewModel : ObservableObject
     public bool IsCommissionEntryEditable => !string.Equals(CommissionEntryUnit, "auto", StringComparison.OrdinalIgnoreCase);
 
 
+    // Campaign Details panel
+    private bool _isCampaignDetailsCollapsed = true;
+    public bool IsCampaignDetailsCollapsed { get => _isCampaignDetailsCollapsed; set { if (SetProperty(ref _isCampaignDetailsCollapsed, value)) OnIsCampaignDetailsCollapsedChanged(value); } }
+    private string _campaignDetailsColumnWidth = "Auto";
+    public string CampaignDetailsColumnWidth { get => _campaignDetailsColumnWidth; set => SetProperty(ref _campaignDetailsColumnWidth, value); }
+    [RelayCommand]
+    private void ToggleCampaignDetailsCollapsed()
+    {
+        IsCampaignDetailsCollapsed = !IsCampaignDetailsCollapsed;
+    }
     // MARK: Collections & Selection
     public ObservableCollection<CampaignSummaryViewModel> StandardCampaigns { get; } = new();
     public ObservableCollection<CampaignSummaryViewModel> CampaignSummaries { get; } = new(); // back-compat alias
     public ObservableCollection<CampaignSummaryViewModel> MyCampaigns { get; } = new();
 
     // Selections
-    [ObservableProperty] private CampaignSummaryViewModel? selectedCampaign; // Standard selection
-    [ObservableProperty] private CampaignSummaryViewModel? selectedMyCampaign;
+    private CampaignSummaryViewModel? _selectedCampaign; // Standard selection
+    public CampaignSummaryViewModel? SelectedCampaign { get => _selectedCampaign; set { if (SetProperty(ref _selectedCampaign, value)) OnSelectedCampaignChanged(value); } }
+    private CampaignSummaryViewModel? _selectedMyCampaign;
+    public CampaignSummaryViewModel? SelectedMyCampaign { get => _selectedMyCampaign; set { if (SetProperty(ref _selectedMyCampaign, value)) OnSelectedMyCampaignChanged(value); } }
 
     // Cashflows grid for active selection
     public ObservableCollection<CashflowRowViewModel> Cashflows { get; } = new();
 
     // Cashflow summary properties
-    [ObservableProperty] private string cashflowCampaignName = "";
-    [ObservableProperty] private string totalPrincipalPaid = "0";
-    [ObservableProperty] private string totalInterestPaid = "0";
-    [ObservableProperty] private string totalFeesPaid = "0";
-    [ObservableProperty] private string netAmountFinanced = "0";
+    private string _cashflowCampaignName = "";
+    public string CashflowCampaignName { get => _cashflowCampaignName; set => SetProperty(ref _cashflowCampaignName, value); }
+    private string _totalPrincipalPaid = "0";
+    public string TotalPrincipalPaid { get => _totalPrincipalPaid; set => SetProperty(ref _totalPrincipalPaid, value); }
+    private string _totalInterestPaid = "0";
+    public string TotalInterestPaid { get => _totalInterestPaid; set => SetProperty(ref _totalInterestPaid, value); }
+    private string _totalFeesPaid = "0";
+    public string TotalFeesPaid { get => _totalFeesPaid; set => SetProperty(ref _totalFeesPaid, value); }
+    private string _netAmountFinanced = "0";
+    public string NetAmountFinanced { get => _netAmountFinanced; set => SetProperty(ref _netAmountFinanced, value); }
 
     // Active selection prefers MyCampaigns, else Standard
     public CampaignSummaryViewModel? ActiveCampaign => SelectedMyCampaign ?? SelectedCampaign;
 
     // MARK: Metrics & Status
-    [ObservableProperty] private MetricsViewModel metrics = new();
-    [ObservableProperty] private string status = "Ready";
-    [ObservableProperty] private bool isCalculating = false;
-    [ObservableProperty] private bool isDealInputsCollapsed = false;
+    private MetricsViewModel _metrics = new();
+    public MetricsViewModel Metrics { get => _metrics; set => SetProperty(ref _metrics, value); }
+    private string _status = "Ready";
+    public string Status { get => _status; set => SetProperty(ref _status, value); }
+    private bool _isCalculating = false;
+    public bool IsCalculating { get => _isCalculating; set => SetProperty(ref _isCalculating, value); }
+    private bool _isDealInputsCollapsed = false;
+    public bool IsDealInputsCollapsed { get => _isDealInputsCollapsed; set { if (SetProperty(ref _isDealInputsCollapsed, value)) OnIsDealInputsCollapsedChanged(value); } }
     // Column width of the left Deal Inputs panel; bound to ColumnDefinition.Width
-    [ObservableProperty] private string dealInputsColumnWidth = "Auto";
+    private string _dealInputsColumnWidth = "420";
+    public string DealInputsColumnWidth { get => _dealInputsColumnWidth; set => SetProperty(ref _dealInputsColumnWidth, value); }
 
     public IRelayCommand RecalculateCommand { get; }
 
@@ -120,7 +175,7 @@ public partial class MainViewModel : ObservableObject
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
         
-        idcOther = SubsidyBudget; // initial mapping per spec
+        IdcOther = SubsidyBudget; // initial mapping per spec
 
         // Initialize data on UI thread with proper error handling
         _ = InitializeAsync();
