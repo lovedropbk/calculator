@@ -1,0 +1,12 @@
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\bin\=build\net8.0\FinancialCalculator.Engine.deps.json
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\bin\=build\net8.0\FinancialCalculator.Engine.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\bin\=build\net8.0\FinancialCalculator.Engine.pdb
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.AssemblyInfoInputs.cache
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.AssemblyInfo.cs
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.csproj.CoreCompileInputs.cache
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.sourcelink.json
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\refint\FinancialCalculator.Engine.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\FinancialCalculator.Engine.pdb
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\=build\net8.0\ref\FinancialCalculator.Engine.dll

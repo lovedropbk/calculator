@@ -202,6 +202,14 @@ public partial class MainViewModel
         return used > SubsidyBudget + 1e-9; // small epsilon
     }
 
+
+    // Collapse/expand left panel and let right tables auto-grow via Grid star sizing
+    partial void OnIsDealInputsCollapsedChanged(bool value)
+    {
+        // When collapsed show a slim rail with just the arrow; otherwise auto-size to content
+        DealInputsColumnWidth = value ? "36" : "Auto";
+    }
+
     private void ScheduleSummariesRefresh()
     {
         // Immediate refresh for the active selection to keep metrics/cashflows snappy

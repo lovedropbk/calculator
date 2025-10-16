@@ -111,6 +111,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private string status = "Ready";
     [ObservableProperty] private bool isCalculating = false;
     [ObservableProperty] private bool isDealInputsCollapsed = false;
+    // Column width of the left Deal Inputs panel; bound to ColumnDefinition.Width
+    [ObservableProperty] private string dealInputsColumnWidth = "Auto";
 
     public IRelayCommand RecalculateCommand { get; }
 

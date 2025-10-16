@@ -48,28 +48,65 @@
                         <RowDefinition Height="Auto" MaxHeight="50"/><!-- Footer -->
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <!-- Left: Deal Input Mask (narrower) -->
-                        <ColumnDefinition Width="1*" MinWidth="360"/>
-                        <!-- Right: Tables + Insights (wider) -->
-                        <ColumnDefinition Width="2*" MinWidth="600"/>
+                        <!-- Left: Deal Input Mask (collapsible) -->
+                        <ColumnDefinition x:Name="LeftColumn" Width="{Binding ViewModel.DealInputsColumnWidth, ElementName=Root}" MinWidth="36"/>
+                        <!-- Right: Tables + Insights (expands when left is collapsed) -->
+                        <ColumnDefinition Width="*" MinWidth="600"/>
                     </Grid.ColumnDefinitions>
 
-        <!-- MARK: LEFT - Deal Input Mask with Responsive Constraints -->
-        <Border Grid.Row="0" Grid.Column="0"
+        <!-- MARK: LEFT - Deal Input Mask with Collapse Toggle -->
+        <Border x:Name="DealInputsCard" Grid.Row="0" Grid.Column="0"
                 Grid.RowSpan="1"
-                Margin="12,12,8,12"
+                Margin="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='12,12,8,12|0,12,0,12'}"
+                Padding="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='16,16,16,16|4,4,4,4'}"
                 Style="{StaticResource CardContainerStyle}"
                 VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch"
-                MinWidth="320"
-                MaxWidth="500">
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          Style="{StaticResource ResponsiveScrollViewer}">
-                <StackPanel Spacing="12">
-        
-                    <!-- Deal Inputs -->
+                HorizontalAlignment="Stretch">
+            <Grid>
+                <!-- Collapse Button positioned at top-right -->
+                <ToggleButton x:Name="DealInputsToggle"
+                               IsChecked="{Binding IsDealInputsCollapsed, Mode=TwoWay}"
+                               VerticalAlignment="Top"
+                               HorizontalAlignment="Right"
+                               Width="28"
+                               Height="28"
+                               Padding="0"
+                               Margin="0,6,0,0"
+                               Background="Transparent"
+                               BorderBrush="{ThemeResource CardStrokeBrush}"
+                               BorderThickness="1"
+                               Canvas.ZIndex="100">
                     <Grid>
+                        <FontIcon Glyph="&#xE76B;"
+                                  Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
+                        <FontIcon Glyph="&#xE76C;"
+                                  Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </Grid>
+                    <ToolTipService.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="Fold in" Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                                <TextBlock Text="Fold out" Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </ToolTipService.ToolTip>
+                </ToggleButton>
+                
+                <!-- Deal Input Content -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              Style="{StaticResource ResponsiveScrollViewer}"
+                              Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </Style>
+                        </Grid.Style>
+                        <StackPanel Spacing="12">
+                
+                            <!-- Deal Inputs -->
+                            <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -96,30 +133,12 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
         
-                        <!-- Header with collapse button -->
-                        <Grid Grid.Row="0" Grid.ColumnSpan="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Deal Inputs" Style="{StaticResource CardHeaderTextStyle}"/>
-                            <Button Grid.Column="1"
-                                    Command="{Binding ToggleDealInputsCollapsedCommand}"
-                                    Content="▼"
-                                    VerticalAlignment="Center"
-                                    Padding="8,4"
-                                    Margin="0,0,8,0">
-                                <ToolTipService.ToolTip>
-                                    <ToolTip Content="Click to expand/collapse deal inputs"/>
-                                </ToolTipService.ToolTip>
-                            </Button>
-                        </Grid>
+                            <!-- Header -->
+                            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Deal Inputs" Style="{StaticResource CardHeaderTextStyle}"/>
         
-                        <!-- Product (display HP, mySTAR, FL, OL; map to engine tags) -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Product" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                   Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" SelectedValue="{Binding Product, Mode=TwoWay}" SelectedValuePath="Tag" MinWidth="220" Margin="8,0,0,0"
-                                  Visibility="{Binding IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+                            <!-- Product (display HP, mySTAR, FL, OL; map to engine tags) -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Product" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" SelectedValue="{Binding Product, Mode=TwoWay}" SelectedValuePath="Tag" MinWidth="220" Margin="8,0,0,0">
                             <ComboBoxItem Content="HP" Tag="HP"/>
                             <ComboBoxItem Content="mySTAR" Tag="mySTAR"/>
                             <ComboBoxItem Content="FL" Tag="F-Lease"/>
@@ -133,7 +152,7 @@
                             </ToolTipService.ToolTip>
                         </TextBlock>
                         <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                  SelectedItem="{Binding TermMonths, Mode=TwoWay}"
+                                  SelectedValue="{Binding TermMonths, Mode=TwoWay}"
                                   MinWidth="220"
                                   Margin="8,0,0,0">
                             <x:Int32>12</x:Int32>
@@ -352,8 +371,10 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </ScrollViewer>
-        </Border>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Border>
 
         <!-- MARK: RIGHT - Standard Campaigns, My Campaigns with Responsive Layout -->
         <Grid x:Name="CampaignsGrid" Grid.Row="0" Grid.Column="1" Margin="8,12,12,12">
@@ -573,8 +594,8 @@
                 </StackPanel>
             </Grid>
         </Border>
-        </Grid>
-            </TabViewItem>
+    </Grid>
+</TabViewItem>
             
             <!-- MARK: Cashflows Tab with Icon -->
             <TabViewItem IsClosable="False" Style="{StaticResource IconTabViewItemStyle}">

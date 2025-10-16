@@ -47,6 +47,17 @@
     <!-- ========================================== -->
     <!-- ENHANCED BUTTON STYLES                    -->
     <!-- ========================================== -->
+    <Style x:Key="CardHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{ThemeResource PrimaryAccentColorBrush}"/>
+    </Style>
+
+    <Style x:Key="LabelTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{ThemeResource SecondaryAccentColorBrush}"/>
+    </Style>
     
     <!-- Primary Action Button with Visual States -->
     <Style x:Key="PrimaryActionButtonStyle" TargetType="Button">
@@ -141,6 +152,7 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="CornerRadius" Value="4"/>
     </Style>
+    
 
     <!-- ========================================== -->
     <!-- ENHANCED TEXTBOX STYLES                   -->

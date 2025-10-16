@@ -42,6 +42,7 @@
             <conv:StringEqualsToVisibilityConverter x:Key="StringEqualsToVisibilityConverter" />
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+            <conv:BoolToThicknessConverter x:Key="BoolToThicknessConverter" />
 
             <!-- MARK: Enhanced Card Container Style with Shadow -->
             <Style x:Key="CardContainerStyle" TargetType="Border">
