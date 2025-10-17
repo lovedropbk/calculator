@@ -50,4 +50,5 @@ public sealed record class CalculatorInputs
     public bool SubdownIsPercent { get; init; }
     public decimal SubdownPercent { get; init; }
     public decimal SubdownTHB { get; init; }
+
 }

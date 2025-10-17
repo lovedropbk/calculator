@@ -271,33 +271,6 @@
                                                 MaxWidth="400"/>
         
                                 <!-- Rate mode: RadioButtons (bind SelectedIndex) -->
-                                <!-- Upfront IDC/Costs -->
-                                <TextBlock Grid.Row="12" Grid.Column="0" Text="Upfront IDC/Costs (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <muxc:NumberBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2"
-                                                Value="{Binding UpfrontCosts, Mode=TwoWay}"
-                                                PlaceholderText="THB"
-                                                NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                Width="{StaticResource ValueAreaWidth}"
-                                                Margin="8,0,0,0"
-                                                MinWidth="200"
-                                                MaxWidth="400"/>
-
-                                <!-- Subdown Campaign (optional) -->
-                                <TextBlock Grid.Row="13" Grid.Column="0" Text="Subdown" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="72"/>
-                                        <ColumnDefinition Width="288"/>
-                                    </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding SubdownIsPercent, Mode=TwoWay}">
-                                        <x:Boolean>False</x:Boolean>
-                                        <x:Boolean>True</x:Boolean>
-                                    </ComboBox>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                        <muxc:NumberBox Value="{Binding SubdownAmount, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Visibility="{Binding SubdownIsPercent, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=False}"/>
-                                        <muxc:NumberBox Value="{Binding SubdownPercent, Mode=TwoWay}" NumberFormatter="{StaticResource GroupedZeroFormatter}" Visibility="{Binding SubdownIsPercent, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
-                                    </StackPanel>
-                                </Grid>
 
                                 <TextBlock Grid.Row="14" Grid.Column="0" Text="Rate mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <RadioButtons Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="{Binding RateModeIndex, Mode=TwoWay}" Margin="8,0,0,0">

@@ -92,14 +92,6 @@ public partial class MainViewModel : ObservableObject
     public double IdcOther { get => _idcOther; set { if (SetProperty(ref _idcOther, value)) OnIdcOtherChanged(value); } }
     private double _upfrontSubsidies = 0;
     public double UpfrontSubsidies { get => _upfrontSubsidies; set => SetProperty(ref _upfrontSubsidies, value); }
-    private double _upfrontCosts = 0;
-    public double UpfrontCosts { get => _upfrontCosts; set => SetProperty(ref _upfrontCosts, value); }
-    private double _subdownAmount = 0;
-    public double SubdownAmount { get => _subdownAmount; set => SetProperty(ref _subdownAmount, value); }
-    private double _subdownPercent = 0;
-    public double SubdownPercent { get => _subdownPercent; set => SetProperty(ref _subdownPercent, value); }
-    private bool _subdownIsPercent = false;
-    public bool SubdownIsPercent { get => _subdownIsPercent; set => SetProperty(ref _subdownIsPercent, value); }
     private bool _idcOtherUserEdited = false;
     public bool IdcOtherUserEdited { get => _idcOtherUserEdited; set { if (SetProperty(ref _idcOtherUserEdited, value)) OnIdcOtherUserEditedChanged(value); } }
 
@@ -341,8 +333,8 @@ public partial class MainViewModel : ObservableObject
             var leftoverBudgetForBaseline = Math.Max(0, SubsidyBudget);  // All budget is available for baseline
             var baseline = ComputeScenarioWithCommission(
                 vehiclePrice: (decimal)PriceExTax,
-                subdownIsPercent: SubdownIsPercent,
-                subdownValue: (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount),
+                subdownIsPercent: false,
+                subdownValue: 0,
                 upfrontCostsDelta: 0m,
                 upfrontSubsidiesDelta: (decimal)leftoverBudgetForBaseline,  // Apply leftover budget for consistency
                 customerRateOverride: null
@@ -385,8 +377,8 @@ public partial class MainViewModel : ObservableObject
                 try
                 {
                     decimal vehiclePrice = (decimal)PriceExTax;
-                    bool subIsPct = SubdownIsPercent;
-                    decimal subVal = (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount);
+                    bool subIsPct = false;
+                    decimal subVal = 0;
                     decimal upCostDelta = 0m;
                     decimal upSubDelta = 0m;
                     double? rateOverride = null;
@@ -568,9 +560,9 @@ public partial class MainViewModel : ObservableObject
                 BalloonValue = (decimal)BalloonValueEntry,
                 CustomerRatePercent = (decimal)CustomerRatePct,
                 UpfrontSubsidies = (decimal)UpfrontSubsidies,
-                UpfrontCosts = (decimal)(UpfrontCosts + DealerCommissionResolvedAmt + IdcOther),
-                SubdownIsPercent = SubdownIsPercent,
-                SubdownValue = (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount)
+                UpfrontCosts = (decimal)(DealerCommissionResolvedAmt + IdcOther),
+                SubdownIsPercent = false,
+                SubdownValue = 0
             });
 
             // Update key metrics from local engine (monthly, flat rate, financed amount)
@@ -629,8 +621,8 @@ public partial class MainViewModel : ObservableObject
             var active = ActiveCampaign;
 
             decimal vehiclePrice = (decimal)PriceExTax;
-            bool subIsPct = SubdownIsPercent;
-            decimal subVal = (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount);
+            bool subIsPct = false;
+            decimal subVal = 0;
             decimal upCostDelta = 0m;
             decimal upSubDelta = 0m;
             double? rateOverride = null;
@@ -835,8 +827,8 @@ public partial class MainViewModel : ObservableObject
 
             var active = ActiveCampaign;
             decimal vehiclePrice = (decimal)PriceExTax;
-            bool subIsPct = SubdownIsPercent;
-            decimal subVal = (decimal)(SubdownIsPercent ? SubdownPercent : SubdownAmount);
+            bool subIsPct = false;
+            decimal subVal = 0;
             decimal upCostDelta = 0m;
             decimal upSubDelta = 0m;
             double? rateOverride = null;
@@ -1090,7 +1082,7 @@ public partial class MainViewModel : ObservableObject
             BalloonValue = (decimal)BalloonValueEntry,
             CustomerRatePercent = (decimal)(customerRateOverride ?? CustomerRatePct),
             UpfrontSubsidies = (decimal)UpfrontSubsidies + upfrontSubsidiesDelta,
-            UpfrontCosts = (decimal)UpfrontCosts + (decimal)IdcOther + upfrontCostsDelta,
+            UpfrontCosts = (decimal)DealerCommissionResolvedAmt + (decimal)IdcOther + upfrontCostsDelta,
             SubdownIsPercent = subdownIsPercent,
             SubdownValue = subdownValue,
         };

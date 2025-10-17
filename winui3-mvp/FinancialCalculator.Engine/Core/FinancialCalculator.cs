@@ -6,7 +6,7 @@ public sealed class FinancialCalculator
 {
     public CalculatorOutputs Calculate(CalculatorInputs input)
     {
-        var (financed, subdownApplied) = ComputeFinancedAmount(input);
+        var financed = ComputeFinancedAmount(input);
         var schedule = BuildSchedule(input, financed);
         var monthly = schedule.Count > 0 ? schedule[0].Cashflow : 0m;
 
@@ -20,7 +20,6 @@ public sealed class FinancialCalculator
         {
             Inputs = input,
             FinancedAmount = Decimal.Round(financed, 2),
-            SubdownApplied = Decimal.Round(subdownApplied, 2),
             MonthlyRate = Decimal.Round(monthly, 2),
             FlatRatePercentPerAnnum = Decimal.Round(flatRate, 6),
             DealIrrAnnualPercent = Decimal.Round(dealIrr, 6),
@@ -30,7 +29,7 @@ public sealed class FinancialCalculator
         };
     }
 
-    private static (decimal financed, decimal subdownApplied) ComputeFinancedAmount(CalculatorInputs input)
+    private static decimal ComputeFinancedAmount(CalculatorInputs input)
     {
         var dp = input.DownpaymentIsPercent
             ? input.VehicleSalesPrice * input.DownpaymentValue / 100m
@@ -48,7 +47,7 @@ public sealed class FinancialCalculator
         subdown = Math.Clamp(subdown, 0m, baseFinanced);
 
         var financed = baseFinanced - subdown;
-        return (financed, subdown);
+        return financed;
     }
 
     private static List<ScheduleRow> BuildSchedule(CalculatorInputs input, decimal financed)

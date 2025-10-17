@@ -7,7 +7,6 @@ public sealed record class CalculatorOutputs
 
     // Key amounts
     public decimal FinancedAmount { get; init; }
-    public decimal SubdownApplied { get; init; }
 
     // Payment/Rate
     public decimal MonthlyRate { get; init; }
