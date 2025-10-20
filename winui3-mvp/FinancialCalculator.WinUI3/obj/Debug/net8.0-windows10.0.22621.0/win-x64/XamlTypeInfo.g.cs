@@ -291,14 +291,14 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             _typeNameTable[61] = "Microsoft.UI.Xaml.Media.FontFamily";
             _typeNameTable[62] = "Windows.UI.Text.FontStyle";
             _typeNameTable[63] = "Windows.UI.Text.FontWeight";
-            _typeNameTable[64] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
-            _typeNameTable[65] = "Microsoft.UI.Xaml.Controls.NumberBox";
-            _typeNameTable[66] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
-            _typeNameTable[67] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
-            _typeNameTable[68] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
-            _typeNameTable[69] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
-            _typeNameTable[70] = "Microsoft.UI.Xaml.TextReadingOrder";
-            _typeNameTable[71] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
+            _typeNameTable[64] = "Microsoft.UI.Xaml.Controls.NumberBox";
+            _typeNameTable[65] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
+            _typeNameTable[66] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
+            _typeNameTable[67] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
+            _typeNameTable[68] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
+            _typeNameTable[69] = "Microsoft.UI.Xaml.TextReadingOrder";
+            _typeNameTable[70] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
+            _typeNameTable[71] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
             _typeNameTable[72] = "Microsoft.UI.Xaml.Controls.RadioButtons";
             _typeNameTable[73] = "FinancialCalculator.WinUI3.MainWindow";
             _typeNameTable[74] = "Microsoft.UI.Xaml.Window";
@@ -375,14 +375,14 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             _typeTable[61] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
             _typeTable[62] = typeof(global::Windows.UI.Text.FontStyle);
             _typeTable[63] = typeof(global::Windows.UI.Text.FontWeight);
-            _typeTable[64] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
-            _typeTable[65] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
-            _typeTable[66] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
-            _typeTable[67] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
-            _typeTable[68] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
-            _typeTable[69] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
-            _typeTable[70] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
-            _typeTable[71] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
+            _typeTable[64] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
+            _typeTable[65] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
+            _typeTable[66] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
+            _typeTable[67] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
+            _typeTable[68] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
+            _typeTable[69] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
+            _typeTable[70] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
+            _typeTable[71] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
             _typeTable[72] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
             _typeTable[73] = typeof(global::FinancialCalculator.WinUI3.MainWindow);
             _typeTable[74] = typeof(global::Microsoft.UI.Xaml.Window);
@@ -445,8 +445,8 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         private object Activate_56_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
         private object Activate_57_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
         private object Activate_59_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
-        private object Activate_64_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
-        private object Activate_65_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
+        private object Activate_64_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
+        private object Activate_71_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
         private object Activate_72_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
         private object Activate_73_MainWindow() { return new global::FinancialCalculator.WinUI3.MainWindow(); }
         private object Activate_75_MainViewModel() { return new global::FinancialCalculator.WinUI3.ViewModels.MainViewModel(); }
@@ -494,11 +494,11 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
         private void StaticInitializer_60_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
         private void StaticInitializer_62_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
         private void StaticInitializer_63_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
-        private void StaticInitializer_64_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
-        private void StaticInitializer_65_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
-        private void StaticInitializer_66_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
-        private void StaticInitializer_69_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
-        private void StaticInitializer_71_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
+        private void StaticInitializer_64_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
+        private void StaticInitializer_65_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
+        private void StaticInitializer_68_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
+        private void StaticInitializer_70_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
+        private void StaticInitializer_71_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
         private void StaticInitializer_72_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
         private void StaticInitializer_73_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.MainWindow).TypeHandle);
         private void StaticInitializer_75_MainViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::FinancialCalculator.WinUI3.ViewModels.MainViewModel).TypeHandle);
@@ -1114,23 +1114,13 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 64:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
-                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.Activator = Activate_64_DataGridTemplateColumn;
-                userType.StaticInitializer = StaticInitializer_64_DataGridTemplateColumn;
-                userType.AddMemberName("CellTemplate");
-                userType.AddMemberName("CellEditingTemplate");
-                xamlType = userType;
-                break;
-
-            case 65:   //  Microsoft.UI.Xaml.Controls.NumberBox
+            case 64:   //  Microsoft.UI.Xaml.Controls.NumberBox
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_65_NumberBox;
-                userType.StaticInitializer = StaticInitializer_65_NumberBox;
+                userType.Activator = Activate_64_NumberBox;
+                userType.StaticInitializer = StaticInitializer_64_NumberBox;
                 userType.AddMemberName("Value");
                 userType.AddMemberName("PlaceholderText");
                 userType.AddMemberName("NumberFormatter");
-                userType.AddMemberName("Minimum");
                 userType.AddMemberName("AcceptsExpression");
                 userType.AddMemberName("Description");
                 userType.AddMemberName("Header");
@@ -1138,6 +1128,7 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 userType.AddMemberName("IsWrapEnabled");
                 userType.AddMemberName("LargeChange");
                 userType.AddMemberName("Maximum");
+                userType.AddMemberName("Minimum");
                 userType.AddMemberName("PreventKeyboardDisplayOnProgrammaticFocus");
                 userType.AddMemberName("SelectionFlyout");
                 userType.AddMemberName("SelectionHighlightColor");
@@ -1149,39 +1140,48 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 66:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
+            case 65:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_66_INumberFormatter2;
+                userType.StaticInitializer = StaticInitializer_65_INumberFormatter2;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 67:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
+            case 66:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 68:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
+            case 67:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 69:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
+            case 68:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_69_NumberBoxSpinButtonPlacementMode;
+                userType.StaticInitializer = StaticInitializer_68_NumberBoxSpinButtonPlacementMode;
                 userType.AddEnumValue("Hidden", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Hidden);
                 userType.AddEnumValue("Compact", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Compact);
                 userType.AddEnumValue("Inline", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Inline);
                 xamlType = userType;
                 break;
 
-            case 70:   //  Microsoft.UI.Xaml.TextReadingOrder
+            case 69:   //  Microsoft.UI.Xaml.TextReadingOrder
                 xamlType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 71:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
+            case 70:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
                 userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_71_NumberBoxValidationMode;
+                userType.StaticInitializer = StaticInitializer_70_NumberBoxValidationMode;
                 userType.AddEnumValue("InvalidInputOverwritten", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.InvalidInputOverwritten);
                 userType.AddEnumValue("Disabled", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.Disabled);
+                xamlType = userType;
+                break;
+
+            case 71:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
+                userType = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
+                userType.Activator = Activate_71_DataGridTemplateColumn;
+                userType.StaticInitializer = StaticInitializer_71_DataGridTemplateColumn;
+                userType.AddMemberName("CellTemplate");
+                userType.AddMemberName("CellEditingTemplate");
                 xamlType = userType;
                 break;
 
@@ -2590,215 +2590,215 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
             var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn)instance;
             that.ElementStyle = (global::Microsoft.UI.Xaml.Style)Value;
         }
-        private object get_133_DataGridTemplateColumn_CellTemplate(object instance)
-        {
-            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
-            return that.CellTemplate;
-        }
-        private void set_133_DataGridTemplateColumn_CellTemplate(object instance, object Value)
-        {
-            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
-            that.CellTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
-        }
-        private object get_134_DataGridTemplateColumn_CellEditingTemplate(object instance)
-        {
-            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
-            return that.CellEditingTemplate;
-        }
-        private void set_134_DataGridTemplateColumn_CellEditingTemplate(object instance, object Value)
-        {
-            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
-            that.CellEditingTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
-        }
-        private object get_135_NumberBox_Value(object instance)
+        private object get_133_NumberBox_Value(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Value;
         }
-        private void set_135_NumberBox_Value(object instance, object Value)
+        private void set_133_NumberBox_Value(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Value = (global::System.Double)Value;
         }
-        private object get_136_NumberBox_PlaceholderText(object instance)
+        private object get_134_NumberBox_PlaceholderText(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.PlaceholderText;
         }
-        private void set_136_NumberBox_PlaceholderText(object instance, object Value)
+        private void set_134_NumberBox_PlaceholderText(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.PlaceholderText = (global::System.String)Value;
         }
-        private object get_137_NumberBox_NumberFormatter(object instance)
+        private object get_135_NumberBox_NumberFormatter(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.NumberFormatter;
         }
-        private void set_137_NumberBox_NumberFormatter(object instance, object Value)
+        private void set_135_NumberBox_NumberFormatter(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.NumberFormatter = (global::Windows.Globalization.NumberFormatting.INumberFormatter2)Value;
         }
-        private object get_138_NumberBox_Minimum(object instance)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
-            return that.Minimum;
-        }
-        private void set_138_NumberBox_Minimum(object instance, object Value)
-        {
-            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
-            that.Minimum = (global::System.Double)Value;
-        }
-        private object get_139_NumberBox_AcceptsExpression(object instance)
+        private object get_136_NumberBox_AcceptsExpression(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.AcceptsExpression;
         }
-        private void set_139_NumberBox_AcceptsExpression(object instance, object Value)
+        private void set_136_NumberBox_AcceptsExpression(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.AcceptsExpression = (global::System.Boolean)Value;
         }
-        private object get_140_NumberBox_Description(object instance)
+        private object get_137_NumberBox_Description(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Description;
         }
-        private void set_140_NumberBox_Description(object instance, object Value)
+        private void set_137_NumberBox_Description(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Description = (global::System.Object)Value;
         }
-        private object get_141_NumberBox_Header(object instance)
+        private object get_138_NumberBox_Header(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Header;
         }
-        private void set_141_NumberBox_Header(object instance, object Value)
+        private void set_138_NumberBox_Header(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_142_NumberBox_HeaderTemplate(object instance)
+        private object get_139_NumberBox_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.HeaderTemplate;
         }
-        private void set_142_NumberBox_HeaderTemplate(object instance, object Value)
+        private void set_139_NumberBox_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_143_NumberBox_IsWrapEnabled(object instance)
+        private object get_140_NumberBox_IsWrapEnabled(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.IsWrapEnabled;
         }
-        private void set_143_NumberBox_IsWrapEnabled(object instance, object Value)
+        private void set_140_NumberBox_IsWrapEnabled(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.IsWrapEnabled = (global::System.Boolean)Value;
         }
-        private object get_144_NumberBox_LargeChange(object instance)
+        private object get_141_NumberBox_LargeChange(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.LargeChange;
         }
-        private void set_144_NumberBox_LargeChange(object instance, object Value)
+        private void set_141_NumberBox_LargeChange(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.LargeChange = (global::System.Double)Value;
         }
-        private object get_145_NumberBox_Maximum(object instance)
+        private object get_142_NumberBox_Maximum(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Maximum;
         }
-        private void set_145_NumberBox_Maximum(object instance, object Value)
+        private void set_142_NumberBox_Maximum(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Maximum = (global::System.Double)Value;
         }
-        private object get_146_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance)
+        private object get_143_NumberBox_Minimum(object instance)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
+            return that.Minimum;
+        }
+        private void set_143_NumberBox_Minimum(object instance, object Value)
+        {
+            var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
+            that.Minimum = (global::System.Double)Value;
+        }
+        private object get_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.PreventKeyboardDisplayOnProgrammaticFocus;
         }
-        private void set_146_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance, object Value)
+        private void set_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.PreventKeyboardDisplayOnProgrammaticFocus = (global::System.Boolean)Value;
         }
-        private object get_147_NumberBox_SelectionFlyout(object instance)
+        private object get_145_NumberBox_SelectionFlyout(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SelectionFlyout;
         }
-        private void set_147_NumberBox_SelectionFlyout(object instance, object Value)
+        private void set_145_NumberBox_SelectionFlyout(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SelectionFlyout = (global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase)Value;
         }
-        private object get_148_NumberBox_SelectionHighlightColor(object instance)
+        private object get_146_NumberBox_SelectionHighlightColor(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SelectionHighlightColor;
         }
-        private void set_148_NumberBox_SelectionHighlightColor(object instance, object Value)
+        private void set_146_NumberBox_SelectionHighlightColor(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SelectionHighlightColor = (global::Microsoft.UI.Xaml.Media.SolidColorBrush)Value;
         }
-        private object get_149_NumberBox_SmallChange(object instance)
+        private object get_147_NumberBox_SmallChange(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SmallChange;
         }
-        private void set_149_NumberBox_SmallChange(object instance, object Value)
+        private void set_147_NumberBox_SmallChange(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SmallChange = (global::System.Double)Value;
         }
-        private object get_150_NumberBox_SpinButtonPlacementMode(object instance)
+        private object get_148_NumberBox_SpinButtonPlacementMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.SpinButtonPlacementMode;
         }
-        private void set_150_NumberBox_SpinButtonPlacementMode(object instance, object Value)
+        private void set_148_NumberBox_SpinButtonPlacementMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.SpinButtonPlacementMode = (global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode)Value;
         }
-        private object get_151_NumberBox_Text(object instance)
+        private object get_149_NumberBox_Text(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.Text;
         }
-        private void set_151_NumberBox_Text(object instance, object Value)
+        private void set_149_NumberBox_Text(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.Text = (global::System.String)Value;
         }
-        private object get_152_NumberBox_TextReadingOrder(object instance)
+        private object get_150_NumberBox_TextReadingOrder(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.TextReadingOrder;
         }
-        private void set_152_NumberBox_TextReadingOrder(object instance, object Value)
+        private void set_150_NumberBox_TextReadingOrder(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.TextReadingOrder = (global::Microsoft.UI.Xaml.TextReadingOrder)Value;
         }
-        private object get_153_NumberBox_ValidationMode(object instance)
+        private object get_151_NumberBox_ValidationMode(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             return that.ValidationMode;
         }
-        private void set_153_NumberBox_ValidationMode(object instance, object Value)
+        private void set_151_NumberBox_ValidationMode(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.NumberBox)instance;
             that.ValidationMode = (global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode)Value;
+        }
+        private object get_152_DataGridTemplateColumn_CellTemplate(object instance)
+        {
+            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
+            return that.CellTemplate;
+        }
+        private void set_152_DataGridTemplateColumn_CellTemplate(object instance, object Value)
+        {
+            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
+            that.CellTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
+        }
+        private object get_153_DataGridTemplateColumn_CellEditingTemplate(object instance)
+        {
+            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
+            return that.CellEditingTemplate;
+        }
+        private void set_153_DataGridTemplateColumn_CellEditingTemplate(object instance, object Value)
+        {
+            var that = (global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn)instance;
+            that.CellEditingTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
         private object get_154_RadioButtons_Items(object instance)
         {
@@ -3887,150 +3887,150 @@ namespace FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo
                 xamlMember.Getter = get_132_DataGridBoundColumn_ElementStyle;
                 xamlMember.Setter = set_132_DataGridBoundColumn_ElementStyle;
                 break;
-            case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellTemplate":
-                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
-                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellTemplate", "Microsoft.UI.Xaml.DataTemplate");
-                xamlMember.Getter = get_133_DataGridTemplateColumn_CellTemplate;
-                xamlMember.Setter = set_133_DataGridTemplateColumn_CellTemplate;
-                break;
-            case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellEditingTemplate":
-                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
-                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellEditingTemplate", "Microsoft.UI.Xaml.DataTemplate");
-                xamlMember.Getter = get_134_DataGridTemplateColumn_CellEditingTemplate;
-                xamlMember.Setter = set_134_DataGridTemplateColumn_CellEditingTemplate;
-                break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Value":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Value", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_135_NumberBox_Value;
-                xamlMember.Setter = set_135_NumberBox_Value;
+                xamlMember.Getter = get_133_NumberBox_Value;
+                xamlMember.Setter = set_133_NumberBox_Value;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.PlaceholderText":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "PlaceholderText", "String");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_136_NumberBox_PlaceholderText;
-                xamlMember.Setter = set_136_NumberBox_PlaceholderText;
+                xamlMember.Getter = get_134_NumberBox_PlaceholderText;
+                xamlMember.Setter = set_134_NumberBox_PlaceholderText;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.NumberFormatter":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "NumberFormatter", "Windows.Globalization.NumberFormatting.INumberFormatter2");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_137_NumberBox_NumberFormatter;
-                xamlMember.Setter = set_137_NumberBox_NumberFormatter;
-                break;
-            case "Microsoft.UI.Xaml.Controls.NumberBox.Minimum":
-                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
-                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
-                xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_138_NumberBox_Minimum;
-                xamlMember.Setter = set_138_NumberBox_Minimum;
+                xamlMember.Getter = get_135_NumberBox_NumberFormatter;
+                xamlMember.Setter = set_135_NumberBox_NumberFormatter;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.AcceptsExpression":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "AcceptsExpression", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_139_NumberBox_AcceptsExpression;
-                xamlMember.Setter = set_139_NumberBox_AcceptsExpression;
+                xamlMember.Getter = get_136_NumberBox_AcceptsExpression;
+                xamlMember.Setter = set_136_NumberBox_AcceptsExpression;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Description":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Description", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_140_NumberBox_Description;
-                xamlMember.Setter = set_140_NumberBox_Description;
+                xamlMember.Getter = get_137_NumberBox_Description;
+                xamlMember.Setter = set_137_NumberBox_Description;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Header":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Header", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_141_NumberBox_Header;
-                xamlMember.Setter = set_141_NumberBox_Header;
+                xamlMember.Getter = get_138_NumberBox_Header;
+                xamlMember.Setter = set_138_NumberBox_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.HeaderTemplate":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_142_NumberBox_HeaderTemplate;
-                xamlMember.Setter = set_142_NumberBox_HeaderTemplate;
+                xamlMember.Getter = get_139_NumberBox_HeaderTemplate;
+                xamlMember.Setter = set_139_NumberBox_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.IsWrapEnabled":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "IsWrapEnabled", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_143_NumberBox_IsWrapEnabled;
-                xamlMember.Setter = set_143_NumberBox_IsWrapEnabled;
+                xamlMember.Getter = get_140_NumberBox_IsWrapEnabled;
+                xamlMember.Setter = set_140_NumberBox_IsWrapEnabled;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.LargeChange":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "LargeChange", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_144_NumberBox_LargeChange;
-                xamlMember.Setter = set_144_NumberBox_LargeChange;
+                xamlMember.Getter = get_141_NumberBox_LargeChange;
+                xamlMember.Setter = set_141_NumberBox_LargeChange;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Maximum":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Maximum", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_145_NumberBox_Maximum;
-                xamlMember.Setter = set_145_NumberBox_Maximum;
+                xamlMember.Getter = get_142_NumberBox_Maximum;
+                xamlMember.Setter = set_142_NumberBox_Maximum;
+                break;
+            case "Microsoft.UI.Xaml.Controls.NumberBox.Minimum":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Minimum", "Double");
+                xamlMember.SetIsDependencyProperty();
+                xamlMember.Getter = get_143_NumberBox_Minimum;
+                xamlMember.Setter = set_143_NumberBox_Minimum;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.PreventKeyboardDisplayOnProgrammaticFocus":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "PreventKeyboardDisplayOnProgrammaticFocus", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_146_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
-                xamlMember.Setter = set_146_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
+                xamlMember.Getter = get_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
+                xamlMember.Setter = set_144_NumberBox_PreventKeyboardDisplayOnProgrammaticFocus;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SelectionFlyout":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectionFlyout", "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_147_NumberBox_SelectionFlyout;
-                xamlMember.Setter = set_147_NumberBox_SelectionFlyout;
+                xamlMember.Getter = get_145_NumberBox_SelectionFlyout;
+                xamlMember.Setter = set_145_NumberBox_SelectionFlyout;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SelectionHighlightColor":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SelectionHighlightColor", "Microsoft.UI.Xaml.Media.SolidColorBrush");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_148_NumberBox_SelectionHighlightColor;
-                xamlMember.Setter = set_148_NumberBox_SelectionHighlightColor;
+                xamlMember.Getter = get_146_NumberBox_SelectionHighlightColor;
+                xamlMember.Setter = set_146_NumberBox_SelectionHighlightColor;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SmallChange":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SmallChange", "Double");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_149_NumberBox_SmallChange;
-                xamlMember.Setter = set_149_NumberBox_SmallChange;
+                xamlMember.Getter = get_147_NumberBox_SmallChange;
+                xamlMember.Setter = set_147_NumberBox_SmallChange;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.SpinButtonPlacementMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "SpinButtonPlacementMode", "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_150_NumberBox_SpinButtonPlacementMode;
-                xamlMember.Setter = set_150_NumberBox_SpinButtonPlacementMode;
+                xamlMember.Getter = get_148_NumberBox_SpinButtonPlacementMode;
+                xamlMember.Setter = set_148_NumberBox_SpinButtonPlacementMode;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.Text":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "Text", "String");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_151_NumberBox_Text;
-                xamlMember.Setter = set_151_NumberBox_Text;
+                xamlMember.Getter = get_149_NumberBox_Text;
+                xamlMember.Setter = set_149_NumberBox_Text;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.TextReadingOrder":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "TextReadingOrder", "Microsoft.UI.Xaml.TextReadingOrder");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_152_NumberBox_TextReadingOrder;
-                xamlMember.Setter = set_152_NumberBox_TextReadingOrder;
+                xamlMember.Getter = get_150_NumberBox_TextReadingOrder;
+                xamlMember.Setter = set_150_NumberBox_TextReadingOrder;
                 break;
             case "Microsoft.UI.Xaml.Controls.NumberBox.ValidationMode":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NumberBox");
                 xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "ValidationMode", "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_153_NumberBox_ValidationMode;
-                xamlMember.Setter = set_153_NumberBox_ValidationMode;
+                xamlMember.Getter = get_151_NumberBox_ValidationMode;
+                xamlMember.Setter = set_151_NumberBox_ValidationMode;
+                break;
+            case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellTemplate":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellTemplate", "Microsoft.UI.Xaml.DataTemplate");
+                xamlMember.Getter = get_152_DataGridTemplateColumn_CellTemplate;
+                xamlMember.Setter = set_152_DataGridTemplateColumn_CellTemplate;
+                break;
+            case "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn.CellEditingTemplate":
+                userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn");
+                xamlMember = new global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlMember(this, "CellEditingTemplate", "Microsoft.UI.Xaml.DataTemplate");
+                xamlMember.Getter = get_153_DataGridTemplateColumn_CellEditingTemplate;
+                xamlMember.Setter = set_153_DataGridTemplateColumn_CellEditingTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.Items":
                 userType = (global::FinancialCalculator.WinUI3.FinancialCalculator_WinUI3_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");

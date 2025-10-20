@@ -117,7 +117,47 @@ public partial class MainViewModel : ObservableObject
     private void ToggleCampaignDetailsCollapsed()
     {
         IsCampaignDetailsCollapsed = !IsCampaignDetailsCollapsed;
+        // Listen for property changes in CampaignSummaryViewModel to trigger recalcs for My Campaigns
+        MyCampaigns.CollectionChanged += MyCampaigns_CollectionChanged;
     }
+
+    private void MyCampaigns_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+        {
+            foreach (CampaignSummaryViewModel item in e.NewItems)
+            {
+                item.PropertyChanged += MyCampaign_PropertyChanged;
+            }
+        }
+        if (e.OldItems != null)
+        {
+            foreach (CampaignSummaryViewModel item in e.OldItems)
+            {
+                item.PropertyChanged -= MyCampaign_PropertyChanged;
+            }
+        }
+    }
+
+    private async void MyCampaign_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // If the changed campaign is currently selected, and the changed property is one of the editable inputs
+        if (sender is CampaignSummaryViewModel vm && vm == SelectedMyCampaign && IsCampaignInputProperty(e.PropertyName))
+        {
+            // Trigger recalculation for this specific campaign
+            await RecalculateMyCampaignAsync(vm);
+        }
+    }
+
+    private bool IsCampaignInputProperty(string? propertyName)
+    {
+        return propertyName == nameof(CampaignSummaryViewModel.CashDiscountAmount) ||
+               propertyName == nameof(CampaignSummaryViewModel.FSSubDownAmount) ||
+               propertyName == nameof(CampaignSummaryViewModel.FSSubInterestAmount) ||
+               propertyName == nameof(CampaignSummaryViewModel.FSFreeMBSPAmount) ||
+               propertyName == nameof(CampaignSummaryViewModel.TargetRatePct);
+    }
+
     // MARK: Collections & Selection
     public ObservableCollection<CampaignSummaryViewModel> StandardCampaigns { get; } = new();
     public ObservableCollection<CampaignSummaryViewModel> CampaignSummaries { get; } = new(); // back-compat alias
@@ -127,7 +167,7 @@ public partial class MainViewModel : ObservableObject
     private CampaignSummaryViewModel? _selectedCampaign; // Standard selection
     public CampaignSummaryViewModel? SelectedCampaign { get => _selectedCampaign; set { if (SetProperty(ref _selectedCampaign, value)) OnSelectedCampaignChanged(value); } }
     private CampaignSummaryViewModel? _selectedMyCampaign;
-    public CampaignSummaryViewModel? SelectedMyCampaign { get => _selectedMyCampaign; set { if (SetProperty(ref _selectedMyCampaign, value)) OnSelectedMyCampaignChanged(value); } }
+    public CampaignSummaryViewModel? SelectedMyCampaign { get => _selectedMyCampaign; set { if (SetProperty(ref _selectedMyCampaign, value)) { OnSelectedMyCampaignChanged(value); OnPropertyChanged(nameof(IsMyCampaignSelected)); } } }
 
     // Cashflows grid for active selection
     public ObservableCollection<CashflowRowViewModel> Cashflows { get; } = new();
@@ -146,6 +186,8 @@ public partial class MainViewModel : ObservableObject
 
     // Active selection prefers MyCampaigns, else Standard
     public CampaignSummaryViewModel? ActiveCampaign => SelectedMyCampaign ?? SelectedCampaign;
+
+    public bool IsMyCampaignSelected => SelectedMyCampaign != null;
 
     // MARK: Metrics & Status
     private MetricsViewModel _metrics = new();
@@ -355,6 +397,7 @@ public partial class MainViewModel : ObservableObject
                 // Show the customer's NOMINAL rate, not the effective/flat rate!
                 Effective = (CustomerRatePct / 100.0).ToString("0.00%"),
                 Downpayment = baselineDp.ToString("N0", CultureInfo.InvariantCulture),
+                TransactionPrice = ((decimal)PriceExTax).ToString("N0", CultureInfo.InvariantCulture),
                 SubsidyUsed = "0",
                 FSSubDown = "0",
                 FSSubInterest = "0",
@@ -458,7 +501,7 @@ public partial class MainViewModel : ObservableObject
                     }
                     else
                     {
-                        // For other campaigns, apply leftover budget as upfront subsidy income
+                        // For other campaigns, apply leftover budget as upfront subsidy income (unallocated subsidy)
                         upSubDelta = (decimal)leftoverBudget;
                     }
 
@@ -482,6 +525,7 @@ public partial class MainViewModel : ObservableObject
                         // For subinterest campaigns with rate override, show the target rate; otherwise show the base customer rate
                         Effective = ((rateOverride ?? CustomerRatePct) / 100.0).ToString("0.00%"),
                         Downpayment = dp.ToString("N0", CultureInfo.InvariantCulture),
+                        TransactionPrice = (vehiclePrice).ToString("N0", CultureInfo.InvariantCulture),
                         SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture),
                         FSSubDown = fsSubDownThb.ToString("N0", CultureInfo.InvariantCulture),
                         FSSubInterest = freeInsuranceThb.ToString("N0", CultureInfo.InvariantCulture),  // Always shows free insurance IDC
@@ -559,7 +603,11 @@ public partial class MainViewModel : ObservableObject
                 BalloonIsPercent = string.Equals(BalloonUnit, "%", StringComparison.OrdinalIgnoreCase),
                 BalloonValue = (decimal)BalloonValueEntry,
                 CustomerRatePercent = (decimal)CustomerRatePct,
-                UpfrontSubsidies = (decimal)UpfrontSubsidies,
+                // For the main calculator tab (manual scenario), we use the full subsidy budget as upfront subsidy
+                // if no specific campaign logic is applied here yet.
+                // The requirement says "assume we utilize all subsidy available".
+                // In manual mode, if user doesn't explicitly allocate it, we treat it as unallocated subsidy (upfront income).
+                UpfrontSubsidies = (decimal)SubsidyBudget,
                 UpfrontCosts = (decimal)(DealerCommissionResolvedAmt + IdcOther),
                 SubdownIsPercent = false,
                 SubdownValue = 0
@@ -619,96 +667,74 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var active = ActiveCampaign;
-
-            decimal vehiclePrice = (decimal)PriceExTax;
-            bool subIsPct = false;
-            decimal subVal = 0;
-            decimal upCostDelta = 0m;
-            decimal upSubDelta = 0m;
-            double? rateOverride = null;
-
-            _activeSubsidyUsed = 0;
-            if (active != null)
-            {
-                var type = active.CampaignType?.ToLowerInvariant() ?? string.Empty;
-                if (type == "cash_discount" && active.CashDiscountAmount > 0)
-                {
-                    var disc = (decimal)active.CashDiscountAmount;
-                    vehiclePrice = Math.Max(0m, vehiclePrice - disc);
-                    _activeSubsidyUsed += active.CashDiscountAmount;
-                }
-                if (active.FSSubDownAmount > 0)
-                {
-                    subIsPct = false; // treat MyCampaign input as THB by default
-                    subVal = (decimal)active.FSSubDownAmount;
-                    _activeSubsidyUsed += active.FSSubDownAmount;
-                }
-                // Treat Free Insurance/MBSP as IDC costs only (no subsidy netting here)
-                if (active.FSSubInterestAmount > 0) { upCostDelta += (decimal)active.FSSubInterestAmount; }
-                if (active.FSFreeMBSPAmount > 0) { upCostDelta += (decimal)active.FSFreeMBSPAmount; }
-                if (active.IDC_MBSP_CostAmount > 0) { upCostDelta += (decimal)active.IDC_MBSP_CostAmount; }
-
-                // Subinterest: use editable row TargetRate if present; else from catalog
-                if (type == "subinterest")
-                {
-                    double? targetRatePct = active.TargetRatePct;
-                    if (!targetRatePct.HasValue)
-                    {
-                        var cat = _campaigns.GetStandard().FirstOrDefault(c => c.Id == active.CampaignId)?.TargetRate;
-                        if (cat.HasValue) targetRatePct = cat.Value * 100.0; // Convert from fraction to percent
-                    }
-                    if (targetRatePct.HasValue)
-                    {
-                        rateOverride = targetRatePct.Value; // Already in percent units (e.g., 2.99)
-                    }
-                }
-            }
-
-            // For subinterest: compute required subsidy for rate buydown (interest shortfall vs base) and apply, capped by leftover budget
-            if (active != null && string.Equals(active.CampaignType, "subinterest", StringComparison.OrdinalIgnoreCase) && rateOverride.HasValue)
-            {
-                var required = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
-                var leftoverBudgetLocal = Math.Max(0, SubsidyBudget - _activeSubsidyUsed);
-                upSubDelta = (decimal)Math.Min(required, leftoverBudgetLocal);
-            }
-            else
-            {
-                // Leftover budget (not used by subdown/cash discount) becomes subsidy income to improve IRR (simplified model)
-                var leftoverBudget = Math.Max(0, SubsidyBudget - _activeSubsidyUsed);
-                upSubDelta = (decimal)leftoverBudget;
-            }
-
-            var res = ComputeScenarioWithCommission(vehiclePrice, subIsPct, subVal, upCostDelta, upSubDelta, rateOverride);
-
-            // Update metrics with current campaign's calculated values
-            var nominalDisplayPct = rateOverride.HasValue ? rateOverride.Value / 100.0 : CustomerRatePct / 100.0;
-            Metrics = new MetricsViewModel
-            {
-                MonthlyInstallment = ((double)res.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                NominalRate = nominalDisplayPct.ToString("0.00%", CultureInfo.InvariantCulture),
-                EffectiveRate = ((double)res.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                FinancedAmount = ((double)res.outputs.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
-                RoRAC = ((double)res.profit.AcquisitionRoRac).ToString("0.00%"),
-            };
-            
-            // Notify UI of metrics update
-            OnPropertyChanged(nameof(Metrics));
-
-            PopulateCashflows(LocalScheduleToDto(res.outputs.Schedule));
-            RefreshProfitabilityDetailsLocal(res.profit);
-
-            // Update campaign name display
-            if (ActiveCampaign != null)
-            {
-                var campaignType = IsMyCampaign(ActiveCampaign) ? "My Campaign" : "Standard Campaign";
-                CashflowCampaignName = $"{campaignType}: {ActiveCampaign.CampaignId}";
-            }
-            else
+            if (active == null)
             {
                 CashflowCampaignName = "No Campaign Selected";
+                Cashflows.Clear();
+                return;
+            }
+
+            // If it's a MyCampaign, we might need to ensure it's up-to-date.
+            // Trigger re-computation to be safe and get full waterfall details.
+            if (IsMyCampaign(active))
+            {
+                // Already handled by property change listeners, but if first load/select, ensure it's calculated.
+                await RecalculateMyCampaignAsync(active);
+            }
+            else
+            {
+                // Standard campaign: we can re-compute here similarly to get full details.
+                // Since they are not editable, we could trust the VM values, but we need 'profit' object for waterfall.
+                // Let's re-compute using the same logic.
+                
+                decimal vehiclePrice = (decimal)PriceExTax;
+                double cashDiscount = active.CashDiscountAmount;
+                double fsSubDown = active.FSSubDownAmount;
+                double fsFreeInsurance = active.FSSubInterestAmount;
+                double fsFreeMbsp = active.FSFreeMBSPAmount;
+                
+                // For standard campaigns, Target Rate comes from catalog if not explicitly set in VM yet.
+                // Actually LoadSummariesLocalAsync should have set it in VM.TargetRatePct if applicable.
+                double? targetRatePct = active.TargetRatePct;
+
+                 // Apply Cash Discount
+                decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
+                if (transactionPrice < 0) transactionPrice = 0;
+
+                // Calculate Subinterest Subsidy if Target Rate is set
+                decimal subinterestSubsidy = 0m;
+                if (targetRatePct.HasValue)
+                {
+                     decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp);
+                     double required = ComputeRequiredSubsidyForRateBuydown(transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, CustomerRatePct, targetRatePct.Value);
+                     subinterestSubsidy = (decimal)required;
+                }
+                // Update VM with calculated subinterest subsidy for display
+                active.SubinterestSubsidy = subinterestSubsidy.ToString("N0", CultureInfo.InvariantCulture);
+
+                // Calculate Unallocated Subsidy & Total Upfront Subsidy for engine
+                // Total Upfront Subsidy to lender = Total Budget - (CashDisc + SubDown + FreeIns + FreeMbsp)
+                // The buydown cost is covered within this amount.
+                double totalUpfrontSubsidyForEngine = SubsidyBudget - cashDiscount - fsSubDown - fsFreeInsurance - fsFreeMbsp;
+
+                var (outc, profit, commPct, commAmt) = ComputeScenarioWithCommission(
+                    transactionPrice,
+                    false,
+                    (decimal)fsSubDown,
+                    (decimal)(fsFreeInsurance + fsFreeMbsp),
+                    (decimal)totalUpfrontSubsidyForEngine - (decimal)UpfrontSubsidies, // Delta
+                    targetRatePct
+                );
+
+                double subsidyUsed = cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + (double)subinterestSubsidy;
+
+                UpdateMetricsFromCampaign(active, outc, profit, commAmt, subsidyUsed, fsFreeInsurance, fsFreeMbsp, (double)subinterestSubsidy);
+                PopulateCashflows(LocalScheduleToDto(outc.Schedule));
+                
+                var campaignTypeStr = IsMyCampaign(active) ? "My Campaign" : "Standard Campaign";
+                CashflowCampaignName = $"{campaignTypeStr}: {active.CampaignId}";
             }
             
-            // Update campaign-specific details for bottom summary
             OnPropertyChanged(nameof(ActiveCampaign));
             OnPropertyChanged(nameof(ActiveFsInsuranceText));
             OnPropertyChanged(nameof(ActiveFsMbspText));
@@ -1061,6 +1087,222 @@ public partial class MainViewModel : ObservableObject
         return DownPaymentValueEntry;
     }
 
+    private async Task RecalculateMyCampaignAsync(CampaignSummaryViewModel vm)
+    {
+        // Small delay to let UI update if called frequently (pseudo-debounce) and make it truly async if needed
+        await Task.Delay(1);
+        if (IsCalculating) return; // Debounce/throttle if needed, though IsCalculating handles basic re-entrancy
+        try
+        {
+            IsCalculating = true;
+            Status = $"Recalculating {vm.Title}...";
+
+            // 1. Gather inputs from vm
+            decimal vehiclePrice = (decimal)PriceExTax;
+            double cashDiscount = vm.CashDiscountAmount;
+            double fsSubDown = vm.FSSubDownAmount;
+            double fsFreeInsurance = vm.FSSubInterestAmount; // Mapped to free insurance field
+            double fsFreeMbsp = vm.FSFreeMBSPAmount;
+            double? targetRatePct = vm.TargetRatePct;
+
+            // Apply Cash Discount to Vehicle Price
+            decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
+            if (transactionPrice < 0) transactionPrice = 0;
+
+            // 2. Calculate Subinterest Subsidy if Target Rate is set
+            decimal subinterestSubsidy = 0m;
+            if (targetRatePct.HasValue)
+            {
+                // Calculate required subsidy to reach target rate.
+                // Note: We need to be careful about circular dependencies here if subinterest subsidy affects financed amount (it shouldn't directly, but it uses budget).
+                // Subinterest subsidy is an UPFRONT SUBSIDY to the lender (income) to offset lower interest.
+                // It does NOT reduce financed amount for customer.
+                
+                // We need to calculate the deal WITHOUT subinterest subsidy first to see the base flows, 
+                // but actually the function ComputeRequiredSubsidyForRateBuydown handles this by comparing two scenarios.
+                
+                // The cost base for buydown should include other campaign costs?
+                // Actually, buydown is based on the financed amount.
+                // Financed amount depends on Transaction Price and SubDown.
+                
+                // Let's use the helper, but we need to pass the correct transaction price.
+                // And Upfront Costs Delta should include Free Insurance + Free MBSP.
+                decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp);
+
+                double required = ComputeRequiredSubsidyForRateBuydown(transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, CustomerRatePct, targetRatePct.Value);
+                subinterestSubsidy = (decimal)required;
+            }
+
+            // 3. Calculate Unallocated Subsidy
+            // Total Budget - (Cash Discount + SubDown + Free Insurance + Free MBSP + Subinterest Subsidy)
+            // Wait, are Free Insurance/MBSP paid from subsidy budget? Usually yes.
+            // The requirement said: "Subsidy budget - cash discount - subdown campaign support - subinterest cost"
+            // It didn't explicitly mention Free Insurance/MBSP in that formula in the prompt, but they are campaign costs.
+            // Let's assume they ARE paid from budget for now to be safe and consistent with "total campaign cost".
+            
+            double totalCampaignCost = cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + (double)subinterestSubsidy;
+            double unallocated = SubsidyBudget - totalCampaignCost;
+            // if unallocated < 0, it means we are over budget. The calculation should still proceed but maybe show warning?
+            // For now, allow negative unallocated (effectively increases dealer contribution/reduces profit if not covered elsewhere, but engine handles negative subsidy as cost if passed correctly? actually UpfrontSubsidies should probably be clamped to 0 if we strictly follow "Subsidy *Budget*")
+            // If we want to strictly enforce budget, we might clamp unallocated to 0.
+            // BUT, if it's negative, it acts as an extra COST.
+            
+            decimal upfrontSubsidiesDelta = (decimal)unallocated;
+            // If unallocated is positive, it's extra income (subsidy) to deal.
+            // If negative, it's extra cost (overrun) to deal.
+            // Our ComputeScenarioWithCommission adds this to UpfrontSubsidies.
+            // If it's negative, it will reduce UpfrontSubsidies, which is correct (e.g. eating into standard dealer margin if we had any, or just showing up as lower RoRAC).
+
+            // 4. Compute full scenario
+            var (outc, profit, commPct, commAmt) = ComputeScenarioWithCommission(
+                transactionPrice,
+                false, // subdown is value
+                (decimal)fsSubDown,
+                (decimal)(fsFreeInsurance + fsFreeMbsp), // Upfront costs delta (campaign specific IDCs)
+                (decimal)subinterestSubsidy + upfrontSubsidiesDelta, // Total upfront subsidy delta (specific rate subsidy + unallocated remnant)
+                                                                     // Wait! If we add subinterestSubsidy AND unallocated,
+                                                                     // Total = subinterestSubsidy + (SubsidyBudget - totalCampaignCost)
+                                                                     // Total = subinterestSubsidy + SubsidyBudget - (cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + subinterestSubsidy)
+                                                                     // Total = SubsidyBudget - cashDiscount - fsSubDown - fsFreeInsurance - fsFreeMbsp
+                                                                     // This looks correct! The specific 'subinterestSubsidy' cancels out in the *Total Upfront Subsidy* passed to engine,
+                                                                     // because it's just one component of how the budget is used.
+                                                                     // ACTUALLY, we should just pass SubsidyBudget minus non-upfront-subsidy components.
+                                                                     // Cash Discount reduces vehicle price (not upfront subsidy to lender).
+                                                                     // SubDown reduces financed amount (not upfront subsidy to lender).
+                                                                     // Free Insurance/MBSP are Upfront Costs (paid to 3rd party).
+                                                                     // SO: Upfront Subsidy to Lender = Total Budget - CashDisc - SubDown - FreeIns - FreeMbsp.
+                                                                     // The Rate Buydown (subinterestSubsidy) is internally covered by this remaining amount.
+                                                                     // IF we want to track it separately, we need to know how much of that remaining amount is NECESSARY for buydown.
+                targetRatePct // Use target rate if set, else null (uses CustomerRatePct)
+            );
+
+            // RE-VERIFY THE UPFRONT SUBSIDY LOGIC ABOVE.
+            // If Upfront Subsidy to Lender = Total Budget - CashDisc - SubDown - FreeIns - FreeMbsp
+            // AND we have a Target Rate that requires 'subinterestSubsidy' amount to achieve same IRR.
+            // The engine doesn't "know" about required subinterestSubsidy. It just takes UpfrontSubsidies.
+            // If we pass the FULL remaining budget as UpfrontSubsidies, the Deal IRR will reflect it.
+            // If that Deal IRR >= Target Rate IRR, then we are good.
+            // The prompt said: "we utilize all subsidy available ... show the entire subsidy amount available ... as positive impact on deal irr"
+            // So YES, we should pass the entire remaining budget as Upfront Subsidy.
+            
+            decimal totalUpfrontSubsidyForEngine = (decimal)(SubsidyBudget - cashDiscount - fsSubDown - fsFreeInsurance - fsFreeMbsp);
+            
+            // Recalculate with verified logic
+             (outc, profit, commPct, commAmt) = ComputeScenarioWithCommission(
+                transactionPrice,
+                false,
+                (decimal)fsSubDown,
+                (decimal)(fsFreeInsurance + fsFreeMbsp),
+                totalUpfrontSubsidyForEngine - (decimal)UpfrontSubsidies, // Delta to achieve desired
+                targetRatePct
+            );
+
+
+            // 5. Update VM with results
+            vm.Monthly = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture);
+            vm.Effective = ((targetRatePct ?? CustomerRatePct) / 100.0).ToString("0.00%");
+            vm.TransactionPrice = transactionPrice.ToString("N0", CultureInfo.InvariantCulture);
+            vm.Downpayment = ComputeDownpaymentDisplay(transactionPrice).ToString("N0", CultureInfo.InvariantCulture);
+            vm.CashDiscount = cashDiscount.ToString("N0", CultureInfo.InvariantCulture);
+            vm.FSSubDown = fsSubDown.ToString("N0", CultureInfo.InvariantCulture);
+            vm.FSSubInterest = fsFreeInsurance.ToString("N0", CultureInfo.InvariantCulture);
+            vm.FSFreeMBSP = fsFreeMbsp.ToString("N0", CultureInfo.InvariantCulture);
+            vm.SubinterestSubsidy = subinterestSubsidy.ToString("N0", CultureInfo.InvariantCulture);
+            
+            double subsidyUsed = cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + (double)subinterestSubsidy;
+            vm.SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
+            
+            double idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + IdcOther;
+            vm.IDCsTotal = idcsTotal.ToString("N0", CultureInfo.InvariantCulture);
+            
+            vm.DealerCommission = $"{commPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({commAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)";
+            vm.RoRAC = ((double)profit.AcquisitionRoRac).ToString("0.00%");
+
+            // 6. If this is the active campaign, also update the main metrics area
+            if (vm == ActiveCampaign)
+            {
+                UpdateMetricsFromCampaign(vm, outc, profit, commAmt, subsidyUsed, fsFreeInsurance, fsFreeMbsp, (double)subinterestSubsidy);
+            }
+
+            Status = "Done";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Error calculating {vm.Title}: {ex.Message}";
+        }
+        finally
+        {
+            IsCalculating = false;
+        }
+    }
+
+    private void UpdateMetricsFromCampaign(CampaignSummaryViewModel vm, FinancialCalculator.Engine.Models.CalculatorOutputs outc, FinancialCalculator.Engine.Models.Profitability profit, double commAmt, double subsidyUsed, double fsIns, double fsMbsp, double rateSubsidy = 0)
+    {
+        Metrics = new MetricsViewModel
+        {
+            MonthlyInstallment = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
+            NominalRate = ((vm.TargetRatePct ?? CustomerRatePct) / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+            EffectiveRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+            FinancedAmount = ((double)outc.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
+            RoRAC = ((double)profit.AcquisitionRoRac).ToString("0.00%"),
+        };
+
+        _activeFsInsurance = fsIns;
+        _activeFsMbsp = fsMbsp;
+        _activeSubsidyUsed = subsidyUsed;
+        // DealerCommissionResolvedAmt = commAmt; // Should we update the global state? Maybe just for display.
+        // Better to keep it separate if it's campaign specific.
+        // But the UI binds to DealerCommissionResolvedAmtText which uses DealerCommissionResolvedAmt.
+        // Let's update it, but be aware it might affect 'Main Calculator' tab if we switch back?
+        // Actually, Main Calculator tab recalculates when focused or inputs changed.
+        DealerCommissionResolvedAmt = commAmt; 
+        
+        OnPropertyChanged(nameof(ActiveFsInsuranceText));
+        OnPropertyChanged(nameof(ActiveFsMbspText));
+        OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
+        OnPropertyChanged(nameof(SubsidyRemainingText));
+        OnPropertyChanged(nameof(DealerCommissionResolvedAmtText));
+        OnPropertyChanged(nameof(IdcTotalText));
+
+        UpdateBudgetUtilization(
+            vm.CashDiscountAmount,
+            vm.FSSubDownAmount,
+             rateSubsidy,
+             fsIns + fsMbsp,
+             SubsidyBudget - subsidyUsed
+        );
+
+        RefreshProfitabilityDetailsLocal(profit);
+    }
+
+    // Budget Visualization
+    private BudgetUtilizationViewModel _budgetUtilization = new();
+    public BudgetUtilizationViewModel BudgetUtilization { get => _budgetUtilization; set => SetProperty(ref _budgetUtilization, value); }
+
+    private void UpdateBudgetUtilization(double cashDiscount, double subDown, double rateSubsidy, double idcs, double unallocated)
+    {
+        // Ensure we don't have negative widths for GridLength
+        cashDiscount = Math.Max(0, cashDiscount);
+        subDown = Math.Max(0, subDown);
+        rateSubsidy = Math.Max(0, rateSubsidy);
+        idcs = Math.Max(0, idcs);
+        unallocated = Math.Max(0, unallocated);
+
+        // Prevent all zeros which would collapse grid
+        if (cashDiscount + subDown + rateSubsidy + idcs + unallocated <= 0)
+        {
+            unallocated = 1; // Default to full unallocated if everything is zero
+        }
+
+        BudgetUtilization = new BudgetUtilizationViewModel
+        {
+            CashDiscountPct = new Microsoft.UI.Xaml.GridLength(cashDiscount, Microsoft.UI.Xaml.GridUnitType.Star),
+            SubDownPct = new Microsoft.UI.Xaml.GridLength(subDown, Microsoft.UI.Xaml.GridUnitType.Star),
+            RateSubsidyPct = new Microsoft.UI.Xaml.GridLength(rateSubsidy, Microsoft.UI.Xaml.GridUnitType.Star),
+            IdcPct = new Microsoft.UI.Xaml.GridLength(idcs, Microsoft.UI.Xaml.GridUnitType.Star),
+            UnallocatedPct = new Microsoft.UI.Xaml.GridLength(unallocated, Microsoft.UI.Xaml.GridUnitType.Star)
+        };
+    }
     private (FinancialCalculator.Engine.Models.CalculatorOutputs outputs,
              FinancialCalculator.Engine.Models.Profitability profit,
              double commissionPct,
@@ -1081,8 +1323,8 @@ public partial class MainViewModel : ObservableObject
             BalloonIsPercent = string.Equals(BalloonUnit, "%", StringComparison.OrdinalIgnoreCase),
             BalloonValue = (decimal)BalloonValueEntry,
             CustomerRatePercent = (decimal)(customerRateOverride ?? CustomerRatePct),
-            UpfrontSubsidies = (decimal)UpfrontSubsidies + upfrontSubsidiesDelta,
-            UpfrontCosts = (decimal)DealerCommissionResolvedAmt + (decimal)IdcOther + upfrontCostsDelta,
+            UpfrontSubsidies = upfrontSubsidiesDelta,
+            UpfrontCosts = (decimal)IdcOther + upfrontCostsDelta,
             SubdownIsPercent = subdownIsPercent,
             SubdownValue = subdownValue,
         };
@@ -1202,6 +1444,7 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string Monthly { get; set; } = string.Empty;
     public string Effective { get; set; } = string.Empty;
     public string Downpayment { get; set; } = string.Empty;
+    public string TransactionPrice { get; set; } = string.Empty;
     public string CashDiscount { get; set; } = string.Empty;
     public string FSSubDown { get; set; } = string.Empty;
     public string FSSubInterest { get; set; } = string.Empty;  // For free insurance IDC amount
@@ -1250,6 +1493,7 @@ public partial class CampaignSummaryViewModel : ObservableObject
         Monthly = this.Monthly,
         Effective = this.Effective,
         Downpayment = this.Downpayment,
+        TransactionPrice = this.TransactionPrice,
         CashDiscount = this.CashDiscount,
         FSSubDown = this.FSSubDown,
         FSSubInterest = this.FSSubInterest,
@@ -1284,4 +1528,14 @@ public partial class CashflowRowViewModel : ObservableObject
     public string SubsidyAllocation { get; set; } = ""; // Subsidy amount if any
     public string IdcBreakdown { get; set; } = "";      // Commission and other IDCs per period
     public string TotalPayment { get; set; } = "";      // Principal + Interest + Fees
+}
+
+public partial class BudgetUtilizationViewModel : ObservableObject
+{
+    // Using GridLength to support proportional sizing in XAML
+    public Microsoft.UI.Xaml.GridLength CashDiscountPct { get; set; } = new(0, Microsoft.UI.Xaml.GridUnitType.Star);
+    public Microsoft.UI.Xaml.GridLength SubDownPct { get; set; } = new(0, Microsoft.UI.Xaml.GridUnitType.Star);
+    public Microsoft.UI.Xaml.GridLength RateSubsidyPct { get; set; } = new(0, Microsoft.UI.Xaml.GridUnitType.Star);
+    public Microsoft.UI.Xaml.GridLength IdcPct { get; set; } = new(0, Microsoft.UI.Xaml.GridUnitType.Star);
+    public Microsoft.UI.Xaml.GridLength UnallocatedPct { get; set; } = new(1, Microsoft.UI.Xaml.GridUnitType.Star); // Default all unallocated
 }

@@ -43,7 +43,7 @@ public static class RoracCalculator
         // This represents the true annualized benefit of subsidies on the deal, isolated from IDCs
         var subsidyUpfrontPct = dealIrrWithSubsidyOnly - dealIrrBaseline;
         
-        // Make sure impacts are non-negative
+        // Make sure impacts are non-negative. Small float errors might cause slightly negative diffs.
         if (idcUpfrontPct < 0) idcUpfrontPct = 0m;
         if (subsidyUpfrontPct < 0) subsidyUpfrontPct = 0m;
         
