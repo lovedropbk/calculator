@@ -9,8 +9,8 @@ public static class RoracCalculator
         public IReadOnlyDictionary<int, decimal> Curve { get; init; } = new Dictionary<int, decimal>();
         public decimal Spread { get; init; } = 0.0025m; // 25 bps
         public decimal OpexPct { get; init; } = -0.0095m; // -0.95%
-        public decimal EconCapRatio { get; init; } = 0.08m; // 8%
-        public decimal CostOfRisk { get; init; } = 0m; // Can be set if needed
+        public decimal EconCapRatio { get; init; } = 0.088m; // 8.8%
+        public decimal CostOfRisk { get; init; } = 0.0025m; // 0.25%
         public decimal CapitalAdvantage { get; init; } = 0m; // Can be set if needed
     }
 
@@ -31,16 +31,17 @@ public static class RoracCalculator
         // - DealIrrAnnualPercentWithoutUpfrontCosts: IRR without IDCs
         
         var dealIrrEffective = deal.DealIrrAnnualPercent / 100m; // IRR with everything
-        var dealIrrNoSubsidies = deal.DealIrrAnnualPercentWithoutUpfrontIncomes / 100m; // IRR without subsidies
-        var dealIrrNoIDCs = deal.DealIrrAnnualPercentWithoutUpfrontCosts / 100m; // IRR without IDCs
+        var dealIrrBaseline = deal.DealIrrAnnualPercentBaseline / 100m; // IRR without subsidies AND without IDCs
+        var dealIrrWithIdcOnly = deal.DealIrrAnnualPercentWithoutUpfrontIncomes / 100m; // IRR with IDCs, without subsidies
+        var dealIrrWithSubsidyOnly = deal.DealIrrAnnualPercentWithoutUpfrontCosts / 100m; // IRR with subsidies, without IDCs
         
-        // IDC impact = difference between IRR without IDCs and IRR with everything
-        // This represents the true annualized cost of IDCs on the deal
-        var idcUpfrontPct = dealIrrNoIDCs - dealIrrEffective;
+        // IDC impact = difference between Baseline and IRR with IDCs (only)
+        // This represents the true annualized cost of IDCs on the deal, isolated from subsidies
+        var idcUpfrontPct = dealIrrBaseline - dealIrrWithIdcOnly;
         
-        // Subsidy impact = difference between IRR with everything and IRR without subsidies
-        // This represents the true annualized benefit of subsidies on the deal
-        var subsidyUpfrontPct = dealIrrEffective - dealIrrNoSubsidies;
+        // Subsidy impact = difference between IRR with subsidies (only) and Baseline
+        // This represents the true annualized benefit of subsidies on the deal, isolated from IDCs
+        var subsidyUpfrontPct = dealIrrWithSubsidyOnly - dealIrrBaseline;
         
         // Make sure impacts are non-negative
         if (idcUpfrontPct < 0) idcUpfrontPct = 0m;

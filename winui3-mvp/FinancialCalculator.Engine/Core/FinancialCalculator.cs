@@ -13,6 +13,7 @@ public sealed class FinancialCalculator
         var dealIrr = ComputeIrrAnnualPercent(input, financed, schedule);
         var dealIrrNoUpfrontIncomes = ComputeIrrAnnualPercent(input with { UpfrontSubsidies = 0 }, financed, schedule);
         var dealIrrNoUpfrontCosts = ComputeIrrAnnualPercent(input with { UpfrontCosts = 0 }, financed, schedule);
+        var dealIrrBaseline = ComputeIrrAnnualPercent(input with { UpfrontSubsidies = 0, UpfrontCosts = 0 }, financed, schedule);
 
         var flatRate = ComputeFlatRatePercent(financed, schedule);
 
@@ -25,6 +26,7 @@ public sealed class FinancialCalculator
             DealIrrAnnualPercent = Decimal.Round(dealIrr, 6),
             DealIrrAnnualPercentWithoutUpfrontIncomes = Decimal.Round(dealIrrNoUpfrontIncomes, 6),
             DealIrrAnnualPercentWithoutUpfrontCosts = Decimal.Round(dealIrrNoUpfrontCosts, 6),
+            DealIrrAnnualPercentBaseline = Decimal.Round(dealIrrBaseline, 6),
             Schedule = schedule
         };
     }

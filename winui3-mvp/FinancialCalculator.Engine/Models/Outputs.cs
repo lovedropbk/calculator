@@ -16,9 +16,11 @@ public sealed record class CalculatorOutputs
     public decimal DealIrrAnnualPercent { get; init; }
     public decimal DealIrrAnnualPercentWithoutUpfrontIncomes { get; init; }
     public decimal DealIrrAnnualPercentWithoutUpfrontCosts { get; init; }
+    public decimal DealIrrAnnualPercentBaseline { get; init; }
 
-    public decimal UpfrontIncomeRateImpactBps => (DealIrrAnnualPercent - DealIrrAnnualPercentWithoutUpfrontIncomes) * 100;
-    public decimal UpfrontCostRateImpactBps => (DealIrrAnnualPercent - DealIrrAnnualPercentWithoutUpfrontCosts) * 100;
+    // Impacts calculated against Baseline (no upfronts) to isolate effects
+    public decimal UpfrontIncomeRateImpactBps => (DealIrrAnnualPercentWithoutUpfrontCosts - DealIrrAnnualPercentBaseline) * 100;
+    public decimal UpfrontCostRateImpactBps => (DealIrrAnnualPercentBaseline - DealIrrAnnualPercentWithoutUpfrontIncomes) * 100;
 
     // Schedule
     public IReadOnlyList<ScheduleRow> Schedule { get; init; } = Array.Empty<ScheduleRow>();
