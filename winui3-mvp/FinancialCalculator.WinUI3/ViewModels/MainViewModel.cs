@@ -208,7 +208,7 @@ public partial class MainViewModel : ObservableObject
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
         
-        IdcOther = SubsidyBudget; // initial mapping per spec
+        IdcOther = 0; // Default to 0, SubsidyBudget is separate now
 
         // Initialize data on UI thread with proper error handling
         _ = InitializeAsync();
@@ -1273,6 +1273,13 @@ public partial class MainViewModel : ObservableObject
         );
 
         RefreshProfitabilityDetailsLocal(profit);
+
+        // Force main UI update if this is the selected campaign
+        if (vm == SelectedMyCampaign)
+        {
+             // Trigger update of dependent properties that might not have fired
+             OnPropertyChanged(nameof(SelectedMyCampaign));
+        }
     }
 
     // Budget Visualization
@@ -1324,7 +1331,7 @@ public partial class MainViewModel : ObservableObject
             BalloonValue = (decimal)BalloonValueEntry,
             CustomerRatePercent = (decimal)(customerRateOverride ?? CustomerRatePct),
             UpfrontSubsidies = upfrontSubsidiesDelta,
-            UpfrontCosts = (decimal)IdcOther + upfrontCostsDelta,
+            UpfrontCosts = (decimal)Math.Max(0, IdcOther) + upfrontCostsDelta,
             SubdownIsPercent = subdownIsPercent,
             SubdownValue = subdownValue,
         };
