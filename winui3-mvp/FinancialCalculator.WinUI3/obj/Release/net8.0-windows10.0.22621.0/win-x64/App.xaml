@@ -17,8 +17,8 @@
             <!-- MARK: Enhanced Theme Brushes with Animations -->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" Opacity="0.95" />
-                    <SolidColorBrush x:Key="CardStrokeBrush" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" Opacity="1.0" />
+                    <SolidColorBrush x:Key="CardStrokeBrush" Color="#C0C0C0" />
                     <SolidColorBrush x:Key="PillBackgroundBrush" Color="#F5F5F5" />
                     <SolidColorBrush x:Key="PillStrokeBrush" Color="#D0D0D0" />
                     <SolidColorBrush x:Key="HighlightBrush" Color="#0078D4" Opacity="0.1" />
@@ -27,7 +27,7 @@
                     <SolidColorBrush x:Key="ErrorBrush" Color="#D83B01" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#202020" Opacity="0.95" />
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#202020" Opacity="1.0" />
                     <SolidColorBrush x:Key="CardStrokeBrush" Color="#404040" />
                     <SolidColorBrush x:Key="PillBackgroundBrush" Color="#303030" />
                     <SolidColorBrush x:Key="PillStrokeBrush" Color="#505050" />

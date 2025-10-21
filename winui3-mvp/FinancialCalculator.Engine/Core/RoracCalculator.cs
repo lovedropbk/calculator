@@ -97,6 +97,10 @@ public static class RoracCalculator
     private static decimal NearestCurveRate(IReadOnlyDictionary<int, decimal> curve, int termMonths)
     {
         if (curve.Count == 0) return 0m;
+        // Fast path: exact match
+        if (curve.TryGetValue(termMonths, out var exactRate)) return exactRate;
+
+        // Fallback: nearest neighbor
         var best = curve.First();
         var bestDiff = Math.Abs(best.Key - termMonths);
         foreach (var kv in curve)

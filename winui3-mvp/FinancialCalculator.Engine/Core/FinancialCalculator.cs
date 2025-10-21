@@ -87,104 +87,85 @@ public sealed class FinancialCalculator
         var bal = financed;
         var rows = new List<ScheduleRow>(n);
 
-        // t=0 payment for advance mode (period 0) booked into first row cashflow aggregation by adding to t=1
         if (input.PaymentMode == PaymentMode.InAdvance)
         {
-            // First payment at t=0 reduces principal immediately by pmt
-        }
+            // Annuity Due: First payment at t=0 (Period 1)
+            var pmt0 = pmt;
+            var bal0 = financed - pmt0;
+            if (bal0 < 0) bal0 = 0;
 
-        for (int k = 1; k <= n; k++)
-        {
-            var interest = Decimal.Round(bal * i_m, 10);
-            var fee = 0m;
-            var totalDue = pmt;
-
-            decimal principal;
-            if (k == n && balloon > 0)
+            rows.Add(new ScheduleRow
             {
-                // On final period, balloon due in addition to regular installment
-                principal = totalDue - interest - fee;
-                var newBal = bal - principal;
-                var cf = totalDue + balloon;
-                rows.Add(new ScheduleRow
-                {
-                    Period = k,
-                    Principal = Decimal.Round(principal, 2),
-                    Interest = Decimal.Round(interest, 2),
-                    Balance = Decimal.Round(newBal, 2),
-                    Cashflow = Decimal.Round(cf, 2)
-                });
-                bal = newBal - balloon;
-                if (bal < 0) bal = 0;
-                break;
-            }
-            else
-            {
-                principal = totalDue - interest - fee;
-                if (principal > bal) principal = bal;
-                var newBal = bal - principal;
-                rows.Add(new ScheduleRow
-                {
-                    Period = k,
-                    Principal = Decimal.Round(principal, 2),
-                    Interest = Decimal.Round(interest, 2),
-                    Balance = Decimal.Round(newBal, 2),
-                    Cashflow = Decimal.Round(totalDue, 2)
-                });
-                bal = newBal;
-            }
-        }
-
-        // Adjust for annuity-due (advance): recompute with t=0 payment applied as principal reduction
-        if (input.PaymentMode == PaymentMode.InAdvance)
-        {
-            var pmt0 = pmt; // first payment at t=0
-            var bal0 = financed - pmt0; if (bal0 < 0) bal0 = 0;
-            rows.Clear();
+                Period = 1,
+                Principal = Decimal.Round(pmt0, 2), // Assuming 0 interest at t=0
+                Interest = 0m,
+                Balance = Decimal.Round(bal0, 2),
+                Cashflow = Decimal.Round(pmt0, 2)
+            });
             bal = bal0;
+
+            // Remaining N-1 payments at t=1 to t=N-1 (Periods 2 to N)
+            for (int k = 2; k <= n; k++)
+            {
+                bal = AddScheduleRow(rows, k, bal, i_m, pmt, balloon, k == n);
+            }
+        }
+        else
+        {
+            // Annuity In Arrears: Payments at t=1 to t=N (Periods 1 to N)
             for (int k = 1; k <= n; k++)
             {
-                var interest = Decimal.Round(bal * i_m, 10);
-                var fee = 0m;
-                var totalDue = pmt;
-                decimal principal;
-                if (k == n && balloon > 0)
-                {
-                    principal = totalDue - interest - fee;
-                    var newBal = bal - principal;
-                    var cf = totalDue + balloon;
-                    rows.Add(new ScheduleRow
-                    {
-                        Period = k,
-                        Principal = Decimal.Round(principal, 2),
-                        Interest = Decimal.Round(interest, 2),
-                        Balance = Decimal.Round(newBal, 2),
-                        Cashflow = Decimal.Round(cf, 2)
-                    });
-                    bal = newBal - balloon;
-                    if (bal < 0) bal = 0;
-                    break;
-                }
-                else
-                {
-                    principal = totalDue - interest - fee;
-                    if (principal > bal) principal = bal;
-                    var newBal = bal - principal;
-                    rows.Add(new ScheduleRow
-                    {
-                        Period = k,
-                        Principal = Decimal.Round(principal, 2),
-                        Interest = Decimal.Round(interest, 2),
-                        Balance = Decimal.Round(newBal, 2),
-                        Cashflow = Decimal.Round(totalDue, 2)
-                    });
-                    bal = newBal;
-                }
+                bal = AddScheduleRow(rows, k, bal, i_m, pmt, balloon, k == n);
             }
-            // Note: For IRR, we will include the t=0 payment explicitly in cashflows below.
         }
 
         return rows;
+    }
+
+    private static decimal AddScheduleRow(List<ScheduleRow> rows, int period, decimal bal, decimal i_m, decimal pmt, decimal balloon, bool isFinal)
+    {
+        var interest = Decimal.Round(bal * i_m, 10);
+        var totalDue = pmt;
+        decimal principal, cf, newBal;
+
+        if (isFinal && balloon > 0)
+        {
+            // Final period with balloon
+            cf = totalDue + balloon;
+            var principalFromPmt = totalDue - interest;
+            newBal = bal - principalFromPmt - balloon;
+            if (newBal < 0) newBal = 0;
+
+            // Total principal paid this period = principalFromPmt + balloon
+            principal = principalFromPmt + balloon;
+
+            rows.Add(new ScheduleRow
+            {
+                Period = period,
+                Principal = Decimal.Round(principal, 2),
+                Interest = Decimal.Round(interest, 2),
+                Balance = Decimal.Round(newBal, 2),
+                Cashflow = Decimal.Round(cf, 2)
+            });
+            return newBal;
+        }
+        else
+        {
+            // Regular period
+            principal = totalDue - interest;
+            if (principal > bal) principal = bal;
+            newBal = bal - principal;
+
+            rows.Add(new ScheduleRow
+            {
+                Period = period,
+                Principal = Decimal.Round(principal, 2),
+                Interest = Decimal.Round(interest, 2),
+                Balance = Decimal.Round(newBal, 2),
+                Cashflow = Decimal.Round(totalDue, 2)
+            });
+            return newBal;
+        }
     }
 
     private static decimal ComputeFlatRatePercent(decimal financed, IReadOnlyList<ScheduleRow> schedule)
@@ -200,21 +181,22 @@ public sealed class FinancialCalculator
 
     private static decimal ComputeIrrAnnualPercent(CalculatorInputs input, decimal financed, IReadOnlyList<ScheduleRow> schedule)
     {
-        var cf = new List<double>(schedule.Count + 2);
+        var cf = new List<double>(schedule.Count + 1);
         // t0: lender disburses financed amount (negative), applies upfront incomes and costs
         var t0 = -(double)financed + (double)input.UpfrontSubsidies - (double)input.UpfrontCosts;
-        cf.Add(t0);
 
+        int start = 0;
         if (input.PaymentMode == PaymentMode.InAdvance && schedule.Count > 0)
         {
-            // Add first payment at t=0; remaining payments occur at t=1..n-1
-            var pmt0 = (double)(schedule[0].Cashflow);
-            cf[0] += pmt0;
-            for (int i = 1; i < schedule.Count; i++) cf.Add((double)schedule[i].Cashflow);
+            // InAdvance: Period 1 (index 0) is at t=0.
+            t0 += (double)schedule[0].Cashflow;
+            start = 1; // Remaining cashflows start from Period 2 (index 1) at t=1
         }
-        else
+
+        cf.Add(t0);
+        for (int i = start; i < schedule.Count; i++)
         {
-            foreach (var r in schedule) cf.Add((double)r.Cashflow);
+            cf.Add((double)schedule[i].Cashflow);
         }
 
         // Solve monthly nominal IRR, annualize by *12 and convert to percent

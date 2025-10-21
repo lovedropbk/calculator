@@ -42,7 +42,7 @@
                             <TextBlock Text="Main Calculator" VerticalAlignment="Center"/>
                         </StackPanel>
                     </TabViewItem.Header>
-                <Grid x:Name="LayoutRoot" Background="Transparent">
+                <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto" MaxHeight="50"/><!-- Footer -->
@@ -290,29 +290,15 @@
                                 <TextBox Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TargetInstallment, Mode=TwoWay}" MinWidth="180" Margin="8,0,0,0"
                                          Visibility="{Binding IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
         
-                                <!-- Primary action with loading indicator -->
-                                <StackPanel Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" Margin="8,16,0,0">
-                                    <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <Button x:Name="RecalculateButton"
-                                                Content="Recalculate"
-                                                Command="{Binding RecalculateCommand}"
-                                                HorizontalAlignment="Left"
-                                                Style="{StaticResource PrimaryActionButtonStyle}"
-                                                MinWidth="120">
-                                            <ToolTipService.ToolTip>
-                                                <ToolTip Content="Click to recalculate with current parameters" Style="{StaticResource InformativeToolTipStyle}"/>
-                                            </ToolTipService.ToolTip>
-                                        </Button>
-                                        <!-- Loading indicator next to button -->
-                                        <ProgressRing x:Name="CalculationProgress"
-                                                      IsActive="{Binding IsCalculating}"
-                                                      Width="20"
-                                                      Height="20"
-                                                      VerticalAlignment="Center"
-                                                      Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                    </StackPanel>
-                                    <!-- Unified validation summary -->
-                                    <TextBlock Text="{Binding Status}" Style="{StaticResource ErrorTextStyle}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                <!-- Loading indicator and Status -->
+                                <StackPanel Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12" Margin="8,16,0,0">
+                                     <ProgressRing x:Name="CalculationProgress"
+                                                   IsActive="{Binding IsCalculating}"
+                                                   Width="20"
+                                                   Height="20"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Style="{StaticResource LabelTextStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
