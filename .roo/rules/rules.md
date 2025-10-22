@@ -1,3 +1,13 @@
+<IMPORTANT INFO REGARDING TOOL USE>
+
+1.  MANDATORY FAILURE PROTOCOL: If a tool call (especially apply_diff) fails:
+*   STOP and RE-READ: Do NOT immediately retry based on memory. You MUST use read_file to re-acquire the ground truth of the file's current state.
+2.   VERBATIM TRANSCRIPTION: When constructing the retry, you MUST transcribe the content exactly from the new read_file output. Do not rely on your previous (failed) attempt's text.
+3.  ESCALATION TO OVERWRITE: If apply_diff fails twice consecutively on the same file, you MUST switch to write_to_file for the next attempt (if file size permits < 500 lines) to break the failure loop.
+4.  VERIFICATION BEFORE OUTPUT: Before outputting an apply_diff or write_to_file block, explicitly re-read your own proposed output character-by-character in your thought process to ensure critical details (like array indices or semicolons) haven't been dropped during output generation.
+
+
+
 <file_length_and_structure>
 
 Never allow a file to exceed 500 lines.

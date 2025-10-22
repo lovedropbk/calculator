@@ -10,11 +10,21 @@ public sealed class LocalScenarioService
     private readonly LocalEngineService _engine = new();
     private readonly RiskParameterRepository _riskRepo;
 
-    public LocalScenarioService()
+    public LocalScenarioService(string? parametersPath = null)
     {
         _riskRepo = new RiskParameterRepository();
-        // NOTE: Hardcoded path for current environment. In prod, this should be relative to app base.
-        _riskRepo.Load(@"C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\docs\parameters");
+        // Use relative path from app base, or override for testing
+        string defaultPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Parameters");
+        
+        // Fallback for dev environment if not copied (e.g. during some test runs if not fully built)
+        if (!System.IO.Directory.Exists(defaultPath))
+        {
+             // Try to find it relative to project root if we are in dev
+             string devPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\winui3-mvp\docs\parameters"));
+             if (System.IO.Directory.Exists(devPath)) defaultPath = devPath;
+        }
+
+        _riskRepo.Load(parametersPath ?? defaultPath);
     }
 
     public sealed record class ScenarioInput

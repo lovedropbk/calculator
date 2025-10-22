@@ -1,5 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Globalization;
+using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.WinUI3.ViewModels;
 
@@ -9,12 +12,57 @@ public partial class MainViewModel
     {
         RefreshCommissionPolicyLocal();
         OnPropertyChanged(nameof(IsBalloonEnabled));
+        UpdateStandardRate();
+        // Re-check vehicle eligibility if product changes to/from mySTAR
+        if (_selectedVehicle != null) OnSelectedVehicleChanged(_selectedVehicle);
         ScheduleSummariesRefresh();
     }
-    private void OnPriceExTaxChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
+    private void OnPriceExTaxChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); UpdateStandardRate(); ScheduleSummariesRefresh(); }
     private void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); ScheduleSummariesRefresh(); }
-    private void OnTermMonthsChanged(int value) => ScheduleSummariesRefresh();
-    private void OnCustomerRatePctChanged(double value) => ScheduleSummariesRefresh();
+    private void OnTermMonthsChanged(int value)
+    {
+        UpdateStandardRate();
+        // Re-populate balloon if mySTAR and term changes
+        if (string.Equals(Product, "mySTAR", System.StringComparison.OrdinalIgnoreCase) && _selectedVehicle != null)
+        {
+            OnSelectedVehicleChanged(_selectedVehicle);
+        }
+        // Term changed -> Flat/Nominal relationship changes. Update Flat based on current Nominal.
+        if (!_isUpdatingRate)
+        {
+            _isUpdatingRate = true;
+            CustomerRateFlat = (double)FinancialCalculator.Engine.Core.FinancialCalculator.ConvertNominalToFlat((decimal)CustomerRatePct, TermMonths, GetPaymentMode());
+            _isUpdatingRate = false;
+        }
+        ScheduleSummariesRefresh();
+    }
+    private void OnCustomerRatePctChanged(double value)
+    {
+        if (!_isUpdatingRate)
+        {
+            _isUpdatingRate = true;
+            CustomerRateFlat = (double)FinancialCalculator.Engine.Core.FinancialCalculator.ConvertNominalToFlat((decimal)value, TermMonths, GetPaymentMode());
+            _isUpdatingRate = false;
+        }
+        CheckRateDeviation();
+        ScheduleSummariesRefresh();
+    }
+    private void OnCustomerRateFlatChanged(double value)
+    {
+        if (!_isUpdatingRate)
+        {
+            _isUpdatingRate = true;
+            CustomerRatePct = (double)FinancialCalculator.Engine.Core.FinancialCalculator.ConvertFlatToNominal((decimal)value, TermMonths, GetPaymentMode());
+            _isUpdatingRate = false;
+        }
+        CheckRateDeviation();
+        ScheduleSummariesRefresh();
+    }
+
+    private PaymentMode GetPaymentMode()
+    {
+        return string.Equals(Timing, "advance", StringComparison.OrdinalIgnoreCase) ? PaymentMode.InAdvance : PaymentMode.InArrears;
+    }
     private void OnSubsidyBudgetChanged(double value)
     {
         // Update dependent computed text for bottom summary
@@ -23,10 +71,21 @@ public partial class MainViewModel
     }
 
     // Additional handlers to keep UI reactive to all inputs (per redesign specs)
-    private void OnTimingChanged(string value) => ScheduleSummariesRefresh();
+    private void OnTimingChanged(string value)
+    {
+        UpdateStandardRate();
+        // Timing changed -> Flat/Nominal relationship changes. Update Flat based on current Nominal.
+        if (!_isUpdatingRate)
+        {
+            _isUpdatingRate = true;
+            CustomerRateFlat = (double)FinancialCalculator.Engine.Core.FinancialCalculator.ConvertNominalToFlat((decimal)CustomerRatePct, TermMonths, GetPaymentMode());
+            _isUpdatingRate = false;
+        }
+        ScheduleSummariesRefresh();
+    }
     private void OnBalloonPercentChanged(double value) => ScheduleSummariesRefresh();
-    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ScheduleSummariesRefresh(); }
-    private void OnDownPaymentValueEntryChanged(double value) => ScheduleSummariesRefresh();
+    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); UpdateStandardRate(); ScheduleSummariesRefresh(); }
+    private void OnDownPaymentValueEntryChanged(double value) { UpdateStandardRate(); ScheduleSummariesRefresh(); }
     private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ScheduleSummariesRefresh(); }
     private void OnBalloonValueEntryChanged(double value) => ScheduleSummariesRefresh();
     private void OnLockModeChanged(string value) => ScheduleSummariesRefresh();
@@ -186,6 +245,11 @@ public partial class MainViewModel
     {
         if (sender is CampaignSummaryViewModel mc)
         {
+            if (e.PropertyName == nameof(CampaignSummaryViewModel.SelectedMbspPackage))
+            {
+                 UpdateMbspCost(mc);
+            }
+
             // Subsidy budget is always editable now
             // SubsidyBudgetIsEnabled = ExceedsInitialSubsidy(mc);
             // Auto-recalc when adjustments change
@@ -223,5 +287,96 @@ public partial class MainViewModel
             OnPropertyChanged(nameof(StandardCampaigns));
             OnPropertyChanged(nameof(CampaignSummaries));
         });
+    }
+    // MARK: Vehicle Selection Handlers
+    private void OnSelectedVehicleChanged(Models.Vehicle? value)
+    {
+        if (value != null)
+        {
+            // Only auto-populate price if it's different to avoid overriding user edits unnecessarily if they select same vehicle?
+            // Requirement says "auto-populate the Price (MSRP) field". usually means overwrite.
+            PriceExTax = value.MSRP;
+
+            // Auto-populate balloon if mySTAR
+             if (string.Equals(Product, "mySTAR", System.StringComparison.OrdinalIgnoreCase))
+            {
+                var rv = value.GetRVForTerm(TermMonths);
+                if (rv.HasValue)
+                {
+                    BalloonUnit = "%";
+                    BalloonValueEntry = rv.Value * 100; // Convert decimal to percent
+                    Status = "Ready"; // Clear potential previous warning
+                }
+                else
+                {
+                     Status = $"Warning: {value.ModelName} is not eligible for mySTAR at {TermMonths} months term (RV not available).";
+                }
+            }
+
+            // Auto-populate MBSP cost if applicable
+            UpdateMbspCost();
+        }
+    }
+
+    // MARK: Standard Rate & Deviation
+    private bool _isRateDeviation = false;
+    public bool IsRateDeviation { get => _isRateDeviation; set => SetProperty(ref _isRateDeviation, value); }
+    private double? _standardRateForCurrentSelection;
+
+    private void UpdateStandardRate()
+    {
+        // Calculate down payment %
+        double downPaymentPct;
+        if (string.Equals(DownPaymentUnit, "%", System.StringComparison.OrdinalIgnoreCase))
+        {
+            downPaymentPct = DownPaymentValueEntry / 100.0;
+        }
+        else
+        {
+            downPaymentPct = PriceExTax > 0 ? DownPaymentValueEntry / PriceExTax : 0;
+        }
+
+        _standardRateForCurrentSelection = _standardRates.GetStandardRate(Product, TermMonths, downPaymentPct, Timing);
+        
+        if (_standardRateForCurrentSelection.HasValue)
+        {
+            // Auto-populate if we are in a state where we should (maybe if user hasn't manually edited rate yet? hard to track. For now auto-populate always on dependent change per req)
+            // "When users change Product, Term, Downpayment, or Payment Mode, auto-populate the Customer Rate"
+            CustomerRatePct = _standardRateForCurrentSelection.Value;
+        }
+        
+        CheckRateDeviation();
+    }
+
+    private void CheckRateDeviation()
+    {
+        if (_standardRateForCurrentSelection.HasValue)
+        {
+            // Allow small epsilon for floating point comparison if needed, but exact match for now
+            IsRateDeviation = Math.Abs(CustomerRatePct - _standardRateForCurrentSelection.Value) > 0.001;
+        }
+        else
+        {
+            IsRateDeviation = false; // No standard rate found, so can't deviate
+        }
+    }
+
+    private void UpdateMbspCost(CampaignSummaryViewModel? campaign = null)
+    {
+        // Only update for currently active MyCampaign or specifically passed one
+        var target = campaign ?? (SelectedMyCampaign); // Use SelectedMyCampaign to be sure we only update editable ones
+        if (target != null && _selectedVehicle != null)
+        {
+             if (_selectedVehicle.MbspCosts.TryGetValue(target.SelectedMbspPackage, out var cost))
+             {
+                 target.FSFreeMBSPAmount = cost;
+                 target.FSFreeMBSP = cost.ToString("N0", CultureInfo.InvariantCulture);
+             }
+             else
+             {
+                 target.FSFreeMBSPAmount = 0;
+                 target.FSFreeMBSP = "N/A";
+             }
+        }
     }
 }

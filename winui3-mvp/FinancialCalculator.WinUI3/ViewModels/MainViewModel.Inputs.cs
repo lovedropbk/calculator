@@ -8,6 +8,13 @@ namespace FinancialCalculator.WinUI3.ViewModels;
 
 public partial class MainViewModel
 {
+    // MARK: Vehicle Selection
+    private Models.Vehicle? _selectedVehicle;
+    public Models.Vehicle? SelectedVehicle { get => _selectedVehicle; set { if (SetProperty(ref _selectedVehicle, value)) OnSelectedVehicleChanged(value); } }
+
+    public ObservableCollection<Models.Vehicle> AllVehicles { get; } = new();
+    public ObservableCollection<string> MbspPackages { get; } = new();
+
     // MARK: Deal Inputs
     private string _product = "HP";
     public string Product { get => _product; set { if (SetProperty(ref _product, value)) OnProductChanged(value); } }
@@ -36,6 +43,7 @@ public partial class MainViewModel
     public string LockMode { get => _lockMode; set { if (SetProperty(ref _lockMode, value)) OnLockModeChanged(value); } }
 
     // MARK: Rate Mode
+    private bool _isUpdatingRate = false; // Prevent recursive updates
     private string _rateMode = "fixed_rate"; // fixed_rate|target_installment
     public string RateMode { get => _rateMode; set { if (SetProperty(ref _rateMode, value)) OnRateModeChanged(value); } }
     private int _rateModeIndex = 0; // 0=fixed_rate, 1=target_installment
@@ -44,6 +52,8 @@ public partial class MainViewModel
     public bool IsTargetInstallmentMode => string.Equals(RateMode, "target_installment", StringComparison.OrdinalIgnoreCase);
     private double _customerRatePct = 3.99;
     public double CustomerRatePct { get => _customerRatePct; set { if (SetProperty(ref _customerRatePct, value)) OnCustomerRatePctChanged(value); } }
+    private double _customerRateFlat = 0;
+    public double CustomerRateFlat { get => _customerRateFlat; set { if (SetProperty(ref _customerRateFlat, value)) OnCustomerRateFlatChanged(value); } }
     private double _targetInstallment = 0;
     public double TargetInstallment { get => _targetInstallment; set { if (SetProperty(ref _targetInstallment, value)) OnTargetInstallmentChanged(value); } }
 

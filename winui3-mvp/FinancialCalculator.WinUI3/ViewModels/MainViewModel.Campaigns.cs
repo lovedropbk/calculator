@@ -172,6 +172,8 @@ public partial class MainViewModel
             StandardCampaigns.Clear();
             CampaignSummaries.Clear();
 
+            bool mbspUnavailable = false;
+
             // Baseline (no campaign) - but should still apply leftover subsidy budget for consistent calculation!
             var leftoverBudgetForBaseline = Math.Max(0, SubsidyBudget);  // All budget is available for baseline
             var baseline = ComputeScenarioWithCommission(
@@ -195,8 +197,9 @@ public partial class MainViewModel
                 Title = "No Campaign (Baseline)",
                 DealerCommission = $"{baseline.commissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({baseline.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
                 Monthly = ((double)baseline.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                // Show the customer's NOMINAL rate, not the effective/flat rate!
-                Effective = (CustomerRatePct / 100.0).ToString("0.00%"),
+                // Show the customer's Flat Rate
+                FlatRate = ((double)baseline.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+                NominalRate = (CustomerRatePct / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
                 Downpayment = baselineDp.ToString("N0", CultureInfo.InvariantCulture),
                 TransactionPrice = ((decimal)PriceExTax).ToString("N0", CultureInfo.InvariantCulture),
                 SubsidyUsed = "0",
@@ -260,8 +263,30 @@ public partial class MainViewModel
                         case "free_mbsp":
                             if (c.MbspCost.HasValue)
                             {
-                                upCostDelta += (decimal)c.MbspCost.Value;
-                                freeMbspThb = c.MbspCost.Value;
+                                double actualMbspCost = c.MbspCost.Value;
+                                bool mbspAvailable = true;
+                                if (_selectedVehicle != null)
+                                {
+                                     if (_selectedVehicle.MbspCosts.TryGetValue("Easy Care 5", out var vehCost))
+                                     {
+                                         actualMbspCost = vehCost;
+                                     }
+                                     else
+                                     {
+                                         mbspAvailable = false;
+                                         mbspUnavailable = true;
+                                     }
+                                }
+                                
+                                if (mbspAvailable)
+                                {
+                                    upCostDelta += (decimal)actualMbspCost;
+                                    freeMbspThb = actualMbspCost;
+                                }
+                                else
+                                {
+                                    continue; // Skip
+                                }
                             }
                             break;
                         case "cash_discount":
@@ -295,10 +320,17 @@ public partial class MainViewModel
                     if (c.Type == "subinterest" && rateOverride.HasValue)
                     {
                         var requiredSubsidy = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, rateOverride.Value);
-                        // Use the required subsidy amount (capped by available budget) for rate buydown
-                        upSubDelta = (decimal)Math.Min(requiredSubsidy, leftoverBudget);
-                        // Track the subsidy used for subinterest rate buydown
-                        subinterestSubsidyThb = Math.Min(requiredSubsidy, leftoverBudget);
+                        
+                        if (requiredSubsidy > leftoverBudget)
+                        {
+                             // Budget exceeded! Calculate lowest rate we CAN achieve.
+                             rateOverride = CalculateLowestAchievableRate(vehiclePrice, subIsPct, subVal, upCostDelta, CustomerRatePct, (double)leftoverBudget);
+                             // Re-calculate required subsidy (should match leftoverBudget closely)
+                             requiredSubsidy = (double)leftoverBudget;
+                        }
+
+                        upSubDelta = (decimal)requiredSubsidy;
+                        subinterestSubsidyThb = requiredSubsidy;
                     }
                     else
                     {
@@ -322,9 +354,10 @@ public partial class MainViewModel
                         Title = c.Type,
                         DealerCommission = $"{outc.commissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({outc.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
                         Monthly = ((double)outc.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                        // Show the customer's NOMINAL rate that they pay (may be adjusted by campaign)
-                        // For subinterest campaigns with rate override, show the target rate; otherwise show the base customer rate
-                        Effective = ((rateOverride ?? CustomerRatePct) / 100.0).ToString("0.00%"),
+                        // Show Flat Rate
+                        FlatRate = ((double)outc.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+                        // Show Nominal Rate (Target if overridden, else Customer)
+                        NominalRate = ((rateOverride ?? CustomerRatePct) / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
                         Downpayment = dp.ToString("N0", CultureInfo.InvariantCulture),
                         TransactionPrice = (vehiclePrice).ToString("N0", CultureInfo.InvariantCulture),
                         SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture),
@@ -374,6 +407,17 @@ public partial class MainViewModel
                 SelectedCampaign = CampaignSummaries.FirstOrDefault(c => c.CampaignId == "baseline");
 
             Status = $"Loaded {CampaignSummaries.Count} options";
+
+            if (mbspUnavailable)
+            {
+                NotificationMessage = "MBSP campaign not available due to missing MBSP offer for this model.";
+                NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
+                IsNotificationOpen = true;
+            }
+            else
+            {
+                IsNotificationOpen = false;
+            }
         }
         catch (Exception ex)
         {

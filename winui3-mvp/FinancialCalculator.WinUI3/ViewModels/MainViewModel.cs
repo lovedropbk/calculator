@@ -22,6 +22,8 @@ public partial class MainViewModel : ObservableObject
     private readonly LocalEngineService _local = new();
     private readonly LocalCampaignsProvider _campaigns = new();
     private readonly LocalScenarioService _scenarios = new();
+    private readonly VehicleCatalogService _vehicleCatalog = new();
+    private readonly StandardRateService _standardRates = new();
 
     // MARK: Parameter Set Caching (legacy no-op)
 
@@ -53,6 +55,14 @@ public partial class MainViewModel : ObservableObject
     public bool IsCalculating { get => _isCalculating; set => SetProperty(ref _isCalculating, value); }
     public IRelayCommand RecalculateCommand { get; }
 
+    // MARK: Notification
+    private bool _isNotificationOpen;
+    public bool IsNotificationOpen { get => _isNotificationOpen; set => SetProperty(ref _isNotificationOpen, value); }
+    private string _notificationMessage = "";
+    public string NotificationMessage { get => _notificationMessage; set => SetProperty(ref _notificationMessage, value); }
+    private Microsoft.UI.Xaml.Controls.InfoBarSeverity _notificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational;
+    public Microsoft.UI.Xaml.Controls.InfoBarSeverity NotificationSeverity { get => _notificationSeverity; set => SetProperty(ref _notificationSeverity, value); }
+
     public MainViewModel()
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
@@ -72,6 +82,30 @@ public partial class MainViewModel : ObservableObject
             await Task.Delay(200);
 
             await InitializeParameterSetAsync();
+
+            // Load catalogs
+            await _vehicleCatalog.LoadAsync();
+            await _standardRates.LoadAsync();
+
+            // Populate vehicles (classes followed by models)
+            var classes = _vehicleCatalog.GetVehicleClasses();
+            foreach (var c in classes)
+            {
+                var avg = _vehicleCatalog.GetClassAverage(c);
+                if (avg != null) AllVehicles.Add(avg);
+            }
+            // Separator if needed, but ComboBox doesn't support it easily without templating.
+            // Just add models now.
+            foreach (var c in classes)
+            {
+                foreach (var v in _vehicleCatalog.GetVehiclesByClass(c))
+                {
+                    AllVehicles.Add(v);
+                }
+            }
+
+            // Populate MBSP packages
+            foreach (var p in _vehicleCatalog.MbspPackages) MbspPackages.Add(p);
 
             // Commission policy: compute locally
             RefreshCommissionPolicyLocal();
@@ -163,7 +197,7 @@ public partial class MainViewModel : ObservableObject
             {
                 MonthlyInstallment = ((double)scenario.Deal.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
                 NominalRate = (CustomerRatePct / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                EffectiveRate = ((double)scenario.Deal.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+                FlatRate = ((double)scenario.Deal.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
                 FinancedAmount = ((double)scenario.Deal.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
                 RoRAC = ((double)scenario.Profit.AcquisitionRoRac).ToString("0.00%"),
             };
@@ -348,7 +382,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(IdcTotalText));
 
         OnPropertyChanged(nameof(WfCustomerRateText));
-        OnPropertyChanged(nameof(WfDealIRREffectiveText));
+        OnPropertyChanged(nameof(WfDealIRRText));
         OnPropertyChanged(nameof(WfIDCUpfrontAnnualizedText));
         OnPropertyChanged(nameof(WfSubsidyUpfrontAnnualizedText));
         OnPropertyChanged(nameof(WfCostOfDebtMatchedText));
@@ -425,7 +459,7 @@ public partial class MainViewModel : ObservableObject
             sb.AppendLine($"Selected Campaign,{(active?.Title ?? "-")}");
             sb.AppendLine($"Monthly Installment (THB),{res.outputs.MonthlyRate.ToString("N0", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Nominal Rate,{(CustomerRatePct / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Effective Rate,{((double)res.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
+            sb.AppendLine($"Flat Rate,{((double)res.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Financed Amount (THB),{res.outputs.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Acq. RoRAC,{((double)res.profit.AcquisitionRoRac).ToString("0.00%", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Dealer Commission (THB),{res.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)}");
@@ -436,7 +470,7 @@ public partial class MainViewModel : ObservableObject
             // Profitability Details
             sb.AppendLine("Profitability Details");
             sb.AppendLine("Metric,Value");
-            sb.AppendLine($"Deal IRR Effective,{_wfDealIRREffective.ToString("0.00%", CultureInfo.InvariantCulture)}");
+            sb.AppendLine($"Deal IRR,{_wfDealIRREffective.ToString("0.00%", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Deal IRR Nominal,{_wfDealIRRNominal.ToString("0.00%", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Cost of Debt Matched,{_wfCostOfDebtMatched.ToString("0.00%", CultureInfo.InvariantCulture)}");
             sb.AppendLine($"Matched Funded Spread,{_wfMatchedFundedSpread.ToString("0.00%", CultureInfo.InvariantCulture)}");
@@ -745,7 +779,7 @@ public partial class MainViewModel : ObservableObject
 
             // 5. Update VM with results
             vm.Monthly = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture);
-            vm.Effective = ((targetRatePct ?? CustomerRatePct) / 100.0).ToString("0.00%");
+            vm.FlatRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%"); // Use actual calculated flat rate
             vm.TransactionPrice = transactionPrice.ToString("N0", CultureInfo.InvariantCulture);
             vm.Downpayment = ComputeDownpaymentDisplay(transactionPrice).ToString("N0", CultureInfo.InvariantCulture);
             vm.CashDiscount = cashDiscount.ToString("N0", CultureInfo.InvariantCulture);
@@ -787,7 +821,7 @@ public partial class MainViewModel : ObservableObject
         {
             MonthlyInstallment = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
             NominalRate = ((vm.TargetRatePct ?? CustomerRatePct) / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-            EffectiveRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+            FlatRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
             FinancedAmount = ((double)outc.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
             RoRAC = ((double)profit.AcquisitionRoRac).ToString("0.00%"),
         };
@@ -915,6 +949,31 @@ public partial class MainViewModel : ObservableObject
         return shortfall;
     }
 
+    private double CalculateLowestAchievableRate(decimal vehiclePrice, bool subdownIsPercent, decimal subdownValue, decimal upfrontCostsDelta, double baseRatePct, double availableBudget)
+    {
+        // Binary search for target rate that results in required subsidy <= availableBudget
+        double low = 0;
+        double high = baseRatePct;
+        double bestRate = baseRatePct;
+
+        for (int i = 0; i < 20; i++)
+        {
+            double mid = (low + high) / 2;
+            double required = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, baseRatePct, mid);
+            
+            if (required > availableBudget)
+            {
+                low = mid; // Need higher rate
+            }
+            else
+            {
+                bestRate = mid;
+                high = mid; // Achievable, try lower
+            }
+        }
+        return Math.Round(bestRate, 2);
+    }
+
     // MARK: Bottom Summary Bindings for Details/Key Metrics
     private double _activeFsInsurance;
     private double _activeFsMbsp;
@@ -932,7 +991,7 @@ public partial class MainViewModel : ObservableObject
     private double _wfCustomerRate;
     private double _wfIDCUpfrontAnnualized;
     private double _wfSubsidyUpfrontAnnualized;
-    private double _wfDealIRREffective;
+    private double _wfDealIRREffective; // Keeping internal name for now if it maps to Engine's DealIrrEffective
     private double _wfCostOfDebtMatched;
     private double _wfMatchedFundedSpread;
     private double _wfGrossInterestMargin;
@@ -959,7 +1018,7 @@ public partial class MainViewModel : ObservableObject
     public string WfCustomerRateText => Pct(_wfCustomerRate);
     public string WfIDCUpfrontAnnualizedText => Pct(_wfIDCUpfrontAnnualized);
     public string WfSubsidyUpfrontAnnualizedText => Pct(_wfSubsidyUpfrontAnnualized);
-    public string WfDealIRREffectiveText => Pct(_wfDealIRREffective);
+    public string WfDealIRRText => Pct(_wfDealIRREffective);
     public string WfCostOfDebtMatchedText => Pct(_wfCostOfDebtMatched);
     public string WfMatchedFundedSpreadText => Pct(_wfMatchedFundedSpread);
     public string WfGrossInterestMarginText => Pct(_wfGrossInterestMargin);
@@ -982,7 +1041,7 @@ public partial class MetricsViewModel : ObservableObject
 {
     public string MonthlyInstallment { get; set; } = "";
     public string NominalRate { get; set; } = "";
-    public string EffectiveRate { get; set; } = "";
+    public string FlatRate { get; set; } = "";
     public string FinancedAmount { get; set; } = "";
     public string RoRAC { get; set; } = "";
 }
@@ -994,7 +1053,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string Title { get; set; } = string.Empty;
     public string DealerCommission { get; set; } = string.Empty;
     public string Monthly { get; set; } = string.Empty;
-    public string Effective { get; set; } = string.Empty;
+    public string NominalRate { get; set; } = string.Empty;
+    public string FlatRate { get; set; } = string.Empty;
     public string Downpayment { get; set; } = string.Empty;
     public string TransactionPrice { get; set; } = string.Empty;
     public string CashDiscount { get; set; } = string.Empty;
@@ -1036,6 +1096,20 @@ public partial class CampaignSummaryViewModel : ObservableObject
         }
     }
 
+    // MBSP Package Selection
+    private string _selectedMbspPackage = "Easy Care 5";
+    public string SelectedMbspPackage
+    {
+        get => _selectedMbspPackage;
+        set
+        {
+            if (SetProperty(ref _selectedMbspPackage, value))
+            {
+                 // Handled by parent VM if needed, or just used for binding
+            }
+        }
+    }
+
     public CampaignSummaryViewModel Clone() => new CampaignSummaryViewModel
     {
         CampaignId = this.CampaignId,
@@ -1043,7 +1117,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
         Title = this.Title,
         DealerCommission = this.DealerCommission,
         Monthly = this.Monthly,
-        Effective = this.Effective,
+        NominalRate = this.NominalRate,
+        FlatRate = this.FlatRate,
         Downpayment = this.Downpayment,
         TransactionPrice = this.TransactionPrice,
         CashDiscount = this.CashDiscount,
@@ -1061,7 +1136,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
         SubinterestSubsidyAmount = this.SubinterestSubsidyAmount,
         IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
         FSFreeMBSPAmount = this.FSFreeMBSPAmount,
-        TargetRatePct = this.TargetRatePct
+        TargetRatePct = this.TargetRatePct,
+        SelectedMbspPackage = this.SelectedMbspPackage
     };
 }
 
