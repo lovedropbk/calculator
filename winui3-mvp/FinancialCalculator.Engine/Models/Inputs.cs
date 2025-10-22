@@ -51,4 +51,9 @@ public sealed record class CalculatorInputs
     public decimal SubdownPercent { get; init; }
     public decimal SubdownTHB { get; init; }
 
+    // Risk Parameters (for Basel II CoR/EC)
+    public string CustomerType { get; init; } = "RETAIL PRIVATE";
+    public string AssetState { get; init; } = "N"; // "N" = New, "U" = Used
+    public string AssetValuationCurve { get; init; } = "MBPC"; // e.g., MBPC, MBVA
+    public string Rating { get; init; } = "4.0";
 }

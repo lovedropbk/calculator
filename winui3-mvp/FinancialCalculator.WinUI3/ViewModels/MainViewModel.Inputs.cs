@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -98,6 +99,26 @@ public partial class MainViewModel
     // Column width of the left Deal Inputs panel; bound to ColumnDefinition.Width
     private string _dealInputsColumnWidth = "420";
     public string DealInputsColumnWidth { get => _dealInputsColumnWidth; set => SetProperty(ref _dealInputsColumnWidth, value); }
+
+    // MARK: Risk Parameters
+    private string _selectedCustomerType = "RETAIL PRIVATE";
+    public string SelectedCustomerType { get => _selectedCustomerType; set { if (SetProperty(ref _selectedCustomerType, value)) OnRiskParamChanged(); } }
+    
+    private string _selectedAssetState = "New";
+    public string SelectedAssetState { get => _selectedAssetState; set { if (SetProperty(ref _selectedAssetState, value)) OnRiskParamChanged(); } }
+
+    private string _selectedAssetValuationCurve = "MBPC";
+    public string SelectedAssetValuationCurve { get => _selectedAssetValuationCurve; set { if (SetProperty(ref _selectedAssetValuationCurve, value)) OnRiskParamChanged(); } }
+
+    private string _selectedRating = "5, 5.0";
+    public string SelectedRating { get => _selectedRating; set { if (SetProperty(ref _selectedRating, value)) OnRiskParamChanged(); } }
+
+    public ObservableCollection<string> CustomerTypes { get; } = new() { "RETAIL PRIVATE", "RETAIL SMALL BUSINESS", "FLEET", "DEALER" };
+    public ObservableCollection<string> AssetStates { get; } = new() { "New", "Used" };
+    public ObservableCollection<string> AssetValuationCurves { get; } = new() { "MBPC", "MBVA", "OOPC", "MBCV", "FUCV" };
+    public ObservableCollection<string> CreditRatings { get; } = new() { "1, 1.0", "2, 2.0", "3, 3.0", "3.5", "4, 4.0", "5, 5.0", "6, 6.0", "7, 7.0", "8, 8.0", "Not Rated" };
+
+    private void OnRiskParamChanged() => _debounceActive.Debounce(50, () => RecalculateCommand.Execute(null));
 
     [RelayCommand]
     private void ToggleDealInputsCollapsed()

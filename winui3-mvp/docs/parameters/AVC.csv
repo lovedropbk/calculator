@@ -1,0 +1,5 @@
+Entity,Order,AssetValuationCurve,Formula,Parameter_a,Parameter_b
+THA-FS,1,"OOPC,MBPC",a*e^bx,0.923,-0.148
+THA-FS,1,MBVA,a*e^bx,0.9314,-0.156
+THA-FS,1,MBBU,a*ln(x)+b,-0.221,0.6512
+THA-FS,1,"OOCV,MBCV,FUCV",a*e^bx,0.8037,-0.128

@@ -27,7 +27,10 @@ public sealed class FinancialCalculator
             DealIrrAnnualPercentWithoutUpfrontIncomes = Decimal.Round(dealIrrNoUpfrontIncomes, 6),
             DealIrrAnnualPercentWithoutUpfrontCosts = Decimal.Round(dealIrrNoUpfrontCosts, 6),
             DealIrrAnnualPercentBaseline = Decimal.Round(dealIrrBaseline, 6),
-            Schedule = schedule
+            Schedule = schedule,
+            T0Disbursement = financed,
+            T0UpfrontSubsidies = input.UpfrontSubsidies,
+            T0UpfrontCosts = input.UpfrontCosts
         };
     }
 

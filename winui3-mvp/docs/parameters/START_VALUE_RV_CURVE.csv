@@ -1,0 +1,3 @@
+Entity,Order,Segment,Brand,Borrower Type,Financial Product Type Short Name,AssetState,ListPriceFilledFlag,CustomerType,AssetValuationCurve,NumberOfVehicles,List_Sales_Price,Division_By,Multiplication,Multiplication_DA
+THA-FS,1,PC,,,,,N,,,,S,0.93,1,1
+THA-FS,2,,,,,,N,,,,S,1,1,1

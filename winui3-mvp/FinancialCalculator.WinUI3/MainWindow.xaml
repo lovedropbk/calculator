@@ -301,6 +301,48 @@
                                     <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Style="{StaticResource LabelTextStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
+
+                            <!-- Risk Parameters Expander -->
+                            <muxc:Expander Header="Risk Parameters" HorizontalAlignment="Stretch" IsExpanded="False" Margin="0,12,0,0">
+                                <Grid RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Customer Type" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox SelectedItem="{Binding SelectedCustomerType, Mode=TwoWay}"
+                                              ItemsSource="{Binding CustomerTypes}"
+                                              Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                                              HorizontalAlignment="Stretch" Margin="8,0,0,0"/>
+
+                                    <TextBlock Text="Asset State" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox SelectedItem="{Binding SelectedAssetState, Mode=TwoWay}"
+                                              ItemsSource="{Binding AssetStates}"
+                                              Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                              HorizontalAlignment="Stretch" Margin="8,0,0,0"/>
+
+                                    <TextBlock Text="Asset Class (AVC)" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox SelectedItem="{Binding SelectedAssetValuationCurve, Mode=TwoWay}"
+                                              ItemsSource="{Binding AssetValuationCurves}"
+                                              Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                              HorizontalAlignment="Stretch" Margin="8,0,0,0"/>
+
+                                    <TextBlock Text="Credit Rating" Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox SelectedItem="{Binding SelectedRating, Mode=TwoWay}"
+                                              ItemsSource="{Binding CreditRatings}"
+                                              Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                              HorizontalAlignment="Stretch" Margin="8,0,0,0"/>
+                                </Grid>
+                            </muxc:Expander>
+
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
@@ -690,10 +732,10 @@
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Customer Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding WfCustomerRateText}"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="- IDC (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="IDC (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WfIDCUpfrontAnnualizedText}"/>
                                         
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="+ Subsidy (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Subsidy (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding WfSubsidyUpfrontAnnualizedText}"/>
 
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="= Deal IRR:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -701,7 +743,7 @@
                                         
                                         <Border Grid.Row="4" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="- Cost of Debt (MFR):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Cost of Debt (MFR):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding WfCostOfDebtMatchedText}"/>
                                         
                                         <TextBlock Grid.Row="6" Grid.Column="0" Text="= Gross Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -709,7 +751,7 @@
 
                                         <Border Grid.Row="7" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
                                         
-                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="- Matched Funded Spread:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Matched Funded Spread:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding WfMatchedFundedSpreadText}"/>
 
                                         <TextBlock Grid.Row="9" Grid.Column="0" Text="= Net Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -717,13 +759,13 @@
 
                                         <Border Grid.Row="10" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="- Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding WfCostOfCreditRiskText}"/>
                                         
-                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="- OPEX:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="OPEX:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding WfOPEXText}"/>
                                         
-                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="- Capital Advantage:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Capital Advantage:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding WfCapitalAdvantageText}"/>
 
                                         <TextBlock Grid.Row="14" Grid.Column="0" Text="= Net EBIT Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -731,7 +773,7 @@
 
                                         <Border Grid.Row="15" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="16" Grid.Column="0" Text="/ Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="16" Grid.Column="0" Text="Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding WfEconomicCapitalText}"/>
                                         
                                         <TextBlock Grid.Row="17" Grid.Column="0" Text="= Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>

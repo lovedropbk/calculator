@@ -1,0 +1,4 @@
+Entity,Order,CustomerType,Segment,AssetValuationCurve,AssetState,Shift Factor
+THA-FS,1,"RETAIL PRIVATE,RETAIL SMALL BUSINESS",,,,1.7
+THA-FS,2,FLEET,,,,1.488
+THA-FS,3,DEALER,,,,1.488

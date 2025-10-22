@@ -22,7 +22,11 @@ public sealed class LocalEngineService
         decimal upfrontSubsidies,
         decimal upfrontCosts,
         bool subdownIsPercent,
-        decimal subdownValue)
+        decimal subdownValue,
+        string customerType = "RETAIL PRIVATE",
+        string assetState = "N",
+        string avc = "MBPC",
+        string rating = "4.0")
     {
         var input = new CalculatorInputs
         {
@@ -42,7 +46,11 @@ public sealed class LocalEngineService
             UpfrontCosts = upfrontCosts,
             SubdownIsPercent = subdownIsPercent,
             SubdownPercent = subdownIsPercent ? subdownValue : 0,
-            SubdownTHB = subdownIsPercent ? 0 : subdownValue
+            SubdownTHB = subdownIsPercent ? 0 : subdownValue,
+            CustomerType = customerType,
+            AssetState = assetState,
+            AssetValuationCurve = avc,
+            Rating = rating
         };
         return _calc.Calculate(input);
     }

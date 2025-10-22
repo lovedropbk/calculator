@@ -1,0 +1,11 @@
+Entity,Order,Financial Product Name,CustomerType,AssetValuationCurve,AssetState,Tier,FIXED_LGD_FLAG,BB_PRODUCT_FLAG,FIXED_LGD_VALUE,FIXED_BALOON_FLAG
+THA-FS,1,Wholesale Finance Multi Brand - Used Vehicles,,,,,Y,N,0.2,Y
+THA-FS,2,Wholesale Finance Mercerdes Benz - New Vehicles,,,,,Y,N,0.05,Y
+THA-FS,3,Wholesale Finance Mitsubishi Fuso - New Vehicles,,,,,Y,N,0.15,Y
+THA-FS,4,Wholesale Finance Mercerdes Benz - Demo Vehicles,,,,,Y,N,0.1,Y
+THA-FS,5,Dealer Working Capital Facility - Non revolving 50% PLS,,,,,Y,N,0.5,N
+THA-FS,6,Dealer Working Capital Facility - Non revolving 20% PLS,,,,,Y,N,0.2,N
+THA-FS,7,Dealer Working Capital Facility - Revolving 50% PLS,,,,,Y,N,0.5,N
+THA-FS,8,Dealer Working Capital Facility - Revolving 20% PLS,,,,,Y,N,0.2,N
+THA-FS,9,Dealer Real Estate Finance,,,,,Y,N,0.07,N
+THA-FS,10,,,,,,N,N,-1,N

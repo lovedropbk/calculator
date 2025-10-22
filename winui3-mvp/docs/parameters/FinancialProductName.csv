@@ -1,0 +1,12 @@
+Entity,Sort_Order,Financial Product Type,Financial Product Name
+THA-FS,1,Finance Lease,Retail Financing  MBPC Used
+THA-FS,2,Balloon Finance Lease,Retail & Fleet Financing  MBPC & CVs New
+THA-FS,3,Dealer - Floorplan Financing or Leasing,Wholesale Finance Multi Brand - Used Vehicles
+THA-FS,4,Dealer - Floorplan Financing or Leasing,Wholesale Finance Mercerdes Benz - New Vehicles
+THA-FS,5,Dealer - Floorplan Financing or Leasing,Wholesale Finance Mitsubishi Fuso - New Vehicles
+THA-FS,6,Dealer - Floorplan Financing or Leasing,Wholesale Finance Mercerdes Benz - Demo Vehicles
+THA-FS,7,Dealer - Working Capital Financing,Dealer Working Capital Facility - Non revolving 50% PLS
+THA-FS,8,Dealer - Working Capital Financing,Dealer Working Capital Facility - Non revolving 20% PLS
+THA-FS,9,Dealer - Working Capital Financing,Dealer Working Capital Facility - Revolving 50% PLS
+THA-FS,10,Dealer - Working Capital Financing,Dealer Working Capital Facility - Revolving 20% PLS
+THA-FS,11,Dealer - Working Capital Financing,Dealer Real Estate Finance

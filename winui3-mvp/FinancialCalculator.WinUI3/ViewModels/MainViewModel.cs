@@ -150,7 +150,12 @@ public partial class MainViewModel : ObservableObject
                 UpfrontSubsidies = (decimal)SubsidyBudget,
                 UpfrontCosts = (decimal)(DealerCommissionResolvedAmt + IdcOther),
                 SubdownIsPercent = false,
-                SubdownValue = 0
+                SubdownValue = 0,
+                // Risk Parameters
+                CustomerType = SelectedCustomerType,
+                AssetState = string.Equals(SelectedAssetState, "New", StringComparison.OrdinalIgnoreCase) ? "N" : "U",
+                AssetValuationCurve = SelectedAssetValuationCurve,
+                Rating = SelectedRating
             });
 
             // Update key metrics from local engine (monthly, flat rate, financed amount)

@@ -8,6 +8,14 @@ namespace FinancialCalculator.WinUI3.Services;
 public sealed class LocalScenarioService
 {
     private readonly LocalEngineService _engine = new();
+    private readonly RiskParameterRepository _riskRepo;
+
+    public LocalScenarioService()
+    {
+        _riskRepo = new RiskParameterRepository();
+        // NOTE: Hardcoded path for current environment. In prod, this should be relative to app base.
+        _riskRepo.Load(@"C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\docs\parameters");
+    }
 
     public sealed record class ScenarioInput
     {
@@ -26,6 +34,11 @@ public sealed class LocalScenarioService
         public decimal UpfrontCosts { get; init; }
         public bool SubdownIsPercent { get; init; }
         public decimal SubdownValue { get; init; }
+        // Risk Inputs
+        public string CustomerType { get; init; } = "RETAIL PRIVATE";
+        public string AssetState { get; init; } = "N";
+        public string AssetValuationCurve { get; init; } = "MBPC";
+        public string Rating { get; init; } = "4.0";
     }
 
     public sealed class ScenarioOutput
@@ -51,15 +64,28 @@ public sealed class LocalScenarioService
             upfrontSubsidies: i.UpfrontSubsidies,
             upfrontCosts: i.UpfrontCosts,
             subdownIsPercent: i.SubdownIsPercent,
-            subdownValue: i.SubdownValue
+            subdownValue: i.SubdownValue,
+            customerType: i.CustomerType,
+            assetState: i.AssetState,
+            avc: i.AssetValuationCurve,
+            rating: i.Rating
         );
 
-        var cof = BuildCofParams(i.Market);
+        // Calculate Risk Parameters
+        double pd = _riskRepo.GetPd(i.CustomerType, i.Rating);
+        var (dcfLgd, downturnLgd) = _riskRepo.GetLgd(i.CustomerType, i.AssetState, i.AssetValuationCurve);
+        
+        double corAnnual = BaselIIEngine.CalculateEL(pd, dcfLgd);
+        
+        // Use EC_TOTAL from parameters as the pragmatic total Economic Capital ratio
+        double ecTotal = _riskRepo.GetEcTotal();
+
+        var cof = BuildCofParams(i.Market, (decimal)corAnnual, (decimal)ecTotal);
         var profit = RoracCalculator.Compute(outputs, cof);
         return new ScenarioOutput { Deal = outputs, Profit = profit };
     }
 
-    private static RoracCalculator.CofParams BuildCofParams(string market)
+    private static CofParams BuildCofParams(string market, decimal cor, decimal ecRatio)
     {
         var curve = new Dictionary<int, decimal>
         {
@@ -70,12 +96,13 @@ public sealed class LocalScenarioService
             {60, 0.0195m},
         };
         var opex = string.Equals(market, "AT", StringComparison.OrdinalIgnoreCase) ? 0.088m : -0.0095m;
-        return new RoracCalculator.CofParams
+        return new CofParams
         {
             Curve = curve,
             Spread = 0.0025m,
             OpexPct = opex,
-            EconCapRatio = 0.08m
+            EconCapRatio = ecRatio,
+            CostOfRisk = cor
         };
     }
 }

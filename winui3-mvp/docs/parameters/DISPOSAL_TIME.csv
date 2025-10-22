@@ -1,0 +1,8 @@
+Entity,Order,Financial Product Type Short Name,AssetValuationCurve,AssetState,Value
+THA-FS,1,,MBPC,,0
+THA-FS,2,,MBVA,,0
+THA-FS,3,,MBBU,,0
+THA-FS,4,,FUCV,,0
+THA-FS,5,,MBCV,,0
+THA-FS,6,,OOCV,,0
+THA-FS,7,,OOPC,,0
