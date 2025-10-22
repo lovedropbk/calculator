@@ -40,7 +40,7 @@ public static class DcfModel
         // --- 3. T0 Cashflows ---
         // These are already Present Values (time 0, DF=1.0)
         double pvUpfrontSubsidies = (double)deal.T0UpfrontSubsidies;
-        double pvUpfrontCosts = (double)deal.T0UpfrontCosts;
+        double pvUpfrontCosts = -(double)deal.T0UpfrontCosts; // Negative cost
 
         // --- 4. Loop Schedule (Period-by-Period DCF) ---
         var orderedSchedule = deal.Schedule.OrderBy(s => s.Period).ToList();
@@ -105,10 +105,10 @@ public static class DcfModel
         decimal gim = annGrossInterest + annFunding;
         decimal nim = gim + annMfs;
         // Net EBIT = NIM + Risk + Opex (neg) + CapAdv + Upfronts(Net)
-        decimal netEbit = nim + annRisk + annOpex + annCapAdv + annUpfrontSubsidies - annUpfrontCosts;
+        decimal netEbit = nim + annRisk + annOpex + annCapAdv + annUpfrontSubsidies + annUpfrontCosts;
 
         // RoRAC = PV(Net Income) / PV(EC)
-        double totalPvNetIncome = pvGrossInterest + pvFunding + pvMfs + pvRisk + pvOpex + pvCapAdv + pvUpfrontSubsidies - pvUpfrontCosts;
+        double totalPvNetIncome = pvGrossInterest + pvFunding + pvMfs + pvRisk + pvOpex + pvCapAdv + pvUpfrontSubsidies + pvUpfrontCosts;
         decimal rorac = pvEc > 1e-9 ? (decimal)(totalPvNetIncome / pvEc) : 0m;
 
         // Pass-through generic periodic fees for reporting if needed

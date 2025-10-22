@@ -16,6 +16,7 @@ The financial calculator engine has been upgraded to include a full period-by-pe
     - Generates cashflow streams for Gross Interest, Funding Cost (MFR), Risk Cost (EL), Opex, and Capital Benefit.
     - Discounts all streams to $T=0$ using MFR as the discount rate.
     - Calculates RoRAC as $\frac{\sum PV(\text{Net Income})}{\sum PV(\text{Economic Capital})}$.
+    - **Sign Convention**: All costs (Funding, Risk, Opex) are stored and calculated as negative values internally. Net Income is the simple sum of all components.
 
 ### 2. Yield Curve Interpolation (`YieldCurve.cs`)
 - **Location**: `FinancialCalculator.Engine.Core`
@@ -46,7 +47,7 @@ The financial calculator engine has been upgraded to include a full period-by-pe
     3.  Calls `BaselIIEngine` to calculate annualized `CostOfRisk` (EL).
     4.  Uses `EC_TOTAL` from repository for `EconCapRatio` (pragmatic approach matching expected ~8-12% range).
     5.  Populates `CofParams` with these dynamic values.
-    6.  Calls `RoracCalculator.Compute` (which now calls `DcfModel.Compute`) with the dynamic parameters.
+    6.  Calls `DcfModel.Compute` directly with the dynamic parameters.
 
 ## User Interface
 - **New Section**: "Risk Parameters" added to the main calculator input area (expandable, folded by default).

@@ -732,10 +732,10 @@
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Customer Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding WfCustomerRateText}"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="- IDC (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="IDC (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WfIDCUpfrontAnnualizedText}"/>
                                         
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="+ Subsidy (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Subsidy (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding WfSubsidyUpfrontAnnualizedText}"/>
 
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="= Deal IRR:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -743,7 +743,7 @@
                                         
                                         <Border Grid.Row="4" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="- Cost of Debt (MFR):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Cost of Debt (MFR):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding WfCostOfDebtMatchedText}"/>
                                         
                                         <TextBlock Grid.Row="6" Grid.Column="0" Text="= Gross Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -751,7 +751,7 @@
 
                                         <Border Grid.Row="7" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
                                         
-                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="- Matched Funded Spread:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Matched Funded Spread:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding WfMatchedFundedSpreadText}"/>
 
                                         <TextBlock Grid.Row="9" Grid.Column="0" Text="= Net Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -759,13 +759,13 @@
 
                                         <Border Grid.Row="10" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="- Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding WfCostOfCreditRiskText}"/>
                                         
-                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="- OPEX:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="OPEX:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding WfOPEXText}"/>
                                         
-                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="- Capital Advantage:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Capital Advantage:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding WfCapitalAdvantageText}"/>
 
                                         <TextBlock Grid.Row="14" Grid.Column="0" Text="= Net EBIT Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
@@ -773,7 +773,7 @@
 
                                         <Border Grid.Row="15" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
 
-                                        <TextBlock Grid.Row="16" Grid.Column="0" Text="/ Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Row="16" Grid.Column="0" Text="Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="16" Grid.Column="1" Text="{Binding WfEconomicCapitalText}"/>
                                         
                                         <TextBlock Grid.Row="17" Grid.Column="0" Text="= Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>

@@ -81,7 +81,7 @@ public sealed class LocalScenarioService
         double ecTotal = _riskRepo.GetEcTotal();
 
         var cof = BuildCofParams(i.Market, (decimal)corAnnual, (decimal)ecTotal);
-        var profit = RoracCalculator.Compute(outputs, cof);
+        var profit = DcfModel.Compute(outputs, cof);
         return new ScenarioOutput { Deal = outputs, Profit = profit };
     }
 
