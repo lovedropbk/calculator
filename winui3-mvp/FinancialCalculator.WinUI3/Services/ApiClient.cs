@@ -191,7 +191,7 @@ namespace FinancialCalculator.WinUI3.Services
                     
                     result.Quote.MonthlyInstallment = GetDoubleOrParse(quoteElem, "monthly_installment");
                     result.Quote.CustomerRateNominal = GetDoubleOrParse(quoteElem, "customer_rate_nominal");
-                    result.Quote.CustomerRateEffective = GetDoubleOrParse(quoteElem, "customer_rate_effective");
+                    result.Quote.CustomerFlatRate = GetDoubleOrParse(quoteElem, "customer_flat_rate");
                     
                     if (quoteElem.TryGetProperty("profitability", out var prof))
                     {

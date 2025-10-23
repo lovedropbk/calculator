@@ -1,33 +1,20 @@
 using System;
 using System.Collections.Generic;
-using FinancialCalculator.Engine.Core;
 using FinancialCalculator.Engine.Models;
 
-namespace FinancialCalculator.WinUI3.Services;
+namespace FinancialCalculator.Engine.Core;
 
-public sealed class LocalScenarioService
+public sealed class DealEngine
 {
-    private readonly LocalEngineService _engine = new();
+    private readonly FinancialCalculator _calc = new();
     private readonly RiskParameterRepository _riskRepo;
 
-    public LocalScenarioService(string? parametersPath = null)
+    public DealEngine(RiskParameterRepository riskRepo)
     {
-        _riskRepo = new RiskParameterRepository();
-        // Use relative path from app base, or override for testing
-        string defaultPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Parameters");
-        
-        // Fallback for dev environment if not copied (e.g. during some test runs if not fully built)
-        if (!System.IO.Directory.Exists(defaultPath))
-        {
-             // Try to find it relative to project root if we are in dev
-             string devPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\winui3-mvp\docs\parameters"));
-             if (System.IO.Directory.Exists(devPath)) defaultPath = devPath;
-        }
-
-        _riskRepo.Load(parametersPath ?? defaultPath);
+        _riskRepo = riskRepo ?? throw new ArgumentNullException(nameof(riskRepo));
     }
 
-    public sealed record class ScenarioInput
+    public sealed record class DealInput
     {
         public string Market { get; init; } = "TH";
         public string Product { get; init; } = "HP";
@@ -51,35 +38,40 @@ public sealed class LocalScenarioService
         public string Rating { get; init; } = "4.0";
     }
 
-    public sealed class ScenarioOutput
+    public sealed class DealOutput
     {
         public CalculatorOutputs Deal { get; init; } = default!;
         public Profitability Profit { get; init; } = default!;
     }
 
-    public ScenarioOutput Compute(ScenarioInput i)
+    public DealOutput Calculate(DealInput i)
     {
-        var outputs = _engine.Calculate(
-            timing: i.Timing,
-            product: i.Product,
-            vehicleSalesPrice: i.VehiclePrice,
-            additionalFinancedItems: i.AdditionalFinancedItems,
-            downIsPercent: i.DownIsPercent,
-            downValue: i.DownValue,
-            termMonths: i.TermMonths,
-            customerRatePercent: i.CustomerRatePercent,
-            balloonIsPercent: i.BalloonIsPercent,
-            balloonValue: i.BalloonValue,
-            periodicFeeAnnualPercent: 0m,
-            upfrontSubsidies: i.UpfrontSubsidies,
-            upfrontCosts: i.UpfrontCosts,
-            subdownIsPercent: i.SubdownIsPercent,
-            subdownValue: i.SubdownValue,
-            customerType: i.CustomerType,
-            assetState: i.AssetState,
-            avc: i.AssetValuationCurve,
-            rating: i.Rating
-        );
+        var calcInput = new CalculatorInputs
+        {
+            VehicleSalesPrice = i.VehiclePrice,
+            AdditionalFinancedItems = i.AdditionalFinancedItems,
+            DownpaymentIsPercent = i.DownIsPercent,
+            DownpaymentValue = i.DownValue,
+            TermMonths = i.TermMonths,
+            PaymentMode = ParseTiming(i.Timing),
+            Product = ParseProduct(i.Product),
+            CustomerRatePercent = i.CustomerRatePercent,
+            BalloonIsPercent = i.BalloonIsPercent,
+            BalloonPercent = i.BalloonIsPercent ? i.BalloonValue : 0,
+            BalloonTHB = i.BalloonIsPercent ? 0 : i.BalloonValue,
+            PeriodicFeeAnnualPercent = 0m,
+            UpfrontSubsidies = i.UpfrontSubsidies,
+            UpfrontCosts = i.UpfrontCosts,
+            SubdownIsPercent = i.SubdownIsPercent,
+            SubdownPercent = i.SubdownIsPercent ? i.SubdownValue : 0,
+            SubdownTHB = i.SubdownIsPercent ? 0 : i.SubdownValue,
+            CustomerType = i.CustomerType,
+            AssetState = i.AssetState,
+            AssetValuationCurve = i.AssetValuationCurve,
+            Rating = i.Rating
+        };
+
+        var outputs = _calc.Calculate(calcInput);
 
         // Calculate Risk Parameters
         double pd = _riskRepo.GetPd(i.CustomerType, i.Rating);
@@ -92,7 +84,7 @@ public sealed class LocalScenarioService
 
         var cof = BuildCofParams(i.Market, (decimal)corAnnual, (decimal)ecTotal);
         var profit = DcfModel.Compute(outputs, cof);
-        return new ScenarioOutput { Deal = outputs, Profit = profit };
+        return new DealOutput { Deal = outputs, Profit = profit };
     }
 
     private static CofParams BuildCofParams(string market, decimal cor, decimal ecRatio)
@@ -113,6 +105,24 @@ public sealed class LocalScenarioService
             OpexPct = opex,
             EconCapRatio = ecRatio,
             CostOfRisk = cor
+        };
+    }
+
+    private static PaymentMode ParseTiming(string s)
+        => string.Equals(s, "advance", StringComparison.OrdinalIgnoreCase)
+            ? PaymentMode.InAdvance
+            : PaymentMode.InArrears;
+
+    private static FinancialProduct ParseProduct(string s)
+    {
+        s = s?.Trim().ToUpperInvariant() ?? string.Empty;
+        return s switch
+        {
+            "HP" or "HIRE PURCHASE" => FinancialProduct.HirePurchase,
+            "FL" or "FINANCE LEASE" => FinancialProduct.FinanceLease,
+            "MYSTAR" => FinancialProduct.MySTAR,
+            "OL" or "OPERATING LEASE" => FinancialProduct.OperatingLease,
+            _ => FinancialProduct.HirePurchase
         };
     }
 }

@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace FinancialCalculator.Tests
 {
-    public class RoRacEndToEndTests
+    public class RoRacEndToEndTests : IAsyncLifetime
     {
         private readonly ITestOutputHelper _output;
         private readonly RiskParameterRepository _riskRepo;
@@ -16,11 +16,14 @@ namespace FinancialCalculator.Tests
         {
             _output = output;
             _riskRepo = new RiskParameterRepository();
-            // Point to the actual parameters directory relative to test execution
-            // Assuming tests run from project root or similar, adjust if needed.
-            // Path based on workspace root: winui3-mvp/docs/parameters
-            _riskRepo.Load(System.IO.Path.GetFullPath("winui3-mvp/docs/parameters"));
         }
+
+        public async Task InitializeAsync()
+        {
+             await _riskRepo.LoadAsync(System.IO.Path.GetFullPath("winui3-mvp/docs/parameters"));
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
 
         [Fact]
         public void TestRoRac_HP_StandardFinance()

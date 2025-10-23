@@ -34,54 +34,7 @@ public sealed class FinancialCalculator
         };
     }
 
-    // Public helper for flat to nominal conversion
-    public static decimal ConvertFlatToNominal(decimal flatRatePercent, int termMonths, PaymentMode paymentMode)
-    {
-        if (termMonths <= 0) return 0m;
-        if (flatRatePercent == 0m) return 0m;
-
-        // Assume financed = 100 for simplified calculation (percentage based)
-        double financed = 100.0;
-        double totalInterest = (double)flatRatePercent / 100.0 * financed * (termMonths / 12.0);
-        double totalPayments = financed + totalInterest;
-        double pmt = totalPayments / termMonths;
-
-        // Solve for nominal rate that gives this PMT
-        // PV = financed, FV = 0 (assuming no balloon for standard flat rate conversion), N = termMonths
-        double rMonthly = Rate(termMonths, pmt, -financed, 0, paymentMode);
-        return (decimal)(rMonthly * 12.0 * 100.0);
-    }
-
-    public static decimal ConvertNominalToFlat(decimal nominalRatePercent, int termMonths, PaymentMode paymentMode)
-    {
-        if (termMonths <= 0) return 0m;
-        decimal financed = 100m; // Basis
-        decimal i_m = nominalRatePercent / 100m / 12m;
-        
-        // PMT calculation (replicated from BuildSchedule for stateless helper)
-        decimal pmt;
-        if (Math.Abs(i_m) < 1e-12m)
-        {
-            pmt = financed / termMonths;
-        }
-        else
-        {
-            double r = (double)i_m;
-            double pow = Math.Pow(1 + r, termMonths);
-            pmt = (decimal)((double)financed * pow * r / (pow - 1));
-        }
-
-        if (paymentMode == PaymentMode.InAdvance)
-        {
-            pmt /= (1 + i_m);
-        }
-
-        decimal totalPayments = pmt * termMonths;
-        decimal totalInterest = totalPayments - financed;
-        decimal years = termMonths / 12m;
-        
-        return (totalInterest / financed) / years * 100m;
-    }
+    // Rate conversions moved to RateConverter class
 
     private static decimal ComputeFinancedAmount(CalculatorInputs input)
     {
@@ -110,11 +63,9 @@ public sealed class FinancialCalculator
         if (n <= 0 || financed <= 0) return new List<ScheduleRow>();
 
         decimal balloon = 0m;
-        if (input.Product != FinancialProduct.HirePurchase)
-        {
-            balloon = input.BalloonIsPercent ? financed * input.BalloonPercent / 100m : input.BalloonTHB;
-            balloon = Math.Clamp(balloon, 0m, financed);
-        }
+        // Allow balloon for all products (including HP) as per new requirement
+        balloon = input.BalloonIsPercent ? financed * input.BalloonPercent / 100m : input.BalloonTHB;
+        balloon = Math.Clamp(balloon, 0m, financed);
 
         var i_m = input.CustomerRatePercent / 100m / 12m;
 
@@ -310,40 +261,4 @@ public sealed class FinancialCalculator
         return r;
     }
 
-    // Find interest rate per period
-    private static double Rate(int nper, double pmt, double pv, double fv, PaymentMode paymentMode)
-    {
-        if (nper <= 0) return 0;
-
-        double F(double r)
-        {
-            if (Math.Abs(r) < 1e-12) return pv + pmt * nper + fv;
-            double pow = Math.Pow(1 + r, nper);
-            double type = paymentMode == PaymentMode.InAdvance ? (1 + r) : 1.0;
-            return pv * pow + pmt * type * (pow - 1) / r + fv;
-        }
-
-        double DF(double r)
-        {
-            if (Math.Abs(r) < 1e-12) return pmt * nper * (paymentMode == PaymentMode.InAdvance ? 1 : 0); // Approx derivative at 0?
-            // Derivative of PV*pow + PMT*type*(pow-1)/r + FV = 0
-            // d/dr (PV*(1+r)^n + PMT*type*((1+r)^n - 1)/r + FV)
-            // Complex derivative, use secant method or numeric derivative if lazy, or just implement it.
-            // Let's use Newton with numeric derivative for simplicity and robustness if analytical is tricky.
-            double h = 1e-5;
-            return (F(r + h) - F(r - h)) / (2 * h);
-        }
-
-        // Initial guess
-        double r = 0.01;
-        for (int i = 0; i < 50; i++)
-        {
-            double y = F(r);
-            if (Math.Abs(y) < 1e-9) return r;
-            double dy = DF(r);
-            if (Math.Abs(dy) < 1e-12) break;
-            r = r - y / dy;
-        }
-        return r;
-    }
 }

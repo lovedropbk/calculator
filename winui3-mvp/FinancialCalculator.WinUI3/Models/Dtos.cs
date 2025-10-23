@@ -102,7 +102,7 @@ namespace FinancialCalculator.WinUI3.Models
         // Enriched KPI fields for grid
         [JsonPropertyName("monthlyInstallment")] public double MonthlyInstallment { get; set; }
         [JsonPropertyName("customerRateNominal")] public double CustomerRateNominal { get; set; }
-        [JsonPropertyName("customerRateEffective")] public double CustomerRateEffective { get; set; }
+        [JsonPropertyName("customerFlatRate")] public double CustomerFlatRate { get; set; }
         [JsonPropertyName("acquisitionRoRAC")] public double AcquisitionRoRAC { get; set; }
 
         // Subsidy components (THB)
@@ -128,7 +128,7 @@ namespace FinancialCalculator.WinUI3.Models
     {
         public double MonthlyInstallment { get; set; }
         public double CustomerRateNominal { get; set; }
-        public double CustomerRateEffective { get; set; }
+        public double CustomerFlatRate { get; set; }
         public double FinancedAmount { get; set; }
         public ProfitabilityDto Profitability { get; set; } = new();
         public List<CampaignAuditEntryDto> CampaignAudit { get; set; } = new();

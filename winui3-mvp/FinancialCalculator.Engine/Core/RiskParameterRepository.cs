@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FinancialCalculator.Engine.Core;
 
@@ -14,13 +15,13 @@ public class RiskParameterRepository
 
     public bool IsLoaded { get; private set; }
 
-    public void Load(string parametersPath)
+    public async Task LoadAsync(string parametersPath)
     {
         try
         {
-            LoadPd(Path.Combine(parametersPath, "PD.csv"));
-            LoadLgd(Path.Combine(parametersPath, "LGD_OneEC.csv"));
-            LoadEcTotal(Path.Combine(parametersPath, "EC_TOTAL.csv"));
+            await LoadPdAsync(Path.Combine(parametersPath, "PD.csv"));
+            await LoadLgdAsync(Path.Combine(parametersPath, "LGD_OneEC.csv"));
+            await LoadEcTotalAsync(Path.Combine(parametersPath, "EC_TOTAL.csv"));
             IsLoaded = true;
         }
         catch (Exception ex) { Console.WriteLine($"Failed to load risk parameters: {ex.Message}"); }
@@ -35,10 +36,11 @@ public class RiskParameterRepository
     }
     public double GetEcTotal() => _ecTotal;
 
-    private void LoadPd(string path)
+    private async Task LoadPdAsync(string path)
     {
         if (!File.Exists(path)) return;
-        foreach (var line in File.ReadLines(path).Skip(1))
+        var lines = await File.ReadAllLinesAsync(path);
+        foreach (var line in lines.Skip(1))
         {
             var parts = SplitCsvLine(line);
             if (parts.Length <= 15) continue;
@@ -51,10 +53,11 @@ public class RiskParameterRepository
         }
     }
 
-    private void LoadLgd(string path)
+    private async Task LoadLgdAsync(string path)
     {
         if (!File.Exists(path)) return;
-        foreach (var line in File.ReadLines(path).Skip(1))
+        var lines = await File.ReadAllLinesAsync(path);
+        foreach (var line in lines.Skip(1))
         {
             var parts = SplitCsvLine(line);
             if (parts.Length <= 14) continue;
@@ -70,10 +73,11 @@ public class RiskParameterRepository
         }
     }
 
-    private void LoadEcTotal(string path)
+    private async Task LoadEcTotalAsync(string path)
     {
         if (!File.Exists(path)) return;
-        foreach (var line in File.ReadLines(path).Skip(1))
+        var lines = await File.ReadAllLinesAsync(path);
+        foreach (var line in lines.Skip(1))
         {
             var parts = SplitCsvLine(line);
             if (parts.Length >= 2 && double.TryParse(parts.ElementAt(1), NumberStyles.Any, CultureInfo.InvariantCulture, out var ec)) { _ecTotal = ec; break; }
