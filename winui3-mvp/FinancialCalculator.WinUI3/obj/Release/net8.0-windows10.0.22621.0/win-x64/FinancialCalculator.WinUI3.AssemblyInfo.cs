@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FinancialCalculator.WinUI3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8e5f0d40dee06d8e1172cbcd78ba703c6b701fd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba1e01f696a0a07b3ed5a027edb9741c3c05dcd8")]
 [assembly: System.Reflection.AssemblyProductAttribute("FinancialCalculator.WinUI3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FinancialCalculator.WinUI3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

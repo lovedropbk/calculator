@@ -82,7 +82,7 @@ public static class DcfModel
             pvRisk += riskCost * df;
             pvOpex += opexCost * df;
             pvCapAdv += capAdvIncome * df;
-            pvEc += ec * df;
+            pvEc += ec * df * dt;
             pvOutstanding += bal * df * dt; // Weighted by time for accurate annualization
 
             prevBal = row.Balance;
@@ -103,9 +103,10 @@ public static class DcfModel
 
         // Margins
         decimal gim = annGrossInterest + annFunding;
-        decimal nim = gim + annMfs;
-        // Net EBIT = NIM + Risk + Opex (neg) + CapAdv + Upfronts(Net)
-        decimal netEbit = nim + annRisk + annOpex + annCapAdv + annUpfrontSubsidies + annUpfrontCosts;
+        // Redefining NIM to include upfronts so it flows from Deal IRR
+        decimal nim = gim + annMfs + annUpfrontSubsidies + annUpfrontCosts;
+        // Net EBIT = NIM + Risk + Opex (neg) + CapAdv
+        decimal netEbit = nim + annRisk + annOpex + annCapAdv;
 
         // RoRAC = PV(Net Income) / PV(EC)
         double totalPvNetIncome = pvGrossInterest + pvFunding + pvMfs + pvRisk + pvOpex + pvCapAdv + pvUpfrontSubsidies + pvUpfrontCosts;
@@ -119,7 +120,7 @@ public static class DcfModel
         {
             CustomerRate = deal.Inputs.CustomerRatePercent / 100m,
             DealIrrEffective = deal.DealIrrAnnualPercent / 100m,
-            DealIrrNominal = deal.Inputs.CustomerRatePercent / 100m, // Approximation
+            DealIrrNominal = (deal.Inputs.CustomerRatePercent / 100m) + annUpfrontCosts + annUpfrontSubsidies,
 
             MatchedFundingRate = annFunding,
             MatchedFundingSpread = annMfs,

@@ -63,6 +63,8 @@ public partial class MainViewModel : ObservableValidator
         // Initialize sub-viewmodels
         DealInput = new DealInputViewModel(_vehicleCatalog, _standardRates, _commission);
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
+        // Subscribe to input changes to keep UI and calculations in sync
+        DealInput.InputsChanged += OnDealInputsChanged;
 
         // Initialize data on UI thread with proper error handling
         _ = InitializeAsync();
@@ -81,6 +83,15 @@ public partial class MainViewModel : ObservableValidator
             // Trigger refresh of main calculator view (debounced to avoid race conditions from mutual exclusion updates)
             _debounceActive.DebounceAsync(50, async () => await RefreshActiveSelectionAsync());
         }
+    }
+
+    private bool _suppressRecalculation = false;
+
+    private void OnDealInputsChanged(object? sender, EventArgs e)
+    {
+        if (_suppressRecalculation) return;
+        // Debounce to avoid excessive recalculations while the user is typing
+        _debounceActive.DebounceAsync(150, async () => await RecalculateAsync());
     }
 
     private async Task InitializeAsync()
@@ -328,6 +339,7 @@ public partial class MainViewModel : ObservableValidator
 
         OnPropertyChanged(nameof(WfCustomerRateText));
         OnPropertyChanged(nameof(WfDealIRRText));
+        OnPropertyChanged(nameof(WfDealIRRNominalText));
         OnPropertyChanged(nameof(WfIDCUpfrontAnnualizedText));
         OnPropertyChanged(nameof(WfSubsidyUpfrontAnnualizedText));
         OnPropertyChanged(nameof(WfCostOfDebtMatchedText));
@@ -545,6 +557,13 @@ public partial class MainViewModel : ObservableValidator
     }
 
     public bool IsGoalSeekTargetSet => GoalTargetValue > 0;
+
+    [RelayCommand]
+    private void CloseGoalSeek()
+    {
+        IsGoalSeekOpen = false;
+        GoalTargetValue = 0;
+    }
 
     [RelayCommand]
     private async Task RunGoalSeekAsync()
@@ -877,10 +896,11 @@ public partial class MainViewModel : ObservableValidator
     public string ActiveFsInsuranceText => _activeFsInsurance.ToString("N0", CultureInfo.InvariantCulture);
     public string ActiveFsMbspText => _activeFsMbsp.ToString("N0", CultureInfo.InvariantCulture);
     private double _activeSubsidyUsed;
-    public string ActiveSubsidyUtilizedText => _activeSubsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
-    public string SubsidyRemainingText => Math.Max(0, DealInput.SubsidyBudget - _activeSubsidyUsed).ToString("N0", CultureInfo.InvariantCulture);
+    // User requested that we always utilize full subsidy budget
+    public string ActiveSubsidyUtilizedText => DealInput.SubsidyBudget.ToString("N0", CultureInfo.InvariantCulture);
+    public string SubsidyRemainingText => "0"; // Always fully utilized
     public string IdcOtherText => DealInput.IdcOther.ToString("N0", CultureInfo.InvariantCulture);
-    public string IdcTotalText => (DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther).ToString("N0", CultureInfo.InvariantCulture);
+    public string IdcTotalText => (DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther + _activeFsInsurance + _activeFsMbsp).ToString("N0", CultureInfo.InvariantCulture);
 
     // MARK: Profitability Waterfall (for RoRAC details panel)
     private double _wfCustomerRate;
@@ -914,6 +934,7 @@ public partial class MainViewModel : ObservableValidator
     public string WfIDCUpfrontAnnualizedText => Pct(_wfIDCUpfrontAnnualized);
     public string WfSubsidyUpfrontAnnualizedText => Pct(_wfSubsidyUpfrontAnnualized);
     public string WfDealIRRText => Pct(_wfDealIRREffective);
+    public string WfDealIRRNominalText => Pct(_wfDealIRRNominal);
     public string WfCostOfDebtMatchedText => Pct(_wfCostOfDebtMatched);
     public string WfMatchedFundedSpreadText => Pct(_wfMatchedFundedSpread);
     public string WfGrossInterestMarginText => Pct(_wfGrossInterestMargin);

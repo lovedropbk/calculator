@@ -205,6 +205,9 @@ public partial class MainViewModel
                 double required = ComputeRequiredSubsidyForRateBuydown(transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, DealInput.CustomerNominalRate, targetRatePct.Value);
                 
                 // Auto-clamp for standard campaigns if over budget
+                // Standard campaigns must show achievable scenarios within the current budget.
+                // If the required subsidy for the target rate exceeds the budget, we clamp the rate to what is achievable with remaining budget.
+                // Custom campaigns (autoClampToBudget=false) are allowed to exceed budget to show user the required overrun.
                 double leftoverBudget = DealInput.SubsidyBudget - (cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp);
                 if (autoClampToBudget && required > leftoverBudget && leftoverBudget >= 0)
                 {
@@ -216,17 +219,16 @@ public partial class MainViewModel
             }
 
             // 3. Calculate Unallocated Subsidy
-            // Total Upfront Subsidy to Lender = Total Budget - CashDisc - SubDown - FreeIns - FreeMbsp
-            // The Rate Buydown (subinterestSubsidy) is internally covered by this remaining amount.
-            decimal totalUpfrontSubsidyForEngine = (decimal)(DealInput.SubsidyBudget - cashDiscount - fsSubDown - fsFreeInsurance - fsFreeMbsp);
-
+            // We pass the FULL budget as upfront subsidy to the engine.
+            // We must also pass ALL costs (including Cash Discount which we pay to dealer despite lowering customer price) as Upfront Costs.
+            
             // 4. Compute full scenario
             var (outc, profit, commPct, commAmt) = ComputeScenarioWithCommission(
                 transactionPrice,
                 false,
                 (decimal)fsSubDown,
                 (decimal)(fsFreeInsurance + fsFreeMbsp),
-                totalUpfrontSubsidyForEngine - (decimal)DealInput.UpfrontSubsidies, // Delta to achieve desired
+                (decimal)(DealInput.SubsidyBudget - cashDiscount),
                 targetRatePct
             );
 
@@ -287,7 +289,15 @@ public partial class MainViewModel
         
         // Update DealInput for display if needed, though it might affect main tab if switched back.
         // Keeping it for now as per original logic.
-        DealInput.DealerCommissionResolvedAmt = commAmt;
+        try
+        {
+            _suppressRecalculation = true;
+            DealInput.DealerCommissionResolvedAmt = commAmt;
+        }
+        finally
+        {
+            _suppressRecalculation = false;
+        }
         
         OnPropertyChanged(nameof(ActiveFsInsuranceText));
         OnPropertyChanged(nameof(ActiveFsMbspText));

@@ -4,6 +4,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Input;
 using FinancialCalculator.WinUI3.ViewModels;
 using FinancialCalculator.WinUI3.Services;
 using WinRT.Interop;
@@ -60,6 +61,15 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             Logger.Error("Copy click handler failed", ex);
+        }
+    }
+
+    private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (ViewModel.IsGoalSeekOpen || ViewModel.IsGoalSeekTargetSet)
+        {
+            ViewModel.CloseGoalSeekCommand.Execute(null);
+            args.Handled = true;
         }
     }
 

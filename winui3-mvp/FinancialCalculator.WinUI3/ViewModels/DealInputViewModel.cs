@@ -145,6 +145,7 @@ public partial class DealInputViewModel : ObservableValidator
 
     public string DealerCommissionPctText => ((DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct) * 100.0).ToString("0.00", CultureInfo.InvariantCulture);
     public string DealerCommissionResolvedAmtText => DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture);
+    public string SubsidyBudgetText => SubsidyBudget.ToString("N0", CultureInfo.InvariantCulture);
 
     // UI helpers
     public string PricePlaceholder => "THB";
@@ -233,8 +234,7 @@ public partial class DealInputViewModel : ObservableValidator
     }
 
     private PaymentMode GetPaymentMode() => string.Equals(Timing, "advance", StringComparison.OrdinalIgnoreCase) ? PaymentMode.InAdvance : PaymentMode.InArrears;
-    private void OnSubsidyBudgetChanged(double value) { NotifyChanged(); } // MainVM handles text update via event? Or move text here.
-    // SubsidyRemainingText depends on ActiveSubsidyUsed which is in MainVM. This is tricky.
+    private void OnSubsidyBudgetChanged(double value) { OnPropertyChanged(nameof(SubsidyBudgetText)); NotifyChanged(); }
     // Let's keep simple inputs here. MainVM can observe SubsidyBudget change.
 
     private void OnTimingChanged(string value)
@@ -388,31 +388,28 @@ public partial class DealInputViewModel : ObservableValidator
         catch { /* swallow */ }
     }
 
+    public (double pct, double amt) ResolveCommissionForFinanced(double financed)
+    {
+        double pct = DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct;
+        if (pct < 0) pct = 0;
+        double amt = DealerCommissionMode == "override" && DealerCommissionAmt.HasValue
+            ? DealerCommissionAmt.Value
+            : Math.Round(financed * pct);
+        return (pct, Math.Max(0, amt));
+    }
+
     private void UpdateDealerCommissionResolved()
     {
         try
         {
-            var financed = Math.Max(0, PriceExTax - DownPaymentAmount); // Wait, DownPaymentAmount is not updated from ValueEntry in this new VM yet?
-            // Actually DownPaymentAmount seems unused in original VM inputs?
-            // Ah, ComputeDownpaymentDisplay uses it.
-            // Let's re-read original:
-            // private double _downPaymentAmount = 200_000;
-            // public double DownPaymentAmount { get => _downPaymentAmount; set { if (SetProperty(ref _downPaymentAmount, value)) OnDownPaymentAmountChanged(value); } }
-            // It seems mostly unused, ComputeDownpaymentDisplay re-calculates it.
-            
-            double dpVal = 0;
-            if (string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase))
-                 dpVal = PriceExTax * DownPaymentValueEntry / 100.0;
-            else
-                 dpVal = DownPaymentValueEntry;
+            // Compute financed amount from current inputs
+            double dpVal = string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase)
+                ? PriceExTax * DownPaymentValueEntry / 100.0
+                : DownPaymentValueEntry;
 
             var fin = Math.Max(0, PriceExTax - dpVal);
 
-            double pct = DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct;
-            if (pct < 0) pct = 0;
-            double amt = DealerCommissionMode == "override" && DealerCommissionAmt.HasValue
-                ? DealerCommissionAmt.Value
-                : Math.Round(fin * pct);
+            var (_, amt) = ResolveCommissionForFinanced(fin);
             DealerCommissionResolvedAmt = Math.Max(0, amt);
         }
         catch
