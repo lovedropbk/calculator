@@ -5,7 +5,7 @@ using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.Tests;
 
-public class RefactoredEngineTests
+public class EngineUnitTests
 {
     [Fact]
     public void RateConverter_FlatToNominal_MatchesExpected()
@@ -17,17 +17,6 @@ public class RefactoredEngineTests
         
         // Verify against known good value or approx
         Assert.InRange((double)nominal, 4.0, 4.2);
-    }
-
-    [Fact]
-    public void MathUtils_Interpolation_Works()
-    {
-        // Linear
-        Assert.Equal(5.0, MathUtils.InterpolateLinear(2.5, 2.0, 4.0, 3.0, 6.0));
-
-        // Exponential (midpoint of 10 and 100 is 31.62 not 55)
-        var mid = MathUtils.InterpolateExponential(0.5, 0, 10, 1, 100);
-        Assert.InRange(mid, 31.6, 31.7);
     }
 
     [Fact]

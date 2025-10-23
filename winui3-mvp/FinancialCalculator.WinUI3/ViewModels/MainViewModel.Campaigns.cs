@@ -172,99 +172,42 @@ public partial class MainViewModel
         return DealInput.DownPaymentValueEntry;
     }
 
-    private async Task<(FinancialCalculator.Engine.Models.CalculatorOutputs? Outputs, FinancialCalculator.Engine.Models.Profitability? Profit)> CalculateCampaignAsync(CampaignSummaryViewModel vm, bool autoClampToBudget = false)
+    private async Task<FinancialCalculator.Engine.Models.Facade.ScenarioResult?> CalculateCampaignAsync(CampaignSummaryViewModel vm, bool autoClampToBudget = false)
     {
-        // Small delay if not auto-clamping (likely user edit)
-        if (!autoClampToBudget) await Task.Delay(1);
-
         try
         {
-            if (!autoClampToBudget)
-            {
-                IsCalculating = true;
-                Status = $"Recalculating {vm.Title}...";
-            }
+            if (!autoClampToBudget) IsCalculating = true;
 
-            // 1. Gather inputs from vm
-            decimal vehiclePrice = (decimal)DealInput.PriceExTax;
-            double cashDiscount = vm.CashDiscountAmount;
-            double fsSubDown = vm.FSSubDownAmount;
-            double fsFreeInsurance = vm.FSSubInterestAmount; // Mapped to free insurance field
-            double fsFreeMbsp = vm.FSFreeMBSPAmount;
-            double? targetRatePct = vm.TargetRatePct;
+            var baseRequest = DealInput.BuildScenarioRequest();
+            var (res, commPct, commAmt) = await _campaignService.CalculateCampaignAsync(
+                vm,
+                baseRequest,
+                DealInput.SubsidyBudget,
+                DealInput,
+                autoClampToBudget);
 
-            // Apply Cash Discount to Vehicle Price
-            decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
-            if (transactionPrice < 0) transactionPrice = 0;
+            if (res == null) return null;
 
-            // 2. Calculate Subinterest Subsidy if Target Rate is set
-            decimal subinterestSubsidy = 0m;
-            if (targetRatePct.HasValue)
-            {
-                decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp);
-                double required = ComputeRequiredSubsidyForRateBuydown(transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, DealInput.CustomerNominalRate, targetRatePct.Value);
-                
-                // Auto-clamp for standard campaigns if over budget
-                // Standard campaigns must show achievable scenarios within the current budget.
-                // If the required subsidy for the target rate exceeds the budget, we clamp the rate to what is achievable with remaining budget.
-                // Custom campaigns (autoClampToBudget=false) are allowed to exceed budget to show user the required overrun.
-                double leftoverBudget = DealInput.SubsidyBudget - (cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp);
-                if (autoClampToBudget && required > leftoverBudget && leftoverBudget >= 0)
-                {
-                     targetRatePct = CalculateLowestAchievableRate(transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, DealInput.CustomerNominalRate, leftoverBudget);
-                     required = leftoverBudget;
-                     vm.TargetRatePct = targetRatePct;
-                }
-                subinterestSubsidy = (decimal)required;
-            }
-
-            // 3. Calculate Unallocated Subsidy
-            // We pass the FULL budget as upfront subsidy to the engine.
-            // We must also pass ALL costs (including Cash Discount which we pay to dealer despite lowering customer price) as Upfront Costs.
-            
-            // 4. Compute full scenario
-            var (outc, profit, commPct, commAmt) = ComputeScenarioWithCommission(
-                transactionPrice,
-                false,
-                (decimal)fsSubDown,
-                (decimal)(fsFreeInsurance + fsFreeMbsp),
-                (decimal)(DealInput.SubsidyBudget - cashDiscount),
-                targetRatePct
-            );
-
-            // 5. Update VM with results
-            vm.Monthly = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture);
-            vm.CustomerFlatRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture);
-            vm.TransactionPrice = transactionPrice.ToString("N0", CultureInfo.InvariantCulture);
-            vm.Downpayment = ComputeDownpaymentDisplay(transactionPrice).ToString("N0", CultureInfo.InvariantCulture);
-            vm.CashDiscount = cashDiscount.ToString("N0", CultureInfo.InvariantCulture);
-            vm.FSSubDown = fsSubDown.ToString("N0", CultureInfo.InvariantCulture);
-            vm.FSSubInterest = fsFreeInsurance.ToString("N0", CultureInfo.InvariantCulture);
-            vm.FSFreeMBSP = fsFreeMbsp.ToString("N0", CultureInfo.InvariantCulture);
-            vm.SubinterestSubsidy = subinterestSubsidy.ToString("N0", CultureInfo.InvariantCulture);
-            
-            double subsidyUsed = cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + (double)subinterestSubsidy;
-            vm.SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
-            
-            double idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + DealInput.IdcOther;
-            vm.IDCsTotal = idcsTotal.ToString("N0", CultureInfo.InvariantCulture);
-            
-            vm.DealerCommission = $"{commPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({commAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)";
-            vm.RoRAC = ((double)profit.AcquisitionRoRac).ToString("0.00%");
-
-            // 6. If this is the active campaign, also update the main metrics area
+            // If this is the active campaign, also update the main metrics area
             if (vm == ActiveCampaign)
             {
-                UpdateMetricsFromCampaign(vm, outc, profit, commAmt, subsidyUsed, fsFreeInsurance, fsFreeMbsp, (double)subinterestSubsidy);
+                // Need to re-calculate some used values for UI update if not returned by service fully decomposed.
+                // Service returns updated VM, so we can read from VM.
+                double.TryParse(vm.FSSubInterest, NumberStyles.Any, CultureInfo.InvariantCulture, out var fsIns);
+                double.TryParse(vm.FSFreeMBSP, NumberStyles.Any, CultureInfo.InvariantCulture, out var fsMbsp);
+                double.TryParse(vm.SubsidyUsed, NumberStyles.Any, CultureInfo.InvariantCulture, out var subsidyUsed);
+                double.TryParse(vm.SubinterestSubsidy, NumberStyles.Any, CultureInfo.InvariantCulture, out var subinterestSubsidy);
+
+                UpdateMetricsFromCampaign(vm, res, commAmt, subsidyUsed, fsIns, fsMbsp, subinterestSubsidy);
             }
 
             Status = "Done";
-            return (outc, profit);
+            return res;
         }
         catch (Exception ex)
         {
             Status = $"Error calculating {vm.Title}: {ex.Message}";
-            return (null, null);
+            return null;
         }
         finally
         {
@@ -272,15 +215,15 @@ public partial class MainViewModel
         }
     }
 
-    private void UpdateMetricsFromCampaign(CampaignSummaryViewModel vm, FinancialCalculator.Engine.Models.CalculatorOutputs outc, FinancialCalculator.Engine.Models.Profitability profit, double commAmt, double subsidyUsed, double fsIns, double fsMbsp, double rateSubsidy = 0)
+    private void UpdateMetricsFromCampaign(CampaignSummaryViewModel vm, FinancialCalculator.Engine.Models.Facade.ScenarioResult res, double commAmt, double subsidyUsed, double fsIns, double fsMbsp, double rateSubsidy = 0)
     {
         Results.Metrics = new MetricsViewModel
         {
-            MonthlyInstallment = ((double)outc.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
+            MonthlyInstallment = ((double)res.MonthlyInstallment).ToString("N0", CultureInfo.InvariantCulture),
             NominalRate = ((vm.TargetRatePct ?? DealInput.CustomerNominalRate) / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-            FlatRate = ((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-            FinancedAmount = ((double)outc.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
-            RoRAC = ((double)profit.AcquisitionRoRac).ToString("0.00%"),
+            FlatRate = ((double)res.FlatRatePercent / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+            FinancedAmount = ((double)res.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
+            RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%"),
         };
 
         _activeFsInsurance = fsIns;
@@ -312,7 +255,7 @@ public partial class MainViewModel
              DealInput.SubsidyBudget - subsidyUsed
         );
 
-        RefreshProfitabilityDetailsLocal(profit);
+        RefreshProfitabilityDetailsLocal(res.Profitability);
 
         // Force main UI update if this is the selected campaign
         if (vm == CampaignManager.SelectedMyCampaign)
@@ -339,47 +282,16 @@ public partial class MainViewModel
 
             bool mbspUnavailable = false;
 
-            // Baseline (no campaign) - but should still apply leftover subsidy budget for consistent calculation!
-            var leftoverBudgetForBaseline = Math.Max(0, DealInput.SubsidyBudget);  // All budget is available for baseline
-            var baseline = ComputeScenarioWithCommission(
-                vehiclePrice: (decimal)DealInput.PriceExTax,
-                subdownIsPercent: false,
-                subdownValue: 0,
-                upfrontCostsDelta: 0m,
-                upfrontSubsidiesDelta: (decimal)leftoverBudgetForBaseline,  // Apply leftover budget for consistency
-                customerRateOverride: null
-            );
-
-            var baselineDp = ComputeDownpaymentDisplay((decimal)DealInput.PriceExTax);
-            
-            // Calculate IDCs Total for baseline (dealer commission + IDC Other)
-            var baselineIdcsTotal = baseline.commissionAmt + DealInput.IdcOther;
-            
+            // Baseline (no campaign) via Service
             var baselineVm = new CampaignSummaryViewModel
             {
                 CampaignId = "baseline",
                 CampaignType = "No Campaign (Baseline)",
                 Title = "No Campaign (Baseline)",
-                DealerCommission = $"{baseline.commissionPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({baseline.commissionAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)",
-                Monthly = ((double)baseline.outputs.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
-                // Show the customer's Flat Rate
-                CustomerFlatRate = ((double)baseline.outputs.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                CustomerNominalRate = (DealInput.CustomerNominalRate / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                Downpayment = baselineDp.ToString("N0", CultureInfo.InvariantCulture),
-                TransactionPrice = ((decimal)DealInput.PriceExTax).ToString("N0", CultureInfo.InvariantCulture),
-                SubsidyUsed = "0",
-                FSSubDown = "0",
-                FSSubInterest = "0",
-                FSFreeMBSP = "0",
-                CashDiscount = "0",
-                IDCsTotal = baselineIdcsTotal.ToString("N0", CultureInfo.InvariantCulture),
-                RoRAC = ((double)baseline.profit.AcquisitionRoRac).ToString("0.00%"),
-                Notes = "Baseline scenario without campaigns",
-                FSSubDownAmount = 0,
-                FSSubInterestAmount = 0,
-                FSFreeMBSPAmount = 0,
-                CashDiscountAmount = 0,
+                Notes = "Baseline scenario without campaigns"
             };
+            
+            await _campaignService.CalculateCampaignAsync(baselineVm, DealInput.BuildScenarioRequest(), DealInput.SubsidyBudget, DealInput, true);
             CampaignManager.StandardCampaigns.Add(baselineVm);
             // CampaignSummaries.Add(baselineVm);
 
@@ -449,7 +361,7 @@ public partial class MainViewModel
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error computing campaign '{c.Id}': {ex.Message}");
+                    Logger.Warn($"Error computing campaign '{c.Id}': {ex.Message}");
                 }
             }
 

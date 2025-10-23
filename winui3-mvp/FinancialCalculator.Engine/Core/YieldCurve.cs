@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
+using MathNet.Numerics.Interpolation;
 
 namespace FinancialCalculator.Engine.Core;
 
 /// <summary>
-/// Implements yield curve interpolation matching legacy VBA logic (Linear/Exponential).
+/// Implements yield curve interpolation matching legacy logic (LogLinear).
 /// </summary>
 public class YieldCurve
 {
-    private readonly SortedDictionary<double, double> _points;
+    private readonly IInterpolation _interpolation;
+    private readonly double _minTerm;
+    private readonly double _maxTerm;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="YieldCurve"/> class.
@@ -17,9 +21,27 @@ public class YieldCurve
     /// <param name="points">Pairs of (Term in Years, Annual Rate as decimal, e.g., 0.05 for 5%).</param>
     public YieldCurve(IEnumerable<(double TermInYears, double AnnualRate)> points)
     {
-        _points = new SortedDictionary<double, double>(points.ToDictionary(p => p.TermInYears, p => p.AnnualRate));
-        if (_points.Count == 0)
+        var sortedPoints = points.OrderBy(p => p.TermInYears).ToList();
+        if (sortedPoints.Count == 0)
             throw new ArgumentException("Yield curve must have at least one point.", nameof(points));
+
+        _minTerm = sortedPoints.First().TermInYears;
+        _maxTerm = sortedPoints.Last().TermInYears;
+
+        var terms = sortedPoints.Select(p => p.TermInYears).ToArray();
+        var rates = sortedPoints.Select(p => p.AnnualRate).ToArray();
+
+        // Use LogLinearSpline for exponential interpolation between points.
+        // Fallback to LinearSpline if rates are zero or negative (LogLinear doesn't handle them well usually, 
+        // though MathNet might handle it or throw. MathUtils.InterpolateExponential fell back to linear).
+        if (rates.Any(r => r <= 1e-9))
+        {
+             _interpolation = LinearSpline.InterpolateSorted(terms, rates);
+        }
+        else
+        {
+             _interpolation = Interpolate.LogLinear(terms, rates);
+        }
     }
 
     /// <summary>
@@ -29,36 +51,11 @@ public class YieldCurve
     /// <returns>Annual rate (decimal).</returns>
     public double GetRate(double termInYears)
     {
-        if (_points.Count == 1) return _points.Values.First();
+        // Extrapolation: constant
+        if (termInYears <= _minTerm) return _interpolation.Interpolate(_minTerm);
+        if (termInYears >= _maxTerm) return _interpolation.Interpolate(_maxTerm);
 
-        // Extrapolation: simplified to constant for now to avoid wild linear swings if not intended.
-        // Legacy might have used linear, but constant is safer without more data.
-        if (termInYears <= _points.Keys.First()) return _points.Values.First();
-        if (termInYears >= _points.Keys.Last()) return _points.Values.Last();
-
-        // Find bracketing points
-        // LastOrDefault with predicate works because it's a SortedDictionary keys are ordered, 
-        // but standard LINQ LastOrDefault might be slow. sorting is guaranteed by SortedDictionary definition.
-        // Efficient lookup would be binary search, but for small curves LINQ is okay.
-        
-        double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-        
-        foreach (var point in _points)
-        {
-            if (point.Key <= termInYears)
-            {
-                x1 = point.Key;
-                y1 = point.Value;
-            }
-            else
-            {
-                x2 = point.Key;
-                y2 = point.Value;
-                break;
-            }
-        }
-
-        return MathUtils.InterpolateExponential(termInYears, x1, y1, x2, y2);
+        return _interpolation.Interpolate(termInYears);
     }
 
     /// <summary>

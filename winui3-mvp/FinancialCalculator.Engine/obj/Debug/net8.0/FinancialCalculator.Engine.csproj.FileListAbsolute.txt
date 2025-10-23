@@ -10,3 +10,4 @@ C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\Financial
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\Debug\net8.0\refint\FinancialCalculator.Engine.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\Debug\net8.0\FinancialCalculator.Engine.pdb
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\Debug\net8.0\ref\FinancialCalculator.Engine.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.Engine\obj\Debug\net8.0\FinancialCalculator.Engine.csproj.AssemblyReference.cache

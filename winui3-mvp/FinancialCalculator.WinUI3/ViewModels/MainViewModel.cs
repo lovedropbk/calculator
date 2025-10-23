@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FinancialCalculator.Engine;
 using FinancialCalculator.Engine.Core;
+using FinancialCalculator.Engine.Models.Facade;
 using FinancialCalculator.WinUI3.Models;
 using FinancialCalculator.WinUI3.Services;
 
@@ -23,10 +25,13 @@ public partial class MainViewModel : ObservableValidator
     // private readonly LocalEngineService _local = new(); // Unused now
     private readonly LocalCampaignsProvider _campaigns = new();
     // private readonly LocalScenarioService _scenarios = new(); // Replaced by DealEngine
-    private DealEngine _dealEngine = null!; // Initialized in InitializeAsync
+    private FinancialFacade _financialFacade = null!; // Initialized in InitializeAsync
     private readonly VehicleCatalogService _vehicleCatalog = new();
     private readonly StandardRateService _standardRates = new();
     private readonly CommissionService _commission = new();
+    private readonly ExportService _exportService = new();
+    private readonly ComparisonService _comparisonService = new();
+    private CampaignCalculationService _campaignService = null!; // Initialized in InitializeAsync
 
     // MARK: Parameter Set Caching (legacy no-op)
 
@@ -42,6 +47,7 @@ public partial class MainViewModel : ObservableValidator
     public CampaignManagerViewModel CampaignManager { get; } = new();
     public ResultsViewModel Results { get; } = new();
     public ComparisonViewModel Comparison { get; } = new();
+    public GoalSeekViewModel GoalSeek { get; private set; } = null!; // Initialized in InitializeAsync due to Facade dependency
     private string _status = "Ready";
     public string Status { get => _status; set => SetProperty(ref _status, value); }
     private bool _isCalculating = false;
@@ -103,14 +109,14 @@ public partial class MainViewModel : ObservableValidator
             await Task.Delay(200);
 
             // Initialize Deal Engine (Async)
-            var riskRepo = new RiskParameterRepository();
+            var riskRepo = new RiskParameterRepository(new FileService());
             await riskRepo.LoadAsync(RiskParametersLocator.GetPath());
-            _dealEngine = new DealEngine(riskRepo);
+            _financialFacade = new FinancialFacade(riskRepo);
+            GoalSeek = new GoalSeekViewModel(_financialFacade, DealInput, RecalculateAsync);
+            _campaignService = new CampaignCalculationService(_financialFacade);
 
             // Subscribe to Campaign Manager changes
             CampaignManager.PropertyChanged += OnCampaignManagerPropertyChanged;
-
-            await InitializeParameterSetAsync();
 
             // Load catalogs
             await _vehicleCatalog.LoadAsync();
@@ -150,72 +156,52 @@ public partial class MainViewModel : ObservableValidator
         }
         catch (Exception ex)
         {
-            Status = $"Initialization error: {ex.Message}";
-            System.Diagnostics.Debug.WriteLine($"MainViewModel initialization error: {ex}");
+            Status = "Initialization failed";
+            Logger.Error("MainViewModel initialization error", ex);
+            NotificationMessage = $"Initialization error: {ex.Message}";
+            NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error;
+            IsNotificationOpen = true;
         }
     }
 
-    // MARK: Parameter Set Initialization
-    private async Task InitializeParameterSetAsync()
-    {
-        // Legacy no-op - parameter set caching removed
-        await Task.CompletedTask;
-    }
-
-    // Legacy API param extraction (unused)
-    private Dictionary<string, object>? GetEngineParameterSetOrNull() => null;
 
 
 
     // MARK: Actions
+    private ScenarioRequest? _lastCalculationRequest;
+
     private async Task RecalculateAsync()
     {
         try
         {
+            var request = DealInput.BuildScenarioRequest();
+            if (_lastCalculationRequest != null && request == _lastCalculationRequest)
+            {
+                return;
+            }
+            _lastCalculationRequest = request;
+
             IsCalculating = true;
             Status = "Calculating...";
 
             // Always calculate with local C# engine for high-fidelity cashflows and IRR per spec
-            var scenario = _dealEngine.Calculate(new DealEngine.DealInput
-            {
-                Market = "TH",
-                Product = DealInput.Product,
-                Timing = DealInput.Timing,
-                TermMonths = DealInput.TermMonths,
-                VehiclePrice = (decimal)DealInput.PriceExTax,
-                AdditionalFinancedItems = (decimal)DealInput.AdditionalFinancedItems,
-                DownIsPercent = string.Equals(DealInput.DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase),
-                DownValue = (decimal)DealInput.DownPaymentValueEntry,
-                BalloonIsPercent = string.Equals(DealInput.BalloonUnit, "%", StringComparison.OrdinalIgnoreCase),
-                BalloonValue = (decimal)DealInput.BalloonValueEntry,
-                CustomerRatePercent = (decimal)DealInput.CustomerNominalRate,
-                // For the main calculator tab (manual scenario), we use the full subsidy budget as upfront subsidy
-                UpfrontSubsidies = (decimal)DealInput.SubsidyBudget,
-                UpfrontCosts = (decimal)(DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther),
-                SubdownIsPercent = false,
-                SubdownValue = 0,
-                // Risk Parameters
-                CustomerType = DealInput.SelectedCustomerType,
-                AssetState = string.Equals(DealInput.SelectedAssetState, "New", StringComparison.OrdinalIgnoreCase) ? "N" : "U",
-                AssetValuationCurve = DealInput.SelectedAssetValuationCurve,
-                Rating = DealInput.SelectedRating
-            });
+            var result = _financialFacade.Calculate(request);
 
             // Update key metrics from local engine (monthly, flat rate, financed amount)
             Results.Metrics = new MetricsViewModel
             {
-                MonthlyInstallment = ((double)scenario.Deal.MonthlyRate).ToString("N0", CultureInfo.InvariantCulture),
+                MonthlyInstallment = ((double)result.MonthlyInstallment).ToString("N0", CultureInfo.InvariantCulture),
                 NominalRate = (DealInput.CustomerNominalRate / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                FlatRate = ((double)scenario.Deal.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                FinancedAmount = ((double)scenario.Deal.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
-                RoRAC = ((double)scenario.Profit.AcquisitionRoRac).ToString("0.00%"),
+                FlatRate = ((double)result.FlatRatePercent / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
+                FinancedAmount = ((double)result.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture),
+                RoRAC = ((double)result.AcquisitionRoRacPercent).ToString("0.00%"),
             };
 
             // Populate cashflows from local engine schedule
-            PopulateCashflows(LocalScheduleToDto(scenario.Deal.Schedule));
+            PopulateCashflows(result.Schedule);
 
             // Populate profitability detail waterfall
-            RefreshProfitabilityDetailsLocal(scenario.Profit);
+            RefreshProfitabilityDetailsLocal(result.Profitability);
 
             Status = "Done";
 
@@ -230,24 +216,6 @@ public partial class MainViewModel : ObservableValidator
         {
             IsCalculating = false;
         }
-    }
-
-    private static List<CashflowRowDto> LocalScheduleToDto(IReadOnlyList<FinancialCalculator.Engine.Models.ScheduleRow> rows)
-    {
-        var list = new List<CashflowRowDto>(rows?.Count ?? 0);
-        if (rows == null) return list;
-        foreach (var r in rows)
-        {
-            list.Add(new CashflowRowDto
-            {
-                Period = r.Period,
-                Principal = (double)r.Principal,
-                Interest = (double)r.Interest,
-                Balance = (double)r.Balance,
-                Cashflow = (double)r.Cashflow,
-            });
-        }
-        return list;
     }
 
     private async Task RefreshActiveSelectionAsync()
@@ -265,11 +233,11 @@ public partial class MainViewModel : ObservableValidator
             // Standard campaigns should auto-clamp to budget if they exceed it due to new inputs.
             // My Campaigns (custom) should NOT auto-clamp, allowing user to see they are over budget.
             bool autoClamp = !IsMyCampaign(ActiveCampaign);
-            var (outc, profit) = await CalculateCampaignAsync(ActiveCampaign, autoClampToBudget: autoClamp);
+            var res = await CalculateCampaignAsync(ActiveCampaign, autoClampToBudget: autoClamp);
 
-            if (outc != null)
+            if (res != null)
             {
-                 PopulateCashflows(LocalScheduleToDto(outc.Schedule));
+                 PopulateCashflows(res.Schedule);
             }
 
             var campaignTypeStr = IsMyCampaign(ActiveCampaign) ? "My Campaign" : "Standard Campaign";
@@ -290,32 +258,32 @@ public partial class MainViewModel : ObservableValidator
     }
 
     // MARK: Profitability details (local)
-    private void RefreshProfitabilityDetailsLocal(FinancialCalculator.Engine.Models.Profitability p)
+    private void RefreshProfitabilityDetailsLocal(FinancialCalculator.Engine.Models.Facade.ProfitabilityDetails p)
     {
-        _wfCustomerRate = (double)p.CustomerRate;
-        _wfDealIRREffective = (double)p.DealIrrEffective;
-        _wfDealIRRNominal = (double)p.DealIrrNominal;
-        _wfIDCUpfrontAnnualized = (double)p.IdcUpfrontAnnualizedPct;
-        _wfSubsidyUpfrontAnnualized = (double)p.SubsidyUpfrontAnnualizedPct;
-        _wfCostOfDebtMatched = (double)p.MatchedFundingRate;
-        _wfMatchedFundedSpread = (double)p.MatchedFundingSpread;
-        _wfGrossInterestMargin = (double)p.GrossInterestMargin;
-        _wfNetInterestMargin = (double)p.NetInterestMargin;
-        _wfCostOfCreditRisk = (double)p.CostOfRisk;
-        _wfOPEX = (double)p.OpexPct;
-        _wfCapitalAdvantage = (double)p.CapitalAdvantage;
-        _wfNetEBITMargin = (double)p.NetEbitMargin;
-        _wfEconomicCapital = 0.08; // fixed ratio used in local calc
+        _wfCustomerRate = (double)p.CustomerRatePercent;
+        _wfDealIRREffective = (double)p.DealIrrEffectivePercent;
+        _wfDealIRRNominal = (double)p.DealIrrNominalPercent;
+        _wfIDCUpfrontAnnualized = (double)p.IdcUpfrontAnnualizedPercent;
+        _wfSubsidyUpfrontAnnualized = (double)p.SubsidyUpfrontAnnualizedPercent;
+        _wfCostOfDebtMatched = (double)p.CostOfDebtMatchedPercent;
+        _wfMatchedFundedSpread = (double)p.MatchedFundingSpreadPercent;
+        _wfGrossInterestMargin = (double)p.GrossInterestMarginPercent;
+        _wfNetInterestMargin = (double)p.NetInterestMarginPercent;
+        _wfCostOfCreditRisk = (double)p.CostOfCreditRiskPercent;
+        _wfOPEX = (double)p.OpexPercent;
+        _wfCapitalAdvantage = (double)p.CapitalAdvantagePercent;
+        _wfNetEBITMargin = (double)p.NetEbitMarginPercent;
+        _wfEconomicCapital = (double)p.EconomicCapitalPercent;
         
         // Map separated IDC/Subsidy values
-        _wfIDCUpfrontCostPct = (double)p.IdcUpfrontAnnualizedPct; // Same as annualized for now
-        _wfIDCPeriodicCostPct = (double)p.IdcPeriodicPct;
-        _wfSubsidyUpfrontPct = (double)p.SubsidyUpfrontAnnualizedPct; // Same as annualized for now
-        _wfSubsidyPeriodicPct = (double)p.SubsidyPeriodicPct;
+        _wfIDCUpfrontCostPct = (double)p.IdcUpfrontAnnualizedPercent;
+        _wfIDCPeriodicCostPct = (double)p.IdcPeriodicPercent;
+        _wfSubsidyUpfrontPct = (double)p.SubsidyUpfrontAnnualizedPercent;
+        _wfSubsidyPeriodicPct = (double)p.SubsidyPeriodicPercent;
         
         // Combined net values (IDC - Subsidy)
-        _wfIDCUpfront = (double)(p.IdcUpfrontAnnualizedPct - p.SubsidyUpfrontAnnualizedPct);
-        _wfIDCPeriodic = (double)(p.IdcPeriodicPct - p.SubsidyPeriodicPct);
+        _wfIDCUpfront = (double)(p.IdcUpfrontAnnualizedPercent - p.SubsidyUpfrontAnnualizedPercent);
+        _wfIDCPeriodic = (double)(p.IdcPeriodicPercent - p.SubsidyPeriodicPercent);
 
         // Active campaign allocations for bottom summary (use VM numeric fields)
         if (ActiveCampaign != null)
@@ -395,75 +363,16 @@ public partial class MainViewModel : ObservableValidator
             }
 
             // Use unified calculation
-            var (outc, profit) = await CalculateCampaignAsync(active, autoClampToBudget: !IsMyCampaign(active));
+            var res = await CalculateCampaignAsync(active, autoClampToBudget: !IsMyCampaign(active));
 
-            if (outc == null || profit == null)
+            if (res == null)
             {
                 Status = "Export failed during calculation.";
                 return;
             }
 
             // Refresh profit details (handled by CalculateCampaignAsync if active, but harmless to repeat if needed for latest values)
-            // Actually, CalculateCampaignAsync calls UpdateMetricsFromCampaign if active, which calls RefreshProfitabilityDetailsLocal.
-            // So we can rely on VM properties if we wanted, but using 'outc' and 'profit' directly is safer for export consistency.
-
-            var sb = new System.Text.StringBuilder();
-            sb.AppendLine("Deal Summary");
-            sb.AppendLine("Key,Value");
-            sb.AppendLine($"Selected Campaign,{active.Title}");
-            sb.AppendLine($"Monthly Installment (THB),{outc.MonthlyRate.ToString("N0", CultureInfo.InvariantCulture)}");
-            // Use nominal rate from VM (might be target rate) or DealInput
-            var nominalRate = active.TargetRatePct ?? DealInput.CustomerNominalRate;
-            sb.AppendLine($"Nominal Rate,{(nominalRate / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Flat Rate,{((double)outc.FlatRatePercentPerAnnum / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Financed Amount (THB),{outc.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Acq. RoRAC,{((double)profit.AcquisitionRoRac).ToString("0.00%", CultureInfo.InvariantCulture)}");
-            
-            // Re-resolve commission for export (it was calculated inside CalculateCampaignAsync but not returned directly,
-            // though it is in ActiveCampaign.DealerCommission string... let's re-calculate or grab from DealInput if it was updated)
-            // CalculateCampaignAsync updated DealInput.DealerCommissionResolvedAmt if active.
-            sb.AppendLine($"Dealer Commission (THB),{DealInput.DealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"IDC - Other (THB),{DealInput.IdcOther.ToString("N0", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"IDC Total (THB),{(DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther).ToString("N0", CultureInfo.InvariantCulture)}");
-            sb.AppendLine();
-
-            // Profitability Details
-            sb.AppendLine("Profitability Details");
-            sb.AppendLine("Metric,Value");
-            sb.AppendLine($"Deal IRR,{_wfDealIRREffective.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Deal IRR Nominal,{_wfDealIRRNominal.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Cost of Debt Matched,{_wfCostOfDebtMatched.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Matched Funded Spread,{_wfMatchedFundedSpread.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Gross Interest Margin,{_wfGrossInterestMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Capital Advantage,{_wfCapitalAdvantage.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Net Interest Margin,{_wfNetInterestMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Cost of Credit Risk,{_wfCostOfCreditRisk.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"OPEX,{_wfOPEX.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Net IDC+Subsidies Upfront,{_wfIDCUpfront.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Net IDC+Subsidies Periodic,{_wfIDCPeriodic.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Net EBIT Margin,{_wfNetEBITMargin.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Economic Capital,{_wfEconomicCapital.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine();
-
-            // Separated Values (placeholders 0 for now)
-            sb.AppendLine("Separated Values:");
-            sb.AppendLine($"IDC Upfront Cost %,{_wfIDCUpfrontCostPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"IDC Periodic Cost %,{_wfIDCPeriodicCostPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Subsidy Upfront %,{_wfSubsidyUpfrontPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine($"Subsidy Periodic %,{_wfSubsidyPeriodicPct.ToString("0.00%", CultureInfo.InvariantCulture)}");
-            sb.AppendLine();
-
-            sb.AppendLine("Cashflow Schedule");
-            sb.AppendLine("Period,Principal,Interest,Balance,Cashflow");
-            foreach (var r in outc.Schedule)
-            {
-                sb.AppendLine($"{r.Period},{r.Principal.ToString("0.00", CultureInfo.InvariantCulture)},{r.Interest.ToString("0.00", CultureInfo.InvariantCulture)},{r.Balance.ToString("0.00", CultureInfo.InvariantCulture)},{r.Cashflow.ToString("0.00", CultureInfo.InvariantCulture)}");
-            }
-
-            var dir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinancialCalculatorExports");
-            System.IO.Directory.CreateDirectory(dir);
-            var file = System.IO.Path.Combine(dir, $"deal_export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
-            await System.IO.File.WriteAllTextAsync(file, sb.ToString(), System.Text.Encoding.UTF8);
+            var file = await _exportService.ExportScenarioAsync(active, res, DealInput.CustomerNominalRate, DealInput.DealerCommissionResolvedAmt, DealInput.IdcOther);
 
             Status = $"Exported XLSX to {file}";
         }
@@ -479,50 +388,33 @@ public partial class MainViewModel : ObservableValidator
     {
         try
         {
-             var deal = new DealComparisonItemViewModel
-             {
-                 Title = $"Scenario {Comparison.ComparedDeals.Count + 1}",
-                 VehicleName = DealInput.SelectedVehicle?.ModelName ?? "Unknown Vehicle",
-                 Product = DealInput.Product,
-                 Price = DealInput.PriceExTax.ToString("N0", CultureInfo.InvariantCulture),
-                 DownPayment = $"{DealInput.DownPaymentValueEntry.ToString("N0", CultureInfo.InvariantCulture)} {DealInput.DownPaymentUnit}",
-                 Term = DealInput.TermMonths,
-                 NominalRate = (DealInput.CustomerNominalRate / 100.0).ToString("0.00%", CultureInfo.InvariantCulture),
-                 FlatRate = DealInput.CustomerFlatRate.ToString("0.00%"), // Assuming it's already a percent value in UI
-                 Balloon = $"{DealInput.BalloonValueEntry.ToString("N0", CultureInfo.InvariantCulture)} {DealInput.BalloonUnit}",
-                 
-                 MonthlyInstallment = Results.Metrics.MonthlyInstallment,
-                 FinancedAmount = Results.Metrics.FinancedAmount,
-                 RoRAC = Results.Metrics.RoRAC,
-                 TotalInterest = Results.TotalInterestPaid
-             };
-
-             // Add waterfall steps based on current waterfall metrics
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel { Label = "Cust. Rate", Value = _wfCustomerRate, FormattedValue = WfCustomerRateText, ColorHex = "#FF0078D7", HeightFactor = Math.Abs(_wfCustomerRate) * 50 });
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel { Label = "CoF", Value = -_wfCostOfDebtMatched, FormattedValue = $"-{WfCostOfDebtMatchedText}", ColorHex = "#FFD13438", HeightFactor = Math.Abs(_wfCostOfDebtMatched) * 50 });
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel { Label = "Risk", Value = -_wfCostOfCreditRisk, FormattedValue = $"-{WfCostOfCreditRiskText}", ColorHex = "#FFD13438", HeightFactor = Math.Abs(_wfCostOfCreditRisk) * 50 });
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel { Label = "OPEX", Value = -_wfOPEX, FormattedValue = $"-{WfOPEXText}", ColorHex = "#FFAA00", HeightFactor = Math.Abs(_wfOPEX) * 50 });
-             
-             // Net IDC/Subsidy
-             double netIdc = _wfIDCUpfrontAnnualized - _wfSubsidyUpfrontAnnualized; // Simplified for now
-             
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel {
-                 Label = "Net IDC",
-                 Value = -netIdc,
-                 FormattedValue = (netIdc >= 0 ? "-" : "+") + Math.Abs(netIdc).ToString("0.00%", CultureInfo.InvariantCulture),
-                 ColorHex = netIdc >= 0 ? "#FFD13438" : "#FF107C10",
-                 HeightFactor = Math.Abs(netIdc) * 50
-             });
-
-             // RoRAC needs careful parsing from string like "1.45%"
-             double roracVal = 0;
-             var roracStr = Results.Metrics.RoRAC.TrimEnd('%');
-             if (double.TryParse(roracStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var rval))
-             {
-                 roracVal = rval / 100.0;
-             }
-
-             deal.WaterfallSteps.Add(new WaterfallStepViewModel { Label = "RoRAC", Value = roracVal, FormattedValue = Results.Metrics.RoRAC, IsTotal = true, ColorHex = "#FF005A9E", HeightFactor = Math.Abs(roracVal) * 50 });
+             var deal = _comparisonService.CreateComparisonItem(
+                 Comparison.ComparedDeals.Count,
+                 DealInput.SelectedVehicle?.ModelName ?? "Unknown Vehicle",
+                 DealInput.Product,
+                 DealInput.PriceExTax,
+                 DealInput.DownPaymentValueEntry,
+                 DealInput.DownPaymentUnit,
+                 DealInput.TermMonths,
+                 DealInput.CustomerNominalRate,
+                 DealInput.CustomerFlatRate,
+                 DealInput.BalloonValueEntry,
+                 DealInput.BalloonUnit,
+                 Results.Metrics.MonthlyInstallment,
+                 Results.Metrics.FinancedAmount,
+                 Results.Metrics.RoRAC,
+                 Results.TotalInterestPaid,
+                 _wfCustomerRate,
+                 WfCustomerRateText,
+                 _wfCostOfDebtMatched,
+                 WfCostOfDebtMatchedText,
+                 _wfCostOfCreditRisk,
+                 WfCostOfCreditRiskText,
+                 _wfOPEX,
+                 WfOPEXText,
+                 _wfIDCUpfrontAnnualized,
+                 _wfSubsidyUpfrontAnnualized
+             );
 
              Comparison.ComparedDeals.Add(deal);
              Status = $"Added {deal.Title} to comparison";
@@ -533,136 +425,30 @@ public partial class MainViewModel : ObservableValidator
         }
     }
 
-    // MARK: Goal Seek
-    private bool _isGoalSeekOpen;
-    public bool IsGoalSeekOpen { get => _isGoalSeekOpen; set => SetProperty(ref _isGoalSeekOpen, value); }
-    
-    private int _goalVariableIndex = 0; // 0=Rate, 1=DownPayment
-    public int GoalVariableIndex { get => _goalVariableIndex; set => SetProperty(ref _goalVariableIndex, value); }
-
-    private int _goalMetricIndex = 0; // 0=Installment, 1=RoRAC
-    public int GoalMetricIndex { get => _goalMetricIndex; set => SetProperty(ref _goalMetricIndex, value); }
-
-    private double _goalTargetValue = 0;
-    public double GoalTargetValue
-    {
-        get => _goalTargetValue;
-        set
-        {
-            if (SetProperty(ref _goalTargetValue, value))
-            {
-                 OnPropertyChanged(nameof(IsGoalSeekTargetSet));
-            }
-        }
-    }
-
-    public bool IsGoalSeekTargetSet => GoalTargetValue > 0;
+    // MARK: Goal Seek -> Delegated to GoalSeekViewModel
+    [RelayCommand]
+    private void GoalSeekSolveForRate() => GoalSeek.OpenForRate();
 
     [RelayCommand]
-    private void CloseGoalSeek()
-    {
-        IsGoalSeekOpen = false;
-        GoalTargetValue = 0;
-    }
-
-    [RelayCommand]
-    private async Task RunGoalSeekAsync()
-    {
-        // Legacy wrapper using UI selected indices
-        var variable = GoalVariableIndex == 0 ? GoalSeekEngine.GoalVariable.CustomerNominalRate : GoalSeekEngine.GoalVariable.DownPaymentAmount;
-        // NOTE: If we add more radio buttons, this mapping needs update.
-        
-        var metric = GoalMetricIndex == 0 ? GoalSeekEngine.TargetMetric.MonthlyInstallment : GoalSeekEngine.TargetMetric.RoRAC;
-        await RunGoalSeekWithParamsAsync(variable, metric, GoalTargetValue);
-    }
-
-    [RelayCommand]
-    private void GoalSeekSolveForRate()
-    {
-        IsGoalSeekOpen = true;
-        GoalVariableIndex = 0; // Customer Rate
-    }
+    private void GoalSeekSolveForDownPayment() => GoalSeek.OpenForDownPayment();
 
     [RelayCommand]
     private async Task GoalSeekSolveForRateAutoAsync()
     {
-        // Auto-run: solve for Rate to achieve target RoRAC (as requested by user)
-        // Ensure target RoRAC is taken from GoalTargetValue
-        IsGoalSeekOpen = true;
-        GoalVariableIndex = 0; // Rate
-        GoalMetricIndex = 1;   // RoRAC
-        await RunGoalSeekAsync();
-    }
-
-    [RelayCommand]
-    private void GoalSeekSolveForDownPayment()
-    {
-        IsGoalSeekOpen = true;
-        GoalVariableIndex = 1; // Down Payment
+        // Use current target from GoalSeek VM if set, or maybe we need a separate target for auto.
+        // Assuming user set it in GoalSeek view, but if we auto-run from main view, where do we get target?
+        // If we want to keep this auto-command on main view, we need to pass target.
+        // Let's assume GoalSeek.TargetValue is used.
+        await GoalSeek.RunWithParamsAsync(GoalSeekVariable.CustomerNominalRate, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
     }
 
     [RelayCommand]
     private async Task GoalSeekSolveForSubsidyAutoAsync()
     {
-        // Auto-run: solve for Subsidy to achieve target RoRAC
-        IsGoalSeekOpen = true;
-        GoalVariableIndex = 3; // UpfrontSubsidy (I need to ensure enum maps to 3, it was 4th item so index 3 is correct if 0-indexed)
-        // Wait, GoalVariableIndex in VM is just an int for RadioButtons. I need to update RunGoalSeekAsync to handle new variable type if I use the int.
-        // Actually, I should probably update GoalVariableIndex to support 4 states if I want radio buttons to reflect it,
-        // OR just bypass GoalVariableIndex in AutoAsync commands.
-        // Let's bypass or update RunGoalSeekAsync to handle explicit override?
-        // RunGoalSeekAsync uses the class properties.
-        
-        // Let's update RunGoalSeekAsync to map generic int to enum better, or use a dedicated property for the command.
-        // For now, I'll hack it by setting a special index or just passing parameters to RunGoalSeekAsync if I refactor it.
-        // Refactoring RunGoalSeekAsync to take optional params is cleaner.
-        await RunGoalSeekWithParamsAsync(GoalSeekEngine.GoalVariable.UpfrontSubsidy, GoalSeekEngine.TargetMetric.RoRAC, GoalTargetValue);
+        await GoalSeek.RunWithParamsAsync(GoalSeekVariable.UpfrontSubsidy, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
     }
 
-    private async Task RunGoalSeekWithParamsAsync(GoalSeekEngine.GoalVariable variable, GoalSeekEngine.TargetMetric metric, double targetValue)
-    {
-        try
-        {
-            IsCalculating = true;
-            Status = $"Goal Seeking {variable}...";
-            await Task.Delay(10);
-
-            var gs = new GoalSeekEngine(_dealEngine);
-            var baseInput = DealInput.BuildDealInput();
-            
-            double target = targetValue;
-            if (metric == GoalSeekEngine.TargetMetric.RoRAC) target /= 100.0;
-
-            double result = gs.Seek(baseInput, variable, metric, target);
-
-            if (variable == GoalSeekEngine.GoalVariable.CustomerNominalRate)
-            {
-                DealInput.CustomerNominalRate = Math.Round(result, 2);
-            }
-            else if (variable == GoalSeekEngine.GoalVariable.DownPaymentAmount)
-            {
-                DealInput.DownPaymentUnit = "THB";
-                DealInput.DownPaymentValueEntry = Math.Round(result, 0);
-            }
-            else if (variable == GoalSeekEngine.GoalVariable.UpfrontSubsidy)
-            {
-                DealInput.SubsidyBudget = Math.Round(result, 0);
-            }
-
-            Status = $"Goal Seek Complete. Result: {result:N2}";
-            await RecalculateAsync();
-        }
-        catch (Exception ex)
-        {
-             Status = $"Goal Seek Error: {ex.Message}";
-        }
-        finally
-        {
-            IsCalculating = false;
-        }
-    }
-
-    private void PopulateCashflows(IReadOnlyList<CashflowRowDto> schedule)
+    private void PopulateCashflows(IReadOnlyList<FinancialCalculator.Engine.Models.Facade.CashflowRow> schedule)
     {
         Results.Cashflows.Clear();
         if (schedule == null) return;
@@ -674,11 +460,16 @@ public partial class MainViewModel : ObservableValidator
 
         foreach (var r in schedule)
         {
-            cumulativePrincipal += r.Principal;
-            cumulativeInterest += r.Interest;
-            totalPrincipal += r.Principal;
-            totalInterest += r.Interest;
-            var totalPayment = r.Principal + r.Interest;
+            double principal = (double)r.Principal;
+            double interest = (double)r.Interest;
+            double balance = (double)r.Balance;
+            double cashflow = (double)r.Cashflow;
+
+            cumulativePrincipal += principal;
+            cumulativeInterest += interest;
+            totalPrincipal += principal;
+            totalInterest += interest;
+            var totalPayment = principal + interest;
 
             string idcBreakdown = "";
             if (r.Period == 1)
@@ -703,11 +494,11 @@ public partial class MainViewModel : ObservableValidator
             Results.Cashflows.Add(new CashflowRowViewModel
             {
                 Period = r.Period,
-                Principal = r.Principal.ToString("N0", CultureInfo.InvariantCulture),
-                Interest = r.Interest.ToString("N0", CultureInfo.InvariantCulture),
+                Principal = principal.ToString("N0", CultureInfo.InvariantCulture),
+                Interest = interest.ToString("N0", CultureInfo.InvariantCulture),
 
-                Balance = r.Balance.ToString("N0", CultureInfo.InvariantCulture),
-                Cashflow = r.Cashflow.ToString("N0", CultureInfo.InvariantCulture),
+                Balance = balance.ToString("N0", CultureInfo.InvariantCulture),
+                Cashflow = cashflow.ToString("N0", CultureInfo.InvariantCulture),
                 PrincipalRunoff = cumulativePrincipal.ToString("N0", CultureInfo.InvariantCulture),
                 InterestRunoff = cumulativeInterest.ToString("N0", CultureInfo.InvariantCulture),
                 SubsidyAllocation = subsidyAllocation,
@@ -733,47 +524,6 @@ public partial class MainViewModel : ObservableValidator
     }
 
     // MARK: Helpers
-    private DealDto BuildDealFromInputs()
-    {
-        // Map unified entry + unit to engine-facing fields (legacy DTO for minor display helpers)
-        double dpAmt = 0, dpPct = 0; string dpLock = "amount";
-        if (string.Equals(DealInput.DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase))
-        {
-            dpPct = DealInput.DownPaymentValueEntry / 100.0;
-            dpLock = "percent";
-        }
-        else
-        {
-            dpAmt = DealInput.DownPaymentValueEntry;
-            dpLock = "amount";
-        }
-
-        double blAmt = 0, blPct = 0;
-        if (string.Equals(DealInput.BalloonUnit, "%", StringComparison.OrdinalIgnoreCase))
-        {
-            blPct = DealInput.BalloonValueEntry / 100.0;
-        }
-        else
-        {
-            blAmt = DealInput.BalloonValueEntry;
-        }
-
-        return new DealDto
-        {
-            Product = DealInput.Product,
-            PriceExTax = DealInput.PriceExTax,
-            DownPaymentAmount = dpAmt,
-            DownPaymentPercent = dpPct,
-            DownPaymentLocked = dpLock,
-            TermMonths = DealInput.TermMonths,
-            BalloonPercent = blPct,
-            BalloonAmount = blAmt,
-            Timing = DealInput.Timing,
-            RateMode = DealInput.RateMode,
-            CustomerNominalRate = DealInput.CustomerNominalRate / 100.0,
-            TargetInstallment = DealInput.TargetInstallment
-        };
-    }
 
     // Budget Visualization
     private BudgetUtilizationViewModel _budgetUtilization = new();
@@ -802,90 +552,6 @@ public partial class MainViewModel : ObservableValidator
             IdcPct = new Microsoft.UI.Xaml.GridLength(idcs, Microsoft.UI.Xaml.GridUnitType.Star),
             UnallocatedPct = new Microsoft.UI.Xaml.GridLength(unallocated, Microsoft.UI.Xaml.GridUnitType.Star)
         };
-    }
-    private (FinancialCalculator.Engine.Models.CalculatorOutputs outputs,
-             FinancialCalculator.Engine.Models.Profitability profit,
-             double commissionPct,
-             double commissionAmt)
-        ComputeScenarioWithCommission(decimal vehiclePrice, bool subdownIsPercent, decimal subdownValue, decimal upfrontCostsDelta, decimal upfrontSubsidiesDelta, double? customerRateOverride)
-    {
-        // First pass: without commission in upfront costs
-        var input1 = new DealEngine.DealInput
-        {
-            Market = "TH",
-            Product = DealInput.Product,
-            Timing = DealInput.Timing,
-            TermMonths = DealInput.TermMonths,
-            VehiclePrice = vehiclePrice,
-            AdditionalFinancedItems = (decimal)DealInput.AdditionalFinancedItems,
-            DownIsPercent = string.Equals(DealInput.DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase),
-            DownValue = (decimal)DealInput.DownPaymentValueEntry,
-            BalloonIsPercent = string.Equals(DealInput.BalloonUnit, "%", StringComparison.OrdinalIgnoreCase),
-            BalloonValue = (decimal)DealInput.BalloonValueEntry,
-            CustomerRatePercent = (decimal)(customerRateOverride ?? DealInput.CustomerNominalRate),
-            UpfrontSubsidies = upfrontSubsidiesDelta,
-            UpfrontCosts = (decimal)Math.Max(0, DealInput.IdcOther) + upfrontCostsDelta,
-            SubdownIsPercent = subdownIsPercent,
-            SubdownValue = subdownValue,
-        };
-        var out1 = _dealEngine.Calculate(input1);
-
-        // Resolve commission based on financed amount
-        var (pct, amt) = ResolveCommissionForFinanced(out1.Deal.FinancedAmount);
-
-        // Second pass: include commission in upfront costs
-        var input2 = input1 with { UpfrontCosts = input1.UpfrontCosts + (decimal)amt };
-        var out2 = _dealEngine.Calculate(input2);
-
-        return (out2.Deal, out2.Profit, pct, amt);
-    }
-
-    private (double pct, double amt) ResolveCommissionForFinanced(decimal financed)
-    {
-        double pct = DealInput.DealerCommissionMode == "override" ? (DealInput.DealerCommissionPct ?? DealInput.AutoCommissionPct) : DealInput.AutoCommissionPct;
-        if (pct < 0) pct = 0;
-        double amt = DealInput.DealerCommissionMode == "override" && DealInput.DealerCommissionAmt.HasValue
-            ? DealInput.DealerCommissionAmt.Value
-            : Math.Round((double)financed * pct);
-        return (pct, Math.Max(0, amt));
-    }
-
-    // Compute subsidy required to buy down from baseRatePct to targetRatePct by interest shortfall (approximation)
-    private double ComputeRequiredSubsidyForRateBuydown(decimal vehiclePrice, bool subdownIsPercent, decimal subdownValue, decimal upfrontCostsDelta, double baseRatePct, double targetRatePct)
-    {
-        // Compute monthly at base rate
-        var baseRes = ComputeScenarioWithCommission(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, baseRatePct);
-        var targetRes = ComputeScenarioWithCommission(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, targetRatePct);
-        // Interest shortfall over the term: approximate as sum of (base interest - target interest)
-        var baseInt = baseRes.outputs.Schedule.Sum(r => (double)r.Interest);
-        var tgtInt = targetRes.outputs.Schedule.Sum(r => (double)r.Interest);
-        var shortfall = Math.Max(0, baseInt - tgtInt);
-        return shortfall;
-    }
-
-    private double CalculateLowestAchievableRate(decimal vehiclePrice, bool subdownIsPercent, decimal subdownValue, decimal upfrontCostsDelta, double baseRatePct, double availableBudget)
-    {
-        // Binary search for target rate that results in required subsidy <= availableBudget
-        double low = 0;
-        double high = baseRatePct;
-        double bestRate = baseRatePct;
-
-        for (int i = 0; i < 20; i++)
-        {
-            double mid = (low + high) / 2;
-            double required = ComputeRequiredSubsidyForRateBuydown(vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, baseRatePct, mid);
-            
-            if (required > availableBudget)
-            {
-                low = mid; // Need higher rate
-            }
-            else
-            {
-                bestRate = mid;
-                high = mid; // Achievable, try lower
-            }
-        }
-        return Math.Round(bestRate, 2);
     }
 
     // MARK: Bottom Summary Bindings for Details/Key Metrics

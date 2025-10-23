@@ -32,5 +32,6 @@ public sealed class Profitability
     
     // Final results
     public decimal NetEbitMargin { get; init; } // Net Interest Margin - CostOfRisk - OPEX - CapitalAdvantage
+    public decimal EconomicCapitalRatio { get; init; } // Economic Capital as ratio of financed amount (approx)
     public decimal AcquisitionRoRac { get; init; } // NetEbitMargin / EconomicCapital
 }

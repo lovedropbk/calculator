@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using FinancialCalculator.Tests.Models;
 
 namespace FinancialCalculator.Tests.Services;
@@ -40,30 +42,34 @@ public class VehicleCatalogService
              return;
         }
 
-        var lines = await File.ReadAllLinesAsync(path);
-        // Header is on line 3 (index 2)
-        if (lines.Length < 4) return;
+        using var reader = new StreamReader(path);
+        // Skip first 3 lines of header garbage if any to match original behavior perfectly, 
+        // though CsvHelper might handle it if we just read until we find the real header.
+        // Let's stick to explicit skip to be safe and match WinUI3 impl I just wrote.
+        for (int i = 0; i < 2; i++) await reader.ReadLineAsync();
 
-        for (int i = 3; i < lines.Length; i++)
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+
+        await csv.ReadAsync();
+        csv.ReadHeader();
+
+        while (await csv.ReadAsync())
         {
-            var line = lines[i];
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(",")) continue; // Skip empty rows
-            var parts = CsvParser.SplitCsvLine(line);
-            if (parts.Length < 12) continue;
+            if (!csv.TryGetField<string>(1, out var modelName) || string.IsNullOrWhiteSpace(modelName) || modelName == "Models name") continue;
 
-            var modelName = parts[1].Trim();
-            if (string.IsNullOrEmpty(modelName) || modelName == "Models name") continue;
+            double ParseCurrencySafe(int index) => csv.TryGetField<string>(index, out var s) ? ParseCurrency(s ?? string.Empty) : 0;
+            double? ParseRVSafe(int index) => csv.TryGetField<string>(index, out var s) ? ParseRV(s ?? string.Empty) : null;
 
             var vehicle = new Vehicle
             {
-                ModelName = modelName,
+                ModelName = modelName.Trim(),
                 Class = InferVehicleClass(modelName),
-                MSRP = ParseCurrency(parts[4]),
-                RV12 = ParseRV(parts[7]),
-                RV24 = ParseRV(parts[8]),
-                RV36 = ParseRV(parts[9]),
-                RV48 = ParseRV(parts[10]),
-                RV60 = ParseRV(parts[11])
+                MSRP = ParseCurrencySafe(4),
+                RV12 = ParseRVSafe(7),
+                RV24 = ParseRVSafe(8),
+                RV36 = ParseRVSafe(9),
+                RV48 = ParseRVSafe(10),
+                RV60 = ParseRVSafe(11)
             };
             _vehicles.Add(vehicle);
         }
@@ -78,41 +84,42 @@ public class VehicleCatalogService
             return;
         }
 
-        var lines = await File.ReadAllLinesAsync(path);
-        if (lines.Length < 2) return;
+        using var reader = new StreamReader(path);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
 
-        var headers = CsvParser.SplitCsvLine(lines[0]).Select(h => h.Trim()).ToArray();
-        // Find indices for MBSP packages (starting from index 3 usually)
+        await csv.ReadAsync();
+        csv.ReadHeader();
+        var headerRecord = csv.HeaderRecord;
+
         var mbspIndices = new Dictionary<string, int>();
-        for (int i = 3; i < headers.Length; i++)
+        if (headerRecord != null)
         {
-            if (!string.IsNullOrEmpty(headers[i]))
+            for (int i = 3; i < headerRecord.Length; i++)
             {
-                mbspIndices[headers[i]] = i;
-                MbspPackages.Add(headers[i]);
+                if (!string.IsNullOrEmpty(headerRecord[i]))
+                {
+                    mbspIndices[headerRecord[i].Trim()] = i;
+                    if (!MbspPackages.Contains(headerRecord[i].Trim()))
+                    {
+                        MbspPackages.Add(headerRecord[i].Trim());
+                    }
+                }
             }
         }
 
-        for (int i = 1; i < lines.Length; i++)
+        while (await csv.ReadAsync())
         {
-            var line = lines[i];
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(",")) continue;
-            var parts = CsvParser.SplitCsvLine(line);
-            
-            // Ensure we have enough parts for the max index we need
-            int maxIndexNeeded = mbspIndices.Values.Count > 0 ? mbspIndices.Values.Max() : 0;
-            if (parts.Length <= maxIndexNeeded) continue;
+            if (!csv.TryGetField<string>(0, out var modelName) || modelName == null) continue;
+            modelName = modelName.Trim();
 
-            var modelName = parts[0].Trim();
             var vehicle = _vehicles.FirstOrDefault(v => ModelNamesMatch(v.ModelName, modelName));
-            
             if (vehicle != null)
             {
                 foreach (var kvp in mbspIndices)
                 {
-                    if (parts.Length > kvp.Value)
+                    if (csv.TryGetField<string>(kvp.Value, out var costStr))
                     {
-                        var cost = ParseCurrency(parts[kvp.Value]);
+                        var cost = ParseCurrency(costStr ?? string.Empty);
                         if (cost > 0)
                         {
                             vehicle.MbspCosts[kvp.Key] = cost;
@@ -145,7 +152,7 @@ public class VehicleCatalogService
              current = current.Parent;
         }
 
-        // Fallback for dev environment (up from bin/Debug/net9.0...)
+        // Fallback for dev environment (up from bin/Debug/net8.0...)
         path = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "winui3-mvp", "docs", filename));
         if (File.Exists(path)) return path;
 
@@ -154,23 +161,16 @@ public class VehicleCatalogService
 
     private string InferVehicleClass(string modelName)
     {
-        // Simple heuristic: first word after stripping sub-brands
         var cleaned = modelName.Replace("Mercedes-AMG ", "").Replace("Mercedes-Maybach ", "").Trim();
         var parts = cleaned.Split(' ');
         if (parts.Length > 0)
         {
-            var prefix = parts[0];
-
-            
-            // Check if it starts with V and has digits (e.g. V250d)
+            var prefix = parts.First();
             if (prefix.StartsWith("V") && prefix.Length > 1 && prefix.Skip(1).Any(char.IsDigit))
             {
                  return "V-Class";
             }
-
             if (prefix == "Sprinter" || prefix == "Vito") return prefix;
-            
-            // Generic fallback to append -Class for short prefixes
             if (prefix.Length <= 4) return prefix + "-Class";
         }
         return "Other";
@@ -178,7 +178,7 @@ public class VehicleCatalogService
 
     private double ParseCurrency(string s)
     {
-        // Remove quotes, spaces, commas, currency symbols if any
+        if (string.IsNullOrEmpty(s)) return 0;
         var cleaned = s.Replace("\"", "").Replace(",", "").Replace(" ", "").Trim();
         if (double.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
             return val;
@@ -187,6 +187,7 @@ public class VehicleCatalogService
 
     private double? ParseRV(string s)
     {
+        if (string.IsNullOrEmpty(s)) return null;
         var cleaned = s.Replace("\"", "").Trim();
         if (cleaned.EndsWith("%"))
         {
@@ -194,7 +195,6 @@ public class VehicleCatalogService
                 return val / 100.0;
         }
         if (cleaned == "N/A" || cleaned == "#N/A" || cleaned == "-" || string.IsNullOrEmpty(cleaned)) return null;
-        
         return null;
     }
 

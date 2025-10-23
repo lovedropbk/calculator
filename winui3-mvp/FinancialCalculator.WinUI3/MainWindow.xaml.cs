@@ -66,9 +66,9 @@ public sealed partial class MainWindow : Window
 
     private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
-        if (ViewModel.IsGoalSeekOpen || ViewModel.IsGoalSeekTargetSet)
+        if (ViewModel.GoalSeek.IsOpen || ViewModel.GoalSeek.IsTargetSet)
         {
-            ViewModel.CloseGoalSeekCommand.Execute(null);
+            ViewModel.GoalSeek.CloseCommand.Execute(null);
             args.Handled = true;
         }
     }

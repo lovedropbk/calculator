@@ -35,6 +35,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251003001" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
@@ -45,9 +46,6 @@
     <ProjectReference Include="..\FinancialCalculator.Engine\FinancialCalculator.Engine.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Services\ApiClient.cs" />
-  </ItemGroup>
 
 
 

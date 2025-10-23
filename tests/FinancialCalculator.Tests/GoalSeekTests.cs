@@ -15,7 +15,7 @@ namespace FinancialCalculator.Tests
         public GoalSeekTests(ITestOutputHelper output)
         {
             _output = output;
-            _riskRepo = new RiskParameterRepository();
+            _riskRepo = new RiskParameterRepository(new FileService());
             _engine = new DealEngine(_riskRepo);
             _goalSeek = new GoalSeekEngine(_engine);
         }

@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using FinancialCalculator.WinUI3.Models;
 
 namespace FinancialCalculator.WinUI3.Services;
@@ -22,68 +24,74 @@ public class StandardRateService
             var path = GetPath("parameters", "standard_rates.csv");
             if (!File.Exists(path))
             {
-                System.Diagnostics.Debug.WriteLine($"Standard rates not found at {path}");
+                Logger.Warn($"Standard rates not found at {path}");
                 return;
             }
 
-            var lines = await File.ReadAllLinesAsync(path);
-            // Skip header
-            foreach (var line in lines.Skip(1))
+            using var reader = new StreamReader(path);
+            using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+
+            await csv.ReadAsync();
+            csv.ReadHeader();
+
+            while (await csv.ReadAsync())
             {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var parts = CsvParser.SplitCsvLine(line);
-                if (parts.Length < 6) continue;
+                // parts -> Product
+                // parts -> Term
+                // parts -> DP Min
+                // parts -> DP Max
+                // parts -> Payment Mode
+                // parts -> Rate
+
+                if (!csv.TryGetField<string>(0, out var product)) continue;
+                if (!csv.TryGetField<int>(1, out var term)) continue;
+                if (!csv.TryGetField<double>(2, out var dpMin)) continue;
+                if (!csv.TryGetField<double>(3, out var dpMax)) continue;
+                if (!csv.TryGetField<string>(4, out var paymentMode)) continue;
+                if (!csv.TryGetField<double>(5, out var rate)) continue;
 
                 _rates.Add(new StandardRate
                 {
-                    Product = parts[0].Trim(),
-                    Term = int.Parse(parts[1].Trim()),
-                    DPMin = ParseDouble(parts[2]),
-                    DPMax = ParseDouble(parts[3]),
-                    PaymentMode = parts[4].Trim(),
-                    Rate = ParseDouble(parts[5])
-
+                    Product = product.Trim(),
+                    Term = term,
+                    DPMin = dpMin,
+                    DPMax = dpMax,
+                    PaymentMode = paymentMode.Trim(),
+                    Rate = rate
                 });
             }
             _isLoaded = true;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading standard rates: {ex.Message}");
+            Logger.Error("Error loading standard rates", ex);
         }
     }
 
     private string GetPath(params string[] pathParts)
-        {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var filename = Path.Combine(pathParts);
-    
-            // 1. Try relative to baseDir (deployment)
-            var path = Path.Combine(baseDir, "docs", filename);
-            if (File.Exists(path)) return path;
-    
-            // 2. Walk up to find 'winui3-mvp' folder or 'docs' folder
-            var current = new DirectoryInfo(baseDir);
-            int maxDepth = 10;
-            while (current != null && maxDepth-- > 0)
-            {
-                 var check = Path.Combine(current.FullName, "winui3-mvp", "docs", filename);
-                 if (File.Exists(check)) return check;
-                 
-                 check = Path.Combine(current.FullName, "docs", filename);
-                 if (File.Exists(check)) return check;
-    
-                 current = current.Parent;
-            }
-    
-            return Path.Combine(baseDir, filename);
-        }
-    
-    private double ParseDouble(string s)
     {
-        if (double.TryParse(s.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
-            return val;
-        return 0;
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        var filename = Path.Combine(pathParts);
+
+        // 1. Try relative to baseDir (deployment)
+        var path = Path.Combine(baseDir, "docs", filename);
+        if (File.Exists(path)) return path;
+
+        // 2. Walk up to find 'winui3-mvp' folder or 'docs' folder
+        var current = new DirectoryInfo(baseDir);
+        int maxDepth = 10;
+        while (current != null && maxDepth-- > 0)
+        {
+             var check = Path.Combine(current.FullName, "winui3-mvp", "docs", filename);
+             if (File.Exists(check)) return check;
+             
+             check = Path.Combine(current.FullName, "docs", filename);
+             if (File.Exists(check)) return check;
+
+             current = current.Parent;
+        }
+
+        return Path.Combine(baseDir, filename);
     }
 
     public double? GetStandardRate(string product, int term, double downPaymentPct, string paymentMode)

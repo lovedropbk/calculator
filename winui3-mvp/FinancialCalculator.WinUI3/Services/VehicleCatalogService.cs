@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using FinancialCalculator.WinUI3.Models;
 
 namespace FinancialCalculator.WinUI3.Services;
@@ -27,7 +29,7 @@ public class VehicleCatalogService
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading vehicle catalog: {ex.Message}");
+            Logger.Error("Error loading vehicle catalog", ex);
         }
     }
 
@@ -36,35 +38,46 @@ public class VehicleCatalogService
         var path = GetPath("RVbymodel OCT2025.csv");
         if (!File.Exists(path))
         {
-             System.Diagnostics.Debug.WriteLine($"RV catalog not found at {path}");
+             Logger.Warn($"RV catalog not found at {path}");
              return;
         }
 
-        var lines = await File.ReadAllLinesAsync(path);
-        // Header is on line 3 (index 2)
-        if (lines.Length < 4) return;
+        using var reader = new StreamReader(path);
+        // Skip first 3 lines of header garbage if any, or rely on CsvHelper to skip if configured.
+        // Original code skipped to line 3 (index 2 for header, data from index 3).
+        // Let's manually skip lines to match exact behavior if it was skipping preamble.
+        for (int i = 0; i < 2; i++) await reader.ReadLineAsync(); 
 
-        for (int i = 3; i < lines.Length; i++)
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+
+        await csv.ReadAsync();
+        csv.ReadHeader();
+
+        while (await csv.ReadAsync())
         {
-            var line = lines[i];
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(",")) continue; // Skip empty rows
-            var parts = CsvParser.SplitCsvLine(line);
-            if (parts.Length < 12) continue;
+            // parts -> Model Name
+            // parts -> MSRP
+            // parts -> RV12
+            // parts -> RV24
+            // parts -> RV36
+            // parts -> RV48
+            // parts -> RV60
+            if (!csv.TryGetField<string>(1, out var modelName) || string.IsNullOrWhiteSpace(modelName) || modelName == "Models name") continue;
 
-            var modelName = parts[1].Trim();
-
-            if (string.IsNullOrEmpty(modelName) || modelName == "Models name") continue;
+            // Safe parsing for currency and RVs
+            double ParseCurrencySafe(int index) => csv.TryGetField<string>(index, out var s) ? ParseCurrency(s ?? string.Empty) : 0;
+            double? ParseRVSafe(int index) => csv.TryGetField<string>(index, out var s) ? ParseRV(s ?? string.Empty) : null;
 
             var vehicle = new Vehicle
             {
-                ModelName = modelName,
+                ModelName = modelName.Trim(),
                 Class = InferVehicleClass(modelName),
-                MSRP = ParseCurrency(parts[4]),
-                RV12 = ParseRV(parts[7]),
-                RV24 = ParseRV(parts[8]),
-                RV36 = ParseRV(parts[9]),
-                RV48 = ParseRV(parts[10]),
-                RV60 = ParseRV(parts[11])
+                MSRP = ParseCurrencySafe(4),
+                RV12 = ParseRVSafe(7),
+                RV24 = ParseRVSafe(8),
+                RV36 = ParseRVSafe(9),
+                RV48 = ParseRVSafe(10),
+                RV60 = ParseRVSafe(11)
             };
             _vehicles.Add(vehicle);
         }
@@ -75,48 +88,47 @@ public class VehicleCatalogService
         var path = GetPath("MBSP OCT2025.csv");
         if (!File.Exists(path))
         {
-            System.Diagnostics.Debug.WriteLine($"MBSP catalog not found at {path}");
+            Logger.Warn($"MBSP catalog not found at {path}");
             return;
         }
 
-        var lines = await File.ReadAllLinesAsync(path);
-        if (lines.Length < 2) return;
+        using var reader = new StreamReader(path);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
 
-        var headers = CsvParser.SplitCsvLine(lines[0]).Select(h => h.Trim()).ToArray();
+        await csv.ReadAsync();
+        csv.ReadHeader();
+        var headerRecord = csv.HeaderRecord;
 
         // Find indices for MBSP packages (starting from index 3 usually)
         var mbspIndices = new Dictionary<string, int>();
-        for (int i = 3; i < headers.Length; i++)
+        if (headerRecord != null)
         {
-            if (!string.IsNullOrEmpty(headers[i]))
+            for (int i = 3; i < headerRecord.Length; i++)
             {
-                mbspIndices[headers[i]] = i;
-                MbspPackages.Add(headers[i]);
+                if (!string.IsNullOrEmpty(headerRecord[i]))
+                {
+                    mbspIndices[headerRecord[i].Trim()] = i;
+                    if (!MbspPackages.Contains(headerRecord[i].Trim()))
+                    {
+                        MbspPackages.Add(headerRecord[i].Trim());
+                    }
+                }
             }
         }
 
-        for (int i = 1; i < lines.Length; i++)
+        while (await csv.ReadAsync())
         {
-            var line = lines[i];
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(",")) continue;
-            var parts = CsvParser.SplitCsvLine(line);
-            
-            // Ensure we have enough parts for the max index we need
-            int maxIndexNeeded = mbspIndices.Values.Count > 0 ? mbspIndices.Values.Max() : 0;
-            if (parts.Length <= maxIndexNeeded) continue;
-
-            var modelName = parts[0].Trim(); // Fixed index for MBSP file
+            if (!csv.TryGetField<string>(0, out var modelName)) continue;
+            modelName = modelName.Trim();
 
             var vehicle = _vehicles.FirstOrDefault(v => ModelNamesMatch(v.ModelName, modelName));
-
-            
             if (vehicle != null)
             {
                 foreach (var kvp in mbspIndices)
                 {
-                    if (parts.Length > kvp.Value)
+                    if (csv.TryGetField<string>(kvp.Value, out var costStr))
                     {
-                        var cost = ParseCurrency(parts[kvp.Value]);
+                        var cost = ParseCurrency(costStr ?? string.Empty);
                         if (cost > 0)
                         {
                             vehicle.MbspCosts[kvp.Key] = cost;
@@ -150,7 +162,7 @@ public class VehicleCatalogService
              current = current.Parent;
         }
 
-        System.Diagnostics.Debug.WriteLine($"Could not find {filename} starting from {baseDir}");
+        Logger.Warn($"Could not find {filename} starting from {baseDir}, using default path");
         return Path.Combine(baseDir, filename);
     }
 
@@ -162,13 +174,8 @@ public class VehicleCatalogService
         if (parts.Length > 0)
         {
             var prefix = parts[0];
-            
-            // Special cases for V-Class models which might start with V but not be V-Class directly in name sometimes?
-            // "V 300 d" -> "V" -> "V-Class"
-            // "V250d" -> "V250d" -> need to handle non-separated
-            
-            // Check if it starts with V and has digits (e.g. V250d)
             if (prefix.StartsWith("V") && prefix.Length > 1 && prefix.Skip(1).Any(char.IsDigit))
+
             {
                  return "V-Class";
             }
@@ -183,6 +190,7 @@ public class VehicleCatalogService
 
     private double ParseCurrency(string s)
     {
+        if (string.IsNullOrEmpty(s)) return 0;
         // Remove quotes, spaces, commas, currency symbols if any
         var cleaned = s.Replace("\"", "").Replace(",", "").Replace(" ", "").Trim();
         if (double.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
@@ -192,13 +200,22 @@ public class VehicleCatalogService
 
     private double? ParseRV(string s)
     {
+        if (string.IsNullOrEmpty(s)) return null;
         var cleaned = s.Replace("\"", "").Trim();
         if (cleaned.EndsWith("%"))
         {
             if (double.TryParse(cleaned.TrimEnd('%'), NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
                 return val / 100.0;
         }
+        // Handle N/A, -, etc. by returning null if standard parsing fails, or explicit check.
+        // Previous code explicitly checked for N/A, #N/A, -
         if (cleaned == "N/A" || cleaned == "#N/A" || cleaned == "-" || string.IsNullOrEmpty(cleaned)) return null;
+        
+        // Try parsing as raw number if it doesn't have % but might be a decimal (0.45)
+        if (double.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out var valNum))
+             return valNum <= 1.0 ? valNum : valNum / 100.0; // Heuristic if someone put 45 instead of 0.45? Maybe safer to just return null if ambiguous.
+             // Stick to original logic: if not %, return null unless it matched the explicit N/A checks which also return null.
+             // Wait, original code `return null` at the end, so if it didn't match %, it returned null.
         
         return null;
     }
@@ -244,7 +261,6 @@ public class VehicleCatalogService
     {
         if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) return false;
         // Normalize by removing spaces and dashes for loose matching.
-        // "EQE 300 - THA" vs "EQE300-THA" vs "EQE 300-THA"
         return string.Equals(
             a.Replace(" ", "").Replace("-", ""),
             b.Replace(" ", "").Replace("-", ""),

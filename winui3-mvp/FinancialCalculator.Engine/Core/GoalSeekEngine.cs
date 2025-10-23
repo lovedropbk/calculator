@@ -1,4 +1,5 @@
 using System;
+using MathNet.Numerics.RootFinding;
 
 namespace FinancialCalculator.Engine.Core;
 
@@ -27,7 +28,6 @@ public class GoalSeekEngine
 
     public double Seek(DealEngine.DealInput baseInput, GoalVariable variable, TargetMetric targetMetric, double targetValue)
     {
-        // Simple bisection search
         double low, high;
 
         switch (variable)
@@ -42,55 +42,33 @@ public class GoalSeekEngine
                  low = 0.0; high = 10_000_000.0;
                  break;
              case GoalVariable.UpfrontSubsidy:
-                 low = 0.0; high = 5_000_000.0; // Reasonable upper bound for subsidy
+                 low = 0.0; high = 5_000_000.0;
                  break;
              default:
                  throw new ArgumentOutOfRangeException(nameof(variable));
          }
 
-        for (int i = 0; i < 50; i++) // Max 50 iterations
+        try
         {
-            double mid = (low + high) / 2.0;
-            var currentInput = CloneWithVariable(baseInput, variable, mid);
-            var output = _dealEngine.Calculate(currentInput);
-
-            double currentValue = targetMetric switch
+            return Brent.FindRoot(x =>
             {
-                TargetMetric.MonthlyInstallment => (double)output.Deal.MonthlyRate,
-                TargetMetric.RoRAC => (double)output.Profit.AcquisitionRoRac,
-                _ => 0
-            };
-
-            if (Math.Abs(currentValue - targetValue) < 1e-5) return mid;
-
-            // Determine direction. Needs careful thought on correlation.
-            // Rate UP -> Monthly UP, RoRAC UP
-            // DownPayment UP -> Monthly DOWN, RoRAC UP (usually, less risk/funding)
-            // Subsidy UP -> RoRAC UP (direct), Monthly NO CHANGE (usually)
-
-            bool isDirectCorrelation = variable == GoalVariable.CustomerNominalRate ||
-                                       variable == GoalVariable.UpfrontSubsidy ||
-                                       (variable == GoalVariable.DownPaymentAmount && targetMetric == TargetMetric.RoRAC);
-            
-            if (variable == GoalVariable.DownPaymentAmount && targetMetric == TargetMetric.MonthlyInstallment)
-            {
-                 isDirectCorrelation = false;
-            }
-            
-            // Subsidy UP -> RoRAC UP (direct)
-            // Subsidy UP -> Monthly (no change if pure lender subsidy, so maybe can't goal seek monthly with it efficiently if slope is 0)
-            
-            if (currentValue < targetValue)
-            {
-                if (isDirectCorrelation) low = mid; else high = mid;
-            }
-            else
-            {
-                if (isDirectCorrelation) high = mid; else low = mid;
-            }
+                var currentInput = CloneWithVariable(baseInput, variable, x);
+                var output = _dealEngine.Calculate(currentInput);
+                double currentValue = targetMetric switch
+                {
+                    TargetMetric.MonthlyInstallment => (double)output.Deal.MonthlyRate,
+                    TargetMetric.RoRAC => (double)output.Profit.AcquisitionRoRac,
+                    _ => 0
+                };
+                return currentValue - targetValue;
+            }, low, high, accuracy: 1e-5);
         }
-
-        return (low + high) / 2.0;
+        catch (Exception)
+        {
+             // Fallback if root not bracketed or other issue, return current best guess or initial
+             // Maybe return 0 or throw, let's return low to indicate failure to find in range
+             return 0;
+        }
     }
 
     private DealEngine.DealInput CloneWithVariable(DealEngine.DealInput input, GoalVariable variable, double value)

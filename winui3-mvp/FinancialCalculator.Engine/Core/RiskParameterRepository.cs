@@ -4,98 +4,187 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace FinancialCalculator.Engine.Core;
 
-public class RiskParameterRepository
+public class RiskParameterRepository : IRiskParameterRepository
 {
-    private readonly Dictionary<(string, string), double> _pdTable = new();
-    private readonly Dictionary<(string, string, string), (double DcfLgd, double DownturnLgd)> _lgdTable = new();
-    private double _ecTotal = 0.088;
+    private readonly IFileService _fileService;
+    private string _parametersPath = string.Empty;
 
-    public bool IsLoaded { get; private set; }
+    private Dictionary<(string, string), double>? _pdTable;
+    private Dictionary<(string, string, string), (double DcfLgd, double DownturnLgd)>? _lgdTable;
+    private double? _ecTotal;
 
-    public async Task LoadAsync(string parametersPath)
+    public bool IsInitialized { get; private set; }
+
+    public RiskParameterRepository(IFileService fileService)
     {
-        try
-        {
-            await LoadPdAsync(Path.Combine(parametersPath, "PD.csv"));
-            await LoadLgdAsync(Path.Combine(parametersPath, "LGD_OneEC.csv"));
-            await LoadEcTotalAsync(Path.Combine(parametersPath, "EC_TOTAL.csv"));
-            IsLoaded = true;
-        }
-        catch (Exception ex) { Console.WriteLine($"Failed to load risk parameters: {ex.Message}"); }
+        _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
     }
 
-    public double GetPd(string customerType, string rating) => _pdTable.TryGetValue((customerType, rating), out var pd) ? pd : 0.0025;
+    public void Initialize(string parametersPath)
+    {
+        _parametersPath = parametersPath;
+        IsInitialized = true;
+    }
+
+    // Kept for backward compatibility if needed, but now just sets the path.
+    // Tables are loaded on-demand.
+    public Task LoadAsync(string parametersPath)
+    {
+        Initialize(parametersPath);
+        return Task.CompletedTask;
+    }
+
+    public async Task<double> GetPdAsync(string customerType, string rating)
+    {
+        await EnsurePdLoadedAsync();
+        return _pdTable!.TryGetValue((customerType, rating), out var pd) ? pd : 0.0025;
+    }
+
+    // Synchronous version for current Engine compatibility, blocks if not loaded.
+    // Ideally Engine becomes async, but for now we might need this.
+    public double GetPd(string customerType, string rating)
+    {
+        if (_pdTable == null) EnsurePdLoadedAsync().GetAwaiter().GetResult();
+        return _pdTable!.TryGetValue((customerType, rating), out var pd) ? pd : 0.0025;
+    }
+
+    public async Task<(double DcfLgd, double DownturnLgd)> GetLgdAsync(string customerType, string assetState, string avc)
+    {
+        await EnsureLgdLoadedAsync();
+        return GetLgdInternal(customerType, assetState, avc);
+    }
+
     public (double DcfLgd, double DownturnLgd) GetLgd(string customerType, string assetState, string avc)
     {
-        if (_lgdTable.TryGetValue((customerType, assetState, avc), out var lgd)) return lgd;
-        if (_lgdTable.TryGetValue((customerType, assetState, "*"), out lgd)) return lgd;
+         if (_lgdTable == null) EnsureLgdLoadedAsync().GetAwaiter().GetResult();
+         return GetLgdInternal(customerType, assetState, avc);
+    }
+
+    private (double DcfLgd, double DownturnLgd) GetLgdInternal(string customerType, string assetState, string avc)
+    {
+        if (_lgdTable!.TryGetValue((customerType, assetState, avc), out var lgd)) return lgd;
+        if (_lgdTable!.TryGetValue((customerType, assetState, "*"), out lgd)) return lgd;
         return (0.45, 0.45);
     }
-    public double GetEcTotal() => _ecTotal;
 
-    private async Task LoadPdAsync(string path)
+    public async Task<double> GetEcTotalAsync()
     {
-        if (!File.Exists(path)) return;
-        var lines = await File.ReadAllLinesAsync(path);
-        foreach (var line in lines.Skip(1))
+        await EnsureEcTotalLoadedAsync();
+        return _ecTotal!.Value;
+    }
+
+    public double GetEcTotal()
+    {
+        if (_ecTotal == null) EnsureEcTotalLoadedAsync().GetAwaiter().GetResult();
+        return _ecTotal!.Value;
+    }
+
+    private async Task EnsurePdLoadedAsync()
+    {
+        if (_pdTable != null) return;
+        _pdTable = new Dictionary<(string, string), double>();
+        var path = Path.Combine(_parametersPath, "PD.csv");
+        if (!_fileService.Exists(path)) return;
+
+        using var reader = _fileService.OpenText(path);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        
+        // Manual reading to handle the splitting of customer types and specific column indices
+        // Assuming the old parser's index usage:
+        // parts.ElementAt(2) -> CustTypeRaw
+        // parts.ElementAt(13) -> Rating
+        // parts.ElementAt(15) -> PD
+        
+        // We can try to read by header if we know them, or by index.
+        // Let's stick to index for robustness against header name changes if we aren't sure.
+        // Actually, CsvHelper is good with headers. Let's assume standard headers exist if skipping 1 line worked.
+        // But for safety and exact replication of previous logic, let's use index.
+        // CsvHelper doesn't easily support "split by comma then take element at index" without custom mapping,
+        // but we can read it as `dynamic` or `string[]` if we want.
+        // Reading as `string[]` gives us behavior closest to `SplitCsvLine`.
+
+        // Reloading with No Header to use indices safely if we want full control, 
+        // OR we use standard reading and assume the CSV is well-formed.
+        // Previous code: `lines.Skip(1)` -> implies header.
+        
+        await csv.ReadAsync(); // Skip header manually if we don't use HasHeaderRecord=true and read matches.
+        csv.ReadHeader(); // Read header row
+
+        while (await csv.ReadAsync())
         {
-            var parts = SplitCsvLine(line);
-            if (parts.Length <= 15) continue;
-            var custTypeRaw = parts.ElementAt(2);
-            var rating = parts.ElementAt(13).Trim();
-            if (double.TryParse(parts.ElementAt(15), NumberStyles.Any, CultureInfo.InvariantCulture, out var pd))
+            // Using TryGetField with index to be safe against weird rows
+            if (!csv.TryGetField<string>(2, out var custTypeRaw) || string.IsNullOrWhiteSpace(custTypeRaw)) continue;
+            if (!csv.TryGetField<string>(13, out var rating) || rating == null) continue;
+            if (!csv.TryGetField<double>(15, out var pd)) continue;
+
+            rating = rating.Trim();
+            foreach (var ct in custTypeRaw.Split(','))
             {
-                foreach (var ct in custTypeRaw.Split(',')) _pdTable[(ct.Trim(), rating)] = pd;
+                _pdTable[(ct.Trim(), rating)] = pd;
             }
         }
     }
 
-    private async Task LoadLgdAsync(string path)
+    private async Task EnsureLgdLoadedAsync()
     {
-        if (!File.Exists(path)) return;
-        var lines = await File.ReadAllLinesAsync(path);
-        foreach (var line in lines.Skip(1))
+        if (_lgdTable != null) return;
+        _lgdTable = new Dictionary<(string, string, string), (double, double)>();
+        var path = Path.Combine(_parametersPath, "LGD_OneEC.csv");
+        if (!_fileService.Exists(path)) return;
+
+        using var reader = _fileService.OpenText(path);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+
+        await csv.ReadAsync();
+        csv.ReadHeader();
+
+        while (await csv.ReadAsync())
         {
-            var parts = SplitCsvLine(line);
-            if (parts.Length <= 14) continue;
-            var assetStatesRaw = parts.ElementAt(3);
-            var custType = parts.ElementAt(4).Trim();
-            var avcsRaw = parts.ElementAt(5);
-            if (double.TryParse(parts.ElementAt(13), NumberStyles.Any, CultureInfo.InvariantCulture, out var dcfLgd) && double.TryParse(parts.ElementAt(14), NumberStyles.Any, CultureInfo.InvariantCulture, out var downturnLgd))
-            {
-                foreach (var aState in assetStatesRaw.Split(','))
-                    foreach (var avc in avcsRaw.Split(','))
-                        _lgdTable[(custType, aState.Trim(), string.IsNullOrEmpty(avc.Trim()) ? "*" : avc.Trim())] = (dcfLgd, downturnLgd);
-            }
+            // parts.ElementAt(3) -> assetStatesRaw
+            // parts.ElementAt(4) -> custType
+            // parts.ElementAt(5) -> avcsRaw
+            // parts.ElementAt(13) -> dcfLgd
+            // parts.ElementAt(14) -> downturnLgd
+             if (!csv.TryGetField<string>(3, out var assetStatesRaw) || assetStatesRaw == null) continue;
+             if (!csv.TryGetField<string>(4, out var custType) || custType == null) continue;
+             if (!csv.TryGetField<string>(5, out var avcsRaw) || avcsRaw == null) continue;
+             if (!csv.TryGetField<double>(13, out var dcfLgd)) continue;
+             if (!csv.TryGetField<double>(14, out var downturnLgd)) continue;
+
+             custType = custType.Trim();
+             foreach (var aState in assetStatesRaw.Split(','))
+             {
+                 foreach (var avc in avcsRaw.Split(','))
+                 {
+                     _lgdTable[(custType, aState.Trim(), string.IsNullOrEmpty(avc.Trim()) ? "*" : avc.Trim())] = (dcfLgd, downturnLgd);
+                 }
+             }
         }
     }
 
-    private async Task LoadEcTotalAsync(string path)
+    private async Task EnsureEcTotalLoadedAsync()
     {
-        if (!File.Exists(path)) return;
-        var lines = await File.ReadAllLinesAsync(path);
-        foreach (var line in lines.Skip(1))
-        {
-            var parts = SplitCsvLine(line);
-            if (parts.Length >= 2 && double.TryParse(parts.ElementAt(1), NumberStyles.Any, CultureInfo.InvariantCulture, out var ec)) { _ecTotal = ec; break; }
-        }
-    }
+        if (_ecTotal != null) return;
+        _ecTotal = 0.088; // Default
+        var path = Path.Combine(_parametersPath, "EC_TOTAL.csv");
+        if (!_fileService.Exists(path)) return;
 
-    private static string[] SplitCsvLine(string line)
-    {
-        var result = new List<string>();
-        bool inQuotes = false;
-        int start = 0;
-        for (int i = 0; i < line.Length; i++)
+        // EC_TOTAL seems simple, just read first data line, col 1.
+        using var reader = _fileService.OpenText(path);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        
+        if (await csv.ReadAsync())
         {
-            if (line[i] == '"') inQuotes = !inQuotes;
-            else if (line[i] == ',' && !inQuotes) { result.Add(StripQuotes(line.Substring(start, i - start))); start = i + 1; }
+             // parts.ElementAt(1) -> ec
+             if (csv.TryGetField<double>(1, out var ec))
+             {
+                 _ecTotal = ec;
+             }
         }
-        result.Add(StripQuotes(line.Substring(start)));
-        return result.ToArray();
     }
-    private static string StripQuotes(string s) { s = s.Trim(); return (s.StartsWith("\"") && s.EndsWith("\"")) ? s.Substring(1, s.Length - 2).Replace("\"\"", "\"") : s; }
 }

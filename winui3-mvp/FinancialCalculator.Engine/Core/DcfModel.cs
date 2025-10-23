@@ -136,6 +136,7 @@ public static class DcfModel
             SubsidyPeriodicPct = periodicFee > 0 ? periodicFee : 0m,
 
             NetEbitMargin = netEbit,
+            EconomicCapitalRatio = ecRatio,
             AcquisitionRoRac = rorac
         };
     }

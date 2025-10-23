@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FinancialCalculator.Engine.Core;
 using FinancialCalculator.Engine.Models;
+using FinancialCalculator.Engine.Models.Facade;
 using FinancialCalculator.WinUI3.Models;
 using FinancialCalculator.WinUI3.Services;
 
@@ -253,7 +254,7 @@ public partial class DealInputViewModel : ObservableValidator
     private void OnDownPaymentValueEntryChanged(double value) { UpdateStandardRate(); NotifyChanged(); }
     private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); NotifyChanged(); }
     private void OnBalloonValueEntryChanged(double value) => NotifyChanged();
-    private void OnLockModeChanged(string value) => NotifyChanged();
+    private void OnLockModeChanged(string value) { }
 
     private void OnRateModeChanged(string value) { OnPropertyChanged(nameof(IsFixedRateMode)); OnPropertyChanged(nameof(IsTargetInstallmentMode)); RateModeIndex = string.Equals(RateMode, "fixed_rate", System.StringComparison.OrdinalIgnoreCase) ? 0 : 1; NotifyChanged(); }
     private void OnRateModeIndexChanged(int value) { RateMode = value == 0 ? "fixed_rate" : "target_installment"; }
@@ -418,9 +419,9 @@ public partial class DealInputViewModel : ObservableValidator
         }
     }
 
-    public DealEngine.DealInput BuildDealInput()
+    public ScenarioRequest BuildScenarioRequest()
     {
-        return new DealEngine.DealInput
+        return new ScenarioRequest
         {
              Market = "TH",
              Product = Product,

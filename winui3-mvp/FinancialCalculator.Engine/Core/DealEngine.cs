@@ -7,9 +7,9 @@ namespace FinancialCalculator.Engine.Core;
 public sealed class DealEngine
 {
     private readonly FinancialCalculator _calc = new();
-    private readonly RiskParameterRepository _riskRepo;
+    private readonly IRiskParameterRepository _riskRepo;
 
-    public DealEngine(RiskParameterRepository riskRepo)
+    public DealEngine(IRiskParameterRepository riskRepo)
     {
         _riskRepo = riskRepo ?? throw new ArgumentNullException(nameof(riskRepo));
     }

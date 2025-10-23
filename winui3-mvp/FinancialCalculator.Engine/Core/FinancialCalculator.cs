@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using FinancialCalculator.Engine.Models;
+using MathNet.Numerics.RootFinding;
 
 namespace FinancialCalculator.Engine.Core;
 
@@ -208,57 +212,29 @@ public sealed class FinancialCalculator
         return (decimal)rAnnual;
     }
 
-    // Newton-Raphson IRR with bisection fallback
+    // Use MathNet.Numerics RootFinding for IRR
     private static double Irr(IReadOnlyList<double> cashflows)
     {
-        double Npv(double rate)
+        try
         {
-            double npv = 0;
-            double df = 1.0;
-            for (int t = 0; t < cashflows.Count; t++)
-            {
-                if (t > 0) df *= (1.0 + rate);
-                npv += cashflows[t] / df;
-            }
-            return npv;
-        }
+             // IRR is the rate that makes NPV = 0
+             Func<double, double> npv = rate =>
+             {
+                 double sum = 0;
+                 for (int i = 0; i < cashflows.Count; i++)
+                 {
+                     sum += cashflows[i] / Math.Pow(1 + rate, i);
+                 }
+                 return sum;
+             };
 
-        double Dnpv(double rate)
-        {
-            double d = 0;
-            for (int t = 1; t < cashflows.Count; t++)
-            {
-                d -= t * cashflows[t] / Math.Pow(1.0 + rate, t + 1);
-            }
-            return d;
+             // Search from -90% to 1000% per period (broad range)
+             return Brent.FindRoot(npv, -0.9, 10.0, accuracy: 1e-8);
         }
-
-        // Initial guess: 1% monthly
-        double r = 0.01;
-        for (int iter = 0; iter < 50; iter++)
+        catch
         {
-            double f = Npv(r);
-            double df = Dnpv(r);
-            if (Math.Abs(df) < 1e-12) break;
-            double rNext = r - f / df;
-            if (double.IsNaN(rNext) || double.IsInfinity(rNext)) break;
-            if (Math.Abs(rNext - r) < 1e-10) return rNext;
-            r = rNext;
+            return 0; // Fallback if fails
         }
-
-        // Bisection fallback
-        double lo = -0.99, hi = 1.0; // -99% to 100% per month
-        double flo = Npv(lo), fhi = Npv(hi);
-        if (double.IsNaN(flo) || double.IsNaN(fhi) || flo * fhi > 0) return r;
-        for (int i = 0; i < 200; i++)
-        {
-            double mid = 0.5 * (lo + hi);
-            double fm = Npv(mid);
-            if (Math.Abs(fm) < 1e-10) return mid;
-            if (flo * fm <= 0) { hi = mid; fhi = fm; }
-            else { lo = mid; flo = fm; }
-        }
-        return r;
     }
 
 }
