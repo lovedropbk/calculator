@@ -14,14 +14,14 @@ namespace FinancialCalculator.WinUI3.ViewModels;
 
 public partial class DealInputViewModel : ObservableValidator
 {
-    private readonly VehicleCatalogService _vehicleCatalog;
-    private readonly StandardRateService _standardRates;
-    private readonly CommissionService _commission;
+    private readonly IVehicleCatalogService _vehicleCatalog;
+    private readonly IStandardRateService _standardRates;
+    private readonly ICommissionService _commission;
 
     // Event to notify parent to recalculate
     public event EventHandler? InputsChanged;
 
-    public DealInputViewModel(VehicleCatalogService vehicleCatalog, StandardRateService standardRates, CommissionService commission)
+    public DealInputViewModel(IVehicleCatalogService vehicleCatalog, IStandardRateService standardRates, ICommissionService commission)
     {
         _vehicleCatalog = vehicleCatalog;
         _standardRates = standardRates;

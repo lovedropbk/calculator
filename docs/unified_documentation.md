@@ -49,6 +49,13 @@ The UI is a native WinUI 3 application following the MVVM pattern. It holds NO f
 3.  `CampaignCalculationService` calls `FinancialFacade.Calculate()` for the modified scenario.
 4.  Results are aggregated and displayed in the Campaigns grid.
 
+## Integration Verification
+A comprehensive code audit confirms that the WinUI 3 frontend exclusively utilizes the `FinancialCalculator.Engine` for all financial calculations.
+*   **Main Calculator**: `MainViewModel.RecalculateAsync` directly calls `FinancialFacade.Calculate`.
+*   **Campaigns**: `CampaignCalculationService` injects and uses `FinancialFacade` for all campaign scenario simulations.
+*   **Goal Seek**: `GoalSeekViewModel` uses `FinancialFacade.GoalSeek`.
+*   **No Duplicate Logic**: There is no shadow calculation logic remaining in the UI layer. All legacy embedded calculations have been removed.
+
 ## Testing
 - **Unit Tests**: `FinancialFacadeTests` use mocked `IRiskParameterRepository` to test orchestration logic in isolation.
 - **Integration Tests**: `RoRacEndToEndTests` use mocked `IFileService` with static CSV data to test the full calculation pipeline reproducibly.

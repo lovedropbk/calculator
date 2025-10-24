@@ -15,6 +15,7 @@
     <Import Project="$(NuGetPackageRoot)microsoft.windowsappsdk.dwrite\1.8.25090401\buildTransitive\Microsoft.WindowsAppSDK.DWrite.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.windowsappsdk.dwrite\1.8.25090401\buildTransitive\Microsoft.WindowsAppSDK.DWrite.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.windowsappsdk.ai\1.8.38\buildTransitive\Microsoft.WindowsAppSDK.AI.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.windowsappsdk.ai\1.8.38\buildTransitive\Microsoft.WindowsAppSDK.AI.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.windowsappsdk\1.8.251003001\buildTransitive\Microsoft.WindowsAppSDK.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.windowsappsdk\1.8.251003001\buildTransitive\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="$(NuGetPackageRoot)communitytoolkit.mvvm\8.4.0\buildTransitive\CommunityToolkit.Mvvm.targets" Condition="Exists('$(NuGetPackageRoot)communitytoolkit.mvvm\8.4.0\buildTransitive\CommunityToolkit.Mvvm.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.windows.cswinrt\2.2.0\build\Microsoft.Windows.CsWinRT.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.windows.cswinrt\2.2.0\build\Microsoft.Windows.CsWinRT.targets')" />
+    <Import Project="$(NuGetPackageRoot)communitytoolkit.mvvm\8.3.2\buildTransitive\CommunityToolkit.Mvvm.targets" Condition="Exists('$(NuGetPackageRoot)communitytoolkit.mvvm\8.3.2\buildTransitive\CommunityToolkit.Mvvm.targets')" />
   </ImportGroup>
 </Project>

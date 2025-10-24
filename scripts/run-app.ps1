@@ -18,7 +18,8 @@ Get-Process -Name "FinancialCalculator.WinUI3" -ErrorAction SilentlyContinue | S
 
 # Define paths
 $projectPath = ".\winui3-mvp\FinancialCalculator.WinUI3\FinancialCalculator.WinUI3.csproj"
-$publishPath = ".\winui3-mvp\FinancialCalculator.WinUI3\bin\$Configuration\net8.0-windows10.0.22621.0\win-x64\publish"
+$tfm = "net8.0-windows10.0.19041.0"
+$publishPath = ".\winui3-mvp\FinancialCalculator.WinUI3\bin\$Configuration\$tfm\win-x64\publish"
 
 if ($Build -or !(Test-Path $publishPath)) {
     # Publish with self-contained runtime
@@ -35,6 +36,9 @@ if ($Build -or !(Test-Path $publishPath)) {
     }
     
     # Publish with all dependencies included
+    # Ensure a clean build to avoid stale XAML/SDK caches when TFM changes
+    dotnet clean $projectPath -c $Configuration | Out-Null
+
     $publishArgs = @(
         "publish"
         $projectPath
@@ -72,7 +76,7 @@ $exePath = Join-Path $publishPath "FinancialCalculator.WinUI3.exe"
 if (-not (Test-Path $exePath)) {
     # Try build output if publish failed
     Write-Host "Published exe not found, trying build output..." -ForegroundColor Yellow
-    $exePath = ".\winui3-mvp\FinancialCalculator.WinUI3\bin\$Configuration\net8.0-windows10.0.22621.0\win-x64\FinancialCalculator.WinUI3.exe"
+    $exePath = ".\winui3-mvp\FinancialCalculator.WinUI3\bin\$Configuration\$tfm\win-x64\FinancialCalculator.WinUI3.exe"
     
     if (-not (Test-Path $exePath)) {
         # Last resort - search for any exe

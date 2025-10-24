@@ -10,7 +10,7 @@ using FinancialCalculator.WinUI3.Models;
 
 namespace FinancialCalculator.WinUI3.Services;
 
-public class VehicleCatalogService
+public class VehicleCatalogService : IVehicleCatalogService
 {
     private List<Vehicle> _vehicles = new();
     public List<string> MbspPackages { get; private set; } = new();
@@ -118,7 +118,7 @@ public class VehicleCatalogService
 
         while (await csv.ReadAsync())
         {
-            if (!csv.TryGetField<string>(0, out var modelName)) continue;
+            if (!csv.TryGetField<string>(0, out var modelName) || modelName == null) continue;
             modelName = modelName.Trim();
 
             var vehicle = _vehicles.FirstOrDefault(v => ModelNamesMatch(v.ModelName, modelName));

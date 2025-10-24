@@ -52,6 +52,11 @@ public partial class MainViewModel : ObservableValidator
     public string Status { get => _status; set => SetProperty(ref _status, value); }
     private bool _isCalculating = false;
     public bool IsCalculating { get => _isCalculating; set => SetProperty(ref _isCalculating, value); }
+
+    private bool _isInitializing = true;
+    public bool IsInitializing { get => _isInitializing; set => SetProperty(ref _isInitializing, value); }
+
+    public Task InitializationNotifier { get; }
     public IRelayCommand RecalculateCommand { get; }
 
     // MARK: Notification
@@ -73,7 +78,7 @@ public partial class MainViewModel : ObservableValidator
         DealInput.InputsChanged += OnDealInputsChanged;
 
         // Initialize data on UI thread with proper error handling
-        _ = InitializeAsync();
+        InitializationNotifier = InitializeAsync();
     }
 
     private void OnCampaignManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -153,6 +158,8 @@ public partial class MainViewModel : ObservableValidator
             {
                 await RefreshActiveSelectionAsync();
             }
+
+            Status = "Ready";
         }
         catch (Exception ex)
         {
@@ -161,6 +168,10 @@ public partial class MainViewModel : ObservableValidator
             NotificationMessage = $"Initialization error: {ex.Message}";
             NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error;
             IsNotificationOpen = true;
+        }
+        finally
+        {
+            IsInitializing = false;
         }
     }
 

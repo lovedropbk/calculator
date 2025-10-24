@@ -10,7 +10,7 @@ using FinancialCalculator.WinUI3.Models;
 
 namespace FinancialCalculator.WinUI3.Services;
 
-public class StandardRateService
+public class StandardRateService : IStandardRateService
 {
     private List<StandardRate> _rates = new();
     private bool _isLoaded = false;
@@ -52,11 +52,11 @@ public class StandardRateService
 
                 _rates.Add(new StandardRate
                 {
-                    Product = product.Trim(),
+                    Product = (product ?? string.Empty).Trim(),
                     Term = term,
                     DPMin = dpMin,
                     DPMax = dpMax,
-                    PaymentMode = paymentMode.Trim(),
+                    PaymentMode = (paymentMode ?? string.Empty).Trim(),
                     Rate = rate
                 });
             }

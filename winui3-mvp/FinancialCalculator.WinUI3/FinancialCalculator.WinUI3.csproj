@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
@@ -14,6 +14,7 @@
 	  
     <EnableMsixTooling>true</EnableMsixTooling>
     <UseWinUI>true</UseWinUI>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -21,13 +22,11 @@
 
   <!-- Debug: framework-dependent for local dev -->
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <!-- Release: fully self-contained (bundle Windows App Runtime + .NET). Avoid SingleFile to simplify runtime loading. -->
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
     <PublishSingleFile>false</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
@@ -36,8 +35,9 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251003001" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="System.Text.Json" Version="9.0.10" />
   </ItemGroup>
@@ -58,5 +58,14 @@
       <Link>Parameters\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Controls\WaterfallChart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Update="Controls\WaterfallChart.xaml.cs">
+      <DependentUpon>WaterfallChart.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

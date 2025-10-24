@@ -506,6 +506,8 @@ C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\Financial
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\netstandard.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\CommunityToolkit.Mvvm.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\CommunityToolkit.WinUI.UI.Controls.DataGrid.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\CsvHelper.dll
+C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\MathNet.Numerics.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\Microsoft.Graphics.Imaging.Projection.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\Microsoft.Windows.AI.ContentSafety.Projection.dll
 C:\Users\PATKRAN\Python\07_controlling\financial_calculator\winui3-mvp\FinancialCalculator.WinUI3\bin\Release\net8.0-windows10.0.22621.0\win-x64\publish\Microsoft.Windows.AI.Foundation.Projection.dll

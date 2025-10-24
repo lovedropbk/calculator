@@ -42,20 +42,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
-              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
-              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
-              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
-              "ViewState": "AgIAAKQAAAAAAAAAAAASwLAAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T15:44:38.36Z"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 3,
@@ -80,6 +68,31 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-10-07T09:40:04.337Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
+              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAP4DAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-02T12:33:31.063Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAAKQAAAAAAAAAAAASwLAAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-16T15:44:38.36Z"
             },
             {
               "$type": "Document",
@@ -117,19 +130,6 @@
               "ViewState": "AgIAABwAAAAAAAAAAAArwCkAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-02T14:26:12.492Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "ViewState": "AgIAAA0BAAAAAAAAAAAAAA0BAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-02T12:33:31.063Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",

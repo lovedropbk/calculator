@@ -33,10 +33,12 @@ public class RiskParameterRepository : IRiskParameterRepository
 
     // Kept for backward compatibility if needed, but now just sets the path.
     // Tables are loaded on-demand.
-    public Task LoadAsync(string parametersPath)
+    public async Task LoadAsync(string parametersPath)
     {
         Initialize(parametersPath);
-        return Task.CompletedTask;
+        await EnsurePdLoadedAsync();
+        await EnsureLgdLoadedAsync();
+        await EnsureEcTotalLoadedAsync();
     }
 
     public async Task<double> GetPdAsync(string customerType, string rating)
@@ -49,7 +51,7 @@ public class RiskParameterRepository : IRiskParameterRepository
     // Ideally Engine becomes async, but for now we might need this.
     public double GetPd(string customerType, string rating)
     {
-        if (_pdTable == null) EnsurePdLoadedAsync().GetAwaiter().GetResult();
+        if (_pdTable == null) throw new InvalidOperationException("PD Table not initialized. Call LoadAsync first.");
         return _pdTable!.TryGetValue((customerType, rating), out var pd) ? pd : 0.0025;
     }
 
@@ -61,7 +63,7 @@ public class RiskParameterRepository : IRiskParameterRepository
 
     public (double DcfLgd, double DownturnLgd) GetLgd(string customerType, string assetState, string avc)
     {
-         if (_lgdTable == null) EnsureLgdLoadedAsync().GetAwaiter().GetResult();
+         if (_lgdTable == null) throw new InvalidOperationException("LGD Table not initialized. Call LoadAsync first.");
          return GetLgdInternal(customerType, assetState, avc);
     }
 
@@ -80,7 +82,7 @@ public class RiskParameterRepository : IRiskParameterRepository
 
     public double GetEcTotal()
     {
-        if (_ecTotal == null) EnsureEcTotalLoadedAsync().GetAwaiter().GetResult();
+        if (_ecTotal == null) throw new InvalidOperationException("EC Total not initialized. Call LoadAsync first.");
         return _ecTotal!.Value;
     }
 

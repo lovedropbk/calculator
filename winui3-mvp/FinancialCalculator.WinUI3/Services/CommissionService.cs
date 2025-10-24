@@ -2,7 +2,7 @@ using System;
 
 namespace FinancialCalculator.WinUI3.Services;
 
-public class CommissionService
+public class CommissionService : ICommissionService
 {
     public string PolicyVersion => "local-v1";
 

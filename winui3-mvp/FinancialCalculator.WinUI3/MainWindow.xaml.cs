@@ -18,6 +18,9 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
+        // Important: initialize ViewModel BEFORE InitializeComponent so x:Bind can resolve during load
+        ViewModel = new MainViewModel();
+
         try
         {
             Logger.Info("MainWindow: InitializeComponent start");
@@ -35,8 +38,7 @@ public sealed partial class MainWindow : Window
             throw;
         }
 
-        ViewModel = new MainViewModel();
-
+        // Ensure Content DataContext (in case template swapped)
         if (this.Content is FrameworkElement fe)
         {
             fe.DataContext = ViewModel;
