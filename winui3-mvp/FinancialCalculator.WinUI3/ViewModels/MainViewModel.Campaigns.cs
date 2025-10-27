@@ -14,13 +14,11 @@ public partial class MainViewModel
 {
     // Campaign Details panel
     private bool _isCampaignDetailsCollapsed = true;
-    public bool IsCampaignDetailsCollapsed { get => _isCampaignDetailsCollapsed; set { if (SetProperty(ref _isCampaignDetailsCollapsed, value)) OnIsCampaignDetailsCollapsedChanged(value); } }
-    private string _campaignDetailsColumnWidth = "Auto";
-    public string CampaignDetailsColumnWidth { get => _campaignDetailsColumnWidth; set => SetProperty(ref _campaignDetailsColumnWidth, value); }
-    
+    public bool IsCampaignDetailsCollapsed { get => _isCampaignDetailsCollapsed; set => SetProperty(ref _isCampaignDetailsCollapsed, value); }
+
     private void OnIsCampaignDetailsCollapsedChanged(bool value)
     {
-        CampaignDetailsColumnWidth = value ? "36" : "Auto";
+        // No-op, handled by XAML converter
     }
 
     [RelayCommand]

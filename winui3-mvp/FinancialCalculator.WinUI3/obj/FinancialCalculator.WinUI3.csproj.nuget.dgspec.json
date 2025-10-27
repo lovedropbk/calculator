@@ -156,6 +156,10 @@
               "target": "Package",
               "version": "[8.3.2, )"
             },
+            "CommunityToolkit.WinUI.UI.Controls": {
+              "target": "Package",
+              "version": "[7.1.2, )"
+            },
             "CommunityToolkit.WinUI.UI.Controls.DataGrid": {
               "target": "Package",
               "version": "[7.1.2, )"

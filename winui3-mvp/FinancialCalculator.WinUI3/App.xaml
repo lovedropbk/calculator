@@ -43,6 +43,8 @@
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
             <conv:BoolToThicknessConverter x:Key="BoolToThicknessConverter" />
+            <conv:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
+            <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
 
             <!-- MARK: Enhanced Card Container Style with Shadow -->
             <Style x:Key="CardContainerStyle" TargetType="Border">
@@ -81,6 +83,7 @@
             <Style TargetType="TextBox">
                 <Setter Property="CornerRadius" Value="6" />
                 <Setter Property="MinWidth" Value="96" />
+                <Setter Property="Height" Value="32" />
                 <Setter Property="Margin" Value="4,0,0,0" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="Padding" Value="8,6,8,6" />
@@ -90,9 +93,18 @@
             <Style TargetType="ComboBox">
                 <Setter Property="CornerRadius" Value="6" />
                 <Setter Property="MinWidth" Value="120" />
+                <Setter Property="Height" Value="32" />
                 <Setter Property="Margin" Value="4,0,0,0" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="Padding" Value="8,6,32,6" />
+            </Style>
+
+            <Style TargetType="muxc:NumberBox">
+                <Setter Property="Height" Value="32" />
+                <Setter Property="MinWidth" Value="120" />
+                <Setter Property="Margin" Value="4,0,0,0" />
+                <Setter Property="Padding" Value="8,6,8,6" />
+                <Setter Property="SpinButtonPlacementMode" Value="Inline" />
             </Style>
 
             <Style TargetType="Button">
@@ -125,9 +137,10 @@
             <nf:DecimalFormatter x:Key="GroupedTwoFormatter" IsGrouped="True" FractionDigits="2" />
 
             <!-- Shared widths for consistent alignment -->
-            <x:Double x:Key="UnitColumnWidthValue">72</x:Double>
-            <x:Double x:Key="InputColumnWidthValue">288</x:Double>
+            <GridLength x:Key="UnitColumnWidthValue">72</GridLength>
+            <GridLength x:Key="InputColumnWidthValue">288</GridLength>
             <x:Double x:Key="ValueAreaWidth">360</x:Double>
+            <x:Double x:Key="LabelColumnWidthValue">160</x:Double>
 
             <!-- MARK: Typography helpers -->
             <Style x:Key="CardHeaderTextStyle" TargetType="TextBlock">

@@ -144,11 +144,26 @@
 
     <!-- Small, icon-focused button to avoid missing resource in templates -->
     <Style x:Key="IconButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
-        <Setter Property="Padding" Value="4"/>
-        <Setter Property="MinWidth" Value="28"/>
-        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="MinWidth" Value="24"/>
+        <Setter Property="MinHeight" Value="24"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+
+    <!-- Compact expander header text for smaller fold widgets -->
+    <Style x:Key="ExpanderHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Opacity" Value="0.85"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+    </Style>
+
+    <!-- Optional compact expander chrome (can be applied per Expander via Style) -->
+    <Style x:Key="CompactExpanderStyle" TargetType="muxc:Expander">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
 
     <!-- Copy Button Style with Success Feedback -->

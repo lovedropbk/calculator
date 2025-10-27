@@ -37,7 +37,7 @@ namespace FinancialCalculator.WinUI3.Converters
             }
 
             var parts = param.Split('|', StringSplitOptions.RemoveEmptyEntries);
-            var t = parts.Length > 0 ? ParseGridLength(parts[0]) : GridLength.Auto;
+            var t = parts.Length > 0 ? ParseGridLength(parts[0]) : new GridLength(1, GridUnitType.Auto);
             var f = parts.Length > 1 ? ParseGridLength(parts[1]) : new GridLength(1, GridUnitType.Star);
             return (t, f);
         }
@@ -52,8 +52,8 @@ namespace FinancialCalculator.WinUI3.Converters
             if (s.EndsWith("*", StringComparison.Ordinal))
             {
                 var weightStr = s.Substring(0, s.Length - 1).Trim();
-                if (weightStr.Length == 0) return new GridLength(1, GridUnitType.Star);
-                if (double.TryParse(weightStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var star))
+                if (string.IsNullOrEmpty(weightStr)) return new GridLength(1, GridUnitType.Star);
+                if (double.TryParse(weightStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var star))
                 {
                     return new GridLength(star, GridUnitType.Star);
                 }
@@ -61,7 +61,7 @@ namespace FinancialCalculator.WinUI3.Converters
             }
 
             // pixels
-            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var px))
+            if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var px))
             {
                 return new GridLength(px, GridUnitType.Pixel);
             }

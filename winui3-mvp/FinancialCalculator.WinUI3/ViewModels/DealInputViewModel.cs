@@ -43,6 +43,13 @@ public partial class DealInputViewModel : ObservableValidator
     private double _priceExTax = 1_000_000;
     public double PriceExTax { get => _priceExTax; set { if (SetProperty(ref _priceExTax, value, true)) OnPriceExTaxChanged(value); } }
 
+    // MBTh manufacturer discount and computed Transaction Price
+    private double _mbthDiscount = 0;
+    public double MbthDiscount { get => _mbthDiscount; set { if (SetProperty(ref _mbthDiscount, value)) OnMbthDiscountChanged(value); } }
+
+    // Computed: MSRP - MBTh discount; used for engine VehiclePrice and UI
+    public double TransactionPrice => Math.Max(0, PriceExTax - MbthDiscount);
+
     [Range(0, 1_000_000_000, ErrorMessage = "Invalid Amount")]
     private double _additionalFinancedItems = 0;
     public double AdditionalFinancedItems { get => _additionalFinancedItems; set => SetProperty(ref _additionalFinancedItems, value, true); }
@@ -159,9 +166,7 @@ public partial class DealInputViewModel : ObservableValidator
     public bool IsCommissionEntryEditable => !string.Equals(CommissionEntryUnit, "auto", StringComparison.OrdinalIgnoreCase);
 
     private bool _isDealInputsCollapsed = false;
-    public bool IsDealInputsCollapsed { get => _isDealInputsCollapsed; set { if (SetProperty(ref _isDealInputsCollapsed, value)) OnIsDealInputsCollapsedChanged(value); } }
-    private string _dealInputsColumnWidth = "420";
-    public string DealInputsColumnWidth { get => _dealInputsColumnWidth; set => SetProperty(ref _dealInputsColumnWidth, value); }
+    public bool IsDealInputsCollapsed { get => _isDealInputsCollapsed; set => SetProperty(ref _isDealInputsCollapsed, value); }
 
     // MARK: Risk Parameters
     private string _selectedCustomerType = "RETAIL PRIVATE";
@@ -192,7 +197,21 @@ public partial class DealInputViewModel : ObservableValidator
         if (_selectedVehicle != null) OnSelectedVehicleChanged(_selectedVehicle);
         NotifyChanged();
     }
-    private void OnPriceExTaxChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); UpdateStandardRate(); NotifyChanged(); }
+    private void OnPriceExTaxChanged(double value)
+    {
+        UpdateDealerCommissionResolved();
+        OnPropertyChanged(nameof(DealerCommissionPctText));
+        OnPropertyChanged(nameof(TransactionPrice));
+        UpdateStandardRate();
+        NotifyChanged();
+    }
+    private void OnMbthDiscountChanged(double value)
+    {
+        OnPropertyChanged(nameof(TransactionPrice));
+        UpdateDealerCommissionResolved();
+        UpdateStandardRate();
+        NotifyChanged();
+    }
     private void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); NotifyChanged(); }
     private void OnTermMonthsChanged(int value)
     {
@@ -311,7 +330,7 @@ public partial class DealInputViewModel : ObservableValidator
     }
     private void OnIdcOtherUserEditedChanged(bool value) => NotifyChanged();
 
-    private void OnIsDealInputsCollapsedChanged(bool value) { DealInputsColumnWidth = value ? "36" : "420"; }
+    private void OnIsDealInputsCollapsedChanged(bool value) { } // No-op, handled by XAML converter
 
     [RelayCommand]
     private void ToggleDealInputsCollapsed()
@@ -352,7 +371,7 @@ public partial class DealInputViewModel : ObservableValidator
         }
         else
         {
-            downPaymentPct = PriceExTax > 0 ? DownPaymentValueEntry / PriceExTax : 0;
+            downPaymentPct = TransactionPrice > 0 ? DownPaymentValueEntry / TransactionPrice : 0;
         }
 
         _standardRateForCurrentSelection = _standardRates.GetStandardRate(Product, TermMonths, downPaymentPct, Timing);
@@ -404,11 +423,12 @@ public partial class DealInputViewModel : ObservableValidator
         try
         {
             // Compute financed amount from current inputs
+            double basePrice = TransactionPrice;
             double dpVal = string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase)
-                ? PriceExTax * DownPaymentValueEntry / 100.0
+                ? basePrice * DownPaymentValueEntry / 100.0
                 : DownPaymentValueEntry;
 
-            var fin = Math.Max(0, PriceExTax - dpVal);
+            var fin = Math.Max(0, basePrice - dpVal);
 
             var (_, amt) = ResolveCommissionForFinanced(fin);
             DealerCommissionResolvedAmt = Math.Max(0, amt);
@@ -427,7 +447,7 @@ public partial class DealInputViewModel : ObservableValidator
              Product = Product,
              Timing = Timing,
              TermMonths = TermMonths,
-             VehiclePrice = (decimal)PriceExTax,
+             VehiclePrice = (decimal)TransactionPrice,
              AdditionalFinancedItems = (decimal)AdditionalFinancedItems,
              DownIsPercent = string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase),
              DownValue = (decimal)DownPaymentValueEntry,
