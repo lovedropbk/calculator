@@ -24,6 +24,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\winui3-mvp\FinancialCalculator.Engine\FinancialCalculator.Engine.csproj" />
+    <ProjectReference Include="..\..\winui3-mvp\FinancialCalculator.WinUI3\FinancialCalculator.WinUI3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="dev-parameters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -105,6 +105,43 @@ public partial class MainViewModel
         ScheduleSummariesRefresh();
     }
 
+    // Copy a campaign into the Campaign Designer (creates a CampaignTileViewModel with term breakdown)
+    [RelayCommand(CanExecute = nameof(CanCopyToMyCampaigns))]
+    private async Task CopyToDesignerAsync(CampaignSummaryViewModel? item)
+    {
+        if (item is null) item = CampaignManager.SelectedCampaign;
+        if (item is null) return;
+
+        try
+        {
+            var baseRequest = DealInput.BuildScenarioRequest();
+            var termSvc = new CampaignTermBreakdownService(_financialFacade, _standardRates);
+            var breakdown = await termSvc.CalculateTermBreakdownAsync(item, baseRequest, DealInput);
+
+            var tile = new CampaignTileViewModel
+            {
+                CampaignId = string.IsNullOrWhiteSpace(item.CampaignId) ? Guid.NewGuid().ToString() : item.CampaignId,
+                Title = item.Title,
+                Product = string.IsNullOrWhiteSpace(item.CampaignType) ? DealInput.Product : item.CampaignType,
+                CampaignVolumePct = 0.0
+            };
+
+            foreach (var tb in breakdown)
+            {
+                tile.TermBreakdown.Add(tb);
+            }
+
+            tile.RecalculateAggregates();
+
+            Comparison.DesignerCampaigns.Add(tile);
+            Status = $"Added {tile.Title} to Campaign Designer";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Error copying to designer: {ex.Message}";
+        }
+    }
+
     private bool CanCopyToMyCampaigns(CampaignSummaryViewModel? item) => item != null || CampaignManager.SelectedCampaign != null;
 
 
@@ -402,4 +439,43 @@ public partial class MainViewModel
         }
         await Task.CompletedTask;
     }
-}
+
+        // Designer campaigns persistence (save/load)
+        private static string DesignerCampaignsPath => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FinancialCalculator", "designer_campaigns.json");
+    
+        [RelayCommand]
+        private async Task SaveDesignerCampaignsAsync()
+        {
+            try
+            {
+                var dir = System.IO.Path.GetDirectoryName(DesignerCampaignsPath)!;
+                System.IO.Directory.CreateDirectory(dir);
+                var list = Comparison.DesignerCampaigns.ToList();
+                var json = System.Text.Json.JsonSerializer.Serialize(list, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                await System.IO.File.WriteAllTextAsync(DesignerCampaignsPath, json);
+                Status = $"Saved {list.Count} designer campaigns";
+            }
+            catch (Exception ex)
+            {
+                Status = $"Save error (designer campaigns): {ex.Message}";
+            }
+        }
+    
+        [RelayCommand]
+        private async Task LoadDesignerCampaignsAsync()
+        {
+            try
+            {
+                if (!System.IO.File.Exists(DesignerCampaignsPath)) { Status = "No saved designer campaigns"; return; }
+                var json = await System.IO.File.ReadAllTextAsync(DesignerCampaignsPath);
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<CampaignTileViewModel>>(json) ?? new();
+                Comparison.DesignerCampaigns.Clear();
+                foreach (var c in list) Comparison.DesignerCampaigns.Add(c);
+                Status = $"Loaded {Comparison.DesignerCampaigns.Count} designer campaigns";
+            }
+            catch (Exception ex)
+            {
+                Status = $"Load error (designer campaigns): {ex.Message}";
+            }
+        }
+    }

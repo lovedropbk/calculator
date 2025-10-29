@@ -118,7 +118,7 @@ public partial class MainViewModel : ObservableValidator
             await riskRepo.LoadAsync(RiskParametersLocator.GetPath());
             _financialFacade = new FinancialFacade(riskRepo);
             GoalSeek = new GoalSeekViewModel(_financialFacade, DealInput, RecalculateAsync);
-            _campaignService = new CampaignCalculationService(_financialFacade);
+            _campaignService = new CampaignCalculationService(_financialFacade, _standardRates);
 
             // Subscribe to Campaign Manager changes
             CampaignManager.PropertyChanged += OnCampaignManagerPropertyChanged;
@@ -395,44 +395,56 @@ public partial class MainViewModel : ObservableValidator
 
     // MARK: Comparison Actions
     [RelayCommand]
-    private void AddToComparison()
+    private async Task AddToComparison()
     {
         try
         {
-             var deal = _comparisonService.CreateComparisonItem(
-                 Comparison.ComparedDeals.Count,
-                 DealInput.SelectedVehicle?.ModelName ?? "Unknown Vehicle",
-                 DealInput.Product,
-                 DealInput.PriceExTax,
-                 DealInput.DownPaymentValueEntry,
-                 DealInput.DownPaymentUnit,
-                 DealInput.TermMonths,
-                 DealInput.CustomerNominalRate,
-                 DealInput.CustomerFlatRate,
-                 DealInput.BalloonValueEntry,
-                 DealInput.BalloonUnit,
-                 Results.Metrics.MonthlyInstallment,
-                 Results.Metrics.FinancedAmount,
-                 Results.Metrics.RoRAC,
-                 Results.TotalInterestPaid,
-                 _wfCustomerRate,
-                 WfCustomerRateText,
-                 _wfCostOfDebtMatched,
-                 WfCostOfDebtMatchedText,
-                 _wfCostOfCreditRisk,
-                 WfCostOfCreditRiskText,
-                 _wfOPEX,
-                 WfOPEXText,
-                 _wfIDCUpfrontAnnualized,
-                 _wfSubsidyUpfrontAnnualized
-             );
+            // Build base request from current deal input
+            var baseRequest = DealInput.BuildScenarioRequest();
 
-             Comparison.ComparedDeals.Add(deal);
-             Status = $"Added {deal.Title} to comparison";
+            // Create a lightweight campaign summary holder to pass any user overrides (e.g., TargetRatePct)
+            var campaignHolder = new CampaignSummaryViewModel
+            {
+                CampaignId = Guid.NewGuid().ToString(),
+                Title = $"Designer {Comparison.DesignerCampaigns.Count + 1}",
+                Notes = string.Empty,
+                // If user has entered a rate override in the deal input, pre-populate target rate
+                TargetRatePct = DealInput.CustomerNominalRate,
+                CashDiscountAmount = DealInput.MbthDiscount, // default mapping (best-effort)
+                FSSubDownAmount = 0,
+                FSSubInterestAmount = 0,
+                FSFreeMBSPAmount = 0
+            };
+
+            // Calculate per-term breakdown (uses standard rate lookup & engine runs)
+            var termSvc = new CampaignTermBreakdownService(_financialFacade, _standardRates);
+            var breakdown = await termSvc.CalculateTermBreakdownAsync(campaignHolder, baseRequest, DealInput);
+
+            // Build a CampaignTileViewModel to show in the designer
+            var tile = new CampaignTileViewModel
+            {
+                CampaignId = campaignHolder.CampaignId,
+                Title = campaignHolder.Title,
+                Product = baseRequest.Product ?? string.Empty,
+                CampaignVolumePct = 0.0
+            };
+
+            foreach (var tb in breakdown)
+            {
+                tile.TermBreakdown.Add(tb);
+            }
+
+            // Compute aggregated metrics for the tile
+            tile.RecalculateAggregates();
+
+            // Add to the Campaign Designer collection
+            Comparison.DesignerCampaigns.Add(tile);
+
+            Status = $"Added {tile.Title} to Campaign Designer";
         }
         catch (Exception ex)
         {
-            Status = $"Error adding to comparison: {ex.Message}";
+            Status = $"Error adding to campaign designer: {ex.Message}";
         }
     }
 
@@ -660,6 +672,13 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string RoRAC { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
 
+    // New: per-term breakdown (editable by user in Campaign Designer)
+    public System.Collections.ObjectModel.ObservableCollection<TermBreakdownItemViewModel> TermBreakdown { get; } = new();
+
+    // Aggregated average RoRAC across distribution (computed by services)
+    private string _avgRoRAC = "0.00%";
+    public string AvgRoRAC { get => _avgRoRAC; set => SetProperty(ref _avgRoRAC, value); }
+
     // Editable amounts for My Campaigns (impact calculators)
     private double _cashDiscountAmount;
     public double CashDiscountAmount { get => _cashDiscountAmount; set { if (_cashDiscountAmount != value) { _cashDiscountAmount = value; OnPropertyChanged(nameof(CashDiscountAmount)); } } }
@@ -696,42 +715,63 @@ public partial class CampaignSummaryViewModel : ObservableObject
         get => _selectedMbspPackage;
         set
         {
-            if (SetProperty(ref _selectedMbspPackage, value))
-            {
-                 // Handled by parent VM if needed, or just used for binding
-            }
+             if (SetProperty(ref _selectedMbspPackage, value))
+             {
+                  // Handled by parent VM if needed, or just used for binding
+             }
         }
     }
 
-    public CampaignSummaryViewModel Clone() => new CampaignSummaryViewModel
+    public CampaignSummaryViewModel Clone()
     {
-        CampaignId = this.CampaignId,
-        CampaignType = this.CampaignType,
-        Title = this.Title,
-        DealerCommission = this.DealerCommission,
-        Monthly = this.Monthly,
-        CustomerNominalRate = this.CustomerNominalRate,
-        CustomerFlatRate = this.CustomerFlatRate,
-        Downpayment = this.Downpayment,
-        TransactionPrice = this.TransactionPrice,
-        CashDiscount = this.CashDiscount,
-        FSSubDown = this.FSSubDown,
-        FSSubInterest = this.FSSubInterest,
-        SubinterestSubsidy = this.SubinterestSubsidy,
-        FSFreeMBSP = this.FSFreeMBSP,
-        SubsidyUsed = this.SubsidyUsed,
-        IDCsTotal = this.IDCsTotal,
-        RoRAC = this.RoRAC,
-        Notes = this.Notes,
-        CashDiscountAmount = this.CashDiscountAmount,
-        FSSubDownAmount = this.FSSubDownAmount,
-        FSSubInterestAmount = this.FSSubInterestAmount,
-        SubinterestSubsidyAmount = this.SubinterestSubsidyAmount,
-        IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
-        FSFreeMBSPAmount = this.FSFreeMBSPAmount,
-        TargetRatePct = this.TargetRatePct,
-        SelectedMbspPackage = this.SelectedMbspPackage
-    };
+        var copy = new CampaignSummaryViewModel
+        {
+            CampaignId = this.CampaignId,
+            CampaignType = this.CampaignType,
+            Title = this.Title,
+            DealerCommission = this.DealerCommission,
+            Monthly = this.Monthly,
+            CustomerNominalRate = this.CustomerNominalRate,
+            CustomerFlatRate = this.CustomerFlatRate,
+            Downpayment = this.Downpayment,
+            TransactionPrice = this.TransactionPrice,
+            CashDiscount = this.CashDiscount,
+            FSSubDown = this.FSSubDown,
+            FSSubInterest = this.FSSubInterest,
+            SubinterestSubsidy = this.SubinterestSubsidy,
+            FSFreeMBSP = this.FSFreeMBSP,
+            SubsidyUsed = this.SubsidyUsed,
+            IDCsTotal = this.IDCsTotal,
+            RoRAC = this.RoRAC,
+            AvgRoRAC = this.AvgRoRAC,
+            Notes = this.Notes,
+            CashDiscountAmount = this.CashDiscountAmount,
+            FSSubDownAmount = this.FSSubDownAmount,
+            FSSubInterestAmount = this.FSSubInterestAmount,
+            SubinterestSubsidyAmount = this.SubinterestSubsidyAmount,
+            IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
+            FSFreeMBSPAmount = this.FSFreeMBSPAmount,
+            TargetRatePct = this.TargetRatePct,
+            SelectedMbspPackage = this.SelectedMbspPackage
+        };
+
+        // Deep-copy term breakdown items
+        if (this.TermBreakdown != null)
+        {
+            foreach (var tb in this.TermBreakdown)
+            {
+                copy.TermBreakdown.Add(new TermBreakdownItemViewModel
+                {
+                    Term = tb.Term,
+                    CustomerRatePct = tb.CustomerRatePct,
+                    RoRAC = tb.RoRAC,
+                    DistributionPct = tb.DistributionPct
+                });
+            }
+        }
+
+        return copy;
+    }
 }
 
 public partial class CashflowRowViewModel : ObservableObject

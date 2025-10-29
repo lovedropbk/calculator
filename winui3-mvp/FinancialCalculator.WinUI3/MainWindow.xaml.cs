@@ -54,9 +54,16 @@ public sealed partial class MainWindow : Window
         {
             if (sender is Button btn && btn.DataContext is CampaignSummaryViewModel row)
             {
+                // Copy to My Campaigns (existing behavior)
                 if (ViewModel.CopyToMyCampaignsCommand.CanExecute(row))
                 {
                     ViewModel.CopyToMyCampaignsCommand.Execute(row);
+                }
+
+                // Also offer to add to Campaign Designer when available
+                if (ViewModel.CopyToDesignerCommand?.CanExecute(row) ?? false)
+                {
+                    ViewModel.CopyToDesignerCommand.Execute(row);
                 }
             }
         }

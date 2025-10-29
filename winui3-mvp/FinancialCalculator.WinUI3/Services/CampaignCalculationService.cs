@@ -11,10 +11,12 @@ namespace FinancialCalculator.WinUI3.Services;
 public class CampaignCalculationService
 {
     private readonly FinancialFacade _financialFacade;
+    private readonly IStandardRateService _standardRateService;
 
-    public CampaignCalculationService(FinancialFacade financialFacade)
+    public CampaignCalculationService(FinancialFacade financialFacade, IStandardRateService standardRateService)
     {
         _financialFacade = financialFacade;
+        _standardRateService = standardRateService;
     }
 
     public async Task<(ScenarioResult? Result, double CommPct, double CommAmt)> CalculateCampaignAsync(
@@ -108,6 +110,39 @@ public class CampaignCalculationService
             
             vm.DealerCommission = $"{commPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({commAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)";
             vm.RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%");
+
+            // --- Populate per-term breakdown and compute aggregated avg RoRAC ---
+            try
+            {
+                var termSvc = new CampaignTermBreakdownService(_financialFacade, _standardRateService);
+                var breakdown = await termSvc.CalculateTermBreakdownAsync(vm, baseRequest, dealInput);
+
+                // Populate VM collection (CampaignSummaryViewModel.TermBreakdown)
+                vm.TermBreakdown.Clear();
+                foreach (var tb in breakdown)
+                {
+                    vm.TermBreakdown.Add(tb);
+                }
+
+                // Compute aggregated average RoRAC across terms using distribution weights
+                double agg = 0.0;
+                foreach (var tb in vm.TermBreakdown)
+                {
+                    var s = (tb.RoRAC ?? string.Empty).Trim();
+                    if (s.EndsWith("%")) s = s.Substring(0, s.Length - 1);
+                    if (double.TryParse(s, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var pctVal))
+                    {
+                        double r = pctVal / 100.0;
+                        agg += r * (tb.DistributionPct / 100.0);
+                    }
+                }
+                vm.AvgRoRAC = agg.ToString("0.00%", CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                // Non-fatal: fallback to single-term RoRAC if breakdown fails
+                vm.AvgRoRAC = vm.RoRAC;
+            }
 
             return (res, commPct, commAmt);
         }

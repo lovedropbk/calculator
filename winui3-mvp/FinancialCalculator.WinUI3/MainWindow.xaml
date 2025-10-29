@@ -1180,12 +1180,12 @@
                 </Grid>
             </TabViewItem>
 
-            <!-- MARK: Comparison Tab with Icon -->
+            <!-- MARK: Campaign Designer Tab with Icon -->
             <TabViewItem IsClosable="False" Style="{StaticResource IconTabViewItemStyle}">
                 <TabViewItem.Header>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE71C;" FontSize="16"/>
-                        <TextBlock Text="Comparison" VerticalAlignment="Center"/>
+                        <TextBlock Text="Campaign Designer" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TabViewItem.Header>
                 <Grid Background="Transparent" Padding="12">
@@ -1195,7 +1195,7 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Margin="0,0,0,12">
-                        <TextBlock Text="Deal Comparison" Style="{StaticResource CardHeaderTextStyle}" FontSize="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="Campaign Designer" Style="{StaticResource CardHeaderTextStyle}" FontSize="24" VerticalAlignment="Center"/>
                         <Button Command="{x:Bind ViewModel.Comparison.ClearComparisonCommand}" Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <FontIcon Glyph="&#xE74D;" FontSize="14"/>
@@ -1204,8 +1204,19 @@
                         </Button>
                     </StackPanel>
 
+                    <!-- Overall Profitability (Campaign Designer aggregate) -->
+                    <Border Style="{StaticResource CardContainerStyle}" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Overall Profitability" Style="{StaticResource CardHeaderTextStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Comparison.OverallAvgRoRAC, Mode=OneWay}"
+                                       FontSize="20" FontWeight="SemiBold"
+                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                            <TextBlock Text="Portfolio weighted Acquisition RoRAC" Opacity="0.7" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{x:Bind ViewModel.Comparison.ComparedDeals, Mode=OneWay}">
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Comparison.DesignerCampaigns, Mode=OneWay}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" Spacing="16"/>
@@ -1213,82 +1224,81 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource CardContainerStyle}" Width="300" Padding="16" VerticalAlignment="Stretch">
-                                        <Grid RowSpacing="12">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-
+                                    <Border Style="{StaticResource CardContainerStyle}" Width="360" Padding="12" VerticalAlignment="Stretch">
+                                        <StackPanel Spacing="8">
                                             <!-- Header -->
-                                            <Grid Grid.Row="0">
+                                            <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Title, Mode=TwoWay}" FontSize="16" FontWeight="SemiBold" BorderThickness="0" Background="Transparent"/>
-                                                <Button Grid.Column="1" Command="{Binding ElementName=Root, Path=ViewModel.Comparison.RemoveDealCommand}" CommandParameter="{Binding}" Style="{StaticResource IconButtonStyle}">
+                                                <!-- Remove/close button could be wired later; placeholder empty button -->
+                                                <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}" Visibility="Collapsed">
                                                     <FontIcon Glyph="&#xE74D;" FontSize="12"/>
                                                 </Button>
                                             </Grid>
 
-                                            <!-- Key Inputs -->
-                                            <StackPanel Grid.Row="1" Spacing="4">
-                                                <TextBlock Text="Inputs" FontWeight="SemiBold" Opacity="0.6"/>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Product" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding Product}" FontWeight="SemiBold"/>
-                                                </Grid>
-                                                <TextBlock Text="{Binding VehicleName}" TextWrapping="Wrap" Opacity="0.8" FontSize="12"/>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Price" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding Price}"/>
-                                                </Grid>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Down Payment" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding DownPayment}"/>
-                                                </Grid>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Term" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding Term}"/>
-                                                </Grid>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Nominal Rate" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding NominalRate}"/>
-                                                </Grid>
+                                            <!-- Basic info -->
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Product" Opacity="0.7" FontSize="11"/>
+                                                    <TextBlock Text="{Binding Product}" FontWeight="SemiBold"/>
+                                                </StackPanel>
+                                                <StackPanel>
+                                                    <TextBlock Text="Avg RoRAC" Opacity="0.7" FontSize="11"/>
+                                                    <TextBlock Text="{Binding AvgRoRAC}" FontWeight="SemiBold"/>
+                                                </StackPanel>
                                             </StackPanel>
 
-                                            <!-- Key Outputs -->
-                                            <StackPanel Grid.Row="2" Spacing="4">
-                                                <TextBlock Text="Outputs" FontWeight="SemiBold" Opacity="0.6"/>
+                                            <!-- Per-term breakdown grid -->
+                                            <Border BorderBrush="{ThemeResource CardStrokeBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
                                                 <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Monthly" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding MonthlyInstallment}" FontWeight="SemiBold" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="Term Breakdown" FontWeight="SemiBold" Opacity="0.7" Margin="0,0,0,8"/>
+                                                    <ItemsControl Grid.Row="1" ItemsSource="{Binding TermBreakdown}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid ColumnSpacing="8" Margin="0,4,0,4">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="60"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="90"/>
+                                                                        <ColumnDefinition Width="80"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="{Binding TermLabel}" VerticalAlignment="Center"/>
+                                                                    <!-- Customer rate editable -->
+                                                                    <muxc:NumberBox Grid.Column="1" Value="{Binding CustomerRatePct, Mode=TwoWay}" Minimum="0" Maximum="100" NumberFormatter="{StaticResource GroupedZeroFormatter}" HorizontalAlignment="Stretch" />
+                                                                    <!-- Distribution % editable -->
+                                                                    <muxc:NumberBox Grid.Column="2" Value="{Binding DistributionPct, Mode=TwoWay}" Minimum="0" Maximum="100" NumberFormatter="{StaticResource GroupedZeroFormatter}" HorizontalAlignment="Stretch" />
+                                                                    <!-- Per-term RoRAC -->
+                                                                    <TextBlock Grid.Column="3" Text="{Binding RoRAC}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
                                                 </Grid>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="Flat Rate" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding FlatRate}"/>
-                                                </Grid>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                    <TextBlock Text="RoRAC" Opacity="0.8"/><TextBlock Grid.Column="1" Text="{Binding RoRAC}" FontWeight="SemiBold"/>
-                                                </Grid>
-                                            </StackPanel>
+                                            </Border>
 
-                                            <!-- Waterfall Chart -->
-                                            <Grid Grid.Row="3" Margin="0,16,0,0">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <TextBlock Text="Profitability Waterfall" FontWeight="SemiBold" Opacity="0.6"/>
-                                                
-                                                <!-- Graphical Waterfall Chart -->
-                                                <localCtrls:WaterfallChart Grid.Row="1" ItemsSource="{Binding WaterfallSteps}" Margin="0,12,0,0" Height="150"/>
+                                            <!-- Campaign volume and controls -->
+                                            <Grid Margin="0,8,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="140"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Campaign Volume Share (%)" Opacity="0.7" FontSize="11"/>
+                                                    <muxc:NumberBox Value="{Binding CampaignVolumePct, Mode=TwoWay}" Minimum="0" Maximum="100" NumberFormatter="{StaticResource GroupedZeroFormatter}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                    <TextBlock Text="Aggregated Avg RoRAC" Opacity="0.7" FontSize="11" HorizontalAlignment="Right"/>
+                                                    <TextBlock Text="{Binding AvgRoRAC}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                                </StackPanel>
                                             </Grid>
-                                        </Grid>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
