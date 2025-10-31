@@ -188,6 +188,12 @@ public class VehicleCatalogService : IVehicleCatalogService
         return "Other";
     }
 
+    private static bool IsAmgModel(string? modelName)
+    {
+        if (string.IsNullOrWhiteSpace(modelName)) return false;
+        return modelName.Trim().StartsWith("Mercedes-AMG", StringComparison.InvariantCultureIgnoreCase);
+    }
+
     private double ParseCurrency(string s)
     {
         if (string.IsNullOrEmpty(s)) return 0;
@@ -222,13 +228,17 @@ public class VehicleCatalogService : IVehicleCatalogService
 
     public IEnumerable<string> GetVehicleClasses()
     {
-        return _vehicles.Select(v => v.Class).Distinct().OrderBy(c => c);
+        return _vehicles.Select(v => v.Class)
+                        .Distinct(StringComparer.InvariantCultureIgnoreCase)
+                        .OrderBy(c => c, StringComparer.InvariantCultureIgnoreCase);
     }
 
     public IEnumerable<Vehicle> GetVehiclesByClass(string vehicleClass)
     {
         return _vehicles.Where(v => string.Equals(v.Class, vehicleClass, StringComparison.OrdinalIgnoreCase))
-                        .OrderBy(v => v.ModelName);
+                        // Non-AMG first (0), AMG last (1)
+                        .OrderBy(v => IsAmgModel(v.ModelName) ? 1 : 0)
+                        .ThenBy(v => v.ModelName, StringComparer.InvariantCultureIgnoreCase);
     }
 
     public Vehicle? GetClassAverage(string vehicleClass)

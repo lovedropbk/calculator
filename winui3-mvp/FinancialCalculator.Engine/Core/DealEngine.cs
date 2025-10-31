@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.Engine.Core;
@@ -124,130 +122,9 @@ public sealed class DealEngine
         return product;
     }
 
-    private static Dictionary<int, decimal> ParseCostOfFundsCurve(string[] lines)
-    {
-        var result = new Dictionary<int, decimal>();
-        bool inCurve = false;
-        for (int i = 0; i < lines.Length; i++)
-        {
-            var line = lines[i].Trim();
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
 
-            if (line.StartsWith("costOfFundsCurve:", StringComparison.OrdinalIgnoreCase))
-            {
-                inCurve = true;
-                continue;
-            }
 
-            if (inCurve)
-            {
-                if (line.StartsWith("-", StringComparison.Ordinal))
-                {
-                    int term = 0; decimal rate = 0m;
 
-                    // Look ahead a few lines for termMonths and rate
-                    for (int j = i + 1; j < Math.Min(lines.Length, i + 6); j++)
-                    {
-                        var l = lines[j].Trim();
-                        if (string.IsNullOrWhiteSpace(l) || l.StartsWith("-", StringComparison.Ordinal)) break;
-
-                        if (l.StartsWith("termMonths", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var parts = l.Split(':');
-                            if (parts.Length == 2 && int.TryParse(parts[1].Trim(), out var t)) term = t;
-                        }
-                        else if (l.StartsWith("rate", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var parts = l.Split(':');
-                            if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var r)) rate = r;
-                        }
-                    }
-
-                    if (term > 0) result[term] = rate;
-                }
-                else if (line.Length > 0 && char.IsLetterOrDigit(line[0]) && !line.StartsWith("rate", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Reached next top-level key
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    private static decimal? ParseSingleDecimal(string[] lines, string key)
-    {
-        foreach (var raw in lines)
-        {
-            var line = raw.Trim();
-            if (line.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase))
-            {
-                var parts = line.Split(':');
-                if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
-                    return v;
-            }
-        }
-        return null;
-    }
-
-    private static Dictionary<string, decimal> ParseOpexByProduct(string[] lines)
-    {
-        var result = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
-        bool inOpex = false, inMap = false;
-
-        for (int i = 0; i < lines.Length; i++)
-        {
-            var line = lines[i].Trim();
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
-
-            if (line.StartsWith("opex:", StringComparison.OrdinalIgnoreCase))
-            {
-                inOpex = true; inMap = false; continue;
-            }
-            if (inOpex && line.StartsWith("byProductPct:", StringComparison.OrdinalIgnoreCase))
-            {
-                inMap = true; continue;
-            }
-
-            if (inOpex && inMap)
-            {
-                if (!line.Contains(":")) break;
-                var parts = line.Split(':');
-                if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
-                {
-                    var k = parts[0].Trim();
-                    result[k] = v;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private static string? FindConfigPath(string filename)
-    {
-        try
-        {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var check = Path.Combine(baseDir, filename);
-            if (File.Exists(check)) return check;
-
-            var current = new DirectoryInfo(baseDir);
-            int depth = 8;
-            while (current != null && depth-- > 0)
-            {
-                check = Path.Combine(current.FullName, filename);
-                if (File.Exists(check)) return check;
-
-                check = Path.Combine(current.FullName, "config.yaml");
-                if (File.Exists(check)) return check;
-
-                current = current.Parent;
-            }
-        }
-        catch { }
-        return null;
-    }
 
     private static PaymentMode ParseTiming(string s)
         => string.Equals(s, "advance", StringComparison.OrdinalIgnoreCase)

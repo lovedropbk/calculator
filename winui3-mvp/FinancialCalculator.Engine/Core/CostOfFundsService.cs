@@ -197,31 +197,59 @@ namespace FinancialCalculator.Engine.Core
 
         private static Dictionary<string, decimal> ParseOpexByProduct(string[] lines)
         {
+            // Robustly parse only the opex.byProductPct map and stop when a new top-level section begins.
             var result = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
             bool inOpex = false, inMap = false;
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = (lines[i] ?? string.Empty).Trim();
+                var raw = lines[i] ?? string.Empty;
+                var line = raw.Trim();
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
 
+                // Enter/exit OPEX section
                 if (line.StartsWith("opex:", StringComparison.OrdinalIgnoreCase))
                 {
-                    inOpex = true; inMap = false; continue;
+                    inOpex = true;
+                    inMap = false;
+                    continue;
                 }
+
+                // If we were inside opex and encounter a new top-level key, exit
+                // Heuristic for "top-level": key ends with ":" and is not "byProductPct:"
+                if (inOpex && line.EndsWith(":") &&
+                    !line.StartsWith("byProductPct:", StringComparison.OrdinalIgnoreCase) &&
+                    !line.StartsWith("opex:", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Leaving the opex section entirely (prevents bleeding into commissionPolicy.byProductPct)
+                    break;
+                }
+
                 if (inOpex && line.StartsWith("byProductPct:", StringComparison.OrdinalIgnoreCase))
                 {
-                    inMap = true; continue;
+                    inMap = true;
+                    continue;
                 }
 
                 if (inOpex && inMap)
                 {
-                    if (!line.Contains(":")) break;
+                    // Expect entries like "HP: 0.0095"
+                    // Stop the map when a non key:value (e.g., empty line) appears
+                    if (!line.Contains(":"))
+                        break;
+
                     var parts = line.Split(':');
-                    if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
+                    if (parts.Length == 2 &&
+                        decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
                     {
                         var k = parts[0].Trim();
                         result[k] = v;
+                    }
+                    else
+                    {
+                        // If we hit a new section marker while in map, stop parsing map
+                        if (line.EndsWith(":"))
+                            break;
                     }
                 }
             }

@@ -60,10 +60,13 @@ public class CampaignCalculationService
             double customerDownpayment = (double)alloc.CustomerDownpayment;
             double subsidyRemaining = (double)alloc.SubsidyRemaining;
 
-            // 3) Compute Rate Buydown (subinterest) recognizing ONLY subsidy remaining (post SubDown)
-            decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp); // IDC (costs)
+            // 3) Compute Rate Buydown first, then allocate IDC (Insurance/MBSP) from remaining budget
+            // Always apply IDC costs in the scenario (engine treats them as costs) but only the budget-funded part reduces net via subsidies.
+            decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp); // IDC (costs always applied)
             double usedForRate = 0.0;
             decimal subinterestSubsidy = 0m;
+            decimal usedInsuranceBudget = 0m;
+            decimal usedMbspBudget = 0m;
 
             if (targetRatePct.HasValue)
             {
@@ -81,30 +84,40 @@ public class CampaignCalculationService
                     baseRate,
                     targetRatePct.Value);
 
-                // Clamp to remaining budget
+                // Clamp to remaining budget (after SubDown and IDC allocations)
                 double availableForRate = Math.Max(0, subsidyRemaining);
-                if (autoClampToBudget && required > availableForRate)
-                {
-                    // Find lowest achievable rate within available budget
-                    double newRate = CalculateLowestAchievableRate(
-                        baseRequest,
-                        dealInput,
-                        transactionPrice,
-                        false,
-                        alloc.SubsidyUsedForSubdown,
-                        upfrontCostsDelta,
-                        baseRate,
-                        availableForRate);
-                    targetRatePct = newRate;
-                    vm.TargetRatePct = newRate;
-                    required = Math.Min(required, availableForRate);
-                }
-
+                // Do NOT alter the user's selected target rate.
+                // Always compute RoRAC at the target rate and plug in only the available subsidy.
                 usedForRate = Math.Min(required, availableForRate);
                 subinterestSubsidy = (decimal)usedForRate;
+                // Reduce remaining budget after rate allocation
+                subsidyRemaining = Math.Max(0, subsidyRemaining - usedForRate);
             }
 
-            // 4) Compute full scenario (UpfrontSubsidies = usedForRate ONLY; SubDown = actual used)
+            // 4) Allocate remaining budget to IDC (Insurance/MBSP) up to their costs, then optionally consume remainder
+            decimal decRemaining = (decimal)Math.Max(0, subsidyRemaining);
+
+            // Offset IDC via subsidies (only up to remaining budget)
+            usedInsuranceBudget = Math.Min((decimal)fsFreeInsurance, decRemaining);
+            decRemaining -= usedInsuranceBudget;
+
+            usedMbspBudget = Math.Min((decimal)fsFreeMbsp, decRemaining);
+            decRemaining -= usedMbspBudget;
+
+            // Add IDC-funded portion to UpfrontSubsidies (positive)
+            subinterestSubsidy += usedInsuranceBudget + usedMbspBudget;
+
+            // Update remaining wallet
+            subsidyRemaining = (double)decRemaining;
+
+            // Optionally consume any leftover budget to further improve RoRAC
+            if (vm.ConsumeAllSubsidy && decRemaining > 0)
+            {
+                subinterestSubsidy += decRemaining;
+                subsidyRemaining = 0; // fully consumed
+            }
+
+            // 5) Compute full scenario (UpfrontSubsidies includes rate subsidy plus any consumed remainder; SubDown = actual used)
             var (res, commPct, commAmt) = ComputeScenarioWithCommission(
                 baseRequest,
                 dealInput,
@@ -134,8 +147,8 @@ public class CampaignCalculationService
             vm.SubinterestSubsidyAmount = usedForRate;
             vm.SubinterestSubsidy = usedForRate.ToString("N0", CultureInfo.InvariantCulture);
 
-            // Totals for display
-            double subsidyUsed = cashDiscount + actualSubdownUsed + fsFreeInsurance + fsFreeMbsp + usedForRate;
+            // Totals for display (clamped to budget allocations actually used)
+            double subsidyUsed = cashDiscount + actualSubdownUsed + (double)usedInsuranceBudget + (double)usedMbspBudget + usedForRate;
             vm.SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
 
             double idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + dealInput.IdcOther;

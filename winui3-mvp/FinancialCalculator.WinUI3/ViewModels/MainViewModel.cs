@@ -85,6 +85,12 @@ public partial class MainViewModel : ObservableValidator
         InitializationNotifier = InitializeAsync();
     }
 
+    private static bool IsAmgModel(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return false;
+        return name.Trim().StartsWith("Mercedes-AMG", StringComparison.InvariantCultureIgnoreCase);
+    }
+
     private void OnCampaignManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(CampaignManager.ActiveCampaign) ||
@@ -94,6 +100,9 @@ public partial class MainViewModel : ObservableValidator
             // Notify MainVM properties that depend on active campaign
             OnPropertyChanged(nameof(ActiveCampaign));
             OnPropertyChanged(nameof(IsMyCampaignSelected));
+
+            // Ensure we listen to property changes on the new ActiveCampaign (Standard or My Campaigns)
+            SubscribeToActiveCampaignChanges();
             
             // Trigger refresh of main calculator view (debounced to avoid race conditions from mutual exclusion updates)
             _debounceActive.DebounceAsync(50, async () => await RefreshActiveSelectionAsync());
@@ -157,21 +166,22 @@ public partial class MainViewModel : ObservableValidator
             await _vehicleCatalog.LoadAsync();
             await _standardRates.LoadAsync();
 
-            // Populate vehicles (classes followed by models)
-            var classes = _vehicleCatalog.GetVehicleClasses();
+            // Populate vehicles (classes followed by ALL models globally sorted A–Z with Mercedes-AMG last)
+            var classes = _vehicleCatalog.GetVehicleClasses().ToList();
             foreach (var c in classes)
             {
                 var avg = _vehicleCatalog.GetClassAverage(c);
                 if (avg != null) DealInput.AllVehicles.Add(avg);
             }
-            // Separator if needed, but ComboBox doesn't support it easily without templating.
-            // Just add models now.
-            foreach (var c in classes)
+
+            // Gather all vehicles across classes and sort globally
+            var allVehicles = classes.SelectMany(c => _vehicleCatalog.GetVehiclesByClass(c)).ToList();
+            var ordered = allVehicles
+                .OrderBy(v => IsAmgModel(v.ModelName) ? 1 : 0)
+                .ThenBy(v => v.ModelName, StringComparer.InvariantCultureIgnoreCase);
+            foreach (var v in ordered)
             {
-                foreach (var v in _vehicleCatalog.GetVehiclesByClass(c))
-                {
-                    DealInput.AllVehicles.Add(v);
-                }
+                DealInput.AllVehicles.Add(v);
             }
     
             // Populate MBSP packages
@@ -182,6 +192,9 @@ public partial class MainViewModel : ObservableValidator
 
             // Load campaign summaries with local engine
             await LoadSummariesLocalAsync();
+
+            // Subscribe to property changes on current ActiveCampaign so UI toggles (e.g., Consume subsidy) trigger recalcs
+            SubscribeToActiveCampaignChanges();
             
             // Trigger initial refresh if there's a default selection
             if (ActiveCampaign != null)
@@ -666,7 +679,12 @@ public partial class MetricsViewModel : ObservableObject
     public string NominalRate { get; set; } = "";
     public string FlatRate { get; set; } = "";
     public string FinancedAmount { get; set; } = "";
-    public string RoRAC { get; set; } = "";
+    private string _roRAC = "";
+    public string RoRAC
+    {
+        get => _roRAC;
+        set => SetProperty(ref _roRAC, value);
+    }
 }
 
 public partial class CampaignSummaryViewModel : ObservableObject
@@ -687,7 +705,12 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string FSFreeMBSP { get; set; } = string.Empty;
     public string SubsidyUsed { get; set; } = string.Empty;
     public string IDCsTotal { get; set; } = string.Empty;  // Total of all IDCs (commission + free insurance + free MBSP + other)
-    public string RoRAC { get; set; } = string.Empty;
+    private string _roRAC = string.Empty;
+    public string RoRAC
+    {
+        get => _roRAC;
+        set => SetProperty(ref _roRAC, value);
+    }
     public string Notes { get; set; } = string.Empty;
 
     // New: per-term breakdown (editable by user in Campaign Designer)
@@ -717,7 +740,7 @@ public partial class CampaignSummaryViewModel : ObservableObject
     {
         get => _targetRatePct;
         set
-        {
+    {
             if (_targetRatePct != value)
             {
                 _targetRatePct = value;
@@ -726,8 +749,23 @@ public partial class CampaignSummaryViewModel : ObservableObject
         }
     }
 
+    // Consume remaining subsidy to improve RoRAC
+    private bool _consumeAllSubsidy;
+    public bool ConsumeAllSubsidy
+    {
+        get => _consumeAllSubsidy;
+        set
+        {
+            if (_consumeAllSubsidy != value)
+            {
+                _consumeAllSubsidy = value;
+                OnPropertyChanged(nameof(ConsumeAllSubsidy));
+            }
+        }
+    }
+
     // MBSP Package Selection
-    private string _selectedMbspPackage = "Easy Care 5";
+    private string _selectedMbspPackage = "";
     public string SelectedMbspPackage
     {
         get => _selectedMbspPackage;
@@ -770,7 +808,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
             IDC_MBSP_CostAmount = this.IDC_MBSP_CostAmount,
             FSFreeMBSPAmount = this.FSFreeMBSPAmount,
             TargetRatePct = this.TargetRatePct,
-            SelectedMbspPackage = this.SelectedMbspPackage
+            SelectedMbspPackage = this.SelectedMbspPackage,
+            ConsumeAllSubsidy = this.ConsumeAllSubsidy
         };
 
         // Deep-copy term breakdown items

@@ -63,7 +63,46 @@ public partial class MainViewModel
                propertyName == nameof(CampaignSummaryViewModel.FSSubDownAmount) ||
                propertyName == nameof(CampaignSummaryViewModel.FSSubInterestAmount) ||
                propertyName == nameof(CampaignSummaryViewModel.FSFreeMBSPAmount) ||
-               propertyName == nameof(CampaignSummaryViewModel.TargetRatePct);
+               propertyName == nameof(CampaignSummaryViewModel.SelectedMbspPackage) ||
+               propertyName == nameof(CampaignSummaryViewModel.TargetRatePct) ||
+               propertyName == nameof(CampaignSummaryViewModel.ConsumeAllSubsidy);
+    }
+
+    // Subscribe to ActiveCampaign property changes (works for Standard and My Campaigns)
+    private void SubscribeToActiveCampaignChanges()
+    {
+        if (_subscribedActiveCampaign != null)
+        {
+            try { _subscribedActiveCampaign.PropertyChanged -= ActiveCampaign_PropertyChanged; } catch { }
+        }
+        _subscribedActiveCampaign = ActiveCampaign;
+        if (_subscribedActiveCampaign != null)
+        {
+            _subscribedActiveCampaign.PropertyChanged += ActiveCampaign_PropertyChanged;
+        }
+    }
+
+    // Recalculate when any editable campaign input changes
+    private async void ActiveCampaign_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is CampaignSummaryViewModel vm && IsCampaignInputProperty(e.PropertyName))
+        {
+            // Map MBSP selection to cost when the package changes
+            if (e.PropertyName == nameof(CampaignSummaryViewModel.SelectedMbspPackage))
+            {
+                var name = vm.SelectedMbspPackage;
+                double cost = 0;
+                if (!string.IsNullOrWhiteSpace(name) &&
+                    DealInput.SelectedVehicle?.MbspCosts != null &&
+                    DealInput.SelectedVehicle.MbspCosts.TryGetValue(name, out var vehCost))
+                {
+                    cost = vehCost;
+                }
+                vm.FSFreeMBSPAmount = cost;
+            }
+
+            await CalculateCampaignAsync(vm, autoClampToBudget: !IsMyCampaign(vm));
+        }
     }
 
     // MARK: Collections & Selection (Proxies to CampaignManager)
@@ -81,6 +120,9 @@ public partial class MainViewModel
     
     public CampaignSummaryViewModel? ActiveCampaign => CampaignManager.ActiveCampaign;
     public bool IsMyCampaignSelected => CampaignManager.SelectedMyCampaign != null;
+
+    // Subscribe to property changes for active campaign (standard or custom)
+    private CampaignSummaryViewModel? _subscribedActiveCampaign;
 
     // Copy a standard campaign to My Campaigns
     [RelayCommand(CanExecute = nameof(CanCopyToMyCampaigns))]
@@ -265,6 +307,9 @@ public partial class MainViewModel
             RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%"),
         };
 
+        // Keep My Campaigns table in sync with the Campaign Designer widget
+        vm.RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%");
+
         _activeFsInsurance = fsIns;
         _activeFsMbsp = fsMbsp;
         _activeSubsidyUsed = subsidyUsed;
@@ -375,7 +420,11 @@ public partial class MainViewModel
                                          mbspUnavailable = true;
                                      }
                                 }
-                                if (mbspAvailable) vm.FSFreeMBSPAmount = actualMbspCost;
+                                if (mbspAvailable)
+                                {
+                                    vm.SelectedMbspPackage = "Easy Care 5";
+                                    vm.FSFreeMBSPAmount = actualMbspCost;
+                                }
                                 else continue;
                             }
                             break;

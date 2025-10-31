@@ -810,6 +810,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="200"/>
@@ -857,6 +858,13 @@
                                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Rate Subsidy (calc.) (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ActiveCampaign.SubinterestSubsidy}" VerticalAlignment="Center" Margin="0,0,0,8" Opacity="0.8"/>
 
+                                    <!-- Consume Entire Subsidy Toggle -->
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Consume entire subsidy" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    <ToggleSwitch Grid.Row="7" Grid.Column="1"
+                                                  IsOn="{Binding ActiveCampaign.ConsumeAllSubsidy, Mode=TwoWay}"
+                                                  OffContent="Off"
+                                                  OnContent="On"
+                                                  Margin="0,0,0,8"/>
                                 </Grid>
 
                                 <!-- Budget Utilization Visualizer -->
