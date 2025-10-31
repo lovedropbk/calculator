@@ -91,6 +91,12 @@ public partial class MainViewModel : ObservableValidator
         return name.Trim().StartsWith("Mercedes-AMG", StringComparison.InvariantCultureIgnoreCase);
     }
 
+    private static bool IsMaybachModel(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return false;
+        return name.Trim().StartsWith("Mercedes-Maybach", StringComparison.InvariantCultureIgnoreCase);
+    }
+
     private void OnCampaignManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(CampaignManager.ActiveCampaign) ||
@@ -166,7 +172,7 @@ public partial class MainViewModel : ObservableValidator
             await _vehicleCatalog.LoadAsync();
             await _standardRates.LoadAsync();
 
-            // Populate vehicles (classes followed by ALL models globally sorted A–Z with Mercedes-AMG last)
+            // Populate vehicles (classes followed by ALL models globally sorted A–Z with Mercedes-AMG next and Mercedes-Maybach last)
             var classes = _vehicleCatalog.GetVehicleClasses().ToList();
             foreach (var c in classes)
             {
@@ -177,7 +183,7 @@ public partial class MainViewModel : ObservableValidator
             // Gather all vehicles across classes and sort globally
             var allVehicles = classes.SelectMany(c => _vehicleCatalog.GetVehiclesByClass(c)).ToList();
             var ordered = allVehicles
-                .OrderBy(v => IsAmgModel(v.ModelName) ? 1 : 0)
+                .OrderBy(v => IsMaybachModel(v.ModelName) ? 2 : IsAmgModel(v.ModelName) ? 1 : 0)
                 .ThenBy(v => v.ModelName, StringComparer.InvariantCultureIgnoreCase);
             foreach (var v in ordered)
             {

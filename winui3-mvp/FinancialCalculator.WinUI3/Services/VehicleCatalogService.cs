@@ -194,6 +194,12 @@ public class VehicleCatalogService : IVehicleCatalogService
         return modelName.Trim().StartsWith("Mercedes-AMG", StringComparison.InvariantCultureIgnoreCase);
     }
 
+    private static bool IsMaybachModel(string? modelName)
+    {
+        if (string.IsNullOrWhiteSpace(modelName)) return false;
+        return modelName.Trim().StartsWith("Mercedes-Maybach", StringComparison.InvariantCultureIgnoreCase);
+    }
+
     private double ParseCurrency(string s)
     {
         if (string.IsNullOrEmpty(s)) return 0;
@@ -236,8 +242,8 @@ public class VehicleCatalogService : IVehicleCatalogService
     public IEnumerable<Vehicle> GetVehiclesByClass(string vehicleClass)
     {
         return _vehicles.Where(v => string.Equals(v.Class, vehicleClass, StringComparison.OrdinalIgnoreCase))
-                        // Non-AMG first (0), AMG last (1)
-                        .OrderBy(v => IsAmgModel(v.ModelName) ? 1 : 0)
+                        // Non-AMG/Maybach first (0), AMG next (1), Maybach last (2)
+                        .OrderBy(v => IsMaybachModel(v.ModelName) ? 2 : IsAmgModel(v.ModelName) ? 1 : 0)
                         .ThenBy(v => v.ModelName, StringComparer.InvariantCultureIgnoreCase);
     }
 
