@@ -608,7 +608,7 @@
                                 <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="140"/>
                                 <controls:DataGridTextColumn Header="Transaction Price" Binding="{Binding TransactionPrice}" Width="140"/>
                                 <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120"/>
-                                <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120"/>
+                                <controls:DataGridTextColumn Header="Customer Downpayment" Binding="{Binding Downpayment}" Width="120"/>
                                 <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140"/>
                                 <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120"/>
                             </controls:DataGrid.Columns>
@@ -698,7 +698,7 @@
                             <controls:DataGridTextColumn Header="Monthly Installment" Binding="{Binding Monthly}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Transaction Price" Binding="{Binding TransactionPrice}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Cash Discount" Binding="{Binding CashDiscount}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
+                            <controls:DataGridTextColumn Header="Customer Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes, Mode=TwoWay}" Width="220"/>

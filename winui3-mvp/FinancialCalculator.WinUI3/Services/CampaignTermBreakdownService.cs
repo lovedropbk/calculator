@@ -61,14 +61,29 @@ public class CampaignTermBreakdownService
             double customerRate = std.Value;
 
             // Build a request for this term and run the engine (replicates ComputeScenarioWithCommission logic)
-            // Apply campaign adjustments:
+            // Apply campaign adjustments with NO double counting:
             // - Cash discount reduces transaction price
             // - FS free insurance/MBSP are IDC (upfront costs)
-            // - Subdown is passed as SubdownValue (THB)
+            // - Subdown is passed as SubdownValue (THB) but capped by base downpayment and available subsidy
+            // - Only leftover subsidy after SubDown (and per policy recognized) may flow into UpfrontSubsidies
             decimal txnPrice = vehiclePrice - (decimal)Math.Max(0, vm.CashDiscountAmount);
             if (txnPrice < 0) txnPrice = 0;
             double upfrontIdcDelta = Math.Max(0, vm.FSSubInterestAmount) + Math.Max(0, vm.FSFreeMBSPAmount);
-            decimal subdownValue = (decimal)Math.Max(0, vm.FSSubDownAmount);
+
+            // Allocation consistent with CampaignCalculationService
+            decimal totalBudgetAfterCash = Math.Max(0m, baseRequest.UpfrontSubsidies - (decimal)Math.Max(0, vm.CashDiscountAmount));
+            decimal baseDown = baseRequest.DownIsPercent ? txnPrice * baseRequest.DownValue / 100m : baseRequest.DownValue;
+            if (baseDown < 0) baseDown = 0m;
+            decimal requestedSubdown = (decimal)Math.Max(0, vm.FSSubDownAmount);
+            decimal subdownUsed = Math.Min(Math.Min(requestedSubdown, totalBudgetAfterCash), baseDown);
+            decimal remainingBudget = totalBudgetAfterCash - subdownUsed;
+            if (remainingBudget < 0) remainingBudget = 0m;
+
+            // Rate subsidy (if precomputed by service) but capped at remaining budget
+            double rateSubParsed = 0.0;
+            double.TryParse((vm.SubinterestSubsidy ?? string.Empty).Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out rateSubParsed);
+            if (rateSubParsed < 0) rateSubParsed = 0;
+            decimal usedForRate = Math.Min((decimal)rateSubParsed, remainingBudget);
 
             var req1 = baseRequest with
             {
@@ -76,8 +91,9 @@ public class CampaignTermBreakdownService
                 VehiclePrice = txnPrice,
                 CustomerRatePercent = (decimal)customerRate,
                 UpfrontCosts = baseRequest.UpfrontCosts + (decimal)upfrontIdcDelta,
+                UpfrontSubsidies = usedForRate,
                 SubdownIsPercent = false,
-                SubdownValue = subdownValue
+                SubdownValue = subdownUsed
             };
 
             var res1 = _financialFacade.Calculate(req1);
@@ -155,15 +171,37 @@ public class CampaignTermBreakdownService
             subdownValue = (decimal)Math.Max(0, campaign.FSSubDownAmount);
         }
 
-        // 1) Build request for this term with provided rate and deltas
+        // 1) Build request for this term with provided rate and deltas, honoring subsidy allocation rules
+        // Compute allocation bounds
+        decimal totalBudgetAfterCash = baseRequest.UpfrontSubsidies;
+        if (campaign != null)
+            totalBudgetAfterCash = Math.Max(0m, baseRequest.UpfrontSubsidies - (decimal)Math.Max(0, campaign.CashDiscountAmount));
+
+        decimal baseDown = baseRequest.DownIsPercent ? txnPrice * baseRequest.DownValue / 100m : baseRequest.DownValue;
+        if (baseDown < 0) baseDown = 0m;
+
+        decimal requestedSubdown = subdownValue;
+        decimal subdownUsed = Math.Min(Math.Min(requestedSubdown, totalBudgetAfterCash), baseDown);
+        decimal remainingBudget = totalBudgetAfterCash - subdownUsed;
+        if (remainingBudget < 0) remainingBudget = 0m;
+
+        double rateSubParsed = 0.0;
+        if (campaign != null)
+        {
+            double.TryParse((campaign.SubinterestSubsidy ?? string.Empty).Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out rateSubParsed);
+            if (rateSubParsed < 0) rateSubParsed = 0;
+        }
+        decimal usedForRate = Math.Min((decimal)rateSubParsed, remainingBudget);
+
         var req1 = baseRequest with
         {
             TermMonths = term,
             VehiclePrice = txnPrice,
             CustomerRatePercent = (decimal)customerRatePct,
             UpfrontCosts = baseRequest.UpfrontCosts + upfrontCostsDelta,
+            UpfrontSubsidies = usedForRate,
             SubdownIsPercent = false,
-            SubdownValue = subdownValue
+            SubdownValue = subdownUsed
         };
 
         // 2) First pass to determine commission on financed amount

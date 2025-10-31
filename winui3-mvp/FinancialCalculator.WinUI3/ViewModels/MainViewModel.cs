@@ -603,9 +603,9 @@ public partial class MainViewModel : ObservableValidator
     public string ActiveFsInsuranceText => _activeFsInsurance.ToString("N0", CultureInfo.InvariantCulture);
     public string ActiveFsMbspText => _activeFsMbsp.ToString("N0", CultureInfo.InvariantCulture);
     private double _activeSubsidyUsed;
-    // User requested that we always utilize full subsidy budget
-    public string ActiveSubsidyUtilizedText => DealInput.SubsidyBudget.ToString("N0", CultureInfo.InvariantCulture);
-    public string SubsidyRemainingText => "0"; // Always fully utilized
+    // Show actual utilized and remaining subsidy per active campaign (no longer assume full utilization)
+    public string ActiveSubsidyUtilizedText => _activeSubsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
+    public string SubsidyRemainingText => Math.Max(0, DealInput.SubsidyBudget - _activeSubsidyUsed).ToString("N0", CultureInfo.InvariantCulture);
     public string IdcOtherText => DealInput.IdcOther.ToString("N0", CultureInfo.InvariantCulture);
     public string IdcTotalText => (DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther + _activeFsInsurance + _activeFsMbsp).ToString("N0", CultureInfo.InvariantCulture);
 

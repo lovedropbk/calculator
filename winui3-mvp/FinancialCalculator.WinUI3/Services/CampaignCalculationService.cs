@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FinancialCalculator.Engine;
+using FinancialCalculator.Engine.Core;
 using FinancialCalculator.Engine.Models.Facade;
 using FinancialCalculator.WinUI3.ViewModels;
 
@@ -30,84 +31,116 @@ public class CampaignCalculationService
 
         try
         {
-            // 1. Gather inputs from vm
+            // 1) Gather inputs from vm
             decimal vehiclePrice = baseRequest.VehiclePrice;
-            double cashDiscount = vm.CashDiscountAmount;
-            double fsSubDown = vm.FSSubDownAmount;
-            double fsFreeInsurance = vm.FSSubInterestAmount;
-            double fsFreeMbsp = vm.FSFreeMBSPAmount;
+            double cashDiscount = Math.Max(0, vm.CashDiscountAmount);
+            double requestedSubdown = Math.Max(0, vm.FSSubDownAmount);
+            double fsFreeInsurance = Math.Max(0, vm.FSSubInterestAmount);
+            double fsFreeMbsp = Math.Max(0, vm.FSFreeMBSPAmount);
             double? targetRatePct = vm.TargetRatePct;
 
             // Apply Cash Discount to Vehicle Price
             decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
             if (transactionPrice < 0) transactionPrice = 0;
 
-            // 2. Calculate Subinterest Subsidy if Target Rate is set
+            // 2) Allocate subsidy to SubDown first (no double counting)
+            // Total subsidy available for allocation after cash discount
+            decimal totalBudgetAfterCash = (decimal)Math.Max(0, subsidyBudget - cashDiscount);
+
+            var allocInput = new CampaignAllocation.Input(
+                TransactionPrice: transactionPrice,
+                DownIsPercent: baseRequest.DownIsPercent,
+                DownValue: baseRequest.DownValue,
+                TotalSubsidyBudget: totalBudgetAfterCash,
+                RequestedSubdownTHB: (decimal)requestedSubdown
+            );
+            var alloc = CampaignAllocation.Allocate(allocInput);
+
+            double actualSubdownUsed = (double)alloc.SubsidyUsedForSubdown;
+            double customerDownpayment = (double)alloc.CustomerDownpayment;
+            double subsidyRemaining = (double)alloc.SubsidyRemaining;
+
+            // 3) Compute Rate Buydown (subinterest) recognizing ONLY subsidy remaining (post SubDown)
+            decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp); // IDC (costs)
+            double usedForRate = 0.0;
             decimal subinterestSubsidy = 0m;
+
             if (targetRatePct.HasValue)
             {
-                decimal upfrontCostsDelta = (decimal)(fsFreeInsurance + fsFreeMbsp);
-                // We need base customer rate from baseRequest, not DealInput directly if we want to be pure.
-                // But baseRequest has it.
+                // Base rate from baseRequest
                 double baseRate = (double)baseRequest.CustomerRatePercent;
-                
-                double required = ComputeRequiredSubsidyForRateBuydown(baseRequest, dealInput, transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, baseRate, targetRatePct.Value);
-                
-                // Auto-clamp for standard campaigns if over budget
-                double leftoverBudget = subsidyBudget - (cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp);
-                if (autoClampToBudget && required > leftoverBudget && leftoverBudget >= 0)
+
+                // Required upfront subsidy equivalent to achieve target rate (interest delta proxy)
+                double required = ComputeRequiredSubsidyForRateBuydown(
+                    baseRequest,
+                    dealInput,
+                    transactionPrice,
+                    false,
+                    alloc.SubsidyUsedForSubdown, // pass actual SubDown used
+                    upfrontCostsDelta,
+                    baseRate,
+                    targetRatePct.Value);
+
+                // Clamp to remaining budget
+                double availableForRate = Math.Max(0, subsidyRemaining);
+                if (autoClampToBudget && required > availableForRate)
                 {
-                     targetRatePct = CalculateLowestAchievableRate(baseRequest, dealInput, transactionPrice, false, (decimal)fsSubDown, upfrontCostsDelta, baseRate, leftoverBudget);
-                     required = leftoverBudget;
-                     vm.TargetRatePct = targetRatePct;
+                    // Find lowest achievable rate within available budget
+                    double newRate = CalculateLowestAchievableRate(
+                        baseRequest,
+                        dealInput,
+                        transactionPrice,
+                        false,
+                        alloc.SubsidyUsedForSubdown,
+                        upfrontCostsDelta,
+                        baseRate,
+                        availableForRate);
+                    targetRatePct = newRate;
+                    vm.TargetRatePct = newRate;
+                    required = Math.Min(required, availableForRate);
                 }
-                subinterestSubsidy = (decimal)required;
+
+                usedForRate = Math.Min(required, availableForRate);
+                subinterestSubsidy = (decimal)usedForRate;
             }
 
-            // 4. Compute full scenario
+            // 4) Compute full scenario (UpfrontSubsidies = usedForRate ONLY; SubDown = actual used)
             var (res, commPct, commAmt) = ComputeScenarioWithCommission(
                 baseRequest,
                 dealInput,
                 transactionPrice,
                 false,
-                (decimal)fsSubDown,
-                (decimal)(fsFreeInsurance + fsFreeMbsp),
-                (decimal)(subsidyBudget - cashDiscount),
+                alloc.SubsidyUsedForSubdown,
+                upfrontCostsDelta,
+                subinterestSubsidy,
                 targetRatePct
             );
 
-            // Update VM (or return data to update VM)
+            // 5) Update VM: display Customer Downpayment and actual SubDown used
             vm.Monthly = ((double)res.MonthlyInstallment).ToString("N0", CultureInfo.InvariantCulture);
             vm.CustomerFlatRate = ((double)res.FlatRatePercent / 100.0).ToString("0.00%", CultureInfo.InvariantCulture);
             vm.TransactionPrice = transactionPrice.ToString("N0", CultureInfo.InvariantCulture);
-            // vm.Downpayment = ... (needs ComputeDownpaymentDisplay, might need to be passed in or calculated here if simple)
-            // Let's assume simple calculation for now or pass it.
-            // MainViewModel used: return (double)(vehiclePrice * (decimal)DealInput.DownPaymentValueEntry / 100m); if %
-            decimal downPayment = baseRequest.DownIsPercent ? transactionPrice * baseRequest.DownValue / 100m : baseRequest.DownValue;
-            vm.Downpayment = downPayment.ToString("N0", CultureInfo.InvariantCulture);
 
+            // Replace displayed downpayment with Customer Downpayment (base down - subdown used, floored at 0)
+            vm.Downpayment = customerDownpayment.ToString("N0", CultureInfo.InvariantCulture);
+
+            // Show actual used SubDown (may be lower than requested due to allocation clamps)
+            // Set numeric amounts to actual utilized values for downstream visuals/exports
+            vm.FSSubDownAmount = actualSubdownUsed;
+            vm.FSSubDown = actualSubdownUsed.ToString("N0", CultureInfo.InvariantCulture);
             vm.CashDiscount = cashDiscount.ToString("N0", CultureInfo.InvariantCulture);
-            vm.FSSubDown = fsSubDown.ToString("N0", CultureInfo.InvariantCulture);
             vm.FSSubInterest = fsFreeInsurance.ToString("N0", CultureInfo.InvariantCulture);
             vm.FSFreeMBSP = fsFreeMbsp.ToString("N0", CultureInfo.InvariantCulture);
-            vm.SubinterestSubsidy = subinterestSubsidy.ToString("N0", CultureInfo.InvariantCulture);
-            
-            double subsidyUsed = cashDiscount + fsSubDown + fsFreeInsurance + fsFreeMbsp + (double)subinterestSubsidy;
-            vm.SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
-            
-            double idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + (double)baseRequest.UpfrontCosts; // Wait, baseRequest.UpfrontCosts might already include some things?
-            // MainVM used DealInput.IdcOther.
-            // Let's use what's passed in baseRequest if it only contains IdcOther initially.
-            // Actually baseRequest.UpfrontCosts in MainVM was (Decimal)(DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther)
-            // If we use baseRequest from DealInput, it might have commission already.
-            // We should probably pass raw IdcOther if we want to be precise.
-            // Or rely on `ComputeScenarioWithCommission` to handle it.
-            // `ComputeScenarioWithCommission` in MainVM used `Math.Max(0, DealInput.IdcOther)`.
-            // Let's assume we can get it from `dealInput.IdcOther` for now as we pass `dealInput`.
-            idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + dealInput.IdcOther;
+            vm.SubinterestSubsidyAmount = usedForRate;
+            vm.SubinterestSubsidy = usedForRate.ToString("N0", CultureInfo.InvariantCulture);
 
+            // Totals for display
+            double subsidyUsed = cashDiscount + actualSubdownUsed + fsFreeInsurance + fsFreeMbsp + usedForRate;
+            vm.SubsidyUsed = subsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
+
+            double idcsTotal = commAmt + fsFreeInsurance + fsFreeMbsp + dealInput.IdcOther;
             vm.IDCsTotal = idcsTotal.ToString("N0", CultureInfo.InvariantCulture);
-            
+
             vm.DealerCommission = $"{commPct.ToString("0.00%", CultureInfo.InvariantCulture)} ({commAmt.ToString("N0", CultureInfo.InvariantCulture)} THB)";
             vm.RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%");
 
@@ -129,8 +162,8 @@ public class CampaignCalculationService
                 foreach (var tb in vm.TermBreakdown)
                 {
                     var s = (tb.RoRAC ?? string.Empty).Trim();
-                    if (s.EndsWith("%")) s = s.Substring(0, s.Length - 1);
-                    if (double.TryParse(s, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var pctVal))
+                    if (s.EndsWith("%")) s = s[..^1];
+                    if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var pctVal))
                     {
                         double r = pctVal / 100.0;
                         agg += r * (tb.DistributionPct / 100.0);
@@ -166,7 +199,7 @@ public class CampaignCalculationService
         };
 
         var res1 = _financialFacade.Calculate(req1);
-        var (pct, amt) = dealInput.ResolveCommissionForFinanced((double)res1.FinancedAmount); 
+        var (pct, amt) = dealInput.ResolveCommissionForFinanced((double)res1.FinancedAmount);
 
         var req2 = req1 with { UpfrontCosts = req1.UpfrontCosts + (decimal)amt };
         var res2 = _financialFacade.Calculate(req2);
@@ -178,7 +211,7 @@ public class CampaignCalculationService
     {
         var baseRes = ComputeScenarioWithCommission(baseReq, dealInput, vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, baseRatePct);
         var targetRes = ComputeScenarioWithCommission(baseReq, dealInput, vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, 0m, targetRatePct);
-        
+
         var baseInt = (double)baseRes.result.TotalInterest;
         var tgtInt = (double)targetRes.result.TotalInterest;
         return Math.Max(0, baseInt - tgtInt);
@@ -194,7 +227,7 @@ public class CampaignCalculationService
         {
             double mid = (low + high) / 2;
             double required = ComputeRequiredSubsidyForRateBuydown(baseReq, dealInput, vehiclePrice, subdownIsPercent, subdownValue, upfrontCostsDelta, baseRatePct, mid);
-            
+
             if (required > availableBudget)
             {
                 low = mid;

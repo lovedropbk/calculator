@@ -22,6 +22,7 @@ public class ExportService
         sb.AppendLine($"Nominal Rate,{(nominalRate / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
         sb.AppendLine($"Flat Rate,{((double)result.FlatRatePercent / 100.0).ToString("0.00%", CultureInfo.InvariantCulture)}");
         sb.AppendLine($"Financed Amount (THB),{result.FinancedAmount.ToString("N0", CultureInfo.InvariantCulture)}");
+        sb.AppendLine($"Customer Downpayment (THB),{campaign.Downpayment}");
         sb.AppendLine($"Acq. RoRAC,{((double)result.AcquisitionRoRacPercent).ToString("0.00%", CultureInfo.InvariantCulture)}");
         
         sb.AppendLine($"Dealer Commission (THB),{dealerCommissionResolvedAmt.ToString("N0", CultureInfo.InvariantCulture)}");

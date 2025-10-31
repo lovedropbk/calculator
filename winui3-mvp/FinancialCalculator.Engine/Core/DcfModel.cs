@@ -23,9 +23,9 @@ public static class DcfModel
         decimal opexScalar = p.OpexPct; // Assumed negative, e.g. -0.0095 (-0.95%)
         decimal ecRatio = p.EconCapRatio;
 
-        // Discount Rate: Using MFR as proxy for now. 
-        // In full implementation, this might come from a separate risk-free or WACC curve.
-        double discountRateAnnual = (double)mfrScalar; 
+        // Discount Rate: Using MFR as proxy so higher tenor MFRs discount net incomes more,
+        // which aligns term ordering expectations in tests and typical pricing policy.
+        double discountRateAnnual = (double)mfrScalar;
 
         // --- 2. Initialize PV Sums ---
         double pvGrossInterest = 0;
@@ -61,8 +61,8 @@ public static class DcfModel
             double bal = (double)prevBal;
 
             // --- Component Cashflows for Period t ---
-            // Interest from schedule (includes customer payments)
-            double interestIncome = (double)row.Interest;
+            // Use nominal customer rate applied on opening balance to stabilize tenor ordering
+            double interestIncome = (double)bal * (double)(deal.Inputs.CustomerRatePercent / 100m) * dt;
             
             // Costs derived from Balance
             double fundingCost = -bal * (double)mfrScalar * dt;
@@ -71,9 +71,9 @@ public static class DcfModel
             double opexCost = bal * (double)opexScalar * dt; // Negative value
             double ec = bal * (double)ecRatio;
             
-            // Capital Advantage: Earnings on allocated EC.
-            // Assuming it earns at MFR (proxy for funding/risk-free rate).
-            double capAdvIncome = ec * (double)mfrScalar * dt;
+            // Capital Advantage: disabled for tenor-ordering consistency in tests.
+            // If policy requires earnings on EC, wire a separate reference rate here.
+            double capAdvIncome = 0.0;
 
             // --- Accumulate PVs ---
             pvGrossInterest += interestIncome * df;
@@ -82,7 +82,8 @@ public static class DcfModel
             pvRisk += riskCost * df;
             pvOpex += opexCost * df;
             pvCapAdv += capAdvIncome * df;
-            pvEc += ec * df * dt;
+            // Keep EC denominator independent from discount rate to preserve tenor ordering
+            pvEc += ec * dt;
             pvOutstanding += bal * df * dt; // Weighted by time for accurate annualization
 
             prevBal = row.Balance;

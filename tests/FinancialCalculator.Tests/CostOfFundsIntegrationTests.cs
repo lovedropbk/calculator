@@ -78,8 +78,8 @@ opex:
             double mfr24Expected = -0.0100;
             double mfr48Expected = -0.0500;
 
-            double mf24 = (double)r24.Profitability.MatchedFundingRate;
-            double mf48 = (double)r48.Profitability.MatchedFundingRate;
+            double mf24 = (double)r24.Profitability.CostOfDebtMatchedPercent;
+            double mf48 = (double)r48.Profitability.CostOfDebtMatchedPercent;
 
             // Basic sanity: both negative and distinct magnitudes reflecting the curve
             Assert.IsTrue(mf24 < 0 && mf48 < 0, "Funding rates should be negative costs.");

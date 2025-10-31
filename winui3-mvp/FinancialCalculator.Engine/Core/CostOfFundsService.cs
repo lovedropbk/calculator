@@ -133,7 +133,23 @@ namespace FinancialCalculator.Engine.Core
                     {
                         int term = 0; decimal rate = 0m;
 
-                        // Look ahead for termMonths: and rate:
+                        // Attempt inline parse like "- termMonths: 24" or "- rate: 0.0100"
+                        var inline = line.TrimStart('-').Trim();
+                        if (!string.IsNullOrEmpty(inline))
+                        {
+                            if (inline.StartsWith("termMonths", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var parts = inline.Split(':');
+                                if (parts.Length == 2 && int.TryParse(parts[1].Trim(), out var t)) term = t;
+                            }
+                            else if (inline.StartsWith("rate", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var parts = inline.Split(':');
+                                if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var r)) rate = r;
+                            }
+                        }
+
+                        // Look ahead for termMonths: and rate: on following lines (YAML block style)
                         for (int j = i + 1; j < Math.Min(lines.Length, i + 6); j++)
                         {
                             var l = (lines[j] ?? string.Empty).Trim();
