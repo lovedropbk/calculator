@@ -123,15 +123,19 @@ public partial class MainViewModel
                 CampaignId = string.IsNullOrWhiteSpace(item.CampaignId) ? Guid.NewGuid().ToString() : item.CampaignId,
                 Title = item.Title,
                 Product = string.IsNullOrWhiteSpace(item.CampaignType) ? DealInput.Product : item.CampaignType,
-                CampaignVolumePct = 0.0
+                CampaignVolumePct = 0.0,
+                ModelName = DealInput.SelectedVehicle?.ModelName ?? string.Empty
             };
 
-            foreach (var tb in breakdown)
+            // Wire live per-term RoRAC recalculation (rate/term aware with commission and CoF)
+            tile.TermRoRacCalculator = async (t, r) =>
             {
-                tile.TermBreakdown.Add(tb);
-            }
+                var req = DealInput.BuildScenarioRequest(); // always reflect latest inputs
+                // Include campaign adjustments (cash discount, subdown, free insurance/MBSP) when recomputing per-term RoRAC
+                return await termSvc.CalculateTermRoRACAsync(req, DealInput, item, t, r);
+            };
 
-            tile.RecalculateAggregates();
+            tile.SetTermBreakdown(breakdown);
 
             Comparison.DesignerCampaigns.Add(tile);
             Status = $"Added {tile.Title} to Campaign Designer";
@@ -469,8 +473,24 @@ public partial class MainViewModel
                 if (!System.IO.File.Exists(DesignerCampaignsPath)) { Status = "No saved designer campaigns"; return; }
                 var json = await System.IO.File.ReadAllTextAsync(DesignerCampaignsPath);
                 var list = System.Text.Json.JsonSerializer.Deserialize<List<CampaignTileViewModel>>(json) ?? new();
+                var termSvc = new CampaignTermBreakdownService(_financialFacade, _standardRates);
+
                 Comparison.DesignerCampaigns.Clear();
-                foreach (var c in list) Comparison.DesignerCampaigns.Add(c);
+                foreach (var c in list)
+                {
+                    // Rehydrate live calculator and fill missing model name from current selection if needed
+                    c.TermRoRacCalculator = async (t, r) =>
+                    {
+                        var req = DealInput.BuildScenarioRequest();
+                        return await termSvc.CalculateTermRoRACAsync(req, DealInput, t, r);
+                    };
+                    if (string.IsNullOrWhiteSpace(c.ModelName))
+                        c.ModelName = DealInput.SelectedVehicle?.ModelName ?? c.ModelName;
+
+                    c.RecalculateAggregates();
+                    Comparison.DesignerCampaigns.Add(c);
+                }
+
                 Status = $"Loaded {Comparison.DesignerCampaigns.Count} designer campaigns";
             }
             catch (Exception ex)

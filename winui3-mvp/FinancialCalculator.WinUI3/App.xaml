@@ -45,6 +45,7 @@
             <conv:BoolToThicknessConverter x:Key="BoolToThicknessConverter" />
             <conv:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
             <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
+            <conv:BoolNotConverter x:Key="BoolNotConverter" />
 
             <!-- MARK: Enhanced Card Container Style with Shadow -->
             <Style x:Key="CardContainerStyle" TargetType="Border">

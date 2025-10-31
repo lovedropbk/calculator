@@ -28,6 +28,14 @@ public partial class DealInputViewModel : ObservableValidator
         _commission = commission;
     }
 
+    // Test-friendly overload: allows constructing without a vehicle catalog
+    public DealInputViewModel(IStandardRateService standardRates, ICommissionService commission)
+    {
+        _vehicleCatalog = new NullVehicleCatalogService();
+        _standardRates = standardRates;
+        _commission = commission;
+    }
+
     // MARK: Vehicle Selection
     private Vehicle? _selectedVehicle;
     public Vehicle? SelectedVehicle { get => _selectedVehicle; set { if (SetProperty(ref _selectedVehicle, value)) OnSelectedVehicleChanged(value); } }

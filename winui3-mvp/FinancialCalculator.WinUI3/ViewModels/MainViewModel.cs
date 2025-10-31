@@ -56,6 +56,9 @@ public partial class MainViewModel : ObservableValidator
     private bool _isInitializing = true;
     public bool IsInitializing { get => _isInitializing; set => SetProperty(ref _isInitializing, value); }
 
+    [ObservableProperty]
+    private bool _cashflowNeedsRefresh;
+
     public Task InitializationNotifier { get; }
     public IRelayCommand RecalculateCommand { get; }
 
@@ -70,7 +73,8 @@ public partial class MainViewModel : ObservableValidator
     public MainViewModel()
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
-
+        InitializeGoalSeekCommands();
+    
         // Initialize sub-viewmodels
         DealInput = new DealInputViewModel(_vehicleCatalog, _standardRates, _commission);
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
@@ -118,7 +122,33 @@ public partial class MainViewModel : ObservableValidator
             await riskRepo.LoadAsync(RiskParametersLocator.GetPath());
             _financialFacade = new FinancialFacade(riskRepo);
             GoalSeek = new GoalSeekViewModel(_financialFacade, DealInput, RecalculateAsync);
+            OnPropertyChanged(nameof(GoalSeek));
             _campaignService = new CampaignCalculationService(_financialFacade, _standardRates);
+
+            // Enable goal-seek commands once GoalSeek VM is available
+            GoalSeekSolveForRateAutoAsyncCommand?.NotifyCanExecuteChanged();
+            GoalSeekSolveForSubsidyAutoAsyncCommand?.NotifyCanExecuteChanged();
+
+            // Observe GoalSeek changes to refresh command CanExecute and overlays
+            try
+            {
+                GoalSeek.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(GoalSeekViewModel.TargetValue) ||
+                        e.PropertyName == nameof(GoalSeekViewModel.IsTargetSet) ||
+                        e.PropertyName == nameof(GoalSeekViewModel.IsCalculating))
+                    {
+                        Logger.Debug($"[GoalSeek] PropertyChanged -> {e.PropertyName}; IsTargetSet={GoalSeek.IsTargetSet}, IsCalculating={GoalSeek.IsCalculating}, TargetValue={GoalSeek.TargetValue}");
+                        GoalSeekSolveForRateAutoAsyncCommand?.NotifyCanExecuteChanged();
+                        GoalSeekSolveForSubsidyAutoAsyncCommand?.NotifyCanExecuteChanged();
+                        OnPropertyChanged(nameof(GoalSeek));
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"[GoalSeek] Failed to subscribe PropertyChanged: {ex.Message}");
+            }
 
             // Subscribe to Campaign Manager changes
             CampaignManager.PropertyChanged += OnCampaignManagerPropertyChanged;
@@ -399,52 +429,56 @@ public partial class MainViewModel : ObservableValidator
     {
         try
         {
-            // Build base request from current deal input
-            var baseRequest = DealInput.BuildScenarioRequest();
+            // Build request from current deal input and run engine
+            var request = DealInput.BuildScenarioRequest();
+            var result = _financialFacade.Calculate(request);
 
-            // Create a lightweight campaign summary holder to pass any user overrides (e.g., TargetRatePct)
-            var campaignHolder = new CampaignSummaryViewModel
-            {
-                CampaignId = Guid.NewGuid().ToString(),
-                Title = $"Designer {Comparison.DesignerCampaigns.Count + 1}",
-                Notes = string.Empty,
-                // If user has entered a rate override in the deal input, pre-populate target rate
-                TargetRatePct = DealInput.CustomerNominalRate,
-                CashDiscountAmount = DealInput.MbthDiscount, // default mapping (best-effort)
-                FSSubDownAmount = 0,
-                FSSubInterestAmount = 0,
-                FSFreeMBSPAmount = 0
-            };
+            // Update local waterfall cache to keep texts/values in sync
+            RefreshProfitabilityDetailsLocal(result.Profitability);
 
-            // Calculate per-term breakdown (uses standard rate lookup & engine runs)
-            var termSvc = new CampaignTermBreakdownService(_financialFacade, _standardRates);
-            var breakdown = await termSvc.CalculateTermBreakdownAsync(campaignHolder, baseRequest, DealInput);
+            // Prepare display strings
+            var vehicleName = DealInput.SelectedVehicle?.ModelName ?? "Model";
+            var monthly = ((double)result.MonthlyInstallment).ToString("N0", CultureInfo.InvariantCulture);
+            var financed = ((double)result.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture);
+            var roracStr = ((double)result.AcquisitionRoRacPercent).ToString("0.00%", CultureInfo.InvariantCulture);
+            var totalInterest = ((double)result.TotalInterest).ToString("N0", CultureInfo.InvariantCulture);
 
-            // Build a CampaignTileViewModel to show in the designer
-            var tile = new CampaignTileViewModel
-            {
-                CampaignId = campaignHolder.CampaignId,
-                Title = campaignHolder.Title,
-                Product = baseRequest.Product ?? string.Empty,
-                CampaignVolumePct = 0.0
-            };
+            // Create comparison item (no side-effects to Campaign Designer)
+            var item = _comparisonService.CreateComparisonItem(
+                Comparison.ComparedDeals.Count,
+                vehicleName,
+                DealInput.Product,
+                DealInput.PriceExTax,
+                DealInput.DownPaymentValueEntry,
+                DealInput.DownPaymentUnit,
+                DealInput.TermMonths,
+                DealInput.CustomerNominalRate,
+                (double)result.FlatRatePercent,
+                DealInput.BalloonValueEntry,
+                DealInput.BalloonUnit,
+                monthly,
+                financed,
+                roracStr,
+                totalInterest,
+                _wfCustomerRate,
+                WfCustomerRateText,
+                _wfCostOfDebtMatched,
+                WfCostOfDebtMatchedText,
+                _wfCostOfCreditRisk,
+                WfCostOfCreditRiskText,
+                _wfOPEX,
+                WfOPEXText,
+                _wfIDCUpfrontAnnualized,
+                _wfSubsidyUpfrontAnnualized
+            );
 
-            foreach (var tb in breakdown)
-            {
-                tile.TermBreakdown.Add(tb);
-            }
-
-            // Compute aggregated metrics for the tile
-            tile.RecalculateAggregates();
-
-            // Add to the Campaign Designer collection
-            Comparison.DesignerCampaigns.Add(tile);
-
-            Status = $"Added {tile.Title} to Campaign Designer";
+            Comparison.ComparedDeals.Add(item);
+            Status = $"Added {item.Title} to Comparison";
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            Status = $"Error adding to campaign designer: {ex.Message}";
+            Status = $"Error adding to comparison: {ex.Message}";
         }
     }
 
@@ -454,22 +488,6 @@ public partial class MainViewModel : ObservableValidator
 
     [RelayCommand]
     private void GoalSeekSolveForDownPayment() => GoalSeek.OpenForDownPayment();
-
-    [RelayCommand]
-    private async Task GoalSeekSolveForRateAutoAsync()
-    {
-        // Use current target from GoalSeek VM if set, or maybe we need a separate target for auto.
-        // Assuming user set it in GoalSeek view, but if we auto-run from main view, where do we get target?
-        // If we want to keep this auto-command on main view, we need to pass target.
-        // Let's assume GoalSeek.TargetValue is used.
-        await GoalSeek.RunWithParamsAsync(GoalSeekVariable.CustomerNominalRate, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
-    }
-
-    [RelayCommand]
-    private async Task GoalSeekSolveForSubsidyAutoAsync()
-    {
-        await GoalSeek.RunWithParamsAsync(GoalSeekVariable.UpfrontSubsidy, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
-    }
 
     private void PopulateCashflows(IReadOnlyList<FinancialCalculator.Engine.Models.Facade.CashflowRow> schedule)
     {

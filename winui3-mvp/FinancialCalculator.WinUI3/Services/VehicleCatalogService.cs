@@ -48,7 +48,7 @@ public class VehicleCatalogService : IVehicleCatalogService
         // Let's manually skip lines to match exact behavior if it was skipping preamble.
         for (int i = 0; i < 2; i++) await reader.ReadLineAsync(); 
 
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        using var csv = FinancialCalculator.Engine.Core.SafeCsv.Create(reader);
 
         await csv.ReadAsync();
         csv.ReadHeader();
@@ -93,7 +93,7 @@ public class VehicleCatalogService : IVehicleCatalogService
         }
 
         using var reader = new StreamReader(path);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        using var csv = FinancialCalculator.Engine.Core.SafeCsv.Create(reader);
 
         await csv.ReadAsync();
         csv.ReadHeader();

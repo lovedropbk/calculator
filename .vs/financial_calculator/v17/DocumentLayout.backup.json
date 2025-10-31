@@ -54,8 +54,8 @@
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml*",
-              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml*",
+              "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
+              "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "ViewState": "AgIAAGICAAAAAAAAAAASwHMCAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-10-27T08:18:45.826Z",
@@ -71,8 +71,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\obj\\Debug\\net8.0-windows10.0.19041.0\\win-x64\\MainWindow.g.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-24T07:27:32.825Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-24T07:27:32.825Z"
             },
             {
               "$type": "Document",
@@ -96,8 +95,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
               "ViewState": "AgIAAFIAAAAAAAAAAAAAwGMAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-07T09:40:04.337Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-07T09:40:04.337Z"
             },
             {
               "$type": "Document",
@@ -121,8 +119,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
               "ViewState": "AgIAABQAAAAAAAAAAAAAAP0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-07T09:32:02.895Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-07T09:32:02.895Z"
             },
             {
               "$type": "Document",

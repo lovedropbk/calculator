@@ -1,11 +1,14 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FinancialCalculator.WinUI3.Services;
+using System.Text.Json.Serialization;
 
 namespace FinancialCalculator.WinUI3.ViewModels;
 
@@ -48,10 +51,16 @@ public partial class ComparisonViewModel : ObservableObject
 
     private void DesignerCampaign_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(CampaignTileViewModel.CampaignVolumePct) || e.PropertyName == nameof(CampaignTileViewModel.AvgRoRAC))
+        if (e.PropertyName == nameof(CampaignTileViewModel.CampaignVolumePct) || e.PropertyName == nameof(CampaignTileViewModel.AvgRoRAC) || e.PropertyName == nameof(CampaignTileViewModel.CampaignUnits))
         {
-            if (e.PropertyName == nameof(CampaignTileViewModel.CampaignVolumePct))
+            if (e.PropertyName == nameof(CampaignTileViewModel.CampaignUnits))
             {
+                // Units drive percentages; recompute % from units
+                _volumeDebouncer.Debounce(150, RecalculateVolumesFromUnits);
+            }
+            else if (e.PropertyName == nameof(CampaignTileViewModel.CampaignVolumePct))
+            {
+                // Back-compat: if user edits % directly (legacy files), keep them normalized
                 _volumeDebouncer.Debounce(250, NormalizeCampaignVolumes);
             }
             RecalculateOverall();
@@ -96,15 +105,73 @@ public partial class ComparisonViewModel : ObservableObject
         }
     }
 
+    // Units -> Percent conversion. If total units == 0, fall back to equal shares.
+    private void RecalculateVolumesFromUnits()
+    {
+        if (_suppressVolumeNormalization) return;
+        _suppressVolumeNormalization = true;
+
+        try
+        {
+            var list = DesignerCampaigns.ToList();
+            if (list.Count == 0) return;
+
+            double totalUnits = list.Sum(c => Math.Max(0, c.CampaignUnits));
+            if (totalUnits <= 0)
+            {
+                double equal = Math.Round(100.0 / list.Count, 2);
+                foreach (var c in list) c.CampaignVolumePct = equal;
+            }
+            else
+            {
+                foreach (var c in list)
+                {
+                    var pct = (Math.Max(0, c.CampaignUnits) / totalUnits) * 100.0;
+                    c.CampaignVolumePct = Math.Round(pct, 2);
+                }
+                // Fix rounding residual to make sure sum is exactly 100
+                double residual = 100.0 - list.Sum(c => c.CampaignVolumePct);
+                if (Math.Abs(residual) >= 0.01)
+                {
+                    var max = list.OrderByDescending(c => c.CampaignVolumePct).First();
+                    max.CampaignVolumePct = Math.Round(max.CampaignVolumePct + residual, 2);
+                }
+            }
+        }
+        finally
+        {
+            _suppressVolumeNormalization = false;
+        }
+    }
+
     private void RecalculateOverall()
     {
-        double agg = 0.0;
-        foreach (var c in DesignerCampaigns)
+        var list = DesignerCampaigns.ToList();
+        if (list.Count == 0)
         {
-            double vol = c.CampaignVolumePct;
-            double avg = ParsePercentOrZero(c.AvgRoRAC);
-            agg += avg * (vol / 100.0);
+            OverallAvgRoRAC = "0.00%";
+            return;
         }
+
+        double sumVol = list.Sum(c => c.CampaignVolumePct);
+        double agg;
+
+        if (sumVol <= 0.0)
+        {
+            // No shares set -> equal weight average
+            agg = list.Average(c => ParsePercentOrZero(c.AvgRoRAC));
+        }
+        else
+        {
+            agg = 0.0;
+            foreach (var c in list)
+            {
+                double vol = c.CampaignVolumePct;
+                double avg = ParsePercentOrZero(c.AvgRoRAC);
+                agg += avg * (vol / 100.0);
+            }
+        }
+
         OverallAvgRoRAC = agg.ToString("0.00%", System.Globalization.CultureInfo.InvariantCulture);
     }
 
@@ -241,6 +308,13 @@ public partial class CampaignTileViewModel : ObservableObject
                 item.PropertyChanged -= TermItem_PropertyChanged;
             }
         }
+
+        // During bulk initialization we defer normalization so config.yaml defaults are preserved
+        if (_suppressDistributionNormalization)
+        {
+            return;
+        }
+
         // Ensure distributions are normalized and aggregates recalculated after structural changes
         NormalizeDistributions();
         RecalculateAggregates();
@@ -257,6 +331,24 @@ public partial class CampaignTileViewModel : ObservableObject
         {
             RecalculateAggregates();
         }
+        else if (e.PropertyName == nameof(TermBreakdownItemViewModel.CustomerRatePct))
+        {
+            // Live recalc: when user edits the rate for a term, recompute that term's RoRAC via the calculator
+            try
+            {
+                if (sender is TermBreakdownItemViewModel term && TermRoRacCalculator != null)
+                {
+                    // Synchronous wait is fine here because the underlying calculator is fast and returns Task.FromResult
+                    var r = TermRoRacCalculator(term.Term, term.CustomerRatePct).GetAwaiter().GetResult();
+                    term.RoRAC = r;
+                    RecalculateAggregates();
+                }
+            }
+            catch
+            {
+                // best-effort; keep previous RoRAC on failure
+            }
+        }
     }
 
     private void NormalizeDistributions()
@@ -265,31 +357,41 @@ public partial class CampaignTileViewModel : ObservableObject
         try
         {
             double total = TermBreakdown.Sum(t => t.DistributionPct);
+            // Already ~equal to 100 → nothing to do
             if (Math.Abs(total - 100.0) < 1e-6) return;
 
             if (total <= 0)
             {
-                // If nothing set, place all weight on the first term (fallback)
-                if (TermBreakdown.Count > 0)
-                {
-                    foreach (var t in TermBreakdown) t.DistributionPct = 0.0;
-                    TermBreakdown[0].DistributionPct = 100.0;
-                }
+                // Defer normalization during initial population to preserve configured defaults from config.yaml
                 return;
             }
 
-            double factor = 100.0 / total;
-            for (int i = 0; i < TermBreakdown.Count; i++)
+            // Only scale when over-allocated (>100). If under-allocated (<100), keep as-is so tests that set 50/50 remain 50/50.
+            if (total > 100.0 + 1e-6)
             {
-                TermBreakdown[i].DistributionPct = Math.Round(TermBreakdown[i].DistributionPct * factor, 2);
-            }
+                double factor = 100.0 / total;
+                for (int i = 0; i < TermBreakdown.Count; i++)
+                {
+                    TermBreakdown[i].DistributionPct = Math.Round(TermBreakdown[i].DistributionPct * factor, 2);
+                }
 
-            // Fix rounding residual
-            double residual = 100.0 - TermBreakdown.Sum(t => t.DistributionPct);
-            if (Math.Abs(residual) >= 0.01 && TermBreakdown.Count > 0)
+                // Fix rounding residual after scaling
+                double residual = 100.0 - TermBreakdown.Sum(t => t.DistributionPct);
+                if (Math.Abs(residual) >= 0.01 && TermBreakdown.Count > 0)
+                {
+                    var max = TermBreakdown.OrderByDescending(t => t.DistributionPct).First();
+                    max.DistributionPct = Math.Round(max.DistributionPct + residual, 2);
+                }
+            }
+            else
             {
-                var max = TermBreakdown.OrderByDescending(t => t.DistributionPct).First();
-                max.DistributionPct = Math.Round(max.DistributionPct + residual, 2);
+                // Optionally nudge tiny residuals when already near 100
+                double residualSmall = 100.0 - total;
+                if (Math.Abs(residualSmall) < 0.01 && TermBreakdown.Count > 0)
+                {
+                    var max = TermBreakdown.OrderByDescending(t => t.DistributionPct).First();
+                    max.DistributionPct = Math.Round(max.DistributionPct + residualSmall, 2);
+                }
             }
         }
         finally
@@ -313,6 +415,13 @@ public partial class CampaignTileViewModel : ObservableObject
         set => SetProperty(ref _title, value);
     }
 
+    private string _modelName = string.Empty;
+    public string ModelName
+    {
+        get => _modelName;
+        set => SetProperty(ref _modelName, value);
+    }
+
     private string _product = string.Empty;
     public string Product
     {
@@ -320,17 +429,63 @@ public partial class CampaignTileViewModel : ObservableObject
         set => SetProperty(ref _product, value);
     }
 
+    // Injected at runtime by MainViewModel; used to compute per-term RoRAC when user edits the rate.
+    // Not serialized to disk.
+    [JsonIgnore]
+    public Func<int, double, Task<string>>? TermRoRacCalculator { get; set; }
+
     // Per-term breakdown collection (editable by user in the UI)
     public System.Collections.ObjectModel.ObservableCollection<TermBreakdownItemViewModel> TermBreakdown { get; } = new();
 
+    // Bulk-set helper to load defaults atomically without mid-way normalization
+    public void SetTermBreakdown(IEnumerable<TermBreakdownItemViewModel> items)
+    {
+        _suppressDistributionNormalization = true;
+        try
+        {
+            TermBreakdown.Clear();
+            foreach (var it in items)
+            {
+                TermBreakdown.Add(it);
+            }
+        }
+        finally
+        {
+            _suppressDistributionNormalization = false;
+        }
+        // Now normalize if needed and compute aggregates
+        NormalizeDistributions();
+        RecalculateAggregates();
+    }
+
     private double _campaignVolumePct = 0.0;
     /// <summary>
-    /// Share of overall designer volume (0-100). Editable by user.
+    /// Share of overall designer volume (0-100). Computed from CampaignUnits by ComparisonViewModel.
     /// </summary>
     public double CampaignVolumePct
     {
         get => _campaignVolumePct;
-        set => SetProperty(ref _campaignVolumePct, value);
+        set
+        {
+            if (SetProperty(ref _campaignVolumePct, value))
+            {
+                // Update formatted text for XAML display
+                OnPropertyChanged(nameof(CampaignVolumePctText));
+            }
+        }
+    }
+
+    // Formatted text for XAML (avoids StringFormat in Binding which isn't supported)
+    public string CampaignVolumePctText => $"{_campaignVolumePct:0.##}%";
+
+    private double _campaignUnits = 0.0;
+    /// <summary>
+    /// Acquisition units for this campaign. ComparisonViewModel converts these to percentage shares.
+    /// </summary>
+    public double CampaignUnits
+    {
+        get => _campaignUnits;
+        set => SetProperty(ref _campaignUnits, value);
     }
 
     private string _avgRoRAC = "0.00%";

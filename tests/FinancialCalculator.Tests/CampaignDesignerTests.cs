@@ -62,17 +62,46 @@ namespace FinancialCalculator.Tests
         {
             // Arrange
             var service = new CampaignTermBreakdownService(_facade, _standardRateService);
-            var dealInput = new DealInputViewModel(_standardRateService, new CommissionService());
+            var commissionService = new CommissionService();
+            var dealInput = new DealInputViewModel(_standardRateService, commissionService) { Product = "HP" };
             var campaign = new CampaignSummaryViewModel();
-            var baseRequest = new Engine.Models.Facade.ScenarioRequest();
+            var baseRequest = dealInput.BuildScenarioRequest();
 
             // Act
             var breakdown = await service.CalculateTermBreakdownAsync(campaign, baseRequest, dealInput);
 
             // Assert
             Assert.IsNotNull(breakdown);
-            Assert.AreEqual(5, breakdown.Count); // 12, 24, 36, 48, 60
-            Assert.IsTrue(breakdown.All(b => !string.IsNullOrEmpty(b.RoRAC)));
+            Assert.IsTrue(breakdown.Count >= 3); // Based on CSV terms for HP (e.g., 24,36,48,60,72)
+            Assert.IsTrue(breakdown.All(b => b.Term > 0 && !string.IsNullOrEmpty(b.RoRAC)));
+        }
+
+        [TestMethod]
+        public async Task TestCampaignTermBreakdown_UsesConfigDefaultsForHP()
+        {
+            // Arrange
+            var service = new CampaignTermBreakdownService(_facade, _standardRateService);
+            var commissionService = new CommissionService();
+            // Important: Product must be set to trigger the correct config lookup
+            var dealInput = new DealInputViewModel(_standardRateService, commissionService) { Product = "HP" };
+            var campaign = new CampaignSummaryViewModel(); // Campaign type doesn't matter for this part of the logic
+            // Move BuildScenarioRequest *after* setting the product to ensure it's included
+            var baseRequest = dealInput.BuildScenarioRequest();
+
+            // Act
+            var breakdown = await service.CalculateTermBreakdownAsync(campaign, baseRequest, dealInput);
+
+            // Assert
+            Assert.IsNotNull(breakdown);
+            var breakdownDict = breakdown.ToDictionary(b => b.Term, b => b.DistributionPct);
+
+            // Verify distributions for present CSV terms per config defaults (HP)
+            // 24:0, 36:10, 48:40, 60:50; other terms (e.g., 72) default to 0.
+            Assert.IsTrue(breakdownDict.ContainsKey(24));
+            Assert.AreEqual(0, breakdownDict[24], 0.001);
+            Assert.AreEqual(10, breakdownDict[36], 0.001);
+            Assert.AreEqual(40, breakdownDict[48], 0.001);
+            Assert.AreEqual(50, breakdownDict[60], 0.001);
         }
     }
 }

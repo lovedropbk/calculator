@@ -13,7 +13,7 @@ public class FinancialFacade
 
     public FinancialFacade(IRiskParameterRepository riskRepo)
     {
-        _dealEngine = new DealEngine(riskRepo);
+        _dealEngine = new DealEngine(riskRepo, new Core.CostOfFundsService());
         _goalSeekEngine = new GoalSeekEngine(_dealEngine);
     }
 

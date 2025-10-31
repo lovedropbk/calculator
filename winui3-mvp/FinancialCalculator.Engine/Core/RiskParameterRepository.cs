@@ -94,7 +94,7 @@ public class RiskParameterRepository : IRiskParameterRepository
         if (!_fileService.Exists(path)) return;
 
         using var reader = _fileService.OpenText(path);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        using var csv = SafeCsv.Create(reader);
         
         // Manual reading to handle the splitting of customer types and specific column indices
         // Assuming the old parser's index usage:
@@ -140,7 +140,7 @@ public class RiskParameterRepository : IRiskParameterRepository
         if (!_fileService.Exists(path)) return;
 
         using var reader = _fileService.OpenText(path);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
+        using var csv = SafeCsv.Create(reader);
 
         await csv.ReadAsync();
         csv.ReadHeader();
@@ -178,15 +178,20 @@ public class RiskParameterRepository : IRiskParameterRepository
 
         // EC_TOTAL seems simple, just read first data line, col 1.
         using var reader = _fileService.OpenText(path);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true });
-        
+        using var csv = SafeCsv.Create(reader);
+
+        // Read and skip header explicitly to avoid attempting to parse header text as a double
+        await csv.ReadAsync();
+        csv.ReadHeader();
+
+        // Read the first data row and parse value safely (culture-invariant, try-parse)
         if (await csv.ReadAsync())
         {
-             // parts.ElementAt(1) -> ec
-             if (csv.TryGetField<double>(1, out var ec))
-             {
-                 _ecTotal = ec;
-             }
+            if (csv.TryGetField<string>(1, out var ecText) &&
+                double.TryParse(ecText, NumberStyles.Any, CultureInfo.InvariantCulture, out var ec))
+            {
+                _ecTotal = ec;
+            }
         }
     }
 }

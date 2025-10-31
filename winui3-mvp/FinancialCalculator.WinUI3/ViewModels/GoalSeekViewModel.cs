@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FinancialCalculator.Engine;
 using FinancialCalculator.Engine.Models.Facade;
+using FinancialCalculator.WinUI3.Services;
 
 namespace FinancialCalculator.WinUI3.ViewModels;
 
@@ -70,6 +71,7 @@ public partial class GoalSeekViewModel : ObservableObject
         {
             IsCalculating = true;
             Status = $"Goal Seeking {variable}...";
+            Logger.Info($"[GoalSeekVM] Start: variable={variable}, metric={metric}, target={targetValue}");
             await Task.Delay(10);
 
             var baseRequest = _dealInput.BuildScenarioRequest();
@@ -94,11 +96,13 @@ public partial class GoalSeekViewModel : ObservableObject
             }
 
             Status = $"Goal Seek Complete. Result: {result:N2}";
+            Logger.Info($"[GoalSeekVM] Completed: variable={variable}, result={result:N6}");
             await _recalculateCallback();
         }
         catch (Exception ex)
         {
              Status = $"Goal Seek Error: {ex.Message}";
+             Logger.Error("[GoalSeekVM] Error during goal seek", ex);
         }
         finally
         {
