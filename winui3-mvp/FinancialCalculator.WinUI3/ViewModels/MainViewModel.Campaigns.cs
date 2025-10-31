@@ -65,7 +65,8 @@ public partial class MainViewModel
                propertyName == nameof(CampaignSummaryViewModel.FSFreeMBSPAmount) ||
                propertyName == nameof(CampaignSummaryViewModel.SelectedMbspPackage) ||
                propertyName == nameof(CampaignSummaryViewModel.TargetRatePct) ||
-               propertyName == nameof(CampaignSummaryViewModel.ConsumeAllSubsidy);
+               propertyName == nameof(CampaignSummaryViewModel.ConsumeAllSubsidy) ||
+               propertyName == nameof(CampaignSummaryViewModel.IncludeInsurance);
     }
 
     // Subscribe to ActiveCampaign property changes (works for Standard and My Campaigns)
@@ -99,6 +100,37 @@ public partial class MainViewModel
                     cost = vehCost;
                 }
                 vm.FSFreeMBSPAmount = cost;
+            }
+
+            // Toggle include insurance behavior
+            if (e.PropertyName == nameof(CampaignSummaryViewModel.IncludeInsurance))
+            {
+                if (vm.IncludeInsurance)
+                {
+                    try
+                    {
+                        if (DealInput.SelectedVehicle != null)
+                        {
+                            var matched = _insurance.TryGetInsuranceCost(DealInput.SelectedVehicle);
+                            if (matched.HasValue)
+                            {
+                                vm.FSSubInterestAmount = matched.Value;
+                            }
+                            else
+                            {
+                                NotificationMessage = $"No insurance match for '{DealInput.SelectedVehicle.ModelName}'. Please enter the cost manually.";
+                                NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
+                                IsNotificationOpen = true;
+                                // keep IncludeInsurance = true to allow manual entry
+                            }
+                        }
+                    }
+                    catch { /* best-effort */ }
+                }
+                else
+                {
+                    vm.FSSubInterestAmount = 0;
+                }
             }
 
             await CalculateCampaignAsync(vm, autoClampToBudget: !IsMyCampaign(vm));
@@ -401,7 +433,21 @@ public partial class MainViewModel
                             else if (c.SubsidyAmount.HasValue) vm.FSSubDownAmount = c.SubsidyAmount.Value;
                             break;
                         case "free_insurance":
-                            if (c.InsuranceCost.HasValue) vm.FSSubInterestAmount = c.InsuranceCost.Value;
+                            {
+                                double actualInsCost = c.InsuranceCost ?? 0;
+                                try
+                                {
+                                    if (DealInput.SelectedVehicle != null)
+                                    {
+                                        var matched = _insurance.TryGetInsuranceCost(DealInput.SelectedVehicle);
+                                        if (matched.HasValue) actualInsCost = matched.Value;
+                                    }
+                                }
+                                catch { /* best-effort */ }
+
+                                if (actualInsCost > 0) vm.FSSubInterestAmount = actualInsCost;
+                                vm.IncludeInsurance = actualInsCost > 0;
+                            }
                             break;
                         case "free_mbsp":
                             if (c.MbspCost.HasValue)

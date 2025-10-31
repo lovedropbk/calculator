@@ -31,6 +31,7 @@ public partial class MainViewModel : ObservableValidator
     private readonly CommissionService _commission = new();
     private readonly ExportService _exportService = new();
     private readonly ComparisonService _comparisonService = new();
+    private readonly InsuranceCatalogService _insurance = new();
     private CampaignCalculationService _campaignService = null!; // Initialized in InitializeAsync
 
     // MARK: Parameter Set Caching (legacy no-op)
@@ -171,8 +172,9 @@ public partial class MainViewModel : ObservableValidator
             // Load catalogs
             await _vehicleCatalog.LoadAsync();
             await _standardRates.LoadAsync();
+            await _insurance.LoadAsync();
 
-            // Populate vehicles (classes followed by ALL models globally sorted A–Z with Mercedes-AMG next and Mercedes-Maybach last)
+            // Populate vehicles (classes followed by ALL models globally sorted Aï¿½Z with Mercedes-AMG next and Mercedes-Maybach last)
             var classes = _vehicleCatalog.GetVehicleClasses().ToList();
             foreach (var c in classes)
             {
@@ -501,6 +503,50 @@ public partial class MainViewModel : ObservableValidator
         }
     }
 
+    // MARK: Insurance action (Campaign Designer)
+    [RelayCommand]
+    private async Task ApplyInsuranceCostAsync()
+    {
+        try
+        {
+            var vm = ActiveCampaign;
+            if (vm == null)
+            {
+                Status = "No active campaign";
+                return;
+            }
+
+            var vehicle = DealInput.SelectedVehicle;
+            if (vehicle == null)
+            {
+                NotificationMessage = "Select a vehicle before applying insurance.";
+                NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
+                IsNotificationOpen = true;
+                return;
+            }
+
+            var price = _insurance.TryGetInsuranceCost(vehicle);
+
+            if (!price.HasValue)
+            {
+                NotificationMessage = $"No insurance match for '{vehicle.ModelName}'. Please enter the cost manually.";
+                NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
+                IsNotificationOpen = true;
+                return;
+            }
+
+            vm.FSSubInterestAmount = price.Value;
+
+            // Recalculate with updated IDC
+            await CalculateCampaignAsync(vm, autoClampToBudget: !IsMyCampaign(vm));
+            Status = "Applied insurance cost";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Insurance apply error: {ex.Message}";
+        }
+    }
+
     // MARK: Goal Seek -> Delegated to GoalSeekViewModel
     [RelayCommand]
     private void GoalSeekSolveForRate() => GoalSeek.OpenForRate();
@@ -770,6 +816,21 @@ public partial class CampaignSummaryViewModel : ObservableObject
         }
     }
 
+    // Toggle: include insurance IDC from catalog/manual amount
+    private bool _includeInsurance;
+    public bool IncludeInsurance
+    {
+        get => _includeInsurance;
+        set
+        {
+            if (_includeInsurance != value)
+            {
+                _includeInsurance = value;
+                OnPropertyChanged(nameof(IncludeInsurance));
+            }
+        }
+    }
+
     // MBSP Package Selection
     private string _selectedMbspPackage = "";
     public string SelectedMbspPackage
@@ -815,7 +876,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
             FSFreeMBSPAmount = this.FSFreeMBSPAmount,
             TargetRatePct = this.TargetRatePct,
             SelectedMbspPackage = this.SelectedMbspPackage,
-            ConsumeAllSubsidy = this.ConsumeAllSubsidy
+            ConsumeAllSubsidy = this.ConsumeAllSubsidy,
+            IncludeInsurance = this.IncludeInsurance
         };
 
         // Deep-copy term breakdown items
