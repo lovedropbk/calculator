@@ -641,22 +641,14 @@
                                            AutoGenerateColumns="False"
                                             IsReadOnly="True"
                                             GridLinesVisibility="All"
-                                            MinHeight="150">
+                                            MinHeight="150" DoubleTapped="OnStandardGridDoubleTapped">
 
+                            <controls:DataGrid.RowStyle>
+                                <Style TargetType="controls:DataGridRow">
+                                    <Setter Property="ToolTipService.ToolTip" Value="Double-click a campaign to add it to My Campaigns"/>
+                                </Style>
+                            </controls:DataGrid.RowStyle>
                             <controls:DataGrid.Columns>
-                                <controls:DataGridTemplateColumn Width="70">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="Copy"
-                                                    Click="OnStandardCopyClick"
-                                                    Style="{StaticResource CopyButtonStyle}">
-                                                <ToolTipService.ToolTip>
-                                                    <ToolTip Content="Copy to My Campaigns" Style="{StaticResource InformativeToolTipStyle}"/>
-                                                </ToolTipService.ToolTip>
-                                            </Button>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
                                 <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title}" Width="200">
                                     <controls:DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
@@ -739,14 +731,6 @@
                                            HorizontalAlignment="Stretch"
                                            MinHeight="150">
                             <controls:DataGrid.Columns>
-                            <!-- Placeholder for alignment with Standard Copy column -->
-                            <controls:DataGridTemplateColumn Width="70">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock/>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title, Mode=TwoWay}" Width="200">
                                 <controls:DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">

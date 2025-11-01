@@ -73,6 +73,37 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void OnStandardGridDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        try
+        {
+            // Find the row VM from the visual tree
+            FrameworkElement? fe = e.OriginalSource as FrameworkElement;
+            CampaignSummaryViewModel? vm = null;
+            while (fe != null && vm == null)
+            {
+                vm = fe.DataContext as CampaignSummaryViewModel;
+                if (vm == null)
+                {
+                    fe = VisualTreeHelper.GetParent(fe) as FrameworkElement;
+                }
+            }
+
+            // Fallback to currently selected standard campaign
+            vm ??= ViewModel.CampaignManager.SelectedCampaign;
+
+            if (vm != null && ViewModel.CopyToMyCampaignsCommand.CanExecute(vm))
+            {
+                ViewModel.CopyToMyCampaignsCommand.Execute(vm);
+                e.Handled = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Double-tap copy to My Campaigns failed", ex);
+        }
+    }
+
     // Remove tile (X button) with confirmation dialog
     private async void OnDesignerRemoveClick(object sender, RoutedEventArgs e)
     {
