@@ -113,8 +113,8 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
         
@@ -123,21 +123,34 @@
         
                                 <!-- Vehicle Selection -->
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Vehicle" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
-                                          ItemsSource="{Binding DealInput.AllVehicles}"
-                                          SelectedItem="{Binding DealInput.SelectedVehicle, Mode=TwoWay}"
-                                          DisplayMemberPath="ModelName"
-                                          MinWidth="220" Margin="8,0,0,0"
-                                          PlaceholderText="Select Class or Model"/>
+                                <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="1"
+                                              ItemsSource="{Binding DealInput.AllVehicles}"
+                                              SelectedItem="{Binding DealInput.SelectedVehicle, Mode=TwoWay}"
+                                              DisplayMemberPath="ModelName"
+                                              Style="{StaticResource CompactComboBox}"
+                                              HorizontalAlignment="Stretch"
+                                              PlaceholderText="Select Class or Model"/>
+                                </Grid>
 
                                 <!-- Product (display HP, mySTAR, FL, OL; map to engine tags) -->
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Product" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" SelectedValue="{Binding DealInput.Product, Mode=TwoWay}" SelectedValuePath="Tag" MinWidth="220" Margin="8,0,0,0" HorizontalAlignment="Left">
-                                    <ComboBoxItem Content="HP" Tag="HP"/>
-                                    <ComboBoxItem Content="mySTAR" Tag="mySTAR"/>
-                                    <ComboBoxItem Content="FL" Tag="F-Lease"/>
-                                    <ComboBoxItem Content="OL" Tag="Op-Lease"/>
-                                </ComboBox>
+                                <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="1" SelectedValue="{Binding DealInput.Product, Mode=TwoWay}" SelectedValuePath="Tag" Style="{StaticResource CompactComboBox}" HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="HP" Tag="HP"/>
+                                        <ComboBoxItem Content="mySTAR" Tag="mySTAR"/>
+                                        <ComboBoxItem Content="FL" Tag="F-Lease"/>
+                                        <ComboBoxItem Content="OL" Tag="Op-Lease"/>
+                                    </ComboBox>
+                                </Grid>
         
                                 <!-- Term with Tooltip -->
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Term (months)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -145,25 +158,34 @@
                                         <ToolTip Content="Loan term duration in months" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
-                                          SelectedValue="{Binding DealInput.TermMonths, Mode=TwoWay}"
-                                          MinWidth="220"
-                                          Margin="8,0,0,0">
-                                    <x:Int32>12</x:Int32>
-                                    <x:Int32>24</x:Int32>
-                                    <x:Int32>36</x:Int32>
-                                    <x:Int32>48</x:Int32>
-                                    <x:Int32>60</x:Int32>
-                                    <x:Int32>72</x:Int32>
-                                    <x:Int32>84</x:Int32>
-                                </ComboBox>
+                                <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="1" SelectedValue="{Binding DealInput.TermMonths, Mode=TwoWay}" Style="{StaticResource CompactComboBox}" HorizontalAlignment="Stretch">
+                                        <x:Int32>12</x:Int32>
+                                        <x:Int32>24</x:Int32>
+                                        <x:Int32>36</x:Int32>
+                                        <x:Int32>48</x:Int32>
+                                        <x:Int32>60</x:Int32>
+                                        <x:Int32>72</x:Int32>
+                                        <x:Int32>84</x:Int32>
+                                    </ComboBox>
+                                </Grid>
         
                                 <!-- Payment Mode (Timing binding) -->
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Payment Mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" SelectedValue="{Binding DealInput.Timing, Mode=TwoWay}" SelectedValuePath="Tag" MinWidth="220" Margin="8,0,0,0" HorizontalAlignment="Left">
-                                    <ComboBoxItem Content="arrears" Tag="arrears"/>
-                                    <ComboBoxItem Content="in advance" Tag="advance"/>
-                                </ComboBox>
+                                <Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="1" SelectedValue="{Binding DealInput.Timing, Mode=TwoWay}" SelectedValuePath="Tag" Style="{StaticResource CompactComboBox}" HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="arrears" Tag="arrears"/>
+                                        <ComboBoxItem Content="in advance" Tag="advance"/>
+                                    </ComboBox>
+                                </Grid>
         
                                 <!-- MSRP with Tooltip -->
                                 <TextBlock Grid.Row="5" Grid.Column="0" Text="MSRP" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -171,52 +193,68 @@
                                         <ToolTip Content="Enter the MSRP excluding tax" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <muxc:NumberBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  Style="{StaticResource ResponsiveNumberBox}"
-                                                  Value="{Binding DealInput.PriceExTax, Mode=TwoWay}"
-                                                  PlaceholderText="{Binding DealInput.PricePlaceholder}"
-                                                  Margin="8,0,0,0"
-                                                  NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
-
-                                <!-- MBTh Discount -->
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="MBTh Discount" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <muxc:NumberBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  Style="{StaticResource ResponsiveNumberBox}"
-                                                  Value="{Binding DealInput.MbthDiscount, Mode=TwoWay}"
-                                                  PlaceholderText="THB"
-                                                  Margin="8,0,0,0"
-                                                  NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
-
-                                <!-- Transaction Price (read-only) -->
-                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Transaction Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <muxc:NumberBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  Style="{StaticResource ResponsiveNumberBox}"
-                                                  Value="{Binding DealInput.TransactionPrice}"
-                                                  IsEnabled="False"
-                                                  Margin="8,0,0,0"
-                                                  NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
-
-                                <!-- Additional Financed Items -->
-                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Additional Financed Items" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <muxc:NumberBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  Style="{StaticResource ResponsiveNumberBox}"
-                                                  Value="{Binding DealInput.AdditionalFinancedItems, Mode=TwoWay}"
-                                                  PlaceholderText="THB"
-                                                  NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                  Margin="8,0,0,0"/>
-         
-                                <!-- Down Payment: unit first then value (inside value area) -->
-                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0">
+                                <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0">
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
+                                                    Value="{Binding DealInput.PriceExTax, Mode=TwoWay}"
+                                                    PlaceholderText="{Binding DealInput.PricePlaceholder}"
+                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                </Grid>
+
+                                <!-- MBTh Discount -->
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="MBTh Discount" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
+                                                    Value="{Binding DealInput.MbthDiscount, Mode=TwoWay}"
+                                                    PlaceholderText="THB"
+                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                </Grid>
+
+                                <!-- Transaction Price (read-only) -->
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Transaction Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
+                                                    Value="{Binding DealInput.TransactionPrice}"
+                                                    IsEnabled="False"
+                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                </Grid>
+
+                                <!-- Additional Financed Items -->
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Additional Financed Items" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
+                                                    Value="{Binding DealInput.AdditionalFinancedItems, Mode=TwoWay}"
+                                                    PlaceholderText="THB"
+                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                </Grid>
+         
+                                <!-- Down Payment: unit first then value (inside value area) -->
+                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource ResponsiveNumberBox}" Value="{Binding DealInput.DownPaymentValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.DownPaymentPlaceholder}" NumberFormatter="{StaticResource GroupedZeroFormatter}">
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}" Value="{Binding DealInput.DownPaymentValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.DownPaymentPlaceholder}" NumberFormatter="{StaticResource GroupedZeroFormatter}">
                                         <muxc:NumberBox.ContextFlyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem Text="Goal Seek: Solve for Down Payment" Command="{Binding GoalSeekSolveForDownPaymentCommand}">
@@ -231,16 +269,16 @@
 
                                 <!-- Balloon: unit first then value (inside value area) -->
                                 <TextBlock Grid.Row="10" Grid.Column="0" Text="Balloon" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left">
+                                <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0">
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
-                                    <TextBox Grid.Column="1" Text="{Binding DealInput.BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.BalloonPlaceholder}" IsEnabled="{Binding DealInput.IsBalloonEnabled}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding DealInput.BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.BalloonPlaceholder}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Style="{StaticResource CompactTextBox}"/>
                                 </Grid>
         
                                 <!-- Subsidy budget with Tooltip and Click-to-Solve -->
@@ -254,10 +292,10 @@
                                         </ToolTipService.ToolTip>
                                     </TextBlock>
                                 </Button>
-                                <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0">
+                                <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <!-- Create a proper overlay structure -->
-                                    <Grid MinWidth="200" MaxWidth="400" HorizontalAlignment="Left">
-                                        <muxc:NumberBox Style="{StaticResource ResponsiveNumberBox}" Value="{Binding DealInput.SubsidyBudget, Mode=TwoWay}"
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}" Value="{Binding DealInput.SubsidyBudget, Mode=TwoWay}"
                                                         PlaceholderText="THB"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         IsEnabled="{Binding DealInput.SubsidyBudgetIsEnabled}"
@@ -295,7 +333,7 @@
         
                                 <!-- IDCs - Dealer Commission -->
                                 <TextBlock Grid.Row="12" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left">
+                                <Grid Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -305,12 +343,12 @@
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <!-- Unified entry: unit + value -->
-                                    <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}" Margin="0,0,6,0">
+                                    <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
                                         <x:String>auto</x:String>
                                         <x:String>%</x:String>
                                         <x:String>THB</x:String>
                                     </ComboBox>
-                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DealInput.CommissionEntryValue, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsCommissionEntryEditable}"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DealInput.CommissionEntryValue, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsCommissionEntryEditable}" Style="{StaticResource CompactTextBox}"/>
                                     <!-- Summary pill -->
                                     <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource PillBorderStyle}">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -341,19 +379,29 @@
                                         <ToolTip Content="Other indirect costs" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <muxc:NumberBox Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2"
-                                                Style="{StaticResource ResponsiveNumberBox}"
-                                                Value="{Binding DealInput.IdcOther, Mode=TwoWay}"
-                                                PlaceholderText="THB"
-                                                NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                Margin="8,0,0,0"/>
+                                <Grid Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
+                                                    Value="{Binding DealInput.IdcOther, Mode=TwoWay}"
+                                                    PlaceholderText="THB"
+                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                </Grid>
         
                                 <!-- Rate mode: RadioButtons (bind SelectedIndex) -->
                                 <TextBlock Grid.Row="16" Grid.Column="0" Text="Rate mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <RadioButtons Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="{Binding DealInput.RateModeIndex, Mode=TwoWay}" Margin="8,0,0,0">
-                                    <x:String>Fixed Rate</x:String>
-                                    <x:String>Target Installment</x:String>
-                                </RadioButtons>
+                                <Grid Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButtons Grid.Column="1" SelectedIndex="{Binding DealInput.RateModeIndex, Mode=TwoWay}">
+                                        <x:String>Fixed Rate</x:String>
+                                        <x:String>Target Installment</x:String>
+                                    </RadioButtons>
+                                </Grid>
         
                                 <!-- Customer rate (visible if fixed rate) -->
                                 <Button Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-4,6,0,0"
@@ -363,8 +411,13 @@
                                         Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
                                      <TextBlock Text="Customer rate (% p.a.)" Style="{StaticResource LabelTextStyle}"/>
                                 </Button>
-                                <StackPanel Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Spacing="4"
-                                            Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
+                                <Grid Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left"
+                                      Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="1" Spacing="4">
                                     <!-- Nominal Rate Row -->
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -377,7 +430,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid>
-                                                <TextBox Text="{Binding DealInput.CustomerNominalRate, Mode=TwoWay}" MinWidth="100" IsReadOnly="{Binding GoalSeek.IsTargetSet}">
+                                                <TextBox Text="{Binding DealInput.CustomerNominalRate, Mode=TwoWay}" MinWidth="100" IsReadOnly="{Binding GoalSeek.IsTargetSet}" Style="{StaticResource CompactTextBox}">
                                                     <TextBox.ContextFlyout>
                                                         <MenuFlyout>
                                                             <MenuFlyoutItem Text="Goal Seek: Solve for Rate (to target RoRAC)" Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}">
@@ -418,16 +471,23 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBox Text="{Binding DealInput.CustomerFlatRate, Mode=TwoWay}" MinWidth="100"/>
+                                        <TextBox Text="{Binding DealInput.CustomerFlatRate, Mode=TwoWay}" MinWidth="100" Style="{StaticResource CompactTextBox}"/>
                                         <TextBlock Grid.Column="1" Text="(flat)" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7" FontSize="12"/>
                                     </Grid>
                                 </StackPanel>
+                               </Grid>
         
                                 <!-- Target installment (visible if target installment) -->
                                 <TextBlock Grid.Row="18" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
                                            Visibility="{Binding DealInput.IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
-                                <TextBox Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding DealInput.TargetInstallment, Mode=TwoWay}" MinWidth="180" Margin="8,0,0,0" HorizontalAlignment="Left"
-                                         Visibility="{Binding DealInput.IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
+                                <Grid Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left"
+                                      Visibility="{Binding DealInput.IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="1" Text="{Binding DealInput.TargetInstallment, Mode=TwoWay}" Style="{StaticResource CompactTextBox}" HorizontalAlignment="Stretch"/>
+                                </Grid>
         
                                 <!-- Loading indicator and Status -->
                                 <StackPanel Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12" Margin="8,16,0,0">
