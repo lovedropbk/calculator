@@ -798,10 +798,10 @@
                             <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding IdcTotalText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <!-- MARK: Campaign Designer & Metrics -->
-                            <StackPanel Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Spacing="12" Margin="0,16,0,0">
+                            <StackPanel Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Spacing="8" Margin="0,8,0,0">
                                 <TextBlock Text="Campaign Designer" Style="{StaticResource SectionHeaderTextStyle}"/>
 
-                                <Grid>
+                                <Grid Width="580" HorizontalAlignment="Left" RowSpacing="2" ColumnSpacing="8">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -813,36 +813,36 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
+                                        <ColumnDefinition Width="{StaticResource DetailsValueColumnWidth}"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Target Rate (for subinterest) -->
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Target Rate (% p.a.)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <muxc:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ActiveCampaign.TargetRatePct, Mode=TwoWay}"
+                                    <muxc:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ActiveCampaign.TargetRatePct, Mode=TwoWay}" Style="{StaticResource CompactNumberBox}"
                                                       NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0,0,0,8"/>
+                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                                     <!-- Cash Discount -->
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Cash Discount (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <muxc:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding ActiveCampaign.CashDiscountAmount, Mode=TwoWay}"
+                                    <muxc:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding ActiveCampaign.CashDiscountAmount, Mode=TwoWay}" Style="{StaticResource CompactNumberBox}"
                                                       NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0,0,0,8"/>
+                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                                     <!-- Subvention (SubDown) -->
                                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Subvention (SubDown) (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <muxc:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding ActiveCampaign.FSSubDownAmount, Mode=TwoWay}"
+                                    <muxc:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding ActiveCampaign.FSSubDownAmount, Mode=TwoWay}" Style="{StaticResource CompactNumberBox}"
                                                       NumberFormatter="{StaticResource GroupedZeroFormatter}"
-                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0,0,0,8"/>
+                                                      IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                                     <!-- Free Insurance Cost -->
                                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Insurance (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <Grid Grid.Row="3" Grid.Column="1" Margin="0,0,0,8">
+                                    <Grid Grid.Row="3" Grid.Column="1" Margin="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <muxc:NumberBox Grid.Column="0"
+                                        <muxc:NumberBox Grid.Column="0" Style="{StaticResource CompactNumberBox}"
                                                         Value="{Binding ActiveCampaign.FSSubInterestAmount, Mode=TwoWay}"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         IsEnabled="{Binding IsMyCampaignSelected}"/>
@@ -856,20 +856,20 @@
                                     
                                     <!-- MBSP Package -->
                                     <TextBlock Grid.Row="4" Grid.Column="0" Text="MBSP Package" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox Grid.Row="4" Grid.Column="1"
+                                    <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource CompactComboBox}"
                                               ItemsSource="{Binding ViewModel.DealInput.MbspPackages, ElementName=Root}"
                                               SelectedItem="{Binding ActiveCampaign.SelectedMbspPackage, Mode=TwoWay}"
                                               IsEnabled="{Binding IsMyCampaignSelected}"
-                                              HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
+                                              HorizontalAlignment="Stretch" Margin="0"/>
 
                                     <!-- Free MBSP Cost -->
                                     <TextBlock Grid.Row="5" Grid.Column="0" Text="MBSP (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ActiveCampaign.FSFreeMBSP, Mode=OneWay}"
-                                             IsReadOnly="True" Margin="0,0,0,8"/>
+                                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ActiveCampaign.FSFreeMBSP, Mode=OneWay}" Style="{StaticResource CompactTextBox}"
+                                             IsReadOnly="True" Margin="0"/>
 
                                     <!-- Subinterest Subsidy (ReadOnly, calculated) -->
                                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Rate Subsidy (calc.) (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ActiveCampaign.SubinterestSubsidy}" VerticalAlignment="Center" Margin="0,0,0,8" Opacity="0.8"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ActiveCampaign.SubinterestSubsidy}" VerticalAlignment="Center" Margin="0" Opacity="0.8"/>
 
                                     <!-- Consume Entire Subsidy Toggle -->
                                     <TextBlock Grid.Row="7" Grid.Column="0" Text="Consume entire subsidy" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap"/>
@@ -877,7 +877,7 @@
                                                   IsOn="{Binding ActiveCampaign.ConsumeAllSubsidy, Mode=TwoWay}"
                                                   OffContent="Off"
                                                   OnContent="On"
-                                                  Margin="0,0,0,8"/>
+                                                  Margin="0"/>
                                 </Grid>
 
                                 <!-- Budget Utilization Visualizer -->
