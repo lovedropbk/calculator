@@ -216,7 +216,7 @@ namespace FinancialCalculator.WinUI3.Services
             return result;
         }
 
-        private static string NormalizeProductKey(string product)
+        internal static string NormalizeProductKey(string product)
         {
             product = (product ?? string.Empty).Trim();
             if (product.StartsWith("HP", StringComparison.OrdinalIgnoreCase)) return "HP";

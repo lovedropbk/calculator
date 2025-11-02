@@ -79,7 +79,7 @@
                     HorizontalAlignment="Stretch"
                     Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
                               Style="{StaticResource ResponsiveScrollViewer}">
                     <Grid>
                         <Grid.Style>
@@ -250,7 +250,7 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
@@ -274,7 +274,7 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
@@ -293,9 +293,13 @@
                                     </TextBlock>
                                 </Button>
                                 <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
-                                    <!-- Create a proper overlay structure -->
+                                    <!-- Create a proper overlay structure aligned like single-field rows -->
                                     <Grid HorizontalAlignment="Stretch">
-                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}" Value="{Binding DealInput.SubsidyBudget, Mode=TwoWay}"
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                            <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                        </Grid.ColumnDefinitions>
+                                        <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}" Value="{Binding DealInput.SubsidyBudget, Mode=TwoWay}"
                                                         PlaceholderText="THB"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         IsEnabled="{Binding DealInput.SubsidyBudgetIsEnabled}"
@@ -313,7 +317,7 @@
                                             </muxc:NumberBox.ContextFlyout>
                                         </muxc:NumberBox>
                                         <!-- Overlay button that covers the entire NumberBox -->
-                                        <Button Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}"
+                                        <Button Grid.ColumnSpan="2" Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 Visibility="{Binding GoalSeek.IsTargetSet, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -343,7 +347,7 @@
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <!-- Unified entry: unit + value -->
-                                    <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}">
+                                    <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
                                         <x:String>auto</x:String>
                                         <x:String>%</x:String>
                                         <x:String>THB</x:String>
@@ -489,15 +493,15 @@
                                     <TextBox Grid.Column="1" Text="{Binding DealInput.TargetInstallment, Mode=TwoWay}" Style="{StaticResource CompactTextBox}" HorizontalAlignment="Stretch"/>
                                 </Grid>
         
-                                <!-- Loading indicator and Status -->
-                                <StackPanel Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12" Margin="8,16,0,0">
+                                <!-- Loading indicator (no status text; hidden when idle) -->
+                                <StackPanel Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="2"
+                                            Orientation="Horizontal" Spacing="12" Margin="8,16,0,0"
+                                            Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}">
                                      <ProgressRing x:Name="CalculationProgress"
                                                    IsActive="{Binding IsCalculating}"
                                                    Width="20"
                                                    Height="20"
-                                                   VerticalAlignment="Center"
-                                                   Visibility="{Binding IsCalculating, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                    <TextBlock Text="{Binding Status}" VerticalAlignment="Center" Style="{StaticResource LabelTextStyle}" TextWrapping="Wrap"/>
+                                                   VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
 
@@ -769,7 +773,7 @@
                     HorizontalAlignment="Stretch"
                     Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
                               Style="{StaticResource ResponsiveScrollViewer}"
                               Padding="0">
                     <StackPanel Spacing="12">
@@ -1092,7 +1096,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Status}"
+                <TextBlock Text="{Binding ErrorStatus}"
                            VerticalAlignment="Center"
                            Opacity="0.8"
                            Style="{StaticResource StatusTextStyle}"/>

@@ -240,7 +240,7 @@ public class CampaignTermBreakdownService
     private double GetDefaultDistribution(string product, int term)
     {
         // Normalize product key to ensure consistent lookups (e.g., "F-Lease", "FinanceLease" -> "FinanceLease")
-        var normalizedProduct = NormalizeProductKey(product);
+        var normalizedProduct = YamlDistributionConfigProvider.NormalizeProductKey(product);
 
         // 1) Configurable defaults from config.yaml (designer.defaultDistribution)
         if (TryGetConfiguredDistribution(normalizedProduct, term, out var configured))
@@ -271,8 +271,6 @@ public class CampaignTermBreakdownService
         return 0.0;
     }
 
-    // MARK: Config-driven default distribution (lightweight YAML scan; optional)
-    private Dictionary<string, Dictionary<int, double>>? _distConfig;
 
     private bool TryGetConfiguredDistribution(string product, int term, out double value)
     {
@@ -287,7 +285,7 @@ public class CampaignTermBreakdownService
             }
 
             // Backward-compat: also attempt normalized product key
-            var alt = NormalizeProductKey(product ?? string.Empty);
+            var alt = YamlDistributionConfigProvider.NormalizeProductKey(product ?? string.Empty);
             if (!string.Equals(alt, product ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
                 _distProvider.TryGetConfiguredDistribution(alt, term, out var v2))
             {
@@ -302,102 +300,8 @@ public class CampaignTermBreakdownService
         return false;
     }
 
-    private string? GetConfigPath(string filename)
-    {
-        try
-        {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var check = Path.Combine(baseDir, filename);
-            if (File.Exists(check)) return check;
 
-            var current = new DirectoryInfo(baseDir);
-            int depth = 8;
-            while (current != null && depth-- > 0)
-            {
-                check = Path.Combine(current.FullName, filename);
-                if (File.Exists(check)) return check;
 
-                // repo-root fallback
-                check = Path.Combine(current.FullName, "config.yaml");
-                if (File.Exists(check)) return check;
-
-                current = current.Parent;
-            }
-        }
-        catch { }
-        return null;
-    }
-
-    private static Dictionary<string, Dictionary<int, double>> ParseDistributionFromYaml(string[] lines)
-    {
-        // Expected structure:
-        // designer:
-        //   defaultDistribution:
-        //     HP:
-        //       12: 0
-        //       24: 0
-        //       36: 10
-        //       48: 40
-        //       60: 50
-        var result = new Dictionary<string, Dictionary<int, double>>(StringComparer.OrdinalIgnoreCase);
-
-        int i = 0;
-        bool inDesigner = false, inDefaults = false;
-        string currentProduct = "";
-        while (i < lines.Length)
-        {
-            var raw = lines[i++];
-            var line = raw.Trim();
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
-
-            if (line.StartsWith("designer:", StringComparison.OrdinalIgnoreCase))
-            {
-                inDesigner = true; inDefaults = false; currentProduct = "";
-                continue;
-            }
-            if (inDesigner && line.StartsWith("defaultDistribution:", StringComparison.OrdinalIgnoreCase))
-            {
-                inDefaults = true; currentProduct = "";
-                continue;
-            }
-
-            if (!inDesigner || !inDefaults) continue;
-
-            // Product section, e.g., "HP:"
-            if (line.EndsWith(":") && !line.StartsWith("-"))
-            {
-                currentProduct = line.TrimEnd(':').Trim();
-                if (!result.ContainsKey(currentProduct))
-                    result[currentProduct] = new Dictionary<int, double>();
-                continue;
-            }
-
-            // Term mapping, e.g., "36: 10.0"
-            var parts = line.Split(':');
-            if (parts.Length == 2 && int.TryParse(parts[0].Trim(), out var term))
-            {
-                if (double.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var val))
-                {
-                    if (!string.IsNullOrEmpty(currentProduct))
-                    {
-                        result[currentProduct][term] = val;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private static string NormalizeProductKey(string product)
-    {
-        product = (product ?? string.Empty).Trim();
-        if (product.StartsWith("HP", StringComparison.OrdinalIgnoreCase)) return "HP";
-        if (product.Contains("mySTAR", StringComparison.OrdinalIgnoreCase)) return "mySTAR";
-        if (product.Contains("F-Lease", StringComparison.OrdinalIgnoreCase) || product.Contains("Finance", StringComparison.OrdinalIgnoreCase)) return "FinanceLease";
-        if (product.Contains("Op-Lease", StringComparison.OrdinalIgnoreCase) || product.Contains("Operating", StringComparison.OrdinalIgnoreCase)) return "OperatingLease";
-        return product;
-    }
 
     private double GetDownPaymentPct(ScenarioRequest req)
     {

@@ -46,8 +46,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -56,7 +60,7 @@
               "RelativeDocumentMoniker": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "ToolTip": "C:\\Users\\PATKRAN\\Python\\07_controlling\\financial_calculator\\winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\MainWindow.xaml",
-              "ViewState": "AgIAAGwCAAAAAAAAAAAowHQCAAA9AAAAAAAAAA==",
+              "ViewState": "AgIAAGwCAAAAAAAAAAAowHwCAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-10-27T08:18:45.826Z",
               "EditorCaption": ""
@@ -95,8 +99,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\ResponsiveStyles.xaml",
               "ViewState": "AgIAAFIAAAAAAAAAAAAAwGMAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-07T09:40:04.337Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-07T09:40:04.337Z"
             },
             {
               "$type": "Document",
@@ -120,8 +123,7 @@
               "RelativeToolTip": "winui3-mvp\\FinancialCalculator.WinUI3\\Styles\\DefaultStyles.xaml",
               "ViewState": "AgIAABQAAAAAAAAAAAAAAP0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-07T09:32:02.895Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-07T09:32:02.895Z"
             },
             {
               "$type": "Document",
@@ -158,6 +160,10 @@
               "ViewState": "AgIAABAAAAAAAAAAAAApwBsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-16T10:01:30.931Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{56df62a4-05a3-4e5b-aa1a-99371ccfb997}"
             }
           ]
         }

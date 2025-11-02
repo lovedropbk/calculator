@@ -25,62 +25,45 @@ namespace FinancialCalculator.WinUI3.ViewModels
             return GoalSeek?.IsTargetSet == true;
         }
 
+        private async Task RunGoalSeek(GoalSeekVariable variable, string startStatus, string successStatus, string label)
+        {
+            if (GoalSeek == null)
+            {
+                Logger.Warn("GoalSeek VM not ready; ignoring " + label + " auto-run.");
+                return;
+            }
+
+            try
+            {
+                Status = startStatus;
+                Logger.Info($"[GoalSeek] {label} overlay clicked. Target={GoalSeek.TargetValue}");
+                await GoalSeek.RunWithParamsAsync(variable, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
+                Status = successStatus;
+                Logger.Info($"[GoalSeek] {label} solve completed.");
+            }
+            catch (OperationCanceledException)
+            {
+                Status = "Goal seek cancelled";
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Error in RunGoalSeek ({label})", ex);
+                Status = $"Goal seek error: {ex.Message}";
+            }
+        }
+
         // NOTE:
         // These are thin wrappers delegating to GoalSeekViewModel, aligning with the architecture.
         // They also handle cancellation/exception paths and update Status for quick UI feedback.
 
         private async Task GoalSeekSolveForSubsidyAutoAsync()
         {
-            if (GoalSeek == null)
-            {
-                Logger.Warn("GoalSeek VM not ready; ignoring Subsidy auto-run.");
-                return;
-            }
-
-            try
-            {
-                Status = "Solving for subsidy...";
-                Logger.Info($"[GoalSeek] Subsidy overlay clicked. Target={GoalSeek.TargetValue}");
-                await GoalSeek.RunWithParamsAsync(GoalSeekVariable.UpfrontSubsidy, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
-                Status = "Solved subsidy.";
-                Logger.Info($"[GoalSeek] Subsidy solve completed. New SubsidyBudget={DealInput.SubsidyBudget}");
-            }
-            catch (OperationCanceledException)
-            {
-                Status = "Goal seek cancelled";
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error in GoalSeekSolveForSubsidyAutoAsync", ex);
-                Status = $"Goal seek error: {ex.Message}";
-            }
+            await RunGoalSeek(GoalSeekVariable.UpfrontSubsidy, "Solving for subsidy...", "Solved subsidy.", "Subsidy");
         }
 
         private async Task GoalSeekSolveForRateAutoAsync()
         {
-            if (GoalSeek == null)
-            {
-                Logger.Warn("GoalSeek VM not ready; ignoring Rate auto-run.");
-                return;
-            }
-
-            try
-            {
-                Status = "Solving for rate...";
-                Logger.Info($"[GoalSeek] Rate overlay clicked. Target={GoalSeek.TargetValue}");
-                await GoalSeek.RunWithParamsAsync(GoalSeekVariable.CustomerNominalRate, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
-                Status = "Solved rate.";
-                Logger.Info($"[GoalSeek] Rate solve completed. New CustomerNominalRate={DealInput.CustomerNominalRate}");
-            }
-            catch (OperationCanceledException)
-            {
-                Status = "Goal seek cancelled";
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error in GoalSeekSolveForRateAutoAsync", ex);
-                Status = $"Goal seek error: {ex.Message}";
-            }
+            await RunGoalSeek(GoalSeekVariable.CustomerNominalRate, "Solving for rate...", "Solved rate.", "Rate");
         }
     }
 }

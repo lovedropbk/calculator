@@ -141,29 +141,7 @@ public class VehicleCatalogService : IVehicleCatalogService
 
     private string GetPath(string filename)
     {
-        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        
-        // 1. Try relative to baseDir (deployment)
-        var path = Path.Combine(baseDir, "docs", filename);
-        if (File.Exists(path)) return path;
-
-        // 2. Walk up to find 'winui3-mvp' folder or 'docs' folder
-        var current = new DirectoryInfo(baseDir);
-        // Guard against infinite loop at root, though Parent should be null eventually
-        int maxDepth = 10;
-        while (current != null && maxDepth-- > 0)
-        {
-             var check = Path.Combine(current.FullName, "winui3-mvp", "docs", filename);
-             if (File.Exists(check)) return check;
-             
-             check = Path.Combine(current.FullName, "docs", filename);
-             if (File.Exists(check)) return check;
-
-             current = current.Parent;
-        }
-
-        Logger.Warn($"Could not find {filename} starting from {baseDir}, using default path");
-        return Path.Combine(baseDir, filename);
+        return PathResolver.GetDocsFilePath(filename);
     }
 
     private string InferVehicleClass(string modelName)

@@ -49,10 +49,34 @@ public partial class MainViewModel : ObservableValidator
     public ResultsViewModel Results { get; } = new();
     public ComparisonViewModel Comparison { get; } = new();
     public GoalSeekViewModel GoalSeek { get; private set; } = null!; // Initialized in InitializeAsync due to Facade dependency
-    private string _status = "Ready";
-    public string Status { get => _status; set => SetProperty(ref _status, value); }
+    private string _status = "";
+    public string Status
+    {
+        get => _status;
+        set
+        {
+            if (SetProperty(ref _status, value))
+            {
+                OnPropertyChanged(nameof(ErrorStatus));
+            }
+        }
+    }
     private bool _isCalculating = false;
     public bool IsCalculating { get => _isCalculating; set => SetProperty(ref _isCalculating, value); }
+
+    public string ErrorStatus
+    {
+        get
+        {
+            var s = _status ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+            // Consider as error for bottom display if it starts with "Error" or contains "fail"
+            return s.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase)
+                   || s.Contains("fail", StringComparison.InvariantCultureIgnoreCase)
+                ? s
+                : string.Empty;
+        }
+    }
 
     private bool _isInitializing = true;
     public bool IsInitializing { get => _isInitializing; set => SetProperty(ref _isInitializing, value); }
@@ -265,7 +289,7 @@ public partial class MainViewModel : ObservableValidator
             // Populate profitability detail waterfall
             RefreshProfitabilityDetailsLocal(result.Profitability);
 
-            Status = "Done";
+            Status = "Ready";
 
             // Also refresh the standard campaigns grid with the new inputs
             await LoadSummariesLocalAsync();

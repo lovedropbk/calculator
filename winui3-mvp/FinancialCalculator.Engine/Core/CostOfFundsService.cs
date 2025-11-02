@@ -64,7 +64,7 @@ namespace FinancialCalculator.Engine.Core
         public decimal GetOpexPctForProduct(string product)
         {
             EnsureLoaded();
-            var key = NormalizeProductKey(product);
+            var key = ProductKeyNormalizer.Normalize(product);
             return _opexByProduct.TryGetValue(key, out var v) ? v : 0m;
         }
 
@@ -257,15 +257,6 @@ namespace FinancialCalculator.Engine.Core
             return result;
         }
 
-        private static string NormalizeProductKey(string product)
-        {
-            product = (product ?? string.Empty).Trim();
-            if (product.StartsWith("HP", StringComparison.OrdinalIgnoreCase)) return "HP";
-            if (product.Contains("mySTAR", StringComparison.OrdinalIgnoreCase)) return "mySTAR";
-            if (product.Contains("F-Lease", StringComparison.OrdinalIgnoreCase) || product.Contains("Finance", StringComparison.OrdinalIgnoreCase)) return "FinanceLease";
-            if (product.Contains("Op-Lease", StringComparison.OrdinalIgnoreCase) || product.Contains("Operating", StringComparison.OrdinalIgnoreCase)) return "OperatingLease";
-            return product;
-        }
 
         private static string? FindConfigPath(string filename)
         {

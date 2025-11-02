@@ -114,15 +114,6 @@ public sealed class DealEngine
         };
     }
 
-    private static string NormalizeProductKey(string product)
-    {
-        product = (product ?? string.Empty).Trim();
-        if (product.StartsWith("HP", StringComparison.OrdinalIgnoreCase)) return "HP";
-        if (product.Contains("MYSTAR", StringComparison.OrdinalIgnoreCase)) return "mySTAR";
-        if (product.Contains("F-LEAS", StringComparison.OrdinalIgnoreCase) || product.Contains("FINANCE", StringComparison.OrdinalIgnoreCase)) return "FinanceLease";
-        if (product.Contains("OP-LEAS", StringComparison.OrdinalIgnoreCase) || product.Contains("OPERAT", StringComparison.OrdinalIgnoreCase)) return "OperatingLease";
-        return product;
-    }
 
 
 

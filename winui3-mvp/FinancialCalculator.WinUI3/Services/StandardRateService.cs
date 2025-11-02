@@ -231,28 +231,7 @@ public class StandardRateService : IStandardRateService
 
     private string GetPath(params string[] pathParts)
     {
-        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        var filename = Path.Combine(pathParts);
-
-        // 1. Try relative to baseDir (deployment)
-        var path = Path.Combine(baseDir, "docs", filename);
-        if (File.Exists(path)) return path;
-
-        // 2. Walk up to find 'winui3-mvp' folder or 'docs' folder
-        var current = new DirectoryInfo(baseDir);
-        int maxDepth = 10;
-        while (current != null && maxDepth-- > 0)
-        {
-            var check = Path.Combine(current.FullName, "winui3-mvp", "docs", filename);
-            if (File.Exists(check)) return check;
-
-            check = Path.Combine(current.FullName, "docs", filename);
-            if (File.Exists(check)) return check;
-
-            current = current.Parent;
-        }
-
-        return Path.Combine(baseDir, filename);
+        return PathResolver.GetDocsFilePath(pathParts);
     }
 
     private static string NormalizeProduct(string product)

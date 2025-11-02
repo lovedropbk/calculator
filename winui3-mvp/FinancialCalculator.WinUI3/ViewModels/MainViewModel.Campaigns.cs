@@ -331,7 +331,7 @@ public partial class MainViewModel
                 Results.CashflowCampaignName = $"{campaignTypeStr}: {vm.CampaignId}";
             }
 
-            Status = "Done";
+            Status = "Ready";
             return res;
         }
         catch (Exception ex)
