@@ -73,56 +73,160 @@ public sealed class FinancialCalculator
 
         var i_m = input.CustomerRatePercent / 100m / 12m;
 
-
-        // Compute annuity payment (arrears), then adjust for advance if needed
+        // Local annuity helper
         decimal Payment(decimal pv, decimal fv, int periods, decimal rate)
         {
             if (periods <= 0) return 0m;
-            if (Math.Abs(rate) < 1e-12m)
-            {
-                return (pv - fv) / periods;
-            }
+            if (Math.Abs(rate) < 1e-12m) return (pv - fv) / periods;
             var r = rate;
             var pow = (decimal)Math.Pow((double)(1 + r), periods);
-            var pmt = (pv * pow + fv) * r / (pow - 1);
-            return pmt;
+            var pmtLocal = (pv * pow + fv) * r / (pow - 1);
+            return pmtLocal;
         }
 
-        var pmtArrears = Payment(financed, -balloon, n, i_m);
-        var pmt = input.PaymentMode == PaymentMode.InAdvance ? pmtArrears / (1 + i_m) : pmtArrears;
+        // Resolve initial installment ignoring holidays; will be re-amortized after holiday blocks
+        var pmtArrears0 = Payment(financed, -balloon, n, i_m);
+        var currentPmt = input.PaymentMode == PaymentMode.InAdvance ? pmtArrears0 / (1 + i_m) : pmtArrears0;
 
-        var bal = financed;
         var rows = new List<ScheduleRow>(n);
+        var bal = financed;
+
+        // Build holiday map
+        var holidays = new bool[n + 2];
+        var ruleIds = new string?[n + 2];
+        var rules = input.PaymentHolidays ?? Array.Empty<PaymentHolidayRule>();
+        foreach (var r in rules)
+        {
+            int a = Math.Max(1, r.StartPeriod);
+            int b = Math.Min(n, r.EndPeriod);
+            for (int k = a; k <= b; k++)
+            {
+                holidays[k] = true;
+                if (ruleIds[k] == null) ruleIds[k] = r.RuleId;
+            }
+        }
 
         if (input.PaymentMode == PaymentMode.InAdvance)
         {
-            // Annuity Due: First payment at t=0 (Period 1)
-            var pmt0 = pmt;
-            var bal0 = financed - pmt0;
-            if (bal0 < 0) bal0 = 0;
-
-            rows.Add(new ScheduleRow
+            // Period 1 special handling
+            if (n >= 1)
             {
-                Period = 1,
-                Principal = Decimal.Round(pmt0, 2), // Assuming 0 interest at t=0
-                Interest = 0m,
-                Balance = Decimal.Round(bal0, 2),
-                Cashflow = Decimal.Round(pmt0, 2)
-            });
-            bal = bal0;
+                if (holidays[1])
+                {
+                    // No payment at t0; no interest
+                    var newBalRaw = bal;
+                    rows.Add(new ScheduleRow
+                    {
+                        Period = 1,
+                        Principal = 0m,
+                        Interest = 0m,
+                        Cashflow = 0m,
+                        Balance = Decimal.Round(newBalRaw, 2),
+                        Kind = PaymentKind.Holiday,
+                        CapitalizedInterest = 0m,
+                        RuleId = ruleIds[1]
+                    });
+                    bal = newBalRaw;
 
-            // Remaining N-1 payments at t=1 to t=N-1 (Periods 2 to N)
+                    // If holiday ends after period 1, re-amortize remaining periods
+                    if ((n == 1) || !holidays[2])
+                    {
+                        var rem = n - 1;
+                        if (rem > 0)
+                        {
+                            var pmtAr = Payment(bal, -balloon, rem, i_m);
+                            currentPmt = pmtAr; // post t0 uses arrears-style
+                        }
+                    }
+                }
+                else
+                {
+                    // Regular t0 payment
+                    var pmt0 = currentPmt;
+                    var bal0 = bal - pmt0;
+                    if (bal0 < 0) bal0 = 0;
+                    rows.Add(new ScheduleRow
+                    {
+                        Period = 1,
+                        Principal = Decimal.Round(pmt0, 2),
+                        Interest = 0m,
+                        Balance = Decimal.Round(bal0, 2),
+                        Cashflow = Decimal.Round(pmt0, 2)
+                    });
+                    bal = bal0;
+                }
+            }
+
+            // Periods 2..N
             for (int k = 2; k <= n; k++)
             {
-                bal = AddScheduleRow(rows, k, bal, i_m, pmt, balloon, k == n);
+                if (holidays[k])
+                {
+                    var interest = Decimal.Round(bal * i_m, 10);
+                    var newBalRaw = bal + interest;
+                    rows.Add(new ScheduleRow
+                    {
+                        Period = k,
+                        Principal = 0m,
+                        Interest = 0m,
+                        Balance = Decimal.Round(newBalRaw, 2),
+                        Cashflow = 0m,
+                        Kind = PaymentKind.Holiday,
+                        CapitalizedInterest = Decimal.Round(interest, 2),
+                        RuleId = ruleIds[k]
+                    });
+                    bal = newBalRaw;
+
+                    bool isEnd = (k == n) || !holidays[k + 1];
+                    if (isEnd && k < n)
+                    {
+                        var rem = n - k;
+                        var pmtAr = Payment(bal, -balloon, rem, i_m);
+                        currentPmt = pmtAr; // arrears going forward
+                    }
+                }
+                else
+                {
+                    bool isFinal = k == n;
+                    bal = AddScheduleRow(rows, k, bal, i_m, currentPmt, balloon, isFinal);
+                }
             }
+
+            return rows;
         }
-        else
+
+        // In Arrears: periods 1..N
+        for (int k = 1; k <= n; k++)
         {
-            // Annuity In Arrears: Payments at t=1 to t=N (Periods 1 to N)
-            for (int k = 1; k <= n; k++)
+            if (holidays[k])
             {
-                bal = AddScheduleRow(rows, k, bal, i_m, pmt, balloon, k == n);
+                var interest = Decimal.Round(bal * i_m, 10);
+                var newBalRaw = bal + interest;
+                rows.Add(new ScheduleRow
+                {
+                    Period = k,
+                    Principal = 0m,
+                    Interest = 0m,
+                    Cashflow = 0m,
+                    Balance = Decimal.Round(newBalRaw, 2),
+                    Kind = PaymentKind.Holiday,
+                    CapitalizedInterest = Decimal.Round(interest, 2),
+                    RuleId = ruleIds[k]
+                });
+                bal = newBalRaw;
+
+                bool isEnd = (k == n) || !holidays[k + 1];
+                if (isEnd && k < n)
+                {
+                    int rem = n - k;
+                    var pmtAr = Payment(bal, -balloon, rem, i_m);
+                    currentPmt = pmtAr;
+                }
+            }
+            else
+            {
+                bool isFinal = k == n;
+                bal = AddScheduleRow(rows, k, bal, i_m, currentPmt, balloon, isFinal);
             }
         }
 

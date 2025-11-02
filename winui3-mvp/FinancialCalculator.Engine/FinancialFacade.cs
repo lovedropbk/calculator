@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FinancialCalculator.Engine.Core;
 using FinancialCalculator.Engine.Models.Facade;
+using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.Engine;
 
@@ -63,7 +64,8 @@ public class FinancialFacade
             CustomerType = r.CustomerType,
             AssetState = r.AssetState,
             AssetValuationCurve = r.AssetValuationCurve,
-            Rating = r.Rating
+            Rating = r.Rating,
+            PaymentHolidays = r.PaymentHolidays
         };
     }
 
@@ -84,7 +86,10 @@ public class FinancialFacade
                 Principal = r.Principal,
                 Interest = r.Interest,
                 Balance = r.Balance,
-                Cashflow = r.Cashflow
+                Cashflow = r.Cashflow,
+                PaymentKind = r.Kind,
+                CapitalizedInterest = r.CapitalizedInterest,
+                RuleId = r.RuleId
             }).ToList(),
             Profitability = new ProfitabilityDetails
             {

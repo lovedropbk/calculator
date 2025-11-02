@@ -75,11 +75,23 @@ public partial class MainViewModel
         if (_subscribedActiveCampaign != null)
         {
             try { _subscribedActiveCampaign.PropertyChanged -= ActiveCampaign_PropertyChanged; } catch { }
+            try { _subscribedActiveCampaign.PaymentHolidays.CollectionChanged -= ActiveCampaignHolidays_CollectionChanged; } catch { }
         }
         _subscribedActiveCampaign = ActiveCampaign;
         if (_subscribedActiveCampaign != null)
         {
             _subscribedActiveCampaign.PropertyChanged += ActiveCampaign_PropertyChanged;
+            try { _subscribedActiveCampaign.PaymentHolidays.CollectionChanged += ActiveCampaignHolidays_CollectionChanged; } catch { }
+        }
+    }
+
+    // Campaign PaymentHolidays collection change -> recalc active campaign
+    private async void ActiveCampaignHolidays_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        var vm = ActiveCampaign;
+        if (vm != null)
+        {
+            await CalculateCampaignAsync(vm, autoClampToBudget: !IsMyCampaign(vm));
         }
     }
 
@@ -312,6 +324,11 @@ public partial class MainViewModel
                 double.TryParse(vm.SubinterestSubsidy, NumberStyles.Any, CultureInfo.InvariantCulture, out var subinterestSubsidy);
 
                 UpdateMetricsFromCampaign(vm, res, commAmt, subsidyUsed, fsIns, fsMbsp, subinterestSubsidy);
+
+                // Update Cashflows grid and banner to reflect campaign-specific schedule
+                PopulateCashflows(res.Schedule);
+                var campaignTypeStr = IsMyCampaign(vm) ? "My Campaign" : "Standard Campaign";
+                Results.CashflowCampaignName = $"{campaignTypeStr}: {vm.CampaignId}";
             }
 
             Status = "Done";
@@ -406,6 +423,7 @@ public partial class MainViewModel
                 Title = "No Campaign (Baseline)",
                 Notes = "Baseline scenario without campaigns"
             };
+            baselineVm.ConsumeAllSubsidy = true;
             
             await _campaignService.CalculateCampaignAsync(baselineVm, DealInput.BuildScenarioRequest(), DealInput.SubsidyBudget, DealInput, true);
             CampaignManager.StandardCampaigns.Add(baselineVm);
@@ -423,7 +441,8 @@ public partial class MainViewModel
                         Title = c.Type,
                         Notes = string.Empty
                     };
-
+                    vm.ConsumeAllSubsidy = true;
+                    
                     // Map raw definition to unified VM inputs
                     decimal vehiclePrice = (decimal)DealInput.PriceExTax;
                     switch (c.Type)

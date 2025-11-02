@@ -43,6 +43,9 @@ public class CampaignCalculationService
             decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
             if (transactionPrice < 0) transactionPrice = 0;
 
+            // Ensure campaign-specific holidays are used for all scenario calculations
+            var baseReqWithHolidays = baseRequest with { PaymentHolidays = vm.PaymentHolidays.ToList() };
+
             // 2) Allocate subsidy to SubDown first (no double counting)
             // Total subsidy available for allocation after cash discount
             decimal totalBudgetAfterCash = (decimal)Math.Max(0, subsidyBudget - cashDiscount);
@@ -75,7 +78,7 @@ public class CampaignCalculationService
 
                 // Required upfront subsidy equivalent to achieve target rate (interest delta proxy)
                 double required = ComputeRequiredSubsidyForRateBuydown(
-                    baseRequest,
+                    baseReqWithHolidays,
                     dealInput,
                     transactionPrice,
                     false,
@@ -119,7 +122,7 @@ public class CampaignCalculationService
 
             // 5) Compute full scenario (UpfrontSubsidies includes rate subsidy plus any consumed remainder; SubDown = actual used)
             var (res, commPct, commAmt) = ComputeScenarioWithCommission(
-                baseRequest,
+                baseReqWithHolidays,
                 dealInput,
                 transactionPrice,
                 false,

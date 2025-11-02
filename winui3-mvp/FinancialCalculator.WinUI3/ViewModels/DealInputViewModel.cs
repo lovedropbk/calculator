@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FinancialCalculator.Engine.Core;
@@ -469,7 +470,8 @@ public partial class DealInputViewModel : ObservableValidator
              CustomerType = SelectedCustomerType,
              AssetState = string.Equals(SelectedAssetState, "New", StringComparison.OrdinalIgnoreCase) ? "N" : "U",
              AssetValuationCurve = SelectedAssetValuationCurve,
-             Rating = SelectedRating
+             Rating = SelectedRating,
+             PaymentHolidays = PaymentHolidays.ToList()
         };
     }
 }

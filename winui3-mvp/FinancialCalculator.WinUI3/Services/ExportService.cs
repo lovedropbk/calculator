@@ -54,10 +54,13 @@ public class ExportService
 
         // Cashflow Schedule
         sb.AppendLine("Cashflow Schedule");
-        sb.AppendLine("Period,Principal,Interest,Balance,Cashflow");
+        sb.AppendLine("Period,PaymentKind,CapitalizedInterest,RuleId,Principal,Interest,Balance,Cashflow");
         foreach (var r in result.Schedule)
         {
-            sb.AppendLine($"{r.Period},{r.Principal.ToString("0.00", CultureInfo.InvariantCulture)},{r.Interest.ToString("0.00", CultureInfo.InvariantCulture)},{r.Balance.ToString("0.00", CultureInfo.InvariantCulture)},{r.Cashflow.ToString("0.00", CultureInfo.InvariantCulture)}");
+            var kind = r.PaymentKind.ToString();
+            var capi = r.CapitalizedInterest.ToString("0.00", CultureInfo.InvariantCulture);
+            var rid = string.IsNullOrWhiteSpace(r.RuleId) ? "" : r.RuleId.Replace(",", " ");
+            sb.AppendLine($"{r.Period},{kind},{capi},{rid},{r.Principal.ToString("0.00", CultureInfo.InvariantCulture)},{r.Interest.ToString("0.00", CultureInfo.InvariantCulture)},{r.Balance.ToString("0.00", CultureInfo.InvariantCulture)},{r.Cashflow.ToString("0.00", CultureInfo.InvariantCulture)}");
         }
 
         var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinancialCalculatorExports");

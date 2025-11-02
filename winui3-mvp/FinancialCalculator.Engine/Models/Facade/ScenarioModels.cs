@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.Engine.Models.Facade;
 
@@ -25,6 +26,7 @@ public record class ScenarioRequest
     public string AssetState { get; init; } = "N";
     public string AssetValuationCurve { get; init; } = "MBPC";
     public string Rating { get; init; } = "4.0";
+    public IReadOnlyList<PaymentHolidayRule> PaymentHolidays { get; init; } = new List<PaymentHolidayRule>();
 }
 
 public record class ScenarioResult
@@ -48,6 +50,11 @@ public record class CashflowRow
     public decimal Interest { get; init; }
     public decimal Balance { get; init; }
     public decimal Cashflow { get; init; }
+
+    // Extended annotations for structured cashflows
+    public FinancialCalculator.Engine.Models.PaymentKind PaymentKind { get; init; }
+    public decimal CapitalizedInterest { get; init; }
+    public string? RuleId { get; init; }
 }
 
 public record class ProfitabilityDetails

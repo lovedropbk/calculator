@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using FinancialCalculator.Engine;
 using FinancialCalculator.Engine.Models.Facade;
+using FinancialCalculator.Engine.Models;
 using FinancialCalculator.WinUI3.ViewModels;
 
 namespace FinancialCalculator.WinUI3.Services;
@@ -40,7 +41,7 @@ public class CampaignTermBreakdownService
         if (dealInput == null) throw new ArgumentNullException(nameof(dealInput));
 
         // Terms derived from CSV via StandardRateService (exactly what's available for product/mode and current downpayment)
-        var br = baseRequest; // already validated non-null above
+        var br = baseRequest with { PaymentHolidays = vm.PaymentHolidays?.ToList() ?? baseRequest.PaymentHolidays };
         var terms = _standardRateService.GetAvailableTerms(
             br.Product ?? string.Empty,
             GetDownPaymentPct(br),

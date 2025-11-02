@@ -600,6 +600,8 @@ public partial class MainViewModel : ObservableValidator
             Results.Cashflows.Add(new CashflowRowViewModel
             {
                 Period = r.Period,
+                PaymentType = r.PaymentKind.ToString(),
+                CapInterest = r.CapitalizedInterest.ToString("N0", CultureInfo.InvariantCulture),
                 Principal = principal.ToString("N0", CultureInfo.InvariantCulture),
                 Interest = interest.ToString("N0", CultureInfo.InvariantCulture),
 
@@ -902,6 +904,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
 public partial class CashflowRowViewModel : ObservableObject
 {
     public int Period { get; set; }
+    public string PaymentType { get; set; } = "";       // Regular or Holiday
+    public string CapInterest { get; set; } = "";       // Capitalized interest during holiday
     public string Principal { get; set; } = "";
     public string Interest { get; set; } = "";
 

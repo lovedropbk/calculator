@@ -43,6 +43,7 @@ public sealed class DealEngine
         public string AssetState { get; init; } = "N";
         public string AssetValuationCurve { get; init; } = "MBPC";
         public string Rating { get; init; } = "4.0";
+        public IReadOnlyList<PaymentHolidayRule> PaymentHolidays { get; init; } = Array.Empty<PaymentHolidayRule>();
     }
 
     public sealed class DealOutput
@@ -75,7 +76,8 @@ public sealed class DealEngine
             CustomerType = i.CustomerType,
             AssetState = i.AssetState,
             AssetValuationCurve = i.AssetValuationCurve,
-            Rating = i.Rating
+            Rating = i.Rating,
+            PaymentHolidays = i.PaymentHolidays
         };
 
         var outputs = _calc.Calculate(calcInput);

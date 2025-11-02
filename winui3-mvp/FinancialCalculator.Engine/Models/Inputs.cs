@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FinancialCalculator.Engine.Models;
@@ -56,4 +58,7 @@ public sealed record class CalculatorInputs
     public string AssetState { get; init; } = "N"; // "N" = New, "U" = Used
     public string AssetValuationCurve { get; init; } = "MBPC"; // e.g., MBPC, MBVA
     public string Rating { get; init; } = "4.0";
+
+    // Cashflow rules: Payment holidays with capitalization and unchanged maturity
+    public IReadOnlyList<PaymentHolidayRule> PaymentHolidays { get; init; } = Array.Empty<PaymentHolidayRule>();
 }
