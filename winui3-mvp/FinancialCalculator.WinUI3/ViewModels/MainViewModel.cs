@@ -474,56 +474,31 @@ public partial class MainViewModel : ObservableValidator
     {
         try
         {
-            // Build request from current deal input and run engine
-            var request = DealInput.BuildScenarioRequest();
-            var result = _financialFacade.Calculate(request);
+            Logger.Info("AddToComparison invoked");
 
-            // Update local waterfall cache to keep texts/values in sync
-            RefreshProfitabilityDetailsLocal(result.Profitability);
+            // Prefer adding to Campaign Designer (as per UX expectation)
+            var active = ActiveCampaign ?? CampaignManager.SelectedCampaign ?? CampaignManager.SelectedMyCampaign;
+            if (active != null)
+            {
+                await CopyToDesignerAsync(active);
+                Status = $"Added '{active.Title}' to Campaign Designer";
+                return;
+            }
 
-            // Prepare display strings
-            var vehicleName = DealInput.SelectedVehicle?.ModelName ?? "Model";
-            var monthly = ((double)result.MonthlyInstallment).ToString("N0", CultureInfo.InvariantCulture);
-            var financed = ((double)result.FinancedAmount).ToString("N0", CultureInfo.InvariantCulture);
-            var roracStr = ((double)result.AcquisitionRoRacPercent).ToString("0.00%", CultureInfo.InvariantCulture);
-            var totalInterest = ((double)result.TotalInterest).ToString("N0", CultureInfo.InvariantCulture);
-
-            // Create comparison item (no side-effects to Campaign Designer)
-            var item = _comparisonService.CreateComparisonItem(
-                Comparison.ComparedDeals.Count,
-                vehicleName,
-                DealInput.Product,
-                DealInput.PriceExTax,
-                DealInput.DownPaymentValueEntry,
-                DealInput.DownPaymentUnit,
-                DealInput.TermMonths,
-                DealInput.CustomerNominalRate,
-                (double)result.FlatRatePercent,
-                DealInput.BalloonValueEntry,
-                DealInput.BalloonUnit,
-                monthly,
-                financed,
-                roracStr,
-                totalInterest,
-                _wfCustomerRate,
-                WfCustomerRateText,
-                _wfCostOfDebtMatched,
-                WfCostOfDebtMatchedText,
-                _wfCostOfCreditRisk,
-                WfCostOfCreditRiskText,
-                _wfOPEX,
-                WfOPEXText,
-                _wfIDCUpfrontAnnualized,
-                _wfSubsidyUpfrontAnnualized
-            );
-
-            Comparison.ComparedDeals.Add(item);
-            Status = $"Added {item.Title} to Comparison";
-            await Task.CompletedTask;
+            // Fallback: synthesize a simple campaign from current inputs
+            var synth = new CampaignSummaryViewModel
+            {
+                CampaignId = Guid.NewGuid().ToString(),
+                Title = "Custom: From Deal Inputs",
+                Notes = ""
+            };
+            await CopyToDesignerAsync(synth);
+            Status = $"Added '{synth.Title}' to Campaign Designer";
         }
         catch (Exception ex)
         {
-            Status = $"Error adding to comparison: {ex.Message}";
+            Logger.Error("AddToComparison failed", ex);
+            Status = $"Error adding to designer: {ex.Message}";
         }
     }
 

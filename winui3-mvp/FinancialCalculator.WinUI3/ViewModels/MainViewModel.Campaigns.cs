@@ -123,14 +123,39 @@ public partial class MainViewModel
                     {
                         if (DealInput.SelectedVehicle != null)
                         {
-                            var matched = _insurance.TryGetInsuranceCost(DealInput.SelectedVehicle);
-                            if (matched.HasValue)
+                            var sv = DealInput.SelectedVehicle;
+                            var matched = _insurance.TryGetInsuranceCost(sv);
+                            bool isClassAverage = (sv.ModelName?.EndsWith("Average", StringComparison.InvariantCultureIgnoreCase) ?? false);
+
+                            double? resolved = null;
+                            if (matched.HasValue && matched.Value > 0 && !isClassAverage)
                             {
-                                vm.FSSubInterestAmount = matched.Value;
+                                resolved = matched.Value;
                             }
                             else
                             {
-                                NotificationMessage = $"No insurance match for '{DealInput.SelectedVehicle.ModelName}'. Please enter the cost manually.";
+                                var cls = sv.Class;
+                                var costs = _vehicleCatalog.GetVehiclesByClass(cls)
+                                                           .Select(v => _insurance.TryGetInsuranceCost(v))
+                                                           .Where(x => x.HasValue && x.Value > 0)
+                                                           .Select(x => x!.Value)
+                                                           .OrderBy(x => x)
+                                                           .ToList();
+                                if (costs.Count > 0)
+                                {
+                                    double avg = costs.Average();
+                                    double median = costs[costs.Count / 2];
+                                    resolved = costs.Count >= 3 ? avg : median;
+                                }
+                            }
+
+                            if (resolved.HasValue)
+                            {
+                                vm.FSSubInterestAmount = resolved.Value;
+                            }
+                            else
+                            {
+                                NotificationMessage = $"No insurance match for '{sv.ModelName}'. Please enter the cost manually.";
                                 NotificationSeverity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning;
                                 IsNotificationOpen = true;
                                 // keep IncludeInsurance = true to allow manual entry
@@ -458,8 +483,32 @@ public partial class MainViewModel
                                 {
                                     if (DealInput.SelectedVehicle != null)
                                     {
-                                        var matched = _insurance.TryGetInsuranceCost(DealInput.SelectedVehicle);
-                                        if (matched.HasValue) actualInsCost = matched.Value;
+                                        var sv = DealInput.SelectedVehicle;
+                                        var matched = _insurance.TryGetInsuranceCost(sv);
+
+                                        bool isClassAverage = (sv.ModelName?.EndsWith("Average", StringComparison.InvariantCultureIgnoreCase) ?? false);
+
+                                        if (matched.HasValue && matched.Value > 0 && !isClassAverage)
+                                        {
+                                            actualInsCost = matched.Value;
+                                        }
+                                        else
+                                        {
+                                            // Class-level aggregation (average, fallback to median) for class selections
+                                            var cls = sv.Class;
+                                            var costs = _vehicleCatalog.GetVehiclesByClass(cls)
+                                                                       .Select(v => _insurance.TryGetInsuranceCost(v))
+                                                                       .Where(x => x.HasValue && x.Value > 0)
+                                                                       .Select(x => x!.Value)
+                                                                       .OrderBy(x => x)
+                                                                       .ToList();
+                                            if (costs.Count > 0)
+                                            {
+                                                double avg = costs.Average();
+                                                double median = costs[costs.Count / 2];
+                                                actualInsCost = costs.Count >= 3 ? avg : median;
+                                            }
+                                        }
                                     }
                                 }
                                 catch { /* best-effort */ }
@@ -473,18 +522,44 @@ public partial class MainViewModel
                             {
                                 double actualMbspCost = c.MbspCost.Value;
                                 bool mbspAvailable = true;
+
                                 if (DealInput.SelectedVehicle != null)
                                 {
-                                     if (DealInput.SelectedVehicle.MbspCosts.TryGetValue("Easy Care 5", out var vehCost))
-                                     {
-                                         actualMbspCost = vehCost;
-                                     }
-                                     else
-                                     {
-                                         mbspAvailable = false;
-                                         mbspUnavailable = true;
-                                     }
+                                    var sv = DealInput.SelectedVehicle;
+                                    bool isClassAverage = (sv.ModelName?.EndsWith("Average", StringComparison.InvariantCultureIgnoreCase) ?? false);
+
+                                    if (!isClassAverage && sv.MbspCosts.TryGetValue("Easy Care 5", out var vehCost))
+                                    {
+                                        actualMbspCost = vehCost;
+                                    }
+                                    else
+                                    {
+                                        // Class-level aggregation for selected package
+                                        var cls = sv.Class;
+                                        var costs = _vehicleCatalog.GetVehiclesByClass(cls)
+                                                                   .Select(v =>
+                                                                   {
+                                                                       if (v.MbspCosts != null && v.MbspCosts.TryGetValue("Easy Care 5", out var cost)) return (double?)cost;
+                                                                       return null;
+                                                                   })
+                                                                   .Where(x => x.HasValue && x.Value > 0)
+                                                                   .Select(x => x!.Value)
+                                                                   .OrderBy(x => x)
+                                                                   .ToList();
+                                        if (costs.Count > 0)
+                                        {
+                                            double avg = costs.Average();
+                                            double median = costs[costs.Count / 2];
+                                            actualMbspCost = costs.Count >= 3 ? avg : median;
+                                        }
+                                        else
+                                        {
+                                            mbspAvailable = false;
+                                            mbspUnavailable = true;
+                                        }
+                                    }
                                 }
+
                                 if (mbspAvailable)
                                 {
                                     vm.SelectedMbspPackage = "Easy Care 5";

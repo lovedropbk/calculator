@@ -17,17 +17,23 @@
             <KeyboardAccelerator Key="Escape" Modifiers="None" Invoked="OnEscapeInvoked"/>
         </Grid.KeyboardAccelerators>
         
-        <!-- InfoBar for notifications -->
-        <muxc:InfoBar x:Name="NotificationBar"
-                      VerticalAlignment="Top"
-                      HorizontalAlignment="Stretch"
-                      Margin="12,12,12,0"
-                      IsOpen="{x:Bind ViewModel.IsNotificationOpen, Mode=TwoWay}"
-                      IsClosable="True"
-                      Severity="{x:Bind ViewModel.NotificationSeverity, Mode=OneWay}"
-                      Title="Notification"
-                      Message="{x:Bind ViewModel.NotificationMessage, Mode=OneWay}"
-                      Style="{StaticResource NotificationInfoBarStyle}"/>
+        <!-- Bottom-right toast for notifications (non-blocking, dismissible) -->
+        <Grid x:Name="NotificationToastHost"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Right"
+              Margin="12"
+              Canvas.ZIndex="9999"
+              IsHitTestVisible="False">
+            <muxc:InfoBar x:Name="NotificationBar"
+                          MaxWidth="380"
+                          IsOpen="{x:Bind ViewModel.IsNotificationOpen, Mode=TwoWay}"
+                          IsClosable="True"
+                          Severity="{x:Bind ViewModel.NotificationSeverity, Mode=OneWay}"
+                          Title="Notification"
+                          Message="{x:Bind ViewModel.NotificationMessage, Mode=OneWay}"
+                          Style="{StaticResource NotificationInfoBarStyle}"
+                          IsHitTestVisible="True"/>
+        </Grid>
 
         <!-- MARK: Root TabView with Icons -->
         <TabView x:Name="MainTabView"
@@ -250,7 +256,12 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60" HorizontalContentAlignment="Center">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
@@ -274,24 +285,25 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
+                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60" HorizontalContentAlignment="Center">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
                                         <x:String>THB</x:String>
                                         <x:String>%</x:String>
                                     </ComboBox>
                                     <TextBox Grid.Column="1" Text="{Binding DealInput.BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.BalloonPlaceholder}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Style="{StaticResource CompactTextBox}"/>
                                 </Grid>
         
-                                <!-- Subsidy budget with Tooltip and Click-to-Solve -->
-                                <Button Grid.Row="11" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                        Padding="4,2" Margin="-4,0,0,0" Background="Transparent" BorderThickness="0"
-                                        Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}"
-                                        IsEnabled="{Binding GoalSeek.IsTargetSet}">
-                                    <TextBlock Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}">
-                                        <ToolTipService.ToolTip>
-                                            <ToolTip Content="Available subsidy budget for this deal. Click to solve for target RoRAC." Style="{StaticResource InformativeToolTipStyle}"/>
-                                        </ToolTipService.ToolTip>
-                                    </TextBlock>
-                                </Button>
+                                <!-- Subsidy budget with Tooltip (label styled like others) -->
+                                <TextBlock Grid.Row="11" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="Available subsidy budget for this deal. Click to solve for target RoRAC." Style="{StaticResource InformativeToolTipStyle}"/>
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                                 <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <!-- Create a proper overlay structure aligned like single-field rows -->
                                     <Grid HorizontalAlignment="Stretch">
@@ -338,33 +350,56 @@
                                 <!-- IDCs - Dealer Commission -->
                                 <TextBlock Grid.Row="12" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <!-- Unified entry: unit + value -->
-                                    <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}" Margin="0,0,6,0" Style="{StaticResource CompactComboBox}" MinWidth="60">
+
+                                    <!-- Inline editor (shown on demand) -->
+                                    <ComboBox Grid.Column="0"
+                                              SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}"
+                                              Margin="0,0,6,0"
+                                              Style="{StaticResource CompactComboBox}"
+                                              MinWidth="60"
+                                              HorizontalContentAlignment="Center"
+                                              Visibility="{Binding DealInput.IsCommissionEditorVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
                                         <x:String>auto</x:String>
                                         <x:String>%</x:String>
                                         <x:String>THB</x:String>
                                     </ComboBox>
-                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DealInput.CommissionEntryValue, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsCommissionEntryEditable}" Style="{StaticResource CompactTextBox}"/>
-                                    <!-- Summary pill -->
-                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource PillBorderStyle}">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock>
-                                                <Run Text="{Binding DealInput.DealerCommissionMode}"/>
-                                                <Run Text=": "/>
-                                                <Run Text="{Binding DealInput.DealerCommissionPctText}"/>
-                                                <Run Text="% ("/>
-                                                <Run Text="{Binding DealInput.DealerCommissionResolvedAmtText}"/>
-                                                <Run Text=" THB)"/>
-                                            </TextBlock>
-                                        </StackPanel>
+
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding DealInput.CommissionEntryValue, Mode=TwoWay}"
+                                             IsEnabled="{Binding DealInput.IsCommissionEntryEditable}"
+                                             Style="{StaticResource CompactTextBox}"
+                                             Visibility="{Binding DealInput.IsCommissionEditorVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                    <!-- Summary pill in same row when editor hidden (align with value column) -->
+                                    <Border Grid.Column="1"
+                                            Style="{StaticResource PillBorderStyle}"
+                                            Visibility="{Binding DealInput.IsCommissionEditorVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock>
+                                                    <Run Text="{Binding DealInput.DealerCommissionMode}"/>
+                                                    <Run Text=": "/>
+                                                    <Run Text="{Binding DealInput.DealerCommissionPctText}"/>
+                                                    <Run Text="% ("/>
+                                                    <Run Text="{Binding DealInput.DealerCommissionResolvedAmtText}"/>
+                                                    <Run Text=" THB)"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <Button Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Command="{Binding DealInput.ShowCommissionEditorCommand}" />
+                                        </Grid>
                                     </Border>
                                 </Grid>
         
@@ -407,14 +442,11 @@
                                     </RadioButtons>
                                 </Grid>
         
-                                <!-- Customer rate (visible if fixed rate) -->
-                                <Button Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-4,6,0,0"
-                                        Padding="4,2" Background="Transparent" BorderThickness="0"
-                                        Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}"
-                                        IsEnabled="{Binding GoalSeek.IsTargetSet}"
-                                        Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
-                                     <TextBlock Text="Customer rate (% p.a.)" Style="{StaticResource LabelTextStyle}"/>
-                                </Button>
+                                <!-- Customer rate label (styled like others) -->
+                                <TextBlock Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-4,6,0,0"
+                                           Text="Customer rate (% p.a.)"
+                                           Style="{StaticResource LabelTextStyle}"
+                                           Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
                                 <Grid Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left"
                                       Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
                                     <Grid.ColumnDefinitions>

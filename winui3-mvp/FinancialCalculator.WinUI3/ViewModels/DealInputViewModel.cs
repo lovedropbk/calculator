@@ -278,10 +278,10 @@ public partial class DealInputViewModel : ObservableValidator
         NotifyChanged();
     }
     private void OnBalloonPercentChanged(double value) => NotifyChanged();
-    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); UpdateStandardRate(); NotifyChanged(); }
-    private void OnDownPaymentValueEntryChanged(double value) { UpdateStandardRate(); NotifyChanged(); }
-    private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); NotifyChanged(); }
-    private void OnBalloonValueEntryChanged(double value) => NotifyChanged();
+    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ConvertDownPaymentOnUnitChange(value); ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); NotifyChanged(); }
+    private void OnDownPaymentValueEntryChanged(double value) { ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); NotifyChanged(); }
+    private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ConvertBalloonOnUnitChange(value); ClampBalloonEntry(); NotifyChanged(); }
+    private void OnBalloonValueEntryChanged(double value) { ClampBalloonEntry(); NotifyChanged(); }
     private void OnLockModeChanged(string value) { }
 
     private void OnRateModeChanged(string value) { OnPropertyChanged(nameof(IsFixedRateMode)); OnPropertyChanged(nameof(IsTargetInstallmentMode)); RateModeIndex = string.Equals(RateMode, "fixed_rate", System.StringComparison.OrdinalIgnoreCase) ? 0 : 1; NotifyChanged(); }
@@ -291,25 +291,12 @@ public partial class DealInputViewModel : ObservableValidator
     private void OnDealerCommissionModeChanged(string value) => NotifyChanged();
     private void OnCommissionEntryUnitChanged(string value)
     {
-        if (string.Equals(value, "auto", System.StringComparison.OrdinalIgnoreCase))
-        {
-            DealerCommissionMode = "auto"; DealerCommissionPct = null; DealerCommissionAmt = null; CommissionEntryValue = 0;
-        }
-        else
-        {
-            DealerCommissionMode = "override";
-        }
+        HandleCommissionUnitChange(value);
         NotifyChanged();
     }
     private void OnCommissionEntryValueChanged(double value)
     {
-        if (!string.Equals(CommissionEntryUnit, "auto", System.StringComparison.OrdinalIgnoreCase))
-        {
-            if (string.Equals(CommissionEntryUnit, "%", System.StringComparison.OrdinalIgnoreCase)) { DealerCommissionPct = value / 100.0; DealerCommissionAmt = null; }
-            else { DealerCommissionAmt = value; DealerCommissionPct = null; }
-            UpdateDealerCommissionResolved();
-            OnPropertyChanged(nameof(DealerCommissionPctText));
-        }
+        SanitizeCommissionEntryValue();
         NotifyChanged();
     }
     private void OnDealerCommissionPctChanged(double? value)
