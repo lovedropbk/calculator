@@ -139,13 +139,11 @@ namespace FinancialCalculator.Engine.Core
                         {
                             if (inline.StartsWith("termMonths", StringComparison.OrdinalIgnoreCase))
                             {
-                                var parts = inline.Split(':');
-                                if (parts.Length == 2 && int.TryParse(parts[1].Trim(), out var t)) term = t;
+                                if (TryParseIntAfterColon(inline, out var t)) term = t;
                             }
                             else if (inline.StartsWith("rate", StringComparison.OrdinalIgnoreCase))
                             {
-                                var parts = inline.Split(':');
-                                if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var r)) rate = r;
+                                if (TryParseDecimalAfterColon(inline, out var r)) rate = r;
                             }
                         }
 
@@ -157,13 +155,11 @@ namespace FinancialCalculator.Engine.Core
 
                             if (l.StartsWith("termMonths", StringComparison.OrdinalIgnoreCase))
                             {
-                                var parts = l.Split(':');
-                                if (parts.Length == 2 && int.TryParse(parts[1].Trim(), out var t)) term = t;
+                                if (TryParseIntAfterColon(l, out var t)) term = t;
                             }
                             else if (l.StartsWith("rate", StringComparison.OrdinalIgnoreCase))
                             {
-                                var parts = l.Split(':');
-                                if (parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var r)) rate = r;
+                                if (TryParseDecimalAfterColon(l, out var r)) rate = r;
                             }
                         }
 
@@ -193,6 +189,20 @@ namespace FinancialCalculator.Engine.Core
                 }
             }
             return null;
+        }
+
+        private static bool TryParseIntAfterColon(string s, out int value)
+        {
+            value = 0;
+            var parts = (s ?? string.Empty).Split(':');
+            return parts.Length == 2 && int.TryParse(parts[1].Trim(), out value);
+        }
+
+        private static bool TryParseDecimalAfterColon(string s, out decimal value)
+        {
+            value = 0m;
+            var parts = (s ?? string.Empty).Split(':');
+            return parts.Length == 2 && decimal.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out value);
         }
 
         private static Dictionary<string, decimal> ParseOpexByProduct(string[] lines)

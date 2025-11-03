@@ -24,33 +24,22 @@ namespace FinancialCalculator.WinUI3.Services
         /// </summary>
         public void Debounce(int millisecondsDelay, Action action)
         {
-            lock (_lock)
+            Schedule(millisecondsDelay, () =>
             {
-                _cts?.Cancel();
-                _cts?.Dispose();
-                _cts = new CancellationTokenSource();
-
-                var token = _cts.Token;
-                Task.Delay(millisecondsDelay, token).ContinueWith(t =>
-                {
-                    if (t.IsCanceled) return;
-
-                    void Invoke()
-                    {
-                        try { action(); }
-                        catch { /* swallow */ }
-                    }
-
-                    if (_syncContext != null) _syncContext.Post(_ => Invoke(), null);
-                    else Invoke();
-                }, TaskScheduler.Default);
-            }
+                action();
+                return Task.CompletedTask;
+            });
         }
 
         /// <summary>
         /// Debounce an async function with the specified delay.
         /// </summary>
         public void DebounceAsync(int millisecondsDelay, Func<Task> asyncAction)
+        {
+            Schedule(millisecondsDelay, asyncAction);
+        }
+
+        private void Schedule(int millisecondsDelay, Func<Task> action)
         {
             lock (_lock)
             {
@@ -63,14 +52,8 @@ namespace FinancialCalculator.WinUI3.Services
                 {
                     if (t.IsCanceled) return;
 
-                    async void InvokeAsync()
-                    {
-                        try { await asyncAction(); }
-                        catch { /* swallow */ }
-                    }
-
-                    if (_syncContext != null) _syncContext.Post(_ => InvokeAsync(), null);
-                    else _ = Task.Run(asyncAction);
+                    if (_syncContext != null) _syncContext.Post(_ => _ = action(), null);
+                    else _ = Task.Run(action);
                 }, TaskScheduler.Default);
             }
         }

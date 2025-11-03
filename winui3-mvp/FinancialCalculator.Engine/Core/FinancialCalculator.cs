@@ -160,36 +160,7 @@ public sealed class FinancialCalculator
             // Periods 2..N
             for (int k = 2; k <= n; k++)
             {
-                if (holidays[k])
-                {
-                    var interest = Decimal.Round(bal * i_m, 10);
-                    var newBalRaw = bal + interest;
-                    rows.Add(new ScheduleRow
-                    {
-                        Period = k,
-                        Principal = 0m,
-                        Interest = 0m,
-                        Balance = Decimal.Round(newBalRaw, 2),
-                        Cashflow = 0m,
-                        Kind = PaymentKind.Holiday,
-                        CapitalizedInterest = Decimal.Round(interest, 2),
-                        RuleId = ruleIds[k]
-                    });
-                    bal = newBalRaw;
-
-                    bool isEnd = (k == n) || !holidays[k + 1];
-                    if (isEnd && k < n)
-                    {
-                        var rem = n - k;
-                        var pmtAr = Payment(bal, -balloon, rem, i_m);
-                        currentPmt = pmtAr; // arrears going forward
-                    }
-                }
-                else
-                {
-                    bool isFinal = k == n;
-                    bal = AddScheduleRow(rows, k, bal, i_m, currentPmt, balloon, isFinal);
-                }
+                ProcessPeriod(rows, k, ref bal, i_m, ref currentPmt, balloon, n, holidays, ruleIds, Payment);
             }
 
             return rows;
@@ -198,36 +169,7 @@ public sealed class FinancialCalculator
         // In Arrears: periods 1..N
         for (int k = 1; k <= n; k++)
         {
-            if (holidays[k])
-            {
-                var interest = Decimal.Round(bal * i_m, 10);
-                var newBalRaw = bal + interest;
-                rows.Add(new ScheduleRow
-                {
-                    Period = k,
-                    Principal = 0m,
-                    Interest = 0m,
-                    Cashflow = 0m,
-                    Balance = Decimal.Round(newBalRaw, 2),
-                    Kind = PaymentKind.Holiday,
-                    CapitalizedInterest = Decimal.Round(interest, 2),
-                    RuleId = ruleIds[k]
-                });
-                bal = newBalRaw;
-
-                bool isEnd = (k == n) || !holidays[k + 1];
-                if (isEnd && k < n)
-                {
-                    int rem = n - k;
-                    var pmtAr = Payment(bal, -balloon, rem, i_m);
-                    currentPmt = pmtAr;
-                }
-            }
-            else
-            {
-                bool isFinal = k == n;
-                bal = AddScheduleRow(rows, k, bal, i_m, currentPmt, balloon, isFinal);
-            }
+            ProcessPeriod(rows, k, ref bal, i_m, ref currentPmt, balloon, n, holidays, ruleIds, Payment);
         }
 
         return rows;
@@ -276,6 +218,61 @@ public sealed class FinancialCalculator
                 Cashflow = Decimal.Round(totalDue, 2)
             });
             return newBal;
+        }
+    }
+
+    private static void AddHolidayRow(List<ScheduleRow> rows, int period, ref decimal bal, decimal i_m, string? ruleId)
+    {
+        var interest = Decimal.Round(bal * i_m, 10);
+        var newBalRaw = bal + interest;
+        rows.Add(new ScheduleRow
+        {
+            Period = period,
+            Principal = 0m,
+            Interest = 0m,
+            Balance = Decimal.Round(newBalRaw, 2),
+            Cashflow = 0m,
+            Kind = PaymentKind.Holiday,
+            CapitalizedInterest = Decimal.Round(interest, 2),
+            RuleId = ruleId
+        });
+        bal = newBalRaw;
+    }
+
+    private static decimal ReAmortizeIfEnd(bool isEnd, int n, int period, decimal bal, decimal balloon, decimal i_m, Func<decimal, decimal, int, decimal, decimal> payment, decimal currentPmt)
+    {
+        if (isEnd && period < n)
+        {
+            var rem = n - period;
+            var pmtAr = payment(bal, -balloon, rem, i_m);
+            return pmtAr;
+        }
+        return currentPmt;
+    }
+
+    private static void ProcessPeriod(
+        List<ScheduleRow> rows,
+        int k,
+        ref decimal bal,
+        decimal i_m,
+        ref decimal currentPmt,
+        decimal balloon,
+        int n,
+        bool[] holidays,
+        string?[] ruleIds,
+        Func<decimal, decimal, int, decimal, decimal> payment)
+    {
+        if (holidays[k])
+        {
+            AddHolidayRow(rows, k, ref bal, i_m, ruleIds[k]);
+
+            bool isEnd = (k == n) || !holidays[k + 1];
+            currentPmt = ReAmortizeIfEnd(isEnd, n, k, bal, balloon, i_m, payment, currentPmt);
+        }
+        else
+        {
+            bool isFinal = k == n;
+            bal = AddScheduleRow(rows, k, bal, i_m, currentPmt, balloon, isFinal);
         }
     }
 
