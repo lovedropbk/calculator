@@ -316,6 +316,7 @@ public partial class DealInputViewModel : ObservableValidator
     private void OnDealerCommissionResolvedAmtChanged(double value)
     {
         OnPropertyChanged(nameof(DealerCommissionResolvedAmtText));
+        SyncCommissionUiFromModel();
         NotifyChanged();
     }
 

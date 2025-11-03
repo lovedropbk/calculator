@@ -120,6 +120,14 @@
                 <Setter Property="Padding" Value="6,4,24,4" />
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             </Style>
+
+            <!-- Compact unit selector: smaller font + reduced right padding to fit "THB" / "%" in 80px column -->
+            <Style x:Key="UnitComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource CompactComboBox}">
+                <Setter Property="MinWidth" Value="48" />
+                <Setter Property="Padding" Value="6,2,8,2" />
+                <Setter Property="FontSize" Value="10" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
             <Style x:Key="CompactTextBox" TargetType="TextBox">
                 <Setter Property="Height" Value="28" />
                 <Setter Property="MinWidth" Value="96" />
@@ -156,8 +164,8 @@
             <nf:DecimalFormatter x:Key="GroupedTwoFormatter" IsGrouped="True" FractionDigits="2" />
 
             <!-- Shared widths for consistent alignment -->
-            <GridLength x:Key="UnitColumnWidthValue">80</GridLength>
-            <GridLength x:Key="InputColumnWidthValue">280</GridLength>
+            <GridLength x:Key="UnitColumnWidthValue">70</GridLength>
+            <GridLength x:Key="InputColumnWidthValue">290</GridLength>
             <x:Double x:Key="ValueAreaWidth">360</x:Double>
             <x:Double x:Key="LabelColumnWidthValue">160</x:Double>
             <!-- Details panel fixed column widths to prevent value shifting -->

@@ -21,8 +21,23 @@ namespace FinancialCalculator.WinUI3.ViewModels
             IsCommissionEditorVisible = true;
             if (string.Equals(CommissionEntryUnit, "auto", StringComparison.OrdinalIgnoreCase))
             {
-                // Default to percentage editing; this reveals the %/THB unit selector and enables value editing
                 CommissionEntryUnit = "%";
+            }
+
+            // Seed both fields from current state (auto or override)
+            try
+            {
+                _isUpdatingCommissionUi = true;
+                var baseFinanced = ApproxFinanced();
+                var pct100 = (DealerCommissionMode == "override" ? (DealerCommissionPct ?? AutoCommissionPct) : AutoCommissionPct) * 100.0;
+                CommissionPctEntry = UnitConversionHelper.ClampPercent(pct100);
+                CommissionAmtEntry = DealerCommissionResolvedAmt > 0
+                    ? DealerCommissionResolvedAmt
+                    : UnitConversionHelper.PercentToMoney(CommissionPctEntry, baseFinanced, baseFinanced * (AutoCommissionPct > 0 ? AutoCommissionPct : 0.03));
+            }
+            finally
+            {
+                _isUpdatingCommissionUi = false;
             }
         }
 
@@ -97,6 +112,97 @@ namespace FinancialCalculator.WinUI3.ViewModels
             }
         }
 
+        // MARK: Commission UI dual-entry (Pct and Amount) for same-row editor
+        private bool _isUpdatingCommissionUi = false;
+
+        private double _commissionPctEntry = 0;
+        public double CommissionPctEntry
+        {
+            get => _commissionPctEntry;
+            set
+            {
+                if (SetProperty(ref _commissionPctEntry, value))
+                {
+                    OnCommissionPctEntryChanged(value);
+                }
+            }
+        }
+
+        private double _commissionAmtEntry = 0;
+        public double CommissionAmtEntry
+        {
+            get => _commissionAmtEntry;
+            set
+            {
+                if (SetProperty(ref _commissionAmtEntry, value))
+                {
+                    OnCommissionAmtEntryChanged(value);
+                }
+            }
+        }
+
+        private void SyncCommissionUiFromModel()
+        {
+            try
+            {
+                _isUpdatingCommissionUi = true;
+                CommissionAmtEntry = DealerCommissionResolvedAmt;
+                var baseFinanced = ApproxFinanced();
+                CommissionPctEntry = UnitConversionHelper.MoneyToPercent(DealerCommissionResolvedAmt, baseFinanced, (AutoCommissionPct > 0 ? AutoCommissionPct * 100.0 : 3.0));
+            }
+            finally { _isUpdatingCommissionUi = false; }
+        }
+
+        private void OnCommissionPctEntryChanged(double value)
+        {
+            if (_isUpdatingCommissionUi) return;
+
+            var pct = UnitConversionHelper.ClampPercent(value);
+            try
+            {
+                _isUpdatingCommissionUi = true;
+                DealerCommissionMode = "override";
+                DealerCommissionPct = pct / 100.0;
+                DealerCommissionAmt = null;
+
+                var baseFinanced = ApproxFinanced();
+                var amt = UnitConversionHelper.PercentToMoney(pct, baseFinanced, baseFinanced * (AutoCommissionPct > 0 ? AutoCommissionPct : 0.03));
+                CommissionAmtEntry = amt;
+
+                UpdateDealerCommissionResolved();
+                OnPropertyChanged(nameof(DealerCommissionPctText));
+            }
+            finally
+            {
+                _isUpdatingCommissionUi = false;
+            }
+        }
+
+        private void OnCommissionAmtEntryChanged(double value)
+        {
+            if (_isUpdatingCommissionUi) return;
+
+            var amt = UnitConversionHelper.SanitizeAmount(value);
+            try
+            {
+                _isUpdatingCommissionUi = true;
+                DealerCommissionMode = "override";
+                DealerCommissionAmt = amt;
+                DealerCommissionPct = null;
+
+                var baseFinanced = ApproxFinanced();
+                var pct = UnitConversionHelper.MoneyToPercent(amt, baseFinanced, (AutoCommissionPct > 0 ? AutoCommissionPct * 100.0 : 3.0));
+                CommissionPctEntry = pct;
+
+                UpdateDealerCommissionResolved();
+                OnPropertyChanged(nameof(DealerCommissionPctText));
+            }
+            finally
+            {
+                _isUpdatingCommissionUi = false;
+            }
+        }
+
         // MARK: Commission conversions/clamping
         private double ApproxFinanced()
         {
@@ -124,6 +230,7 @@ namespace FinancialCalculator.WinUI3.ViewModels
 
             DealerCommissionMode = "override";
             IsCommissionEditorVisible = true;
+            SyncCommissionUiFromModel();
 
             var baseFinanced = ApproxFinanced();
 
