@@ -59,3 +59,27 @@ A comprehensive code audit confirms that the WinUI 3 frontend exclusively utiliz
 ## Testing
 - **Unit Tests**: `FinancialFacadeTests` use mocked `IRiskParameterRepository` to test orchestration logic in isolation.
 - **Integration Tests**: `RoRacEndToEndTests` use mocked `IFileService` with static CSV data to test the full calculation pipeline reproducibly.
+
+## Fluent v2 UI Guide (WinUI 3)
+- Where tokens and styles live:
+  - Fluent density and surface tokens live in [Styles/FluentTheme.xaml](winui3-mvp/FinancialCalculator.WinUI3/Styles/FluentTheme.xaml)
+  - App-wide helpers, converters, and CardContainerStyle live in [App.xaml](winui3-mvp/FinancialCalculator.WinUI3/App.xaml)
+- Using Dense* styles for new inputs:
+  - Apply keyed styles to controls:
+    - TextBox: DenseTextBoxStyle (or DenseTextBoxWithSuffixStyle when you show a trailing unit like % or THB)
+    - ComboBox: DenseComboBoxStyle
+    - NumberBox: DenseNumberBoxStyle
+  - Do not set inline Height or Padding on inputs; the Dense styles centralize density.
+  - Use Unit suffix helpers from [App.xaml](winui3-mvp/FinancialCalculator.WinUI3/App.xaml) (UnitSuffixTextStyle, PercentSuffixMargin, CurrencySuffixMargin) for consistent suffix labels.
+- Adding card-like surfaces:
+  - Wrap content in a Border and set Style="{StaticResource CardContainerStyle}" (defined in [App.xaml](winui3-mvp/FinancialCalculator.WinUI3/App.xaml)) for Fluent v2-compliant card background, stroke, radius, and shadow across Light/Dark/High Contrast.
+- Replacing legacy tokens:
+  - Search for legacy tokens: SystemControl*, AcrylicBackgroundFillColorDefaultBrush
+  - Replace with Fluent v2 equivalents:
+    - Text: TextFillColor* (e.g., TextFillColorPrimaryBrush)
+    - Strokes: ControlStrokeColor* / ControlStrongStrokeColor*
+    - Surfaces/Overlays: CardBackgroundFillColorDefaultBrush, LayerFillColorDefaultBrush
+  - Tip: Use your IDE’s “Find in Files” to replace safely and verify in both Light and Dark themes.
+
+- High Contrast readiness:
+  - If you add custom brushes, provide overrides in the HighContrast ThemeDictionary (see [App.xaml](winui3-mvp/FinancialCalculator.WinUI3/App.xaml)) and prefer ControlStrongStrokeColorDefaultBrush + TextFillColorPrimaryBrush for legibility.

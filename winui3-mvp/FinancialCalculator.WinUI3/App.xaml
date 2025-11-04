@@ -18,8 +18,6 @@
             <!-- MARK: Enhanced Theme Brushes with Animations -->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFFFF" Opacity="1.0" />
-                    <SolidColorBrush x:Key="CardStrokeBrush" Color="#C0C0C0" />
                     <SolidColorBrush x:Key="PillBackgroundBrush" Color="#F5F5F5" />
                     <SolidColorBrush x:Key="PillStrokeBrush" Color="#D0D0D0" />
                     <SolidColorBrush x:Key="HighlightBrush" Color="#0078D4" Opacity="0.1" />
@@ -34,8 +32,6 @@
                     <SolidColorBrush x:Key="BudgetUnallocatedBrush" Color="#737373"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#202020" Opacity="1.0" />
-                    <SolidColorBrush x:Key="CardStrokeBrush" Color="#404040" />
                     <SolidColorBrush x:Key="PillBackgroundBrush" Color="#303030" />
                     <SolidColorBrush x:Key="PillStrokeBrush" Color="#505050" />
                     <SolidColorBrush x:Key="HighlightBrush" Color="#0078D4" Opacity="0.2" />
@@ -48,6 +44,11 @@
                     <SolidColorBrush x:Key="BudgetRateSubsidyBrush" Color="#00B7C3"/>
                     <SolidColorBrush x:Key="BudgetIdcBrush" Color="#038387"/>
                     <SolidColorBrush x:Key="BudgetUnallocatedBrush" Color="#737373"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <!-- High Contrast overrides for custom brushes -->
+                    <SolidColorBrush x:Key="PillBackgroundBrush" Color="#00000000" />
+                    <SolidColorBrush x:Key="PillStrokeBrush" Color="#000000" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -94,40 +95,7 @@
             </Style>
 
             <!-- MARK: Enhanced Input Defaults with Hover Effects -->
-            <!-- Global TextBox style removed to preserve Fluent defaults.
-                 Use CompactTextBox or a keyed style per control. -->
-
-            <!-- Global ComboBox style removed to preserve Fluent defaults.
-                 Use CompactComboBox or UnitComboBoxStyle where needed. -->
-
-            <!-- Global NumberBox style removed to preserve Fluent defaults.
-                 Use CompactNumberBox for dense layouts. -->
-            <!-- Compact input styles for dense forms -->
-            <Style x:Key="CompactNumberBox" TargetType="muxc:NumberBox">
-                <Setter Property="Height" Value="28" />
-                <Setter Property="MinWidth" Value="120" />
-                <Setter Property="Padding" Value="6,4,36,4" />
-                <Setter Property="SpinButtonPlacementMode" Value="Hidden" />
-            </Style>
-            <Style x:Key="CompactComboBox" TargetType="ComboBox">
-                <Setter Property="Height" Value="28" />
-                <Setter Property="MinWidth" Value="120" />
-                <Setter Property="Padding" Value="6,4,24,4" />
-                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            </Style>
-
-            <!-- Compact unit selector: smaller font + reduced right padding to fit "THB" / "%" in 80px column -->
-            <Style x:Key="UnitComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource CompactComboBox}">
-                <Setter Property="MinWidth" Value="48" />
-                <Setter Property="Padding" Value="6,2,8,2" />
-                <Setter Property="FontSize" Value="10" />
-                <Setter Property="HorizontalContentAlignment" Value="Center" />
-            </Style>
-            <Style x:Key="CompactTextBox" TargetType="TextBox">
-                <Setter Property="Height" Value="28" />
-                <Setter Property="MinWidth" Value="96" />
-                <Setter Property="Padding" Value="6,4,6,4" />
-            </Style>
+            <!-- Input density is centralized in Styles/FluentTheme.xaml via Dense* keyed styles (DenseTextBoxStyle, DenseTextBoxWithSuffixStyle, DenseComboBoxStyle, DenseNumberBoxStyle). Legacy Compact* styles have been removed to avoid drift. See Fluent tokens and styles in [Styles/FluentTheme.xaml](winui3-mvp/FinancialCalculator.WinUI3/Styles/FluentTheme.xaml). -->
 
             <!-- Global Button style removed to preserve Fluent defaults.
                  Use PrimaryActionButtonStyle / SecondaryButtonStyle / IconButtonStyle explicitly. -->

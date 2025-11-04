@@ -61,12 +61,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Page Update="Controls\WaterfallChart.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Update="Controls\WaterfallChart.xaml.cs">
-      <DependentUpon>WaterfallChart.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>

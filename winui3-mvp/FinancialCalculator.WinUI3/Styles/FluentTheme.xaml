@@ -58,6 +58,11 @@
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
     </Style>
 
+    <!-- Dense variant with right suffix space (e.g., %, THB) -->
+    <Style x:Key="DenseTextBoxWithSuffixStyle" TargetType="TextBox" BasedOn="{StaticResource DenseTextBoxStyle}">
+        <Setter Property="Padding" Value="6,4,24,4"/>
+    </Style>
+
     <Style x:Key="DenseComboBoxStyle" TargetType="ComboBox">
         <Setter Property="Height" Value="{StaticResource CompactControlHeight}"/>
         <Setter Property="Padding" Value="{StaticResource CompactComboPadding}"/>
@@ -88,4 +93,11 @@
         <Setter Property="Padding" Value="{StaticResource CardPaddingStandard}"/>
     </Style>
 
+  <!-- Dense NumberBox variants with extra right padding for in-field labels -->
+  <Style x:Key="DenseNumberBoxWithLabel52Style" TargetType="muxc:NumberBox" BasedOn="{StaticResource DenseNumberBoxStyle}">
+    <Setter Property="Padding" Value="6,4,52,4"/>
+  </Style>
+  <Style x:Key="DenseNumberBoxWithLabel40Style" TargetType="muxc:NumberBox" BasedOn="{StaticResource DenseNumberBoxStyle}">
+    <Setter Property="Padding" Value="6,4,40,4"/>
+  </Style>
 </ResourceDictionary>
