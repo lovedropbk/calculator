@@ -276,5 +276,179 @@ namespace FinancialCalculator.WinUI3.ViewModels
             UpdateDealerCommissionResolved();
             OnPropertyChanged(nameof(DealerCommissionPctText));
         }
+
+        // MARK: Down Payment dual-entry (Pct and Amount) for same-row editor (always visible)
+        private bool _isUpdatingDownUi = false;
+
+        private double _downPaymentPctEntry = 0;
+        public double DownPaymentPctEntry
+        {
+            get => _downPaymentPctEntry;
+            set
+            {
+                if (SetProperty(ref _downPaymentPctEntry, value))
+                {
+                    OnDownPaymentPctEntryChanged(value);
+                }
+            }
+        }
+
+        private double _downPaymentAmtEntry = 0;
+        public double DownPaymentAmtEntry
+        {
+            get => _downPaymentAmtEntry;
+            set
+            {
+                if (SetProperty(ref _downPaymentAmtEntry, value))
+                {
+                    OnDownPaymentAmtEntryChanged(value);
+                }
+            }
+        }
+
+        private void SyncDownUiFromModel()
+        {
+            try
+            {
+                _isUpdatingDownUi = true;
+                double basePrice = TransactionPrice;
+                if (string.Equals(DownPaymentUnit, "%", StringComparison.OrdinalIgnoreCase))
+                {
+                    _downPaymentPctEntry = UnitConversionHelper.ClampPercent1dp(DownPaymentValueEntry);
+                    OnPropertyChanged(nameof(DownPaymentPctEntry));
+                    _downPaymentAmtEntry = UnitConversionHelper.PercentToMoney(_downPaymentPctEntry, basePrice, basePrice > 0 ? basePrice * 0.20 : 0);
+                    OnPropertyChanged(nameof(DownPaymentAmtEntry));
+                }
+                else
+                {
+                    _downPaymentAmtEntry = UnitConversionHelper.SanitizeAmount(DownPaymentValueEntry);
+                    OnPropertyChanged(nameof(DownPaymentAmtEntry));
+                    _downPaymentPctEntry = UnitConversionHelper.MoneyToPercent1dp(_downPaymentAmtEntry, basePrice, 20.0);
+                    OnPropertyChanged(nameof(DownPaymentPctEntry));
+                }
+            }
+            finally { _isUpdatingDownUi = false; }
+        }
+
+        private void OnDownPaymentPctEntryChanged(double value)
+        {
+            if (_isUpdatingDownUi) return;
+
+            var pct = UnitConversionHelper.ClampPercent1dp(value);
+            try
+            {
+                _isUpdatingDownUi = true;
+                DownPaymentUnit = "%";
+                DownPaymentValueEntry = pct;
+
+                var amt = UnitConversionHelper.PercentToMoney(pct, TransactionPrice, TransactionPrice > 0 ? TransactionPrice * 0.20 : 0);
+                DownPaymentAmtEntry = amt;
+            }
+            finally { _isUpdatingDownUi = false; }
+        }
+
+        private void OnDownPaymentAmtEntryChanged(double value)
+        {
+            if (_isUpdatingDownUi) return;
+
+            var amt = UnitConversionHelper.SanitizeAmount(value);
+            try
+            {
+                _isUpdatingDownUi = true;
+                DownPaymentUnit = "THB";
+                DownPaymentValueEntry = amt;
+
+                var pct = UnitConversionHelper.MoneyToPercent1dp(amt, TransactionPrice, 20.0);
+                DownPaymentPctEntry = pct;
+            }
+            finally { _isUpdatingDownUi = false; }
+        }
+
+        // MARK: Balloon dual-entry (Pct and Amount) for same-row editor (always visible)
+        private bool _isUpdatingBalloonUi = false;
+
+        private double _balloonPctEntry = 0;
+        public double BalloonPctEntry
+        {
+            get => _balloonPctEntry;
+            set
+            {
+                if (SetProperty(ref _balloonPctEntry, value))
+                {
+                    OnBalloonPctEntryChanged(value);
+                }
+            }
+        }
+
+        private double _balloonAmtEntry = 0;
+        public double BalloonAmtEntry
+        {
+            get => _balloonAmtEntry;
+            set
+            {
+                if (SetProperty(ref _balloonAmtEntry, value))
+                {
+                    OnBalloonAmtEntryChanged(value);
+                }
+            }
+        }
+
+        private void SyncBalloonUiFromModel()
+        {
+            try
+            {
+                _isUpdatingBalloonUi = true;
+                double baseThb = TransactionPrice;
+                if (string.Equals(BalloonUnit, "%", StringComparison.OrdinalIgnoreCase))
+                {
+                    _balloonPctEntry = UnitConversionHelper.ClampPercent1dp(BalloonValueEntry);
+                    OnPropertyChanged(nameof(BalloonPctEntry));
+                    _balloonAmtEntry = UnitConversionHelper.PercentToMoney(_balloonPctEntry, baseThb, 0.0);
+                    OnPropertyChanged(nameof(BalloonAmtEntry));
+                }
+                else
+                {
+                    _balloonAmtEntry = UnitConversionHelper.SanitizeAmount(BalloonValueEntry);
+                    OnPropertyChanged(nameof(BalloonAmtEntry));
+                    _balloonPctEntry = UnitConversionHelper.MoneyToPercent1dp(_balloonAmtEntry, baseThb, 0.0);
+                    OnPropertyChanged(nameof(BalloonPctEntry));
+                }
+            }
+            finally { _isUpdatingBalloonUi = false; }
+        }
+
+        private void OnBalloonPctEntryChanged(double value)
+        {
+            if (_isUpdatingBalloonUi) return;
+
+            var pct = UnitConversionHelper.ClampPercent1dp(value);
+            try
+            {
+                _isUpdatingBalloonUi = true;
+                BalloonUnit = "%";
+                BalloonValueEntry = pct;
+
+                var amt = UnitConversionHelper.PercentToMoney(pct, TransactionPrice, 0.0);
+                BalloonAmtEntry = amt;
+            }
+            finally { _isUpdatingBalloonUi = false; }
+        }
+
+        private void OnBalloonAmtEntryChanged(double value)
+        {
+            if (_isUpdatingBalloonUi) return;
+
+            var amt = UnitConversionHelper.SanitizeAmount(value);
+            try
+            {
+                _isUpdatingBalloonUi = true;
+                BalloonUnit = "THB";
+                BalloonValueEntry = amt;
+
+                var pct = UnitConversionHelper.MoneyToPercent1dp(amt, TransactionPrice, 0.0);
+                BalloonPctEntry = pct;
+            }
+            finally { _isUpdatingBalloonUi = false; }
+        }
     }
 }

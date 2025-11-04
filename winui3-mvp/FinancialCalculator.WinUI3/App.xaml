@@ -104,15 +104,15 @@
                 <Setter Property="Height" Value="32" />
                 <Setter Property="MinWidth" Value="120" />
                 <Setter Property="Margin" Value="4,0,0,0" />
-                <Setter Property="Padding" Value="8,6,8,6" />
-                <Setter Property="SpinButtonPlacementMode" Value="Inline" />
+                <Setter Property="Padding" Value="8,6,36,6" />
+                <Setter Property="SpinButtonPlacementMode" Value="Hidden" />
             </Style>
             <!-- Compact input styles for dense forms -->
             <Style x:Key="CompactNumberBox" TargetType="muxc:NumberBox">
                 <Setter Property="Height" Value="28" />
                 <Setter Property="MinWidth" Value="120" />
-                <Setter Property="Padding" Value="6,4,6,4" />
-                <Setter Property="SpinButtonPlacementMode" Value="Inline" />
+                <Setter Property="Padding" Value="6,4,36,4" />
+                <Setter Property="SpinButtonPlacementMode" Value="Hidden" />
             </Style>
             <Style x:Key="CompactComboBox" TargetType="ComboBox">
                 <Setter Property="Height" Value="28" />
@@ -165,12 +165,24 @@
 
             <!-- Shared widths for consistent alignment -->
             <GridLength x:Key="UnitColumnWidthValue">70</GridLength>
-            <GridLength x:Key="InputColumnWidthValue">290</GridLength>
-            <x:Double x:Key="ValueAreaWidth">360</x:Double>
+            <GridLength x:Key="InputColumnWidthValue">260</GridLength>
+            <x:Double x:Key="ValueAreaWidth">320</x:Double>
             <x:Double x:Key="LabelColumnWidthValue">160</x:Double>
             <!-- Details panel fixed column widths to prevent value shifting -->
-            <GridLength x:Key="DetailsLabelColumnWidth">220</GridLength>
+            <GridLength x:Key="DetailsLabelColumnWidth">160</GridLength>
             <GridLength x:Key="DetailsValueColumnWidth">360</GridLength>
+
+            <!-- Unified unit suffix helpers -->
+            <Thickness x:Key="PercentSuffixMargin">0,0,4,0</Thickness>
+            <Thickness x:Key="CurrencySuffixMargin">0,0,20,0</Thickness>
+            <Style x:Key="UnitSuffixTextStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Opacity" Value="0.6"/>
+                <Setter Property="IsHitTestVisible" Value="False"/>
+            </Style>
+            <!-- Align expanders with value column (LabelColumn 160 + 8px gap) -->
+            <Thickness x:Key="ValueAreaOffsetMargin">168,12,0,0</Thickness>
 
             <!-- MARK: Typography helpers -->
             <Style x:Key="CardHeaderTextStyle" TargetType="TextBlock">

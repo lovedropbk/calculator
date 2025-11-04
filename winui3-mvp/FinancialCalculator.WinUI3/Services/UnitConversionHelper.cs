@@ -56,5 +56,29 @@ namespace FinancialCalculator.WinUI3.Services
             if (double.IsNaN(v) || double.IsInfinity(v)) return 0;
             return Math.Max(0, Math.Round(v, 0, MidpointRounding.AwayFromZero));
         }
+
+        /// <summary>
+        /// Convert THB to percent rounded to 1 decimal place (0-100 clamp).
+        /// Dedicated for compact % fields (Downpayment/Balloon).
+        /// </summary>
+        public static double MoneyToPercent1dp(double amountThb, double baseThb, double fallbackPercent = 20.0)
+        {
+            if (double.IsNaN(amountThb) || double.IsInfinity(amountThb)) amountThb = 0;
+            if (double.IsNaN(baseThb) || double.IsInfinity(baseThb) || baseThb <= 0)
+            {
+                return ClampPercent1dp(fallbackPercent);
+            }
+            var pct = (amountThb / baseThb) * 100.0;
+            return ClampPercent1dp(pct);
+        }
+
+        /// <summary>Clamp percent to 0-100 with 1dp rounding.</summary>
+        public static double ClampPercent1dp(double percent)
+        {
+            if (double.IsNaN(percent) || double.IsInfinity(percent)) return 0.0;
+            if (percent < 0) return 0;
+            if (percent > 100) return 100;
+            return Math.Round(percent, 1, MidpointRounding.AwayFromZero);
+        }
     }
 }

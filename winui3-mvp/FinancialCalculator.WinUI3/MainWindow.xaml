@@ -62,8 +62,8 @@
                     <Grid.ColumnDefinitions>
                         <!-- Left: Deal Input Mask (collapsible) -->
                         <ColumnDefinition x:Name="LeftColumn"
-                                          Width="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='36|2*'}"
-                                          MinWidth="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='36|360'}"/>
+                                          Width="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='36|1.4*'}"
+                                          MinWidth="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='36|560'}"/>
                         <!-- Center: Main content -->
                         <ColumnDefinition Width="3*" MinWidth="480"/>
                         <!-- Grid Splitter -->
@@ -204,10 +204,14 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
-                                                    Value="{Binding DealInput.PriceExTax, Mode=TwoWay}"
-                                                    PlaceholderText="{Binding DealInput.PricePlaceholder}"
-                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                    <Grid Grid.Column="1">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}"
+                                                        Value="{Binding DealInput.PriceExTax, Mode=TwoWay}"
+                                                        PlaceholderText="{Binding DealInput.PricePlaceholder}"
+                                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                        Padding="6,4,36,4"/>
+                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                    </Grid>
                                 </Grid>
 
                                 <!-- MBTh Discount -->
@@ -217,10 +221,14 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
-                                                    Value="{Binding DealInput.MbthDiscount, Mode=TwoWay}"
-                                                    PlaceholderText="THB"
-                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                    <Grid Grid.Column="1">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}"
+                                                        Value="{Binding DealInput.MbthDiscount, Mode=TwoWay}"
+                                                        PlaceholderText="THB"
+                                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                        Padding="6,4,36,4"/>
+                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                    </Grid>
                                 </Grid>
 
                                 <!-- Transaction Price (read-only) -->
@@ -230,10 +238,14 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
-                                                    Value="{Binding DealInput.TransactionPrice}"
-                                                    IsEnabled="False"
-                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                    <Grid Grid.Column="1">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}"
+                                                        Value="{Binding DealInput.TransactionPrice}"
+                                                        IsEnabled="False"
+                                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                        Padding="6,4,36,4"/>
+                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                    </Grid>
                                 </Grid>
 
                                 <!-- Additional Financed Items -->
@@ -243,58 +255,112 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
-                                                    Value="{Binding DealInput.AdditionalFinancedItems, Mode=TwoWay}"
-                                                    PlaceholderText="THB"
-                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                    <Grid Grid.Column="1">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}"
+                                                        Value="{Binding DealInput.AdditionalFinancedItems, Mode=TwoWay}"
+                                                        PlaceholderText="THB"
+                                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                        Padding="6,4,36,4"/>
+                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                    </Grid>
                                 </Grid>
          
-                                <!-- Down Payment: unit first then value (inside value area) -->
+                                <!-- Down Payment: dual-entry (%, THB) with instant conversion; unit dropdown removed -->
                                 <TextBlock Grid.Row="9" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.DownPaymentUnit, Mode=TwoWay}" Margin="0" Style="{StaticResource UnitComboBoxStyle}" MinWidth="60" HorizontalContentAlignment="Center">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}" FontSize="10" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                        <x:String>THB</x:String>
-                                        <x:String>%</x:String>
-                                    </ComboBox>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}" Margin="0" HorizontalAlignment="Stretch" Value="{Binding DealInput.DownPaymentValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.DownPaymentPlaceholder}" NumberFormatter="{StaticResource GroupedZeroFormatter}">
-                                        <muxc:NumberBox.ContextFlyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Text="Goal Seek: Solve for Down Payment" Command="{Binding GoalSeekSolveForDownPaymentCommand}">
-                                                     <MenuFlyoutItem.Icon>
-                                                        <FontIcon Glyph="&#xE71A;" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                            </MenuFlyout>
-                                        </muxc:NumberBox.ContextFlyout>
-                                    </muxc:NumberBox>
+                                    <!-- Keep column 0 empty to preserve alignment -->
+                                    <Grid Grid.Column="1" ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- % input with persistent suffix -->
+                                        <Grid Grid.Column="0">
+                                            <TextBox
+                                                Text="{x:Bind ViewModel.DealInput.DownPaymentPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                PlaceholderText="%"
+                                                Style="{StaticResource CompactTextBox}"
+                                                Margin="0"
+                                                HorizontalAlignment="Stretch"
+                                                TextAlignment="Right"
+                                                Padding="6,4,24,4"
+                                                InputScope="Number"/>
+                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                        </Grid>
+
+                                        <!-- THB input with persistent suffix -->
+                                        <Grid Grid.Column="1">
+                                            <muxc:NumberBox
+                                                Style="{StaticResource CompactNumberBox}"
+                                                Margin="2,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                Value="{Binding DealInput.DownPaymentAmtEntry, Mode=TwoWay}"
+                                                PlaceholderText="THB"
+                                                NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                Padding="6,4,36,4">
+                                                <muxc:NumberBox.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem Text="Goal Seek: Solve for Down Payment" Command="{Binding GoalSeekSolveForDownPaymentCommand}">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE71A;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </muxc:NumberBox.ContextFlyout>
+                                            </muxc:NumberBox>
+                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
 
-                                <!-- Balloon: unit first then value (inside value area) -->
+                                <!-- Balloon: dual-entry (%, THB) with instant conversion; unit dropdown removed -->
                                 <TextBlock Grid.Row="10" Grid.Column="0" Text="Balloon" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox Grid.Column="0" SelectedItem="{Binding DealInput.BalloonUnit, Mode=TwoWay}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Margin="0" Style="{StaticResource UnitComboBoxStyle}" MinWidth="60" HorizontalContentAlignment="Center">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}" FontSize="10" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                        <x:String>THB</x:String>
-                                        <x:String>%</x:String>
-                                    </ComboBox>
-                                    <TextBox Grid.Column="1" Margin="0" HorizontalAlignment="Stretch" Text="{Binding DealInput.BalloonValueEntry, Mode=TwoWay}" PlaceholderText="{Binding DealInput.BalloonPlaceholder}" IsEnabled="{Binding DealInput.IsBalloonEnabled}" Style="{StaticResource CompactTextBox}"/>
+                                    <!-- Keep column 0 empty to preserve alignment -->
+                                    <Grid Grid.Column="1" ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- % input with persistent suffix -->
+                                        <Grid Grid.Column="0">
+                                            <TextBox
+                                                Text="{x:Bind ViewModel.DealInput.BalloonPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                PlaceholderText="%"
+                                                Style="{StaticResource CompactTextBox}"
+                                                Margin="0"
+                                                HorizontalAlignment="Stretch"
+                                                TextAlignment="Right"
+                                                Padding="6,4,24,4"
+                                                IsEnabled="{Binding DealInput.IsBalloonEnabled}"
+                                                InputScope="Number"/>
+                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                        </Grid>
+
+                                        <!-- THB input with persistent suffix -->
+                                        <Grid Grid.Column="1">
+                                            <muxc:NumberBox
+                                                Style="{StaticResource CompactNumberBox}"
+                                                Margin="2,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                Value="{Binding DealInput.BalloonAmtEntry, Mode=TwoWay}"
+                                                PlaceholderText="THB"
+                                                NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                Padding="6,4,36,4"
+                                                IsEnabled="{Binding DealInput.IsBalloonEnabled}"/>
+                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
         
                                 <!-- Subsidy budget with Tooltip (label styled like others) -->
@@ -317,7 +383,8 @@
                                                         IsEnabled="{Binding DealInput.SubsidyBudgetIsEnabled}"
                                                         IsHitTestVisible="{Binding GoalSeek.IsTargetSet, Converter={StaticResource BoolNotConverter}}"
                                                         Minimum="0"
-                                                        AcceptsExpression="False">
+                                                        AcceptsExpression="False"
+                                                        Padding="6,4,36,4">
                                             <muxc:NumberBox.ContextFlyout>
                                                 <MenuFlyout>
                                                     <MenuFlyoutItem Text="Goal Seek: Solve for Subsidy (to target RoRAC)" Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}">
@@ -328,6 +395,10 @@
                                                 </MenuFlyout>
                                             </muxc:NumberBox.ContextFlyout>
                                         </muxc:NumberBox>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="THB"
+                                                   Style="{StaticResource UnitSuffixTextStyle}"
+                                                   Margin="{StaticResource CurrencySuffixMargin}"/>
                                         <!-- Overlay button that covers the entire NumberBox -->
                                         <Button Grid.ColumnSpan="2" Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}"
                                                 HorizontalAlignment="Stretch"
@@ -355,46 +426,41 @@
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Inline editor (shown on demand) -->
-                                    <ComboBox Grid.Column="0"
-                                              SelectedItem="{Binding DealInput.CommissionEntryUnit, Mode=TwoWay}"
-                                              Margin="0"
-                                              Style="{StaticResource UnitComboBoxStyle}"
-                                              MinWidth="60"
-                                              HorizontalContentAlignment="Center"
-                                              Visibility="{Binding DealInput.IsCommissionEditorVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}" FontSize="10" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                        <x:String>auto</x:String>
-                                        <x:String>%</x:String>
-                                        <x:String>THB</x:String>
-                                    </ComboBox>
+                                    <!-- Unit dropdown removed; column preserved for alignment -->
 
                                     <Grid Grid.Column="1" ColumnSpacing="4"
                                           Visibility="{Binding DealInput.IsCommissionEditorVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="2*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBox Grid.Column="0"
-                                                 Text="{x:Bind ViewModel.DealInput.CommissionPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 PlaceholderText="%"
-                                                 Style="{StaticResource CompactTextBox}"
-                                                 Margin="0"
-                                                 HorizontalAlignment="Stretch"
-                                                 TextAlignment="Right"
-                                                 InputScope="Number"/>
-                                        <TextBox Grid.Column="1"
-                                                 Text="{x:Bind ViewModel.DealInput.CommissionAmtEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 PlaceholderText="THB"
-                                                 Style="{StaticResource CompactTextBox}"
-                                                 Margin="2,0,0,0"
-                                                 HorizontalAlignment="Stretch"
-                                                 TextAlignment="Right"
-                                                 InputScope="Number"/>
+
+                                        <!-- % input with persistent suffix -->
+                                        <Grid Grid.Column="0">
+                                            <TextBox
+                                                Text="{x:Bind ViewModel.DealInput.CommissionPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                PlaceholderText="%"
+                                                Style="{StaticResource CompactTextBox}"
+                                                Margin="0"
+                                                HorizontalAlignment="Stretch"
+                                                TextAlignment="Right"
+                                                Padding="6,4,24,4"
+                                                InputScope="Number"/>
+                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                        </Grid>
+
+                                        <!-- THB input with persistent suffix -->
+                                        <Grid Grid.Column="1">
+                                            <muxc:NumberBox
+                                                Style="{StaticResource CompactNumberBox}"
+                                                Margin="2,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                Value="{Binding DealInput.CommissionAmtEntry, Mode=TwoWay}"
+                                                PlaceholderText="THB"
+                                                NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                Padding="6,4,36,4"/>
+                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        </Grid>
                                     </Grid>
 
                                     <!-- Summary pill in same row when editor hidden (align with value column) -->
@@ -433,10 +499,14 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <muxc:NumberBox Grid.Column="1" Style="{StaticResource CompactNumberBox}"
-                                                    Value="{Binding DealInput.IdcOther, Mode=TwoWay}"
-                                                    PlaceholderText="THB"
-                                                    NumberFormatter="{StaticResource GroupedZeroFormatter}"/>
+                                    <Grid Grid.Column="1">
+                                        <muxc:NumberBox Style="{StaticResource CompactNumberBox}"
+                                                        Value="{Binding DealInput.IdcOther, Mode=TwoWay}"
+                                                        PlaceholderText="THB"
+                                                        NumberFormatter="{StaticResource GroupedZeroFormatter}"
+                                                        Padding="6,4,36,4"/>
+                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                    </Grid>
                                 </Grid>
         
                                 <!-- Rate mode: RadioButtons (bind SelectedIndex) -->
@@ -453,7 +523,7 @@
                                 </Grid>
         
                                 <!-- Customer rate label (styled like others) -->
-                                <TextBlock Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-4,6,0,0"
+                                <TextBlock Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,6,0,0"
                                            Text="Customer rate (% p.a.)"
                                            Style="{StaticResource LabelTextStyle}"
                                            Visibility="{Binding DealInput.IsFixedRateMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
@@ -463,47 +533,64 @@
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="1" Spacing="4">
-                                    <!-- Nominal Rate Row -->
-                                    <Grid>
+
+                                    <Grid Grid.Column="1" ColumnSpacing="4">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid>
-                                                <TextBox Text="{Binding DealInput.CustomerNominalRate, Mode=TwoWay}" MinWidth="100" IsReadOnly="{Binding GoalSeek.IsTargetSet}" Style="{StaticResource CompactTextBox}">
-                                                    <TextBox.ContextFlyout>
-                                                        <MenuFlyout>
-                                                            <MenuFlyoutItem Text="Goal Seek: Solve for Rate (to target RoRAC)" Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}">
-                                                                <MenuFlyoutItem.Icon>
-                                                                    <FontIcon Glyph="&#xE71A;" />
-                                                                </MenuFlyoutItem.Icon>
-                                                            </MenuFlyoutItem>
-                                                        </MenuFlyout>
-                                                    </TextBox.ContextFlyout>
-                                                </TextBox>
-                                                <Button Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}"
-                                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                        Visibility="{Binding GoalSeek.IsTargetSet, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border BorderBrush="Gold" BorderThickness="2" Background="Transparent" CornerRadius="4">
-                                                                 <ToolTipService.ToolTip>
-                                                                     <ToolTip Content="Click to solve for Customer Rate to achieve target RoRAC" />
-                                                                 </ToolTipService.ToolTip>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                            </Grid>
-                                            <TextBlock Grid.Column="1" Text="(nominal)" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7" FontSize="12"/>
+
+                                        <!-- Nominal rate input (with in-field label and goal-seek overlay) -->
+                                        <Grid Grid.Column="0">
+                                            <muxc:NumberBox
+                                                Value="{x:Bind ViewModel.DealInput.CustomerNominalRate, Mode=TwoWay}"
+                                                Minimum="0"
+                                                Maximum="100"
+                                                Style="{StaticResource CompactNumberBox}"
+                                                NumberFormatter="{StaticResource GroupedTwoFormatter}"
+                                                Padding="6,4,52,4"
+                                                IsEnabled="{Binding GoalSeek.IsTargetSet, Converter={StaticResource BoolNotConverter}}">
+                                                <muxc:NumberBox.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem Text="Goal Seek: Solve for Rate (to target RoRAC)" Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE71A;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </muxc:NumberBox.ContextFlyout>
+                                            </muxc:NumberBox>
+                                            <TextBlock Text="nominal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.7" FontSize="12" IsHitTestVisible="False"/>
+                                            <Button Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}"
+                                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                    Visibility="{Binding GoalSeek.IsTargetSet, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border BorderBrush="Gold" BorderThickness="2" Background="Transparent" CornerRadius="4">
+                                                            <ToolTipService.ToolTip>
+                                                                <ToolTip Content="Click to solve for Customer Rate to achieve target RoRAC" />
+                                                            </ToolTipService.ToolTip>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </Grid>
-                                        <FontIcon Grid.Column="1" Glyph="&#xE7BA;" Foreground="DarkOrange"
+
+                                        <!-- Flat rate input (with in-field label) -->
+                                        <Grid Grid.Column="1">
+                                            <muxc:NumberBox
+                                                Value="{x:Bind ViewModel.DealInput.CustomerFlatRate, Mode=TwoWay}"
+                                                Minimum="0"
+                                                Maximum="100"
+                                                Style="{StaticResource CompactNumberBox}"
+                                                NumberFormatter="{StaticResource GroupedTwoFormatter}"
+                                                Padding="6,4,40,4"/>
+                                            <TextBlock Text="flat" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.7" FontSize="12" IsHitTestVisible="False"/>
+                                        </Grid>
+
+                                        <!-- Deviation warning -->
+                                        <FontIcon Grid.Column="2" Glyph="&#xE7BA;" Foreground="DarkOrange"
                                                   Visibility="{Binding DealInput.IsRateDeviation, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   Margin="8,0,0,0" VerticalAlignment="Center">
                                             <ToolTipService.ToolTip>
@@ -511,17 +598,7 @@
                                             </ToolTipService.ToolTip>
                                         </FontIcon>
                                     </Grid>
-                                    <!-- Flat Rate Row -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox Text="{Binding DealInput.CustomerFlatRate, Mode=TwoWay}" MinWidth="100" Style="{StaticResource CompactTextBox}"/>
-                                        <TextBlock Grid.Column="1" Text="(flat)" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7" FontSize="12"/>
-                                    </Grid>
-                                </StackPanel>
-                               </Grid>
+                                </Grid>
         
                                 <!-- Target installment (visible if target installment) -->
                                 <TextBlock Grid.Row="18" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -548,73 +625,88 @@
                             </Grid>
 
                             <!-- Goal Seek Expander (Moved above Risk Parameters) -->
-                            <muxc:Expander Header="Goal Seek" HorizontalAlignment="Stretch" IsExpanded="{Binding GoalSeek.IsOpen, Mode=TwoWay}" Margin="0,12,0,0">
-                                <StackPanel Spacing="12">
-                                    <TextBlock Text="Target RoRAC (%):" Style="{StaticResource LabelTextStyle}"/>
-                                    <Grid HorizontalAlignment="Left">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <muxc:NumberBox Grid.Column="0"
-                                                        Value="{Binding GoalSeek.TargetValue, Mode=TwoWay}"
-                                                        Minimum="0"
-                                                        Maximum="100"
-                                                        SmallChange="0.1"
-                                                        LargeChange="1"
-                                                        SpinButtonPlacementMode="Inline"
-                                                        AcceptsExpression="False"
-                                                        PlaceholderText="e.g. 15 (for 15%)"
-                                                        Width="150"/>
-                                        <TextBlock Grid.Column="1" Text="%" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7"/>
-                                    </Grid>
-                                    <TextBlock Text="Click on the highlighted 'Customer Rate' or 'Subsidy Budget' fields to auto-solve for the target RoRAC."
-                                               Style="{StaticResource LabelTextStyle}" Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
-                                </StackPanel>
-                            </muxc:Expander>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                    <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                </Grid.ColumnDefinitions>
+                                <muxc:Expander Grid.Column="2" Grid.ColumnSpan="2" Header="Goal Seek" HorizontalAlignment="Stretch" IsExpanded="{Binding GoalSeek.IsOpen, Mode=TwoWay}" Style="{StaticResource CompactExpanderStyle}">
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="Target RoRAC (%):" Style="{StaticResource LabelTextStyle}"/>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <muxc:NumberBox Grid.Column="0"
+                                                            Value="{Binding GoalSeek.TargetValue, Mode=TwoWay}"
+                                                            Minimum="0"
+                                                            Maximum="100"
+                                                            SmallChange="0.1"
+                                                            LargeChange="1"
+                                                            AcceptsExpression="False"
+                                                            PlaceholderText="e.g. 15 (for 15%)"
+                                                            Width="150"/>
+                                            <TextBlock Grid.Column="1" Text="%" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7"/>
+                                        </Grid>
+                                        <TextBlock Text="Click on the highlighted 'Customer Rate' or 'Subsidy Budget' fields to auto-solve for the target RoRAC."
+                                                   Style="{StaticResource LabelTextStyle}" Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
+                                    </StackPanel>
+                                </muxc:Expander>
+                            </Grid>
 
                             <!-- Cashflow adjustments moved to Cashflows tab -->
 
                             <!-- Risk Parameters Expander -->
-                            <muxc:Expander Header="Risk Parameters" HorizontalAlignment="Stretch" IsExpanded="False" Margin="0,12,0,0">
-                                <Grid RowSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                    <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                </Grid.ColumnDefinitions>
+                                <muxc:Expander Grid.Column="2" Grid.ColumnSpan="2" Header="Risk Parameters" HorizontalAlignment="Stretch" IsExpanded="False" Style="{StaticResource CompactExpanderStyle}">
+                                    <Grid RowSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                                    <TextBlock Text="Customer Type" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedItem="{Binding DealInput.SelectedCustomerType, Mode=TwoWay}"
-                                              ItemsSource="{Binding DealInput.CustomerTypes}"
-                                              Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-                                              HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                        <TextBlock Text="Customer Type" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedItem="{Binding DealInput.SelectedCustomerType, Mode=TwoWay}"
+                                                  ItemsSource="{Binding DealInput.CustomerTypes}"
+                                                  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
 
-                                    <TextBlock Text="Asset State" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedItem="{Binding DealInput.SelectedAssetState, Mode=TwoWay}"
-                                              ItemsSource="{Binding DealInput.AssetStates}"
-                                              Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                              HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                        <TextBlock Text="Asset State" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedItem="{Binding DealInput.SelectedAssetState, Mode=TwoWay}"
+                                                  ItemsSource="{Binding DealInput.AssetStates}"
+                                                  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
 
-                                    <TextBlock Text="Asset Class (AVC)" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedItem="{Binding DealInput.SelectedAssetValuationCurve, Mode=TwoWay}"
-                                              ItemsSource="{Binding DealInput.AssetValuationCurves}"
-                                              Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                              HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                        <TextBlock Text="Asset Class (AVC)" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedItem="{Binding DealInput.SelectedAssetValuationCurve, Mode=TwoWay}"
+                                                  ItemsSource="{Binding DealInput.AssetValuationCurves}"
+                                                  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
 
-                                    <TextBlock Text="Credit Rating" Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedItem="{Binding DealInput.SelectedRating, Mode=TwoWay}"
-                                              ItemsSource="{Binding DealInput.CreditRatings}"
-                                              Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                                              HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                                </Grid>
-                            </muxc:Expander>
+                                        <TextBlock Text="Credit Rating" Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedItem="{Binding DealInput.SelectedRating, Mode=TwoWay}"
+                                                  ItemsSource="{Binding DealInput.CreditRatings}"
+                                                  Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                    </Grid>
+                                </muxc:Expander>
+                            </Grid>
 
                         </StackPanel>
                     </Grid>

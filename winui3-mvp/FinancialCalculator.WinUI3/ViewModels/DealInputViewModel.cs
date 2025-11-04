@@ -27,6 +27,13 @@ public partial class DealInputViewModel : ObservableValidator
         _vehicleCatalog = vehicleCatalog;
         _standardRates = standardRates;
         _commission = commission;
+
+        // Seed dual-entry fields for Downpayment and Balloon
+        SyncDownUiFromModel();
+        SyncBalloonUiFromModel();
+
+        // Ensure initial flat rate is computed even if nominal equals the standard rate
+        UpdateStandardRate();
     }
 
     // Test-friendly overload: allows constructing without a vehicle catalog
@@ -35,6 +42,13 @@ public partial class DealInputViewModel : ObservableValidator
         _vehicleCatalog = new NullVehicleCatalogService();
         _standardRates = standardRates;
         _commission = commission;
+
+        // Seed dual-entry fields for Downpayment and Balloon
+        SyncDownUiFromModel();
+        SyncBalloonUiFromModel();
+
+        // Ensure initial flat rate is computed even if nominal equals the standard rate
+        UpdateStandardRate();
     }
 
     // MARK: Vehicle Selection
@@ -212,6 +226,9 @@ public partial class DealInputViewModel : ObservableValidator
         OnPropertyChanged(nameof(DealerCommissionPctText));
         OnPropertyChanged(nameof(TransactionPrice));
         UpdateStandardRate();
+        // Keep dual-entry fields in sync with new base
+        SyncDownUiFromModel();
+        SyncBalloonUiFromModel();
         NotifyChanged();
     }
     private void OnMbthDiscountChanged(double value)
@@ -219,6 +236,9 @@ public partial class DealInputViewModel : ObservableValidator
         OnPropertyChanged(nameof(TransactionPrice));
         UpdateDealerCommissionResolved();
         UpdateStandardRate();
+        // Keep dual-entry fields in sync with new base
+        SyncDownUiFromModel();
+        SyncBalloonUiFromModel();
         NotifyChanged();
     }
     private void OnDownPaymentAmountChanged(double value) { UpdateDealerCommissionResolved(); OnPropertyChanged(nameof(DealerCommissionPctText)); NotifyChanged(); }
@@ -278,10 +298,10 @@ public partial class DealInputViewModel : ObservableValidator
         NotifyChanged();
     }
     private void OnBalloonPercentChanged(double value) => NotifyChanged();
-    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ConvertDownPaymentOnUnitChange(value); ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); NotifyChanged(); }
-    private void OnDownPaymentValueEntryChanged(double value) { ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); NotifyChanged(); }
-    private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ConvertBalloonOnUnitChange(value); ClampBalloonEntry(); NotifyChanged(); }
-    private void OnBalloonValueEntryChanged(double value) { ClampBalloonEntry(); NotifyChanged(); }
+    private void OnDownPaymentUnitChanged(string value) { OnPropertyChanged(nameof(DownPaymentPlaceholder)); OnPropertyChanged(nameof(DownPaymentUnitSuffix)); ConvertDownPaymentOnUnitChange(value); ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); SyncDownUiFromModel(); NotifyChanged(); }
+    private void OnDownPaymentValueEntryChanged(double value) { ClampDownPaymentEntry(); UpdateDealerCommissionResolved(); UpdateStandardRate(); SyncDownUiFromModel(); NotifyChanged(); }
+    private void OnBalloonUnitChanged(string value) { OnPropertyChanged(nameof(BalloonPlaceholder)); OnPropertyChanged(nameof(BalloonUnitSuffix)); ConvertBalloonOnUnitChange(value); ClampBalloonEntry(); SyncBalloonUiFromModel(); NotifyChanged(); }
+    private void OnBalloonValueEntryChanged(double value) { ClampBalloonEntry(); SyncBalloonUiFromModel(); NotifyChanged(); }
     private void OnLockModeChanged(string value) { }
 
     private void OnRateModeChanged(string value) { OnPropertyChanged(nameof(IsFixedRateMode)); OnPropertyChanged(nameof(IsTargetInstallmentMode)); RateModeIndex = string.Equals(RateMode, "fixed_rate", System.StringComparison.OrdinalIgnoreCase) ? 0 : 1; NotifyChanged(); }
@@ -372,12 +392,27 @@ public partial class DealInputViewModel : ObservableValidator
         }
 
         _standardRateForCurrentSelection = _standardRates.GetStandardRate(Product, TermMonths, downPaymentPct, Timing);
-        
+
         if (_standardRateForCurrentSelection.HasValue)
         {
-            CustomerNominalRate = _standardRateForCurrentSelection.Value;
+            // If the nominal changes, setter will compute flat via OnCustomerNominalRateChanged.
+            // If it doesn't change (same value), force recomputation of flat here.
+            var std = _standardRateForCurrentSelection.Value;
+            if (Math.Abs(CustomerNominalRate - std) > 1e-9)
+            {
+                CustomerNominalRate = std;
+            }
+            else
+            {
+                if (!_isUpdatingRate)
+                {
+                    _isUpdatingRate = true;
+                    CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode());
+                    _isUpdatingRate = false;
+                }
+            }
         }
-        
+
         CheckRateDeviation();
     }
 
