@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vm="using:FinancialCalculator.WinUI3.ViewModels"
+    xmlns:appcontrols="using:FinancialCalculator.WinUI3.Controls"
     mc:Ignorable="d"
     Title="Financial Calculator Pro">
 
@@ -1443,169 +1444,13 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Margin="0,0,0,12">
-                        <TextBlock Text="Campaign Designer" Style="{StaticResource CardHeaderTextStyle}" FontSize="24" VerticalAlignment="Center"/>
-                        <Button Command="{x:Bind ViewModel.Comparison.ClearComparisonCommand}" Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE74D;" FontSize="14"/>
-                                <TextBlock Text="Clear All"/>
-                            </StackPanel>
-                        </Button>
-                        <ToggleSwitch x:Name="DesignerDetailsToggle"
-                                      OnContent="Detailed"
-                                      OffContent="Compact"
-                                      IsOn="True"
-                                      Margin="8,0,0,0"
-                                      VerticalAlignment="Center"
-                                      AutomationProperties.Name="Toggle tile details (compact/detailed)"/>
+                    <StackPanel Grid.Row="0" Spacing="12" Margin="0,0,0,12">
+                        <appcontrols:CampaignDesignerHeaderView/>
+                        <appcontrols:CampaignDesignerSummaryView/>
                     </StackPanel>
 
-                    <!-- Overall Profitability (Campaign Designer aggregate) -->
-                    <Border Style="{StaticResource CardContainerStyle}" Padding="12" Margin="0,0,0,12">
-                        <StackPanel>
-                            <TextBlock Text="Overall Profitability" Style="{StaticResource CardHeaderTextStyle}"/>
-                            <TextBlock Text="{x:Bind ViewModel.Comparison.OverallAvgRoRAC, Mode=OneWay}"
-                                       FontSize="20" FontWeight="SemiBold"
-                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
-                            <TextBlock Text="Volume weighted AcqRoRAC" Opacity="0.7" FontSize="12"/>
-                        </StackPanel>
-                    </Border>
-
-                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{x:Bind ViewModel.Comparison.DesignerCampaigns, Mode=OneWay}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="16"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="vm:CampaignTileViewModel">
-                                    <Border Style="{StaticResource CardContainerStyle}" Width="360" Padding="12" VerticalAlignment="Stretch">
-                                        <StackPanel Spacing="8">
-                                            <!-- Header -->
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBox Text="{Binding Title, Mode=TwoWay}" FontSize="16" FontWeight="SemiBold" BorderThickness="0" Background="Transparent"/>
-                                                <!-- Details toggle (Fluent-aligned) -->
-                                                <ToggleSwitch Grid.Column="1"
-                                                              x:Name="TileDetailsToggle"
-                                                              OnContent="Details"
-                                                              OffContent="Compact"
-                                                              IsOn="True"
-                                                              Margin="8,0,8,0"
-                                                              VerticalAlignment="Center"/>
-                                                <!-- Remove (X) button: prompts user and deletes campaign tile -->
-                                                <Button Grid.Column="2"
-                                                        Style="{StaticResource IconButtonStyle}"
-                                                        Click="OnDesignerRemoveClick"
-                                                        ToolTipService.ToolTip="Remove campaign">
-                                                    <FontIcon Glyph="&#xE74D;" FontSize="12"/>
-                                                </Button>
-                                            </Grid>
-
-                                            <!-- Basic info -->
-                                            <StackPanel Spacing="4">
-                                                <!-- Model and Campaign summary -->
-                                                <TextBlock FontWeight="SemiBold">
-                                                    <Run Text="Model: "/>
-                                                    <Run Text="{Binding ModelName}"/>
-                                                </TextBlock>
-                                                <TextBlock FontWeight="SemiBold">
-                                                    <Run Text="Campaign: "/>
-                                                    <Run Text="{Binding Title}"/>
-                                                </TextBlock>
-                                                <!-- Product and Avg RoRAC -->
-                                                <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Product" Opacity="0.7" FontSize="11"/>
-                                                        <TextBlock Text="{Binding Product}" FontWeight="SemiBold"/>
-                                                    </StackPanel>
-                                                    <StackPanel>
-                                                        <TextBlock Text="Avg RoRAC" Opacity="0.7" FontSize="11"/>
-                                                        <TextBlock Text="{Binding AvgRoRAC}" FontWeight="SemiBold"/>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </StackPanel>
-
-                                            <!-- Per-term breakdown grid -->
-                                            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8"
-                                                    Visibility="{Binding IsOn, ElementName=TileDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="*"/>
-                                                    </Grid.RowDefinitions>
-                                                    <TextBlock Text="Term Breakdown" FontWeight="SemiBold" Opacity="0.7" Margin="0,0,0,8"/>
-                                                    <!-- Column headers -->
-                                                    <Grid Grid.Row="1" ColumnSpacing="8" Margin="0,0,0,4">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="60"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="90"/>
-                                                            <ColumnDefinition Width="80"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0" Text="Term" Opacity="0.6" FontSize="12"/>
-                                                        <TextBlock Grid.Column="1" Text="Rate (% p.a.)" Opacity="0.6" FontSize="12"/>
-                                                        <TextBlock Grid.Column="2" Text="Volume Share (%)" Opacity="0.6" FontSize="12"/>
-                                                        <TextBlock Grid.Column="3" Text="RoRAC" Opacity="0.6" FontSize="12" HorizontalAlignment="Right"/>
-                                                    </Grid>
-                                                    <ItemsControl Grid.Row="2" ItemsSource="{Binding TermBreakdown}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid ColumnSpacing="8" Margin="0,4,0,4">
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="60"/>
-                                                                        <ColumnDefinition Width="*"/>
-                                                                        <ColumnDefinition Width="90"/>
-                                                                        <ColumnDefinition Width="80"/>
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock Grid.Column="0" Text="{Binding TermLabel}" VerticalAlignment="Center"/>
-                                                                    <!-- Customer rate editable -->
-                                                                    <muxc:NumberBox Grid.Column="1" Value="{Binding CustomerRatePct, Mode=TwoWay}" Minimum="0" Maximum="100" NumberFormatter="{StaticResource GroupedZeroFormatter}" HorizontalAlignment="Stretch" />
-                                                                    <!-- Distribution % editable -->
-                                                                    <muxc:NumberBox Grid.Column="2" Value="{Binding DistributionPct, Mode=TwoWay}" Minimum="0" Maximum="100" NumberFormatter="{StaticResource GroupedZeroFormatter}" HorizontalAlignment="Stretch" />
-                                                                    <!-- Per-term RoRAC -->
-                                                                    <TextBlock Grid.Column="3" Text="{Binding RoRAC}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </Grid>
-                                            </Border>
-
-                                            <!-- Campaign volume and controls -->
-                                            <Grid Margin="0,8,0,0"
-                                                  Visibility="{Binding IsOn, ElementName=TileDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="140"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel>
-                                                    <TextBlock Text="Acquisition Units" Opacity="0.7" FontSize="11"/>
-                                                    <muxc:NumberBox Value="{Binding CampaignUnits, Mode=TwoWay}" Minimum="0" NumberFormatter="{StaticResource GroupedZeroFormatter}" />
-                                                </StackPanel>
-                                                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Volume Share (%)" Opacity="0.7" FontSize="11" HorizontalAlignment="Right"/>
-                                                        <TextBlock HorizontalAlignment="Right" Text="{Binding CampaignVolumePctText}"/>
-                                                    </StackPanel>
-                                                    <StackPanel Margin="0,4,0,0">
-                                                        <TextBlock Text="Average RoRAC" Opacity="0.7" FontSize="11" HorizontalAlignment="Right"/>
-                                                        <TextBlock Text="{Binding AvgRoRAC}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <appcontrols:CampaignDesignerTilesView Grid.Row="1"
+                                                           IsDetailed="{Binding Comparison.IsDesignerDetailed, Mode=TwoWay}"/>
                 </Grid>
             </TabViewItem>
         </TabView.TabItems>

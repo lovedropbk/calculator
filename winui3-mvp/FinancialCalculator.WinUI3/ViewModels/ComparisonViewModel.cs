@@ -19,6 +19,14 @@ public partial class ComparisonViewModel : ObservableObject
     // Campaign Designer collection (tiles shown in Campaign Designer tab)
     public System.Collections.ObjectModel.ObservableCollection<CampaignTileViewModel> DesignerCampaigns { get; } = new();
 
+    // Global details state for Campaign Designer tiles
+    private bool _isDesignerDetailed = true;
+    public bool IsDesignerDetailed
+    {
+        get => _isDesignerDetailed;
+        set => SetProperty(ref _isDesignerDetailed, value);
+    }
+
     private string _overallAvgRoRAC = "0.00%";
     public string OverallAvgRoRAC { get => _overallAvgRoRAC; set => SetProperty(ref _overallAvgRoRAC, value); }
 

@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Styles/DefaultStyles.xaml"/>
                 <ResourceDictionary Source="Styles/ResponsiveStyles.xaml"/>
                 <ResourceDictionary Source="Styles/FluentTheme.xaml"/>
+                <ResourceDictionary Source="Styles/DesignerStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <!-- MARK: Enhanced Theme Brushes with Animations -->
             <ResourceDictionary.ThemeDictionaries>
@@ -60,6 +61,7 @@
             <conv:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
             <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
             <conv:BoolNotConverter x:Key="BoolNotConverter" />
+            <conv:TextFormatConverter x:Key="TextFormatConverter" />
 
             <!-- MARK: Enhanced Card Container Style with Shadow -->
             <Style x:Key="CardContainerStyle" TargetType="Border">

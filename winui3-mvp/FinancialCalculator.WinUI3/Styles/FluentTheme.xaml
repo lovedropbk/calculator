@@ -100,4 +100,14 @@
   <Style x:Key="DenseNumberBoxWithLabel40Style" TargetType="muxc:NumberBox" BasedOn="{StaticResource DenseNumberBoxStyle}">
     <Setter Property="Padding" Value="6,4,40,4"/>
   </Style>
+
+  <!-- Dense ToggleSwitch for compact contexts -->
+  <Style x:Key="DenseToggleSwitchStyle" TargetType="ToggleSwitch">
+    <Setter Property="MinWidth" Value="0"/>
+    <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="OnContent" Value="On"/>
+    <Setter Property="OffContent" Value="Off"/>
+    <Setter Property="Height" Value="{StaticResource CompactControlHeight}"/>
+  </Style>
 </ResourceDictionary>

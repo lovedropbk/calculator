@@ -1,0 +1,23 @@
+<UserControl
+    x:Class="FinancialCalculator.WinUI3.Controls.CampaignDesignerSummaryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Expect DataContext = MainViewModel -->
+    <Border Style="{StaticResource CardContainerStyle}" Padding="{StaticResource DesignerCardPadding}" Margin="0,0,0,12">
+        <StackPanel>
+            <TextBlock Text="Overall Profitability"
+                       Style="{StaticResource CardHeaderTextStyle}"/>
+            <TextBlock Text="{Binding Comparison.OverallAvgRoRAC}"
+                       FontSize="{StaticResource FontSizeHeader}"
+                       FontWeight="SemiBold"
+                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+            <TextBlock Text="Volume weighted AcqRoRAC"
+                       Style="{StaticResource TokenCaptionTextStyle}"/>
+        </StackPanel>
+    </Border>
+</UserControl>
