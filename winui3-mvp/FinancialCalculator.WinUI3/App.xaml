@@ -50,6 +50,13 @@
                     <!-- High Contrast overrides for custom brushes -->
                     <SolidColorBrush x:Key="PillBackgroundBrush" Color="#00000000" />
                     <SolidColorBrush x:Key="PillStrokeBrush" Color="#000000" />
+
+                    <!-- Budget palette in High Contrast: map to system colors for visibility -->
+                    <SolidColorBrush x:Key="BudgetCashBrush" Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="BudgetSubDownBrush" Color="{ThemeResource SystemColorWindowTextColor}"/>
+                    <SolidColorBrush x:Key="BudgetRateSubsidyBrush" Color="{ThemeResource SystemColorHotlightColor}"/>
+                    <SolidColorBrush x:Key="BudgetIdcBrush" Color="{ThemeResource SystemColorGrayTextColor}"/>
+                    <SolidColorBrush x:Key="BudgetUnallocatedBrush" Color="{ThemeResource SystemColorWindowFrameColor}"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 

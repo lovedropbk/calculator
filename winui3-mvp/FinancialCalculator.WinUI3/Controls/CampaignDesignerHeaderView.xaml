@@ -13,31 +13,30 @@
                     Spacing="{StaticResource DesignerTileGap}"
                     Margin="{StaticResource DesignerHeaderMargin}"
                     VerticalAlignment="Center">
-            <TextBlock Text="Campaign Designer"
-                       Style="{StaticResource CardHeaderTextStyle}"
-                       FontSize="{StaticResource FontSizeDisplay}"
+            <TextBlock x:Uid="CampaignDesigner_Header_Title"
+                       Style="{StaticResource DesignerSectionHeaderTextStyle}"
                        VerticalAlignment="Center"/>
 
-            <Button Command="{Binding Comparison.ClearComparisonCommand}"
+            <Button x:Uid="CampaignDesigner_Header_ClearAll_Button"
+                    Command="{Binding Comparison.ClearComparisonCommand}"
                     Style="{StaticResource SecondaryButtonStyle}"
                     VerticalAlignment="Center"
+                    AccessKey="C"
+                    AutomationProperties.AcceleratorKey="Alt+C"
                     AutomationProperties.Name="Clear all campaign tiles">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE74D;" FontSize="14"/>
-                    <TextBlock Text="Clear All"/>
+                    <TextBlock x:Uid="CampaignDesigner_Header_ClearAll_Text"/>
                 </StackPanel>
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="Clear all designer tiles"/>
-                </ToolTipService.ToolTip>
             </Button>
 
             <ToggleSwitch x:Name="DesignerDetailsToggle"
+                          x:Uid="CampaignDesigner_Header_DetailsToggle"
                           Style="{StaticResource DenseToggleSwitchStyle}"
-                          OnContent="Detailed"
-                          OffContent="Compact"
                           IsOn="{Binding Comparison.IsDesignerDetailed, Mode=TwoWay}"
-                          Margin="8,0,0,0"
                           VerticalAlignment="Center"
+                          AccessKey="D"
+                          AutomationProperties.AcceleratorKey="Alt+D"
                           AutomationProperties.Name="Toggle designer tile details (compact/detailed)"/>
         </StackPanel>
     </Grid>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CampaignDesigner_Header_Title.Text" xml:space="preserve">
+    <value>Campaign Designer</value>
+  </data>
+  <data name="CampaignDesigner_Header_ClearAll_Text.Text" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="CampaignDesigner_Header_ClearAll_Button.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear all designer tiles</value>
+  </data>
+  <data name="CampaignDesigner_Header_DetailsToggle.OnContent" xml:space="preserve">
+    <value>Detailed</value>
+  </data>
+  <data name="CampaignDesigner_Header_DetailsToggle.OffContent" xml:space="preserve">
+    <value>Compact</value>
+  </data>
+  <data name="CampaignDesigner_Summary_Title.Text" xml:space="preserve">
+    <value>Overall Profitability</value>
+  </data>
+  <data name="CampaignDesigner_Summary_Caption.Text" xml:space="preserve">
+    <value>Volume weighted AcqRoRAC</value>
+  </data>
+  <data name="CampaignDesigner_Tile_Toggle.OnContent" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="CampaignDesigner_Tile_Toggle.OffContent" xml:space="preserve">
+    <value>Compact</value>
+  </data>
+  <data name="CampaignDesigner_Tile_Reset.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reset to global</value>
+  </data>
+  <data name="CampaignDesigner_Tile_Remove.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove campaign</value>
+  </data>
+  <data name="CampaignDesigner_Tile_ProductLabel.Text" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="CampaignDesigner_Tile_AvgRoRACLabel.Text" xml:space="preserve">
+    <value>Avg RoRAC</value>
+  </data>
+  <data name="CampaignDesigner_Tile_TermBreakdownTitle.Text" xml:space="preserve">
+    <value>Term Breakdown</value>
+  </data>
+  <data name="CampaignDesigner_Tile_TermHeader.Text" xml:space="preserve">
+    <value>Term</value>
+  </data>
+  <data name="CampaignDesigner_Tile_RateHeader.Text" xml:space="preserve">
+    <value>Rate (% p.a.)</value>
+  </data>
+  <data name="CampaignDesigner_Tile_VolumeHeader.Text" xml:space="preserve">
+    <value>Volume Share (%)</value>
+  </data>
+  <data name="CampaignDesigner_Tile_RoRACHeader.Text" xml:space="preserve">
+    <value>RoRAC</value>
+  </data>
+  <data name="CampaignDesigner_Tile_AcqUnitsLabel.Text" xml:space="preserve">
+    <value>Acquisition Units</value>
+  </data>
+  <data name="CampaignDesigner_Tile_VolumeShareLabel.Text" xml:space="preserve">
+    <value>Volume Share (%)</value>
+  </data>
+  <data name="CampaignDesigner_Tile_AverageRoRACLabel.Text" xml:space="preserve">
+    <value>Average RoRAC</value>
+  </data>
+  <data name="CampaignDesigner_Tile_ModelPrefix.Text" xml:space="preserve">
+    <value>Model: </value>
+  </data>
+  <data name="CampaignDesigner_Tile_CampaignPrefix.Text" xml:space="preserve">
+    <value>Campaign: </value>
+  </data>
+</root>

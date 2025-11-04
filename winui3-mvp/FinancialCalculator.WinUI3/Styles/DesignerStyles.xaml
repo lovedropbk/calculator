@@ -14,6 +14,11 @@
 
     <!-- Tile gaps and paddings -->
     <x:Double x:Key="DesignerTileGap">16</x:Double>
+    <!-- Gutter token for tiles spacing (used by UniformGridLayout and others) -->
+    <x:Double x:Key="DesignerTilesGutter">16</x:Double>
+    <!-- Standardized item margin for ListView container -->
+    <Thickness x:Key="DesignerTilesItemMargin">0,0,16,0</Thickness>
+
     <Thickness x:Key="DesignerHeaderMargin">0,0,0,12</Thickness>
     <Thickness x:Key="DesignerCardPadding">12</Thickness>
 
@@ -57,4 +62,26 @@
     <!-- Compact toggle usage marker (bind via x:Key from FluentTheme.xaml DenseToggleSwitchStyle) -->
     <!-- Usage: Style="{StaticResource DenseToggleSwitchStyle}" -->
 
+    <!-- ========================================== -->
+    <!-- Designer spacing + thickness tokens        -->
+    <!-- ========================================== -->
+    <Thickness x:Key="MarginTopXS">0,4,0,0</Thickness>
+    <Thickness x:Key="MarginTopS">0,8,0,0</Thickness>
+    <Thickness x:Key="MarginBottomXS">0,0,0,4</Thickness>
+    <Thickness x:Key="MarginVertXS">0,4,0,4</Thickness>
+    <Thickness x:Key="MarginLeftS">8,0,0,0</Thickness>
+    <Thickness x:Key="InlineRightSmallMargin">0,0,8,0</Thickness>
+
+    <!-- Secondary inline label (e.g., 'nominal', 'flat' in-field) -->
+    <Style x:Key="SecondaryInlineLabelTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TokenLabelTextStyle}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Opacity" Value="0.7"/>
+        <Setter Property="Margin" Value="{StaticResource InlineRightSmallMargin}"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+    </Style>
+
+    <Thickness x:Key="MarginBottomS">0,0,0,8</Thickness>
+    <Thickness x:Key="MarginBottomM">0,0,0,12</Thickness>
 </ResourceDictionary>

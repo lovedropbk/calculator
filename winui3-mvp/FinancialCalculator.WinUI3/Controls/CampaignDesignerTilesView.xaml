@@ -14,33 +14,56 @@
     <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                   VerticalScrollBarVisibility="Auto"
                   Padding="{StaticResource DesignerTilesPadding}">
-        <ListView x:Name="TilesList"
-                  ItemsSource="{Binding Comparison.DesignerCampaigns}"
-                  SelectionMode="None"
-                  IsItemClickEnabled="False"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <!-- Virtualizing wrap layout -->
-                    <ItemsWrapGrid Orientation="Horizontal"
-                                   MaximumRowsOrColumns="0"
-                                   ItemWidth="{StaticResource DesignerTileWidth}"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0,0,{StaticResource DesignerTileGap},0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:CampaignTileViewModel">
-                    <appcontrols:CampaignDesignerTileView
-                        RemoveCommand="{Binding ElementName=Root, Path=RemoveTileCommand}"
-                        IsDetailed="{Binding ElementName=Root, Path=IsDetailed}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <Grid>
+            <!-- ListView path (default) -->
+            <ListView x:Name="TilesList"
+                      ItemsSource="{Binding Comparison.DesignerCampaigns}"
+                      SelectionMode="None"
+                      IsItemClickEnabled="False"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Visibility="Visible">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!-- Virtualizing wrap layout -->
+                        <ItemsWrapGrid Orientation="Horizontal"
+                                       MaximumRowsOrColumns="0"
+                                       ItemWidth="{StaticResource DesignerTileWidth}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="{StaticResource DesignerTilesItemMargin}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CampaignTileViewModel">
+                        <appcontrols:CampaignDesignerTileView
+                            RemoveCommand="{Binding ElementName=Root, Path=RemoveTileCommand}"
+                            GlobalIsDetailed="{Binding ElementName=Root, Path=IsDetailed}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!-- ItemsRepeater path (alternative, switch via LayoutStrategy DP) -->
+            <muxc:ItemsRepeater x:Name="TilesRepeater"
+                                ItemsSource="{Binding Comparison.DesignerCampaigns}"
+                                Visibility="Collapsed">
+                <muxc:ItemsRepeater.Layout>
+                    <muxc:UniformGridLayout Orientation="Horizontal"
+                                            MinItemWidth="{StaticResource DesignerTileWidth}"
+                                            MinColumnSpacing="{StaticResource DesignerTilesGutter}"
+                                            MinRowSpacing="{StaticResource DesignerTilesGutter}"/>
+                </muxc:ItemsRepeater.Layout>
+                <muxc:ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CampaignTileViewModel">
+                        <appcontrols:CampaignDesignerTileView
+                            RemoveCommand="{Binding ElementName=Root, Path=RemoveTileCommand}"
+                            GlobalIsDetailed="{Binding ElementName=Root, Path=IsDetailed}"/>
+                    </DataTemplate>
+                </muxc:ItemsRepeater.ItemTemplate>
+            </muxc:ItemsRepeater>
+        </Grid>
     </ScrollViewer>
 </UserControl>

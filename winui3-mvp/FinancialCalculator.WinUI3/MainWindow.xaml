@@ -764,7 +764,7 @@
                                   Style="{StaticResource ResponsiveScrollViewer}">
                         <controls:DataGrid x:Name="StandardGrid" Style="{StaticResource ModernDataGridStyle}"
                                            VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch"
+                                           HorizontalAlignment="Left"
                                            ItemsSource="{Binding CampaignManager.StandardCampaigns}"
                                            SelectedItem="{Binding CampaignManager.SelectedCampaign, Mode=TwoWay}"
                                            SelectionMode="Single"
@@ -862,7 +862,7 @@
                                            IsReadOnly="False"
                                            GridLinesVisibility="All"
                                            VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch"
+                                           HorizontalAlignment="Left"
                                            MinHeight="150">
                             <controls:DataGrid.Columns>
                             <controls:DataGridTextColumn Header="Campaign Name" Binding="{Binding Title, Mode=TwoWay}" Width="200">
@@ -879,7 +879,6 @@
                             <controls:DataGridTextColumn Header="Customer Downpayment" Binding="{Binding Downpayment}" Width="120" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Dealer Comm." Binding="{Binding DealerCommission}" Width="140" IsReadOnly="True"/>
                             <controls:DataGridTextColumn Header="Acq. RoRAC" Binding="{Binding RoRAC}" Width="120" IsReadOnly="True"/>
-                            <controls:DataGridTextColumn Header="Notes" Binding="{Binding Notes, Mode=TwoWay}" Width="220"/>
                         </controls:DataGrid.Columns>
                     </controls:DataGrid>
                 </ScrollViewer>
@@ -1175,7 +1174,9 @@
                                     Command="{Binding ExportXlsxCommand}"
                                     HorizontalAlignment="Right"
                                     Margin="0,8,0,0"
-                                    Style="{StaticResource SecondaryButtonStyle}">
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    AccessKey="E"
+                                    AutomationProperties.AcceleratorKey="Alt+E">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE8A5;" FontSize="14"/>
                                     <TextBlock Text="Export XLSX"/>
@@ -1349,7 +1350,9 @@
                         <Button Grid.Column="1"
                                 Command="{Binding ExportXlsxCommand}"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource SecondaryButtonStyle}">
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                AccessKey="E"
+                                AutomationProperties.AcceleratorKey="Alt+E">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <FontIcon Glyph="&#xE8A5;" FontSize="14"/>
                                 <TextBlock Text="Export XLSX"/>
@@ -1450,6 +1453,7 @@
                     </StackPanel>
 
                     <appcontrols:CampaignDesignerTilesView Grid.Row="1"
+                                                           LayoutStrategy="ItemsRepeaterUniformGrid"
                                                            IsDetailed="{Binding Comparison.IsDesignerDetailed, Mode=TwoWay}"/>
                 </Grid>
             </TabViewItem>

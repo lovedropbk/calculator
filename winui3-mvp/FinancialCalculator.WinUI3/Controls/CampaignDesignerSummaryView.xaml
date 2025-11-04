@@ -8,15 +8,15 @@
     mc:Ignorable="d">
 
     <!-- Expect DataContext = MainViewModel -->
-    <Border Style="{StaticResource CardContainerStyle}" Padding="{StaticResource DesignerCardPadding}" Margin="0,0,0,12">
+    <Border Style="{StaticResource CardContainerStyle}" Padding="{StaticResource DesignerCardPadding}" Margin="{StaticResource MarginBottomM}">
         <StackPanel>
-            <TextBlock Text="Overall Profitability"
-                       Style="{StaticResource CardHeaderTextStyle}"/>
+            <TextBlock x:Uid="CampaignDesigner_Summary_Title"
+                       Style="{StaticResource TokenSectionHeaderTextStyle}"/>
             <TextBlock Text="{Binding Comparison.OverallAvgRoRAC}"
                        FontSize="{StaticResource FontSizeHeader}"
                        FontWeight="SemiBold"
                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
-            <TextBlock Text="Volume weighted AcqRoRAC"
+            <TextBlock x:Uid="CampaignDesigner_Summary_Caption"
                        Style="{StaticResource TokenCaptionTextStyle}"/>
         </StackPanel>
     </Border>

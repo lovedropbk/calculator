@@ -16,6 +16,57 @@ namespace FinancialCalculator.WinUI3.Controls
             {
                 RemoveTileCommand = new SimpleCommand(async (obj) => await OnRemoveTileRequestedAsync(obj));
             }
+
+            // Ensure initial layout strategy is applied after the visual tree is available
+            Loaded += (_, __) => UpdateLayoutStrategy();
+        }
+
+        // Layout strategy enum to switch between ListView+ItemsWrapGrid and ItemsRepeater+UniformGridLayout
+        public enum TilesLayoutStrategy
+        {
+            ListViewWrap = 0,
+            ItemsRepeaterUniformGrid = 1
+        }
+
+        public TilesLayoutStrategy LayoutStrategy
+        {
+            get => (TilesLayoutStrategy)GetValue(LayoutStrategyProperty);
+            set => SetValue(LayoutStrategyProperty, value);
+        }
+
+        public static readonly DependencyProperty LayoutStrategyProperty =
+            DependencyProperty.Register(
+                nameof(LayoutStrategy),
+                typeof(TilesLayoutStrategy),
+                typeof(CampaignDesignerTilesView),
+                new PropertyMetadata(TilesLayoutStrategy.ListViewWrap, OnLayoutStrategyChanged));
+
+        private static void OnLayoutStrategyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is CampaignDesignerTilesView view)
+            {
+                view.UpdateLayoutStrategy();
+            }
+        }
+
+        private void UpdateLayoutStrategy()
+        {
+            if (TilesList is null || TilesRepeater is null) return;
+
+            if (LayoutStrategy == TilesLayoutStrategy.ListViewWrap)
+            {
+                TilesList.Visibility = Visibility.Visible;
+                TilesList.IsHitTestVisible = true;
+                TilesRepeater.Visibility = Visibility.Collapsed;
+                TilesRepeater.IsHitTestVisible = false;
+            }
+            else
+            {
+                TilesList.Visibility = Visibility.Collapsed;
+                TilesList.IsHitTestVisible = false;
+                TilesRepeater.Visibility = Visibility.Visible;
+                TilesRepeater.IsHitTestVisible = true;
+            }
         }
 
         // Expose a global detail flag that parents can bind to (e.g., Comparison.IsDesignerDetailed)

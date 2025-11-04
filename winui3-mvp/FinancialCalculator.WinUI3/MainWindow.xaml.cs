@@ -104,35 +104,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    // Remove tile (X button) with confirmation dialog
-    private async void OnDesignerRemoveClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (sender is Button btn && btn.DataContext is CampaignTileViewModel tile)
-            {
-                var dialog = new ContentDialog
-                {
-                    Title = "Delete campaign?",
-                    Content = $"Are you sure you want to delete '{tile.Title}'?",
-                    PrimaryButtonText = "Delete",
-                    CloseButtonText = "Cancel",
-                    DefaultButton = ContentDialogButton.Close,
-                    XamlRoot = (this.Content as FrameworkElement)?.XamlRoot
-                };
-
-                var result = await dialog.ShowAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    ViewModel.Comparison.DesignerCampaigns.Remove(tile);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("Remove designer tile failed", ex);
-        }
-    }
 
     private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
@@ -143,7 +114,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    // Duplicate handler removed. See earlier OnDesignerRemoveClick implementation.
 
     private void TryApplySystemBackdrop()
     {
