@@ -1451,6 +1451,13 @@
                                 <TextBlock Text="Clear All"/>
                             </StackPanel>
                         </Button>
+                        <ToggleSwitch x:Name="DesignerDetailsToggle"
+                                      OnContent="Detailed"
+                                      OffContent="Compact"
+                                      IsOn="True"
+                                      Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      AutomationProperties.Name="Toggle tile details (compact/detailed)"/>
                     </StackPanel>
 
                     <!-- Overall Profitability (Campaign Designer aggregate) -->
@@ -1460,7 +1467,7 @@
                             <TextBlock Text="{x:Bind ViewModel.Comparison.OverallAvgRoRAC, Mode=OneWay}"
                                        FontSize="20" FontWeight="SemiBold"
                                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
-                            <TextBlock Text="Portfolio weighted Acquisition RoRAC" Opacity="0.7" FontSize="12"/>
+                            <TextBlock Text="Volume weighted AcqRoRAC" Opacity="0.7" FontSize="12"/>
                         </StackPanel>
                     </Border>
 
@@ -1480,10 +1487,19 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Title, Mode=TwoWay}" FontSize="16" FontWeight="SemiBold" BorderThickness="0" Background="Transparent"/>
+                                                <!-- Details toggle (Fluent-aligned) -->
+                                                <ToggleSwitch Grid.Column="1"
+                                                              x:Name="TileDetailsToggle"
+                                                              OnContent="Details"
+                                                              OffContent="Compact"
+                                                              IsOn="True"
+                                                              Margin="8,0,8,0"
+                                                              VerticalAlignment="Center"/>
                                                 <!-- Remove (X) button: prompts user and deletes campaign tile -->
-                                                <Button Grid.Column="1"
+                                                <Button Grid.Column="2"
                                                         Style="{StaticResource IconButtonStyle}"
                                                         Click="OnDesignerRemoveClick"
                                                         ToolTipService.ToolTip="Remove campaign">
@@ -1516,7 +1532,8 @@
                                             </StackPanel>
 
                                             <!-- Per-term breakdown grid -->
-                                            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
+                                            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8"
+                                                    Visibility="{Binding IsOn, ElementName=TileDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="Auto"/>
@@ -1562,7 +1579,8 @@
                                             </Border>
 
                                             <!-- Campaign volume and controls -->
-                                            <Grid Margin="0,8,0,0">
+                                            <Grid Margin="0,8,0,0"
+                                                  Visibility="{Binding IsOn, ElementName=TileDetailsToggle, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="140"/>
