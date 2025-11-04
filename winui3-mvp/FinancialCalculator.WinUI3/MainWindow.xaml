@@ -54,7 +54,7 @@
                             <TextBlock Text="Main Calculator" VerticalAlignment="Center"/>
                         </StackPanel>
                     </TabViewItem.Header>
-                <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid x:Name="LayoutRoot" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto" MaxHeight="50"/><!-- Footer -->
@@ -590,7 +590,7 @@
                                         </Grid>
 
                                         <!-- Deviation warning -->
-                                        <FontIcon Grid.Column="2" Glyph="&#xE7BA;" Foreground="DarkOrange"
+                                        <FontIcon Grid.Column="2" Glyph="&#xE7BA;" Foreground="{ThemeResource WarningBrush}"
                                                   Visibility="{Binding DealInput.IsRateDeviation, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   Margin="8,0,0,0" VerticalAlignment="Center">
                                             <ToolTipService.ToolTip>
@@ -685,25 +685,25 @@
                                         <ComboBox SelectedItem="{Binding DealInput.SelectedCustomerType, Mode=TwoWay}"
                                                   ItemsSource="{Binding DealInput.CustomerTypes}"
                                                   Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource CompactComboBox}"/>
 
                                         <TextBlock Text="Asset State" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                                         <ComboBox SelectedItem="{Binding DealInput.SelectedAssetState, Mode=TwoWay}"
                                                   ItemsSource="{Binding DealInput.AssetStates}"
                                                   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource CompactComboBox}"/>
 
                                         <TextBlock Text="Asset Class (AVC)" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                                         <ComboBox SelectedItem="{Binding DealInput.SelectedAssetValuationCurve, Mode=TwoWay}"
                                                   ItemsSource="{Binding DealInput.AssetValuationCurves}"
                                                   Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource CompactComboBox}"/>
 
                                         <TextBlock Text="Credit Rating" Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                                         <ComboBox SelectedItem="{Binding DealInput.SelectedRating, Mode=TwoWay}"
                                                   ItemsSource="{Binding DealInput.CreditRatings}"
                                                   Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                                                  HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                                                  HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource CompactComboBox}"/>
                                     </Grid>
                                 </muxc:Expander>
                             </Grid>
@@ -721,14 +721,14 @@
                     Height="28"
                     Padding="0"
                     Margin="0,18,4,0"
-                    Background="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                    BorderBrush="{ThemeResource CardStrokeBrush}"
+                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     Canvas.ZIndex="100" Style="{StaticResource IconButtonStyle}">
                 <Grid>
-                    <FontIcon Glyph="&#xE76B;" Foreground="White"
+                    <FontIcon Glyph="&#xE76B;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                               Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                   <FontIcon Glyph="&#xE76C;" Foreground="White"
+                   <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                              Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
                </Grid>
                <ToolTipService.ToolTip>
@@ -768,7 +768,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Auto"
                                   Style="{StaticResource ResponsiveScrollViewer}">
-                        <controls:DataGrid x:Name="StandardGrid"
+                        <controls:DataGrid x:Name="StandardGrid" Style="{StaticResource ModernDataGridStyle}"
                                            VerticalAlignment="Stretch"
                                            HorizontalAlignment="Stretch"
                                            ItemsSource="{Binding CampaignManager.StandardCampaigns}"
@@ -856,7 +856,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Auto"
                                   Style="{StaticResource ResponsiveScrollViewer}">
-                        <controls:DataGrid x:Name="MyGrid"
+                        <controls:DataGrid x:Name="MyGrid" Style="{StaticResource ModernDataGridStyle}"
                                            ItemsSource="{Binding CampaignManager.MyCampaigns}"
                                            SelectedItem="{Binding CampaignManager.SelectedMyCampaign, Mode=TwoWay}"
                                            SelectionMode="Single"
@@ -1075,18 +1075,18 @@
                                         <ColumnDefinition Width="{Binding BudgetUtilization.UnallocatedPct}"/>
                                     </Grid.ColumnDefinitions>
                                     <!-- Using rectangles for segments, colors should be defined in resources optimally, using hardcoded for now -->
-                                    <Rectangle Grid.Column="0" Fill="#FF0078D7" ToolTipService.ToolTip="Cash Discount"/>
-                                    <Rectangle Grid.Column="1" Fill="#FF0099BC" ToolTipService.ToolTip="SubDown"/>
-                                    <Rectangle Grid.Column="2" Fill="#FF00B7C3" ToolTipService.ToolTip="Rate Subsidy"/>
-                                    <Rectangle Grid.Column="3" Fill="#FF038387" ToolTipService.ToolTip="Other Campaign IDCs (Insurance/MBSP)"/>
-                                    <Rectangle Grid.Column="4" Fill="#FF737373" ToolTipService.ToolTip="Unallocated"/>
+                                    <Rectangle Grid.Column="0" Fill="{ThemeResource BudgetCashBrush}" ToolTipService.ToolTip="Cash Discount"/>
+                                    <Rectangle Grid.Column="1" Fill="{ThemeResource BudgetSubDownBrush}" ToolTipService.ToolTip="SubDown"/>
+                                    <Rectangle Grid.Column="2" Fill="{ThemeResource BudgetRateSubsidyBrush}" ToolTipService.ToolTip="Rate Subsidy"/>
+                                    <Rectangle Grid.Column="3" Fill="{ThemeResource BudgetIdcBrush}" ToolTipService.ToolTip="Other Campaign IDCs (Insurance/MBSP)"/>
+                                    <Rectangle Grid.Column="4" Fill="{ThemeResource BudgetUnallocatedBrush}" ToolTipService.ToolTip="Unallocated"/>
                                 </Grid>
                                 <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="#FF0078D7"/><TextBlock Text="Cash Disc." FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="#FF0099BC"/><TextBlock Text="SubDown" FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="#FF00B7C3"/><TextBlock Text="Rate Sub." FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="#FF038387"/><TextBlock Text="IDCs" FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="#FF737373"/><TextBlock Text="Unallocated" FontSize="11"/></StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetCashBrush}"/><TextBlock Text="Cash Disc." FontSize="11"/></StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetSubDownBrush}"/><TextBlock Text="SubDown" FontSize="11"/></StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetRateSubsidyBrush}"/><TextBlock Text="Rate Sub." FontSize="11"/></StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetIdcBrush}"/><TextBlock Text="IDCs" FontSize="11"/></StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetUnallocatedBrush}"/><TextBlock Text="Unallocated" FontSize="11"/></StackPanel>
                                 </StackPanel>
                             </StackPanel>
 
@@ -1101,7 +1101,7 @@
                             <Grid Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsGrid2"
                                   Visibility="{Binding IsChecked, ElementName=RoRACDetailsToggle2, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Margin="0,8,0,8">
-                                <Border BorderBrush="{ThemeResource CardStrokeBrush}" BorderThickness="1" CornerRadius="4" Padding="12">
+                                <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="12">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -1141,7 +1141,7 @@
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="= Deal IRR (Nominal):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                                         <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding WfDealIRRNominalText}" FontWeight="SemiBold"/>
                                         
-                                        <Border Grid.Row="4" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
+                                        <Border Grid.Row="4" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Matched Funded Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding WfCostOfDebtMatchedText}"/>
@@ -1152,7 +1152,7 @@
                                         <TextBlock Grid.Row="7" Grid.Column="0" Text="= Net Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                                         <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding WfNetInterestMarginText}" FontWeight="SemiBold"/>
 
-                                        <Border Grid.Row="8" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
+                                        <Border Grid.Row="8" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding WfCostOfCreditRiskText}"/>
@@ -1166,7 +1166,7 @@
                                         <TextBlock Grid.Row="12" Grid.Column="0" Text="= Net EBIT Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                                         <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding WfNetEBITMarginText}" FontWeight="SemiBold"/>
 
-                                        <Border Grid.Row="13" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource SystemControlForegroundBaseLowBrush}" Margin="0,4,0,4"/>
+                                        <Border Grid.Row="13" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="14" Grid.Column="0" Text="Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding WfEconomicCapitalText}"/>
@@ -1203,14 +1203,14 @@
                     Height="28"
                     Padding="0"
                     Margin="4,18,0,0"
-                    Background="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                    BorderBrush="{ThemeResource CardStrokeBrush}"
+                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     Canvas.ZIndex="100" Style="{StaticResource IconButtonStyle}">
                 <Grid>
-                    <FontIcon Glyph="&#xE76C;" Foreground="White"
+                    <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                               Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    <FontIcon Glyph="&#xE76B;" Foreground="White"
+                    <FontIcon Glyph="&#xE76B;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                               Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </Grid>
                 <ToolTipService.ToolTip>
@@ -1333,7 +1333,7 @@
                                     <TextBlock Text="{Binding ActiveCampaign.HolidayError}" Foreground="Red"/>
 
                                     <TextBlock Text="Active Holidays" Style="{StaticResource LabelTextStyle}" />
-                                    <Border BorderBrush="{ThemeResource CardStrokeBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
+                                    <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
                                         <ItemsControl ItemsSource="{Binding ActiveCampaign.PaymentHolidays}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -1375,7 +1375,7 @@
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       VerticalScrollBarVisibility="Auto"
                                       Style="{StaticResource ResponsiveScrollViewer}">
-                            <controls:DataGrid x:Name="CashflowGrid"
+                            <controls:DataGrid x:Name="CashflowGrid" Style="{StaticResource ModernDataGridStyle}"
                                                ItemsSource="{Binding Results.Cashflows}"
                                                HeadersVisibility="Column"
                                                CanUserSortColumns="True"
@@ -1408,7 +1408,7 @@
                     
                     <!-- Summary Totals -->
                     <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="Gray" BorderThickness="1" Margin="0,8,0,0" Padding="12">
+                            BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}" BorderThickness="1" Margin="0,8,0,0" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -1523,7 +1523,7 @@
                                             </StackPanel>
 
                                             <!-- Per-term breakdown grid -->
-                                            <Border BorderBrush="{ThemeResource CardStrokeBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
+                                            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="Auto"/>

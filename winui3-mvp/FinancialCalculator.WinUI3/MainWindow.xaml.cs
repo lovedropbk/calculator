@@ -168,7 +168,7 @@ public sealed partial class MainWindow : Window
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                appWindow.Title = "Financial Calculator";
+                appWindow.Title = "Financial Calculator Pro";
                 var titleBar = appWindow.TitleBar;
                 titleBar.ExtendsContentIntoTitleBar = true;
                 titleBar.ButtonBackgroundColor = Colors.Transparent;

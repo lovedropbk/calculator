@@ -25,6 +25,12 @@
                     <SolidColorBrush x:Key="SuccessBrush" Color="#107C10" />
                     <SolidColorBrush x:Key="WarningBrush" Color="#FFB900" />
                     <SolidColorBrush x:Key="ErrorBrush" Color="#D83B01" />
+                    <!-- Themed palette for budget utilization -->
+                    <SolidColorBrush x:Key="BudgetCashBrush" Color="#0078D7"/>
+                    <SolidColorBrush x:Key="BudgetSubDownBrush" Color="#0099BC"/>
+                    <SolidColorBrush x:Key="BudgetRateSubsidyBrush" Color="#00B7C3"/>
+                    <SolidColorBrush x:Key="BudgetIdcBrush" Color="#038387"/>
+                    <SolidColorBrush x:Key="BudgetUnallocatedBrush" Color="#737373"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="CardBackgroundBrush" Color="#202020" Opacity="1.0" />
@@ -35,6 +41,12 @@
                     <SolidColorBrush x:Key="SuccessBrush" Color="#10A010" />
                     <SolidColorBrush x:Key="WarningBrush" Color="#FFD700" />
                     <SolidColorBrush x:Key="ErrorBrush" Color="#FF6B6B" />
+                    <!-- Themed palette for budget utilization -->
+                    <SolidColorBrush x:Key="BudgetCashBrush" Color="#0078D7"/>
+                    <SolidColorBrush x:Key="BudgetSubDownBrush" Color="#0099BC"/>
+                    <SolidColorBrush x:Key="BudgetRateSubsidyBrush" Color="#00B7C3"/>
+                    <SolidColorBrush x:Key="BudgetIdcBrush" Color="#038387"/>
+                    <SolidColorBrush x:Key="BudgetUnallocatedBrush" Color="#737373"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -49,8 +61,8 @@
 
             <!-- MARK: Enhanced Card Container Style with Shadow -->
             <Style x:Key="CardContainerStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
@@ -81,32 +93,14 @@
             </Style>
 
             <!-- MARK: Enhanced Input Defaults with Hover Effects -->
-            <Style TargetType="TextBox">
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="MinWidth" Value="96" />
-                <Setter Property="Height" Value="32" />
-                <Setter Property="Margin" Value="4,0,0,0" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Padding" Value="8,6,8,6" />
-                <Setter Property="PlaceholderForeground" Value="{ThemeResource TextControlPlaceholderForeground}" />
-            </Style>
+            <!-- Global TextBox style removed to preserve Fluent defaults.
+                 Use CompactTextBox or a keyed style per control. -->
 
-            <Style TargetType="ComboBox">
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="MinWidth" Value="120" />
-                <Setter Property="Height" Value="32" />
-                <Setter Property="Margin" Value="4,0,0,0" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Padding" Value="8,6,32,6" />
-            </Style>
+            <!-- Global ComboBox style removed to preserve Fluent defaults.
+                 Use CompactComboBox or UnitComboBoxStyle where needed. -->
 
-            <Style TargetType="muxc:NumberBox">
-                <Setter Property="Height" Value="32" />
-                <Setter Property="MinWidth" Value="120" />
-                <Setter Property="Margin" Value="4,0,0,0" />
-                <Setter Property="Padding" Value="8,6,36,6" />
-                <Setter Property="SpinButtonPlacementMode" Value="Hidden" />
-            </Style>
+            <!-- Global NumberBox style removed to preserve Fluent defaults.
+                 Use CompactNumberBox for dense layouts. -->
             <!-- Compact input styles for dense forms -->
             <Style x:Key="CompactNumberBox" TargetType="muxc:NumberBox">
                 <Setter Property="Height" Value="28" />
@@ -118,7 +112,7 @@
                 <Setter Property="Height" Value="28" />
                 <Setter Property="MinWidth" Value="120" />
                 <Setter Property="Padding" Value="6,4,24,4" />
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
 
             <!-- Compact unit selector: smaller font + reduced right padding to fit "THB" / "%" in 80px column -->
@@ -134,13 +128,8 @@
                 <Setter Property="Padding" Value="6,4,6,4" />
             </Style>
 
-            <Style TargetType="Button">
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Margin" Value="6,0,0,0" />
-                <Setter Property="Padding" Value="10,6,10,6" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="MinWidth" Value="80" />
-            </Style>
+            <!-- Global Button style removed to preserve Fluent defaults.
+                 Use PrimaryActionButtonStyle / SecondaryButtonStyle / IconButtonStyle explicitly. -->
 
             <!-- Enhanced Button Hover Style -->
             <Style x:Key="HoverButtonStyle" TargetType="Button">
@@ -185,21 +174,14 @@
             <Thickness x:Key="ValueAreaOffsetMargin">168,12,0,0</Thickness>
 
             <!-- MARK: Typography helpers -->
-            <Style x:Key="CardHeaderTextStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="18" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Margin" Value="0,0,0,8" />
-            </Style>
+            <!-- CardHeaderTextStyle moved to Styles/DefaultStyles.xaml -->
             <Style x:Key="SectionHeaderTextStyle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Margin" Value="0,0,8,0" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style x:Key="LabelTextStyle" TargetType="TextBlock">
-                <Setter Property="Opacity" Value="0.78" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
+            <!-- LabelTextStyle moved to Styles/DefaultStyles.xaml -->
 
             <!-- Enhanced Validation/Error text style with Icon -->
             <Style x:Key="ErrorTextStyle" TargetType="TextBlock">
@@ -227,7 +209,7 @@
 
             <!-- Loading Indicator Template -->
             <DataTemplate x:Key="LoadingTemplate">
-                <Grid Background="{ThemeResource SystemControlBackgroundAltMediumLowBrush}">
+                <Grid Background="{ThemeResource LayerFillColorDefaultBrush}">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
                         <ProgressRing IsActive="True" Width="48" Height="48" />
                         <TextBlock Text="Calculating..." HorizontalAlignment="Center" />
