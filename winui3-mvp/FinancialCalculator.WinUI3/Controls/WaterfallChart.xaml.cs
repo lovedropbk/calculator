@@ -81,7 +81,7 @@ public sealed partial class WaterfallChart : UserControl
         {
             X1 = 0, Y1 = zeroY,
             X2 = ChartCanvas.ActualWidth, Y2 = zeroY,
-            Stroke = new SolidColorBrush(Colors.Gray),
+            Stroke = ResolveBrush("ControlStrongStrokeColorDefaultBrush"),
             StrokeThickness = 1,
             Opacity = 0.5
         });
@@ -111,7 +111,7 @@ public sealed partial class WaterfallChart : UserControl
             {
                 Width = Math.Max(1, barWidth - 4),
                 Height = rectHeight,
-                Fill = new SolidColorBrush(ParseColor(item.ColorHex)),
+                Fill = ResolveBrush(item.ColorHex),
             };
             Canvas.SetLeft(rect, currentX + 2);
             Canvas.SetTop(rect, rectTop);
@@ -127,7 +127,7 @@ public sealed partial class WaterfallChart : UserControl
                  {
                      X1 = currentX + barWidth - 2, Y1 = endY,
                      X2 = currentX + barWidth + 6, Y2 = endY,
-                     Stroke = new SolidColorBrush(Colors.Gray),
+                     Stroke = ResolveBrush("ControlStrokeColorDefaultBrush"),
                      StrokeThickness = 1,
                      StrokeDashArray = new DoubleCollection { 2, 2 },
                      Opacity = 0.5
@@ -163,5 +163,30 @@ public sealed partial class WaterfallChart : UserControl
         {
             return Colors.Gray;
         }
+    }
+
+    private SolidColorBrush ResolveBrush(string keyOrHex)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(keyOrHex) && keyOrHex.StartsWith("#"))
+            {
+                return new SolidColorBrush(ParseColor(keyOrHex));
+            }
+
+            // Try theme resources (SolidColorBrush or Color)
+            var resources = Application.Current.Resources;
+            if (resources.TryGetValue(keyOrHex, out var value))
+            {
+                if (value is SolidColorBrush sb) return sb;
+                if (value is Color c) return new SolidColorBrush(c);
+            }
+        }
+        catch
+        {
+            // ignore
+        }
+
+        return new SolidColorBrush(Colors.Gray);
     }
 }

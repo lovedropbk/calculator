@@ -13,6 +13,7 @@
                 <!-- Include the new style resource dictionaries -->
                 <ResourceDictionary Source="Styles/DefaultStyles.xaml"/>
                 <ResourceDictionary Source="Styles/ResponsiveStyles.xaml"/>
+                <ResourceDictionary Source="Styles/FluentTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <!-- MARK: Enhanced Theme Brushes with Animations -->
             <ResourceDictionary.ThemeDictionaries>

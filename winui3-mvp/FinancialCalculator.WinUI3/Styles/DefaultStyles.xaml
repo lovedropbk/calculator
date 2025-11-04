@@ -224,7 +224,7 @@
 
     <!-- Progress Ring Container -->
     <Style x:Key="ProgressContainerStyle" TargetType="Border">
-        <Setter Property="Background" Value="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="24"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -317,19 +317,11 @@
     </Style>
 
     <Style x:Key="StatusSuccessTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
-        <Setter Property="Foreground">
-            <Setter.Value>
-                <SolidColorBrush Color="#107C10"/>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Foreground" Value="{ThemeResource SuccessBrush}"/>
     </Style>
 
     <Style x:Key="StatusErrorTextStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
-        <Setter Property="Foreground">
-            <Setter.Value>
-                <SolidColorBrush Color="#D83B01"/>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Foreground" Value="{ThemeResource ErrorBrush}"/>
     </Style>
 
     <!-- ========================================== -->
