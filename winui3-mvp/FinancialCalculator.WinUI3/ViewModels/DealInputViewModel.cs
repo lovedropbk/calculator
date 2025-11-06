@@ -134,9 +134,10 @@ public partial class DealInputViewModel : ObservableValidator
         get => _customerFlatRate;
         set
         {
-            if (SetProperty(ref _customerFlatRate, value))
+            var v = Math.Round(value, 2);
+            if (SetProperty(ref _customerFlatRate, v))
             {
-                OnCustomerFlatRateChanged(value);
+                OnCustomerFlatRateChanged(v);
             }
         }
     }

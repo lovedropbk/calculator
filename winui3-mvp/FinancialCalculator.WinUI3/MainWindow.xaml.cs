@@ -54,13 +54,11 @@ public sealed partial class MainWindow : Window
         {
             if (sender is Button btn && btn.DataContext is CampaignSummaryViewModel row)
             {
-                // Copy to My Campaigns (existing behavior)
                 if (ViewModel.CopyToMyCampaignsCommand.CanExecute(row))
                 {
                     ViewModel.CopyToMyCampaignsCommand.Execute(row);
                 }
 
-                // Also offer to add to Campaign Designer when available
                 if (ViewModel.CopyToDesignerCommand?.CanExecute(row) ?? false)
                 {
                     ViewModel.CopyToDesignerCommand.Execute(row);
@@ -70,6 +68,89 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             Logger.Error("Copy click handler failed", ex);
+        }
+    }
+
+    private async void OnRiskSettingsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var vm = ViewModel.DealInput;
+            var prevCustomerType = vm.SelectedCustomerType;
+            var prevAssetState = vm.SelectedAssetState;
+            var prevAvc = vm.SelectedAssetValuationCurve;
+            var prevRating = vm.SelectedRating;
+
+            var labelCol = new ColumnDefinition { Width = (GridLength)Application.Current.Resources["DetailsLabelColumnWidth"] };
+            var valueCol = new ColumnDefinition { Width = (GridLength)Application.Current.Resources["DetailsValueColumnWidth"] };
+            var contentGrid = new Grid { RowSpacing = (double)Application.Current.Resources["SpaceM"] };
+            contentGrid.ColumnDefinitions.Add(labelCol);
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength((double)Application.Current.Resources["SpaceS"]) });
+            contentGrid.ColumnDefinitions.Add(valueCol);
+
+            var labelStyle = (Style)Application.Current.Resources["LabelTextStyle"];
+            var comboStyle = (Style)Application.Current.Resources["DenseComboBoxStyle"];
+
+            var ctLabel = new TextBlock { Text = "Customer Type", Style = labelStyle };
+            Grid.SetRow(ctLabel, 0); Grid.SetColumn(ctLabel, 0);
+            var ctCombo = new ComboBox { ItemsSource = vm.CustomerTypes, SelectedItem = vm.SelectedCustomerType, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
+            ctCombo.SelectionChanged += (_, __) => vm.SelectedCustomerType = ctCombo.SelectedItem as string ?? vm.SelectedCustomerType;
+            Grid.SetRow(ctCombo, 0); Grid.SetColumn(ctCombo, 2);
+
+            var asLabel = new TextBlock { Text = "Asset State", Style = labelStyle };
+            Grid.SetRow(asLabel, 1); Grid.SetColumn(asLabel, 0);
+            var asCombo = new ComboBox { ItemsSource = vm.AssetStates, SelectedItem = vm.SelectedAssetState, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
+            asCombo.SelectionChanged += (_, __) => vm.SelectedAssetState = asCombo.SelectedItem as string ?? vm.SelectedAssetState;
+            Grid.SetRow(asCombo, 1); Grid.SetColumn(asCombo, 2);
+
+            var avcLabel = new TextBlock { Text = "Asset Class (AVC)", Style = labelStyle };
+            Grid.SetRow(avcLabel, 2); Grid.SetColumn(avcLabel, 0);
+            var avcCombo = new ComboBox { ItemsSource = vm.AssetValuationCurves, SelectedItem = vm.SelectedAssetValuationCurve, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
+            avcCombo.SelectionChanged += (_, __) => vm.SelectedAssetValuationCurve = avcCombo.SelectedItem as string ?? vm.SelectedAssetValuationCurve;
+            Grid.SetRow(avcCombo, 2); Grid.SetColumn(avcCombo, 2);
+
+            var ratingLabel = new TextBlock { Text = "Credit Rating", Style = labelStyle };
+            Grid.SetRow(ratingLabel, 3); Grid.SetColumn(ratingLabel, 0);
+            var ratingCombo = new ComboBox { ItemsSource = vm.CreditRatings, SelectedItem = vm.SelectedRating, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
+            ratingCombo.SelectionChanged += (_, __) => vm.SelectedRating = ratingCombo.SelectedItem as string ?? vm.SelectedRating;
+            Grid.SetRow(ratingCombo, 3); Grid.SetColumn(ratingCombo, 2);
+
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            contentGrid.Children.Add(ctLabel);
+            contentGrid.Children.Add(ctCombo);
+            contentGrid.Children.Add(asLabel);
+            contentGrid.Children.Add(asCombo);
+            contentGrid.Children.Add(avcLabel);
+            contentGrid.Children.Add(avcCombo);
+            contentGrid.Children.Add(ratingLabel);
+            contentGrid.Children.Add(ratingCombo);
+
+            var dlg = new ContentDialog
+            {
+                Title = "Risk settings",
+                PrimaryButtonText = "Save",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = (this.Content as FrameworkElement)?.XamlRoot,
+                Content = contentGrid
+            };
+
+            var result = await dlg.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+            {
+                vm.SelectedCustomerType = prevCustomerType;
+                vm.SelectedAssetState = prevAssetState;
+                vm.SelectedAssetValuationCurve = prevAvc;
+                vm.SelectedRating = prevRating;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Risk settings dialog failed", ex);
         }
     }
 
@@ -107,11 +188,12 @@ public sealed partial class MainWindow : Window
 
     private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
-        if (ViewModel.GoalSeek.IsOpen || ViewModel.GoalSeek.IsTargetSet)
+        if (ViewModel.GoalSeek.IsOpen || ViewModel.GoalSeek.IsAnyTargetSet)
         {
             ViewModel.GoalSeek.CloseCommand.Execute(null);
             args.Handled = true;
         }
+
     }
 
 

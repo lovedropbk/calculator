@@ -165,22 +165,23 @@ public partial class MainViewModel : ObservableValidator
             OnPropertyChanged(nameof(GoalSeek));
             _campaignService = new CampaignCalculationService(_financialFacade, _standardRates);
 
-            // Enable goal-seek commands once GoalSeek VM is available
             GoalSeekSolveForRateAutoAsyncCommand?.NotifyCanExecuteChanged();
             GoalSeekSolveForSubsidyAutoAsyncCommand?.NotifyCanExecuteChanged();
+            GoalSeekSolveForDownPaymentAutoAsyncCommand?.NotifyCanExecuteChanged();
 
-            // Observe GoalSeek changes to refresh command CanExecute and overlays
             try
             {
                 GoalSeek.PropertyChanged += (s, e) =>
                 {
-                    if (e.PropertyName == nameof(GoalSeekViewModel.TargetValue) ||
-                        e.PropertyName == nameof(GoalSeekViewModel.IsTargetSet) ||
+                    if (e.PropertyName == nameof(GoalSeekViewModel.TargetRoRac) ||
+                        e.PropertyName == nameof(GoalSeekViewModel.TargetInstallment) ||
+                        e.PropertyName == nameof(GoalSeekViewModel.IsAnyTargetSet) ||
                         e.PropertyName == nameof(GoalSeekViewModel.IsCalculating))
                     {
-                        Logger.Debug($"[GoalSeek] PropertyChanged -> {e.PropertyName}; IsTargetSet={GoalSeek.IsTargetSet}, IsCalculating={GoalSeek.IsCalculating}, TargetValue={GoalSeek.TargetValue}");
+                        Logger.Debug($"[GoalSeek] PropertyChanged -> {e.PropertyName}; IsAnyTargetSet={GoalSeek.IsAnyTargetSet}, IsCalculating={GoalSeek.IsCalculating}, Target=(metric={GoalSeek.ActiveTarget.metric}, value={GoalSeek.ActiveTarget.value})");
                         GoalSeekSolveForRateAutoAsyncCommand?.NotifyCanExecuteChanged();
                         GoalSeekSolveForSubsidyAutoAsyncCommand?.NotifyCanExecuteChanged();
+                        GoalSeekSolveForDownPaymentAutoAsyncCommand?.NotifyCanExecuteChanged();
                         OnPropertyChanged(nameof(GoalSeek));
                     }
                 };
@@ -189,6 +190,7 @@ public partial class MainViewModel : ObservableValidator
             {
                 Logger.Warn($"[GoalSeek] Failed to subscribe PropertyChanged: {ex.Message}");
             }
+
 
             // Subscribe to Campaign Manager changes
             CampaignManager.PropertyChanged += OnCampaignManagerPropertyChanged;

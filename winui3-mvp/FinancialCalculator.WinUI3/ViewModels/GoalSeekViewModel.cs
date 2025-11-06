@@ -31,10 +31,20 @@ public partial class GoalSeekViewModel : ObservableObject
     private int _metricIndex = 0; // 0=Installment, 1=RoRAC
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsTargetSet))]
-    private double _targetValue = 0;
+    [NotifyPropertyChangedFor(nameof(IsAnyTargetSet))]
+    private double _targetRoRac = 0;
 
-    public bool IsTargetSet => TargetValue > 0;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyTargetSet))]
+    private double _targetInstallment = 0;
+
+    public bool IsAnyTargetSet => TargetRoRac > 0 || TargetInstallment > 0;
+    public bool IsRoRacTargetSet => TargetRoRac > 0;
+    public bool IsInstallmentTargetSet => TargetInstallment > 0;
+
+    public (GoalSeekMetric metric, double value) ActiveTarget =>
+        IsRoRacTargetSet ? (GoalSeekMetric.RoRAC, TargetRoRac) : (GoalSeekMetric.MonthlyInstallment, TargetInstallment);
+
 
     [ObservableProperty]
     private string _status = "";
@@ -46,9 +56,11 @@ public partial class GoalSeekViewModel : ObservableObject
     private void Close()
     {
         IsOpen = false;
-        TargetValue = 0;
+        TargetRoRac = 0;
+        TargetInstallment = 0;
         Status = "";
     }
+
 
     [RelayCommand]
     private async Task RunAsync()
@@ -60,10 +72,10 @@ public partial class GoalSeekViewModel : ObservableObject
             3 => GoalSeekVariable.UpfrontSubsidy,
              _ => throw new ArgumentOutOfRangeException(nameof(VariableIndex))
         };
-        
-        var metric = MetricIndex == 0 ? GoalSeekMetric.MonthlyInstallment : GoalSeekMetric.RoRAC;
-        await RunWithParamsAsync(variable, metric, TargetValue);
+        var (metric, value) = ActiveTarget;
+        await RunWithParamsAsync(variable, metric, value);
     }
+
 
     public async Task RunWithParamsAsync(GoalSeekVariable variable, GoalSeekMetric metric, double targetValue)
     {

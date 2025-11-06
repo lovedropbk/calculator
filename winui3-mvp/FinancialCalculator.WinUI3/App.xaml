@@ -138,6 +138,7 @@
             <!-- Details panel fixed column widths to prevent value shifting -->
             <GridLength x:Key="DetailsLabelColumnWidth">160</GridLength>
             <GridLength x:Key="DetailsValueColumnWidth">360</GridLength>
+            <x:Double x:Key="DealInputsCardMaxWidth">520</x:Double>
 
             <!-- Unified unit suffix helpers -->
             <Thickness x:Key="PercentSuffixMargin">0,0,4,0</Thickness>

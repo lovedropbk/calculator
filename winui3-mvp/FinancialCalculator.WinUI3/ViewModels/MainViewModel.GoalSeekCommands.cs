@@ -6,24 +6,20 @@ using FinancialCalculator.WinUI3.Services;
 
 namespace FinancialCalculator.WinUI3.ViewModels
 {
-    // MARK: Goal Seek Async Commands (explicit ICommand properties for XAML binding)
     public partial class MainViewModel
     {
         public IAsyncRelayCommand GoalSeekSolveForSubsidyAutoAsyncCommand { get; private set; } = null!;
         public IAsyncRelayCommand GoalSeekSolveForRateAutoAsyncCommand { get; private set; } = null!;
+        public IAsyncRelayCommand GoalSeekSolveForDownPaymentAutoAsyncCommand { get; private set; } = null!;
 
-        // Initialize explicit async commands; invoked from MainViewModel constructor
         private void InitializeGoalSeekCommands()
         {
-            GoalSeekSolveForSubsidyAutoAsyncCommand = new AsyncRelayCommand(GoalSeekSolveForSubsidyAutoAsync, CanRunGoalSeek);
-            GoalSeekSolveForRateAutoAsyncCommand = new AsyncRelayCommand(GoalSeekSolveForRateAutoAsync, CanRunGoalSeek);
+            GoalSeekSolveForSubsidyAutoAsyncCommand = new AsyncRelayCommand(GoalSeekSolveForSubsidyAutoAsync, canExecute: CanRunGoalSeek);
+            GoalSeekSolveForRateAutoAsyncCommand = new AsyncRelayCommand(GoalSeekSolveForRateAutoAsync, canExecute: CanRunGoalSeek);
+            GoalSeekSolveForDownPaymentAutoAsyncCommand = new AsyncRelayCommand(GoalSeekSolveForDownPaymentAutoAsync, canExecute: CanRunGoalSeek);
         }
 
-        private bool CanRunGoalSeek()
-        {
-            // Enable when the GoalSeek VM exists and a target value is set
-            return GoalSeek?.IsTargetSet == true;
-        }
+        private bool CanRunGoalSeek() => GoalSeek?.IsAnyTargetSet == true;
 
         private async Task RunGoalSeek(GoalSeekVariable variable, string startStatus, string successStatus, string label)
         {
@@ -36,8 +32,9 @@ namespace FinancialCalculator.WinUI3.ViewModels
             try
             {
                 Status = startStatus;
-                Logger.Info($"[GoalSeek] {label} overlay clicked. Target={GoalSeek.TargetValue}");
-                await GoalSeek.RunWithParamsAsync(variable, GoalSeekMetric.RoRAC, GoalSeek.TargetValue);
+                var t = GoalSeek.ActiveTarget;
+                Logger.Info($"[GoalSeek] {label} overlay clicked. TargetMetric={t.metric}, Target={t.value}");
+                await GoalSeek.RunWithParamsAsync(variable, t.metric, t.value);
                 Status = successStatus;
                 Logger.Info($"[GoalSeek] {label} solve completed.");
             }
@@ -52,10 +49,6 @@ namespace FinancialCalculator.WinUI3.ViewModels
             }
         }
 
-        // NOTE:
-        // These are thin wrappers delegating to GoalSeekViewModel, aligning with the architecture.
-        // They also handle cancellation/exception paths and update Status for quick UI feedback.
-
         private async Task GoalSeekSolveForSubsidyAutoAsync()
         {
             await RunGoalSeek(GoalSeekVariable.UpfrontSubsidy, "Solving for subsidy...", "Solved subsidy.", "Subsidy");
@@ -64,6 +57,11 @@ namespace FinancialCalculator.WinUI3.ViewModels
         private async Task GoalSeekSolveForRateAutoAsync()
         {
             await RunGoalSeek(GoalSeekVariable.CustomerNominalRate, "Solving for rate...", "Solved rate.", "Rate");
+        }
+
+        private async Task GoalSeekSolveForDownPaymentAutoAsync()
+        {
+            await RunGoalSeek(GoalSeekVariable.DownPaymentAmount, "Solving for down payment...", "Solved down payment.", "Down Payment");
         }
     }
 }
