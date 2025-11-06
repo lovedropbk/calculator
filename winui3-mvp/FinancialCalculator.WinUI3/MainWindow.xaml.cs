@@ -5,10 +5,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Dispatching;
 using FinancialCalculator.WinUI3.ViewModels;
 using FinancialCalculator.WinUI3.Services;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using WinRT.Interop;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace FinancialCalculator.WinUI3;
 
@@ -16,9 +18,11 @@ public sealed partial class MainWindow : Window
 {
     public MainViewModel ViewModel { get; }
 
+    private readonly AppSettingsService _settings = new();
+    private readonly LayoutCoordinator _layout = new();
+
     public MainWindow()
     {
-        // Important: initialize ViewModel BEFORE InitializeComponent so x:Bind can resolve during load
         ViewModel = new MainViewModel();
 
         try
@@ -38,14 +42,24 @@ public sealed partial class MainWindow : Window
             throw;
         }
 
-        // Ensure Content DataContext (in case template swapped)
-        if (this.Content is FrameworkElement fe)
+        if (Content is FrameworkElement fe)
         {
             fe.DataContext = ViewModel;
         }
 
         TryApplySystemBackdrop();
         CustomizeTitleBar();
+
+        try
+        {
+            _settings.Load();
+            if (Content is FrameworkElement root)
+            {
+                _settings.ApplyTheme(root);
+            }
+            _layout.Attach(ViewModel, _settings);
+        }
+        catch { }
     }
 
     private void OnStandardCopyClick(object sender, RoutedEventArgs e)
@@ -154,11 +168,68 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void OnSettingsFlyoutOpening(object sender, object e)
+    {
+        try
+        {
+            if (sender is not MenuFlyout flyout) return;
+            ToggleMenuFlyoutItem? autoToggle = null;
+            MenuFlyoutSubItem? themeMenu = null;
+            foreach (var item in flyout.Items)
+            {
+                if (item is ToggleMenuFlyoutItem t && (t.Name == "AutoExpandToggle" || t.Text.Contains("Auto expand"))) autoToggle = t;
+                if (item is MenuFlyoutSubItem s && s.Text == "Theme") themeMenu = s;
+            }
+            if (autoToggle != null) autoToggle.IsChecked = _settings.AutoExpandRightOnLeftCollapse;
+            var fe = this.Content as FrameworkElement;
+            var current = fe?.RequestedTheme ?? ElementTheme.Default;
+            if (themeMenu != null)
+            {
+                foreach (var sub in themeMenu.Items)
+                {
+                    if (sub is RadioMenuFlyoutItem r)
+                    {
+                        if (r.Text.Contains("System")) r.IsChecked = current == ElementTheme.Default;
+                        else if (r.Text.Contains("Light")) r.IsChecked = current == ElementTheme.Light;
+                        else if (r.Text.Contains("Dark")) r.IsChecked = current == ElementTheme.Dark;
+                    }
+                }
+            }
+        }
+        catch { }
+    }
+
+    private void OnAutoExpandToggleClicked(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is ToggleMenuFlyoutItem t)
+            {
+                _settings.AutoExpandRightOnLeftCollapse = t.IsChecked;
+                _settings.Save();
+            }
+        }
+        catch { }
+    }
+
+    private void OnThemeDefaultClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Default);
+    private void OnThemeLightClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Light);
+    private void OnThemeDarkClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Dark);
+
+    private void ApplyTheme(ElementTheme theme)
+    {
+        try
+        {
+            if (this.Content is FrameworkElement fe) fe.RequestedTheme = theme;
+            _settings.SetTheme(theme);
+        }
+        catch { }
+    }
+
     private void OnStandardGridDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         try
         {
-            // Find the row VM from the visual tree
             FrameworkElement? fe = e.OriginalSource as FrameworkElement;
             CampaignSummaryViewModel? vm = null;
             while (fe != null && vm == null)
@@ -170,7 +241,6 @@ public sealed partial class MainWindow : Window
                 }
             }
 
-            // Fallback to currently selected standard campaign
             vm ??= ViewModel.CampaignManager.SelectedCampaign;
 
             if (vm != null && ViewModel.CopyToMyCampaignsCommand.CanExecute(vm))
@@ -185,6 +255,20 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void OnLeftCollapseToggleClicked(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                if (ViewModel.DealInput.IsDealInputsCollapsed && _settings.AutoExpandRightOnLeftCollapse)
+                {
+                    ViewModel.IsCampaignDetailsCollapsed = false;
+                }
+            });
+        }
+        catch { }
+    }
 
     private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
@@ -193,20 +277,16 @@ public sealed partial class MainWindow : Window
             ViewModel.GoalSeek.CloseCommand.Execute(null);
             args.Handled = true;
         }
-
     }
-
 
     private void TryApplySystemBackdrop()
     {
-        // Apply Mica for a modern look; safely ignore if not supported on thisOS
         try
         {
             SystemBackdrop = new MicaBackdrop();
         }
         catch
         {
-            // no-op
         }
     }
 
@@ -229,7 +309,18 @@ public sealed partial class MainWindow : Window
         }
         catch
         {
-            // Safe no-op on environments that don't support AppWindow (older Windows)
         }
+    }
+
+    private void OnAppSettingsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button btn && btn.Flyout is FlyoutBase fb)
+            {
+                fb.ShowAt(btn);
+            }
+        }
+        catch { }
     }
 }

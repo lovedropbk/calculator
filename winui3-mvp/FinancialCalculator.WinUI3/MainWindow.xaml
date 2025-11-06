@@ -37,14 +37,14 @@
 
         <!-- MARK: Root TabView with Icons -->
         <TabView x:Name="MainTabView"
-                 TabWidthMode="Equal"
                  IsAddTabButtonVisible="False"
                  CanDragTabs="False"
                  CanReorderTabs="False"
                  VerticalAlignment="Stretch"
                  HorizontalAlignment="Stretch"
                  Margin="0,0,0,0">
-            
+
+
             <!-- MARK: Main Tab with Icon -->
             <TabView.TabItems>
                 <TabViewItem IsClosable="False" Style="{StaticResource IconTabViewItemStyle}">
@@ -126,8 +126,8 @@
                                     <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-        
+                    </Grid.ColumnDefinitions>
+
                                 <!-- Header -->
                                 <Grid Grid.Row="0" Grid.ColumnSpan="3">
                                     <Grid.ColumnDefinitions>
@@ -697,7 +697,7 @@
             </Border>
 
             <!-- Collapse Button positioned at top-right of the column -->
-            <Button Command="{Binding DealInput.ToggleDealInputsCollapsedCommand}"
+            <Button Command="{Binding DealInput.ToggleDealInputsCollapsedCommand}" Click="OnLeftCollapseToggleClicked"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Width="28"
@@ -894,7 +894,7 @@
                               Padding="0">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Campaign Details &amp; Key Metrics" Style="{StaticResource SectionHeaderTextStyle}"/>
-                        <Grid Width="580" HorizontalAlignment="Left">
+                        <Grid Width="580" HorizontalAlignment="Left" ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
                                 <ColumnDefinition Width="{StaticResource DetailsValueColumnWidth}"/>
@@ -1208,8 +1208,9 @@
             </Button>
         </Grid>
                     <!-- MARK: FOOTER -->
-        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
+         <Border Grid.Row="1" Grid.ColumnSpan="4" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
             <Grid>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -1246,9 +1247,28 @@
                             <ToolTip Content="Add current deal to comparison tab" Style="{StaticResource InformativeToolTipStyle}"/>
                         </ToolTipService.ToolTip>
                     </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+                        <Button x:Name="AppSettingsButtonFooter" Style="{StaticResource SecondaryButtonStyle}" Click="OnAppSettingsClick">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE713;" FontSize="14"/>
+                                <TextBlock Text="Settings"/>
+                            </StackPanel>
+                            <Button.Flyout>
+                                <MenuFlyout Opening="OnSettingsFlyoutOpening">
+                                    <MenuFlyoutSubItem Text="App behavior">
+                                        <ToggleMenuFlyoutItem Text="Auto expand right when left collapses" Click="OnAutoExpandToggleClicked"/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Text="Theme">
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="System default" Click="OnThemeDefaultClicked"/>
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Light" Click="OnThemeLightClicked"/>
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Dark" Click="OnThemeDarkClicked"/>
+                                    </MenuFlyoutSubItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
     </Grid>
 </TabViewItem>
             
@@ -1401,8 +1421,9 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            
+                    </Grid.ColumnDefinitions>
+
+
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Total Principal Paid" FontSize="12" Opacity="0.7"/>
                                 <TextBlock Text="{Binding Results.TotalPrincipalPaid}" FontSize="16" FontWeight="SemiBold"/>
