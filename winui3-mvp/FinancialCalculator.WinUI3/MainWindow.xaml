@@ -76,6 +76,10 @@
 
         <!-- MARK: LEFT - Deal Input Mask with Collapse Toggle -->
         <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <!-- Deal Input Content Area -->
             <Border x:Name="DealInputsCard"
                     Margin="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='12,12,8,12|0,12,0,12'}"
@@ -618,38 +622,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <!-- Goal Seek Expander (Moved above Risk Parameters) -->
-                            <Grid Margin="0,12,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
-                                    <ColumnDefinition Width="8"/>
-                                    <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
-                                    <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
-                                </Grid.ColumnDefinitions>
-                                <muxc:Expander Grid.Column="2" Grid.ColumnSpan="2" Header="Goal Seek" HorizontalAlignment="Stretch" IsExpanded="{Binding GoalSeek.IsOpen, Mode=TwoWay}" Style="{StaticResource CompactExpanderStyle}">
-                                    <StackPanel Spacing="12">
-                                        <TextBlock Text="Target RoRAC (%):" Style="{StaticResource LabelTextStyle}"/>
-                                        <Grid HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <muxc:NumberBox Grid.Column="0"
-                                                            Value="{Binding GoalSeek.TargetValue, Mode=TwoWay}"
-                                                            Minimum="0"
-                                                            Maximum="100"
-                                                            SmallChange="0.1"
-                                                            LargeChange="1"
-                                                            AcceptsExpression="False"
-                                                            PlaceholderText="e.g. 15 (for 15%)"
-                                                            Width="150"/>
-                                            <TextBlock Grid.Column="1" Text="%" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7"/>
-                                        </Grid>
-                                        <TextBlock Text="Click on the highlighted 'Customer Rate' or 'Subsidy Budget' fields to auto-solve for the target RoRAC."
-                                                   Style="{StaticResource LabelTextStyle}" Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
-                                    </StackPanel>
-                                </muxc:Expander>
-                            </Grid>
+
 
                             <!-- Cashflow adjustments moved to Cashflows tab -->
 
@@ -704,7 +677,46 @@
 
                         </StackPanel>
                     </Grid>
-                </ScrollViewer>
+</ScrollViewer>
+            </Border>
+
+            <Border Grid.Row="1"
+                    Margin="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='12,12,8,12|0,12,0,12'}"
+                    Padding="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='16,16,16,16|4,4,4,4'}"
+                    Style="{StaticResource CardContainerStyle}"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                <Grid RowSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Goal Seek" Style="{StaticResource CardHeaderTextStyle}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Target RoRAC (%)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,0,0,0" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                            <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="1">
+                            <muxc:NumberBox Style="{StaticResource DenseNumberBoxStyle}"
+                                            Value="{Binding GoalSeek.TargetValue, Mode=TwoWay}"
+                                            Minimum="0"
+                                            Maximum="100"
+                                            SmallChange="0.1"
+                                            LargeChange="1"
+                                            PlaceholderText="%"
+                                            NumberFormatter="{StaticResource GroupedTwoFormatter}"/>
+                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Border>
 
             <!-- Collapse Button positioned at top-right of the column -->
