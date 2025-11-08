@@ -36,17 +36,36 @@ namespace FinancialCalculator.WinUI3.Converters
             }
 
             var parts = param.Split('|', StringSplitOptions.RemoveEmptyEntries);
-            var t = parts.Length > 0 ? ParseDouble(parts[0]) : 0.0;
-            var f = parts.Length > 1 ? ParseDouble(parts[1]) : 0.0;
+            var t = parts.Length > 0 ? ParseDoubleOrResource(parts[0]) : 0.0;
+            var f = parts.Length > 1 ? ParseDoubleOrResource(parts[1]) : 0.0;
             return (t, f);
         }
 
-        private static double ParseDouble(string s)
+        private static double ParseDoubleOrResource(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return 0.0;
-            if (double.TryParse(s.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
+            var token = s.Trim();
+            if (double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
             {
                 return d;
+            }
+            var app = Application.Current;
+            if (app is not null)
+            {
+                try
+                {
+                    if (app.Resources.TryGetValue(token, out var obj))
+                    {
+                        switch (obj)
+                        {
+                            case double dv: return dv;
+                            case GridLength gl: return gl.Value;
+                            case Thickness th: return th.Left + th.Right;
+                            case string str when double.TryParse(str, NumberStyles.Any, CultureInfo.InvariantCulture, out var ds): return ds;
+                        }
+                    }
+                }
+                catch { }
             }
             return 0.0;
         }

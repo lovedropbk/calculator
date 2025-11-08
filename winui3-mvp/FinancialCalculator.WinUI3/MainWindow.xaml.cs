@@ -175,10 +175,12 @@ public sealed partial class MainWindow : Window
             if (sender is not MenuFlyout flyout) return;
             ToggleMenuFlyoutItem? autoToggle = null;
             MenuFlyoutSubItem? themeMenu = null;
+            MenuFlyoutSubItem? densityMenu = null;
             foreach (var item in flyout.Items)
             {
                 if (item is ToggleMenuFlyoutItem t && (t.Name == "AutoExpandToggle" || t.Text.Contains("Auto expand"))) autoToggle = t;
                 if (item is MenuFlyoutSubItem s && s.Text == "Theme") themeMenu = s;
+                if (item is MenuFlyoutSubItem d && d.Text == "Density") densityMenu = d;
             }
             if (autoToggle != null) autoToggle.IsChecked = _settings.AutoExpandRightOnLeftCollapse;
             var fe = this.Content as FrameworkElement;
@@ -192,6 +194,17 @@ public sealed partial class MainWindow : Window
                         if (r.Text.Contains("System")) r.IsChecked = current == ElementTheme.Default;
                         else if (r.Text.Contains("Light")) r.IsChecked = current == ElementTheme.Light;
                         else if (r.Text.Contains("Dark")) r.IsChecked = current == ElementTheme.Dark;
+                    }
+                }
+            }
+            if (densityMenu != null)
+            {
+                foreach (var sub in densityMenu.Items)
+                {
+                    if (sub is RadioMenuFlyoutItem r)
+                    {
+                        if (r.Text.Contains("Compact")) r.IsChecked = _settings.Density == AppDensity.Compact;
+                        else if (r.Text.Contains("Comfortable")) r.IsChecked = _settings.Density == AppDensity.Comfortable;
                     }
                 }
             }
@@ -215,6 +228,9 @@ public sealed partial class MainWindow : Window
     private void OnThemeDefaultClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Default);
     private void OnThemeLightClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Light);
     private void OnThemeDarkClicked(object sender, RoutedEventArgs e) => ApplyTheme(ElementTheme.Dark);
+
+    private void OnDensityCompactClicked(object sender, RoutedEventArgs e) => _settings.SetDensity(AppDensity.Compact);
+    private void OnDensityComfortableClicked(object sender, RoutedEventArgs e) => _settings.SetDensity(AppDensity.Comfortable);
 
     private void ApplyTheme(ElementTheme theme)
     {
@@ -323,4 +339,6 @@ public sealed partial class MainWindow : Window
         }
         catch { }
     }
+
+    
 }

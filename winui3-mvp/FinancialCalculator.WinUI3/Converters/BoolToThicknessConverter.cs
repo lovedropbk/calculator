@@ -41,12 +41,36 @@ namespace FinancialCalculator.WinUI3.Converters
                 return (new Thickness(16), new Thickness(4));
             }
             var parts = param.Split('|');
-            var t = parts.Length > 0 ? ParseThickness(parts[0]) : new Thickness(16);
-            var f = parts.Length > 1 ? ParseThickness(parts[1]) : new Thickness(4);
+            var t = parts.Length > 0 ? ParseThicknessOrResource(parts[0]) : new Thickness(16);
+            var f = parts.Length > 1 ? ParseThicknessOrResource(parts[1]) : new Thickness(4);
             return (t, f);
         }
 
-        private static Thickness ParseThickness(string s)
+        private static Thickness ParseThicknessOrResource(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return new Thickness(0);
+            // Resource key path (tokenization): look up in Application resources first
+            var key = s.Trim();
+            var app = Application.Current;
+            if (app is not null)
+            {
+                try
+                {
+                    if (app.Resources.TryGetValue(key, out var obj))
+                    {
+                        if (obj is Thickness thRes) return thRes;
+                        if (obj is string str) return ParseThicknessString(str);
+                        if (obj is double d) return new Thickness(d);
+                    }
+                }
+                catch { /* fall back to parsing below */ }
+            }
+
+            // Fallback: parse inline numeric thickness (e.g., "12,12,4,12")
+            return ParseThicknessString(key);
+        }
+
+        private static Thickness ParseThicknessString(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return new Thickness(0);
             var tokens = s.Split(',', StringSplitOptions.RemoveEmptyEntries)

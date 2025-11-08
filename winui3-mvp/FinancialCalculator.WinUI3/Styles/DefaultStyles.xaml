@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives">
 
     <!-- ========================================== -->
     <!-- THEME COLORS & BRUSHES                    -->
@@ -50,7 +51,7 @@
     <Style x:Key="CardHeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Margin" Value="0,0,0,8"/>
+        <Setter Property="Margin" Value="{StaticResource MarginBottomS}"/>
     </Style>
 
     <Style x:Key="LabelTextStyle" TargetType="TextBlock">
@@ -273,7 +274,14 @@
         <Setter Property="AlternatingRowBackground" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="GridLinesVisibility" Value="All"/>
+
+        <!-- Density + padding driven by tokenized primitive styles -->
+        <!-- Cell and header density via dedicated styles below (avoid XAML compiler type resolution issues) -->
     </Style>
+
+    <!-- Note: Implicit DataGrid style is disabled due to WinUI XAML compiler limitations in this project setup. Keep using ModernDataGridStyle explicitly. -->
+
+    <!-- DataGrid primitives styles intentionally left to toolkit defaults to avoid markup compiler issues across platforms. -->
 
     <!-- ========================================== -->
     <!-- TOOLTIP STYLES                            -->

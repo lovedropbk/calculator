@@ -82,6 +82,5 @@
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
-    <Thickness x:Key="MarginBottomS">0,0,0,8</Thickness>
-    <Thickness x:Key="MarginBottomM">0,0,0,12</Thickness>
+    <!-- Use global MarginBottomS/M from FluentTheme.xaml to avoid duplicate keys -->
 </ResourceDictionary>

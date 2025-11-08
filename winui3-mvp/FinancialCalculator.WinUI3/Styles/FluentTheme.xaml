@@ -25,6 +25,66 @@
     <x:Double x:Key="SpaceS">8</x:Double>
     <x:Double x:Key="SpaceM">12</x:Double>
     <x:Double x:Key="SpaceL">16</x:Double>
+    <x:Double x:Key="SpaceXXS">2</x:Double>
+    <x:Double x:Key="SpaceXSPlus">6</x:Double>
+
+    <!-- Layout tokens for two‑pane main view -->
+    <Thickness x:Key="MainTwoPaneContentMargin">4,12,8,12</Thickness>
+
+    <!-- Pane/card margins & paddings as tokens (for converters/state triggers) -->
+    <!-- For BoolToThicknessConverter: order of parameters is Collapsed|Expanded -->
+    <!-- Left stack: outer margins only; inter-card gap is handled by StackedCardSpacing -->
+    <Thickness x:Key="DealInputsCardMarginCollapsed">12,12,4,0</Thickness>
+    <Thickness x:Key="DealInputsCardMarginExpanded">0,12,0,0</Thickness>
+    <Thickness x:Key="DealInputsCardPaddingCollapsed">16,16,16,16</Thickness>
+    <Thickness x:Key="DealInputsCardPaddingExpanded">4,4,4,4</Thickness>
+
+    <Thickness x:Key="GoalSeekCardMarginCollapsed">12,0,4,12</Thickness>
+    <Thickness x:Key="GoalSeekCardMarginExpanded">0,0,0,12</Thickness>
+    <Thickness x:Key="GoalSeekCardPaddingCollapsed">16,16,16,16</Thickness>
+    <Thickness x:Key="GoalSeekCardPaddingExpanded">4,4,4,4</Thickness>
+
+    <!-- Generic spacing tokens for forms and common margins -->
+    <!-- Note: aliasing primitives via StaticResource is not supported; duplicate the value for reliability. -->
+    <x:Double x:Key="FormRowSpacing">4</x:Double>
+    <x:Double x:Key="FormColumnSpacing">4</x:Double>
+    <!-- Vertical spacing between stacked cards (left and center) -->
+    <x:Double x:Key="StackedCardSpacing">8</x:Double>
+    <Thickness x:Key="LabelToValueMargin">8,0,0,0</Thickness>
+    <Thickness x:Key="MarginBottomS">0,0,0,8</Thickness>
+    <Thickness x:Key="MarginBottomM">0,0,0,12</Thickness>
+    <!-- Section paddings / outer margins -->
+    <Thickness x:Key="SectionPaddingM">12</Thickness>
+    <Thickness x:Key="SectionPaddingS">8</Thickness>
+    <Thickness x:Key="CardOuterMarginStandard">12,12,12,12</Thickness>
+
+    <!-- Loading indicator size -->
+    <x:Double x:Key="LoaderIndicatorSize">48</x:Double>
+
+    <!-- Standard widths used in details/value grids -->
+    <x:Double x:Key="DetailsGridStandardWidth">580</x:Double>
+
+    <!-- Backfill allowance and computed max widths for left cards -->
+    <x:Double x:Key="CardBackfillAllowance">0</x:Double>
+    <!-- MaxWidth when left pane is collapsed vs expanded; tune with tokens above -->
+    <x:Double x:Key="DealInputsCardMaxWidthCollapsed">520</x:Double>
+    <x:Double x:Key="DealInputsCardMaxWidthExpanded">496</x:Double>
+
+    <!-- Stacked card row sizing (ensure top/bottom cards match height) -->
+    <GridLength x:Key="StackedCardRowHeight">1*</GridLength>
+    <x:Double x:Key="StackedCardMinHeight">220</x:Double>
+    <x:Double x:Key="DealInputsMinHeight">320</x:Double>
+    <x:Double x:Key="GoalSeekMinHeight">220</x:Double>
+    <!-- Center stack (Standard/My Campaigns) min/max heights -->
+    <x:Double x:Key="CenterTopMinHeight">200</x:Double>
+    <x:Double x:Key="CenterTopMaxHeight">400</x:Double>
+    <x:Double x:Key="CenterBottomMinHeight">200</x:Double>
+
+    <!-- DataGrid density tokens (applies to Standard/My Campaigns and others) -->
+    <x:Double x:Key="DataGridRowHeight">28</x:Double>
+    <x:Double x:Key="DataGridHeaderHeight">32</x:Double>
+    <Thickness x:Key="DataGridCellPadding">6,4,6,4</Thickness>
+    <Thickness x:Key="DataGridHeaderPadding">8,6,8,6</Thickness>
 
     <Thickness x:Key="CardPaddingCompact">12</Thickness>
     <Thickness x:Key="CardPaddingStandard">16</Thickness>

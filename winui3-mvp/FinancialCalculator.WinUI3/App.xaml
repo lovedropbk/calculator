@@ -5,7 +5,8 @@
     xmlns:local="using:FinancialCalculator.WinUI3"
     xmlns:conv="using:FinancialCalculator.WinUI3.Converters"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:nf="using:Windows.Globalization.NumberFormatting">
+    xmlns:nf="using:Windows.Globalization.NumberFormatting"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,7 +16,10 @@
                 <ResourceDictionary Source="Styles/ResponsiveStyles.xaml"/>
                 <ResourceDictionary Source="Styles/FluentTheme.xaml"/>
                 <ResourceDictionary Source="Styles/DesignerStyles.xaml"/>
+                <!-- Density dictionary: default to Compact; can be swapped at runtime -->
+                <ResourceDictionary Source="Styles/Density.Compact.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
             <!-- MARK: Enhanced Theme Brushes with Animations -->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -189,8 +193,8 @@
             <!-- Loading Indicator Template -->
             <DataTemplate x:Key="LoadingTemplate">
                 <Grid Background="{ThemeResource LayerFillColorDefaultBrush}">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-                        <ProgressRing IsActive="True" Width="48" Height="48" />
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="{StaticResource SpaceM}">
+                        <ProgressRing IsActive="True" Width="{StaticResource LoaderIndicatorSize}" Height="{StaticResource LoaderIndicatorSize}" />
                         <TextBlock Text="Calculating..." HorizontalAlignment="Center" />
                     </StackPanel>
                 </Grid>

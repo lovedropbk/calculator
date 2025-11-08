@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using FinancialCalculator.WinUI3.Services;
@@ -7,6 +7,7 @@ namespace FinancialCalculator.WinUI3;
 
 public partial class App : Application
 {
+    private readonly AppSettingsService _settings = new();
     public App()
     {
         Logger.Init("ui");
@@ -81,6 +82,9 @@ public partial class App : Application
 
         try
         {
+            // Load settings and apply density before creating window
+            _settings.Load();
+            _settings.ApplyDensity();
             Logger.Info("Creating MainWindow - about to call constructor");
             var window = new MainWindow();
             Logger.Info("MainWindow constructor completed");
@@ -92,6 +96,10 @@ public partial class App : Application
             Logger.Info("About to activate MainWindow");
             window.Activate();
             Logger.Info("MainWindow activated successfully");
+
+            // Apply theme preference after window exists
+            if (window.Content is FrameworkElement fe)
+                _settings.ApplyTheme(fe);
 
             // Add a visual indicator if window is created but not showing content
             if (window.Content == null)
@@ -146,3 +154,5 @@ public partial class App : Application
         }
     }
 }
+
+

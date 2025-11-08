@@ -24,7 +24,7 @@
                     AccessKey="C"
                     AutomationProperties.AcceleratorKey="Alt+C"
                     AutomationProperties.Name="Clear all campaign tiles">
-                <StackPanel Orientation="Horizontal" Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                     <FontIcon Glyph="&#xE74D;" FontSize="14"/>
                     <TextBlock x:Uid="CampaignDesigner_Header_ClearAll_Text"/>
                 </StackPanel>
