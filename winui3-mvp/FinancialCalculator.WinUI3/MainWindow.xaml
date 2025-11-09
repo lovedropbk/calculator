@@ -700,32 +700,11 @@
             </Border>
 
             <!-- Collapse Button positioned at top-right of the column -->
-            <Button Command="{Binding DealInput.ToggleDealInputsCollapsedCommand}" Click="OnLeftCollapseToggleClicked"
-                    VerticalAlignment="Top"
+            <appcontrols:PaneToggleButton
                     HorizontalAlignment="Right"
-                    Width="28"
-                    Height="28"
-                    Padding="0"
                     Margin="0,18,4,0"
-                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    Canvas.ZIndex="100" Style="{StaticResource IconButtonStyle}">
-                <Grid>
-                    <FontIcon Glyph="&#xE76B;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                              Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                   <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                             Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
-               </Grid>
-               <ToolTipService.ToolTip>
-                   <ToolTip>
-                       <StackPanel>
-                           <TextBlock Text="Fold in" Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
-                           <TextBlock Text="Fold out" Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </ToolTip>
-                </ToolTipService.ToolTip>
-            </Button>
+                    IsCollapsed="{Binding DealInput.IsDealInputsCollapsed, Mode=TwoWay}"
+                    ToggleCommand="{Binding DealInput.ToggleDealInputsCollapsedCommand}"/>
         </Grid>
 
         <controls:GridSplitter Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" Width="{StaticResource SpaceXS}"
@@ -886,8 +865,8 @@
         <Grid Grid.Row="0" Grid.Column="3">
             <!-- Campaign Details Content Area -->
             <Border x:Name="CampaignDetailsCard"
-                    Margin="{StaticResource CardOuterMarginStandard}"
-                    Padding="{StaticResource CardPaddingStandard}"
+                    Margin="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='DetailsCardMarginCollapsed|DetailsCardMarginExpanded'}"
+                    Padding="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter='DetailsCardPaddingCollapsed|DetailsCardPaddingExpanded'}"
                     Style="{StaticResource CardContainerStyle}"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
@@ -1052,28 +1031,7 @@
 
                                 <!-- Budget Utilization Visualizer -->
                                 <TextBlock Text="Budget Utilization" Style="{StaticResource SectionHeaderTextStyle}" Margin="0,16,0,12"/>
-                                <Grid Height="24" Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.CashDiscountPct}"/>
-                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.SubDownPct}"/>
-                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.RateSubsidyPct}"/>
-                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.IdcPct}"/>
-                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.UnallocatedPct}"/>
-                                    </Grid.ColumnDefinitions>
-                                    <!-- Using rectangles for segments, colors should be defined in resources optimally, using hardcoded for now -->
-                                    <Rectangle Grid.Column="0" Fill="{ThemeResource BudgetCashBrush}" ToolTipService.ToolTip="Cash Discount"/>
-                                    <Rectangle Grid.Column="1" Fill="{ThemeResource BudgetSubDownBrush}" ToolTipService.ToolTip="SubDown"/>
-                                    <Rectangle Grid.Column="2" Fill="{ThemeResource BudgetRateSubsidyBrush}" ToolTipService.ToolTip="Rate Subsidy"/>
-                                    <Rectangle Grid.Column="3" Fill="{ThemeResource BudgetIdcBrush}" ToolTipService.ToolTip="Other Campaign IDCs (Insurance/MBSP)"/>
-                                    <Rectangle Grid.Column="4" Fill="{ThemeResource BudgetUnallocatedBrush}" ToolTipService.ToolTip="Unallocated"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceM}" HorizontalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetCashBrush}"/><TextBlock Text="Cash Disc." FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetSubDownBrush}"/><TextBlock Text="SubDown" FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetRateSubsidyBrush}"/><TextBlock Text="Rate Sub." FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetIdcBrush}"/><TextBlock Text="IDCs" FontSize="11"/></StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetUnallocatedBrush}"/><TextBlock Text="Unallocated" FontSize="11"/></StackPanel>
-                                </StackPanel>
+                                <appcontrols:BudgetUtilizationBar DataContext="{Binding}"/>
                             </StackPanel>
 
                             <ToggleButton Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" x:Name="RoRACDetailsToggle2" HorizontalAlignment="Left" Margin="0,16,0,4">
@@ -1184,32 +1142,11 @@
             </Border>
 
             <!-- Collapse Button positioned at top-left of the column -->
-            <Button Command="{Binding ToggleCampaignDetailsCollapsedCommand}"
-                    VerticalAlignment="Top"
+            <appcontrols:PaneToggleButton
                     HorizontalAlignment="Left"
-                    Width="28"
-                    Height="28"
-                    Padding="0"
                     Margin="4,18,0,0"
-                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    Canvas.ZIndex="100" Style="{StaticResource IconButtonStyle}">
-                <Grid>
-                    <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                              Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    <FontIcon Glyph="&#xE76B;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                              Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </Grid>
-                <ToolTipService.ToolTip>
-                    <ToolTip>
-                        <StackPanel>
-                            <TextBlock Text="Fold out" Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
-                            <TextBlock Text="Fold in" Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </ToolTip>
-                </ToolTipService.ToolTip>
-            </Button>
+                    IsCollapsed="{Binding IsCampaignDetailsCollapsed, Mode=TwoWay}"
+                    ToggleCommand="{Binding ToggleCampaignDetailsCollapsedCommand}"/>
         </Grid>
                     <!-- MARK: FOOTER -->
          <Border Grid.Row="1" Grid.ColumnSpan="4" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
