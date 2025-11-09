@@ -58,6 +58,22 @@ public sealed partial class MainWindow : Window
                 _settings.ApplyTheme(root);
             }
             _layout.Attach(ViewModel, _settings);
+
+            // React to theme changes from SettingsViewModel to apply immediately to the window
+            try
+            {
+                ViewModel.Settings.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(ViewModels.Settings.SettingsViewModel.Theme))
+                    {
+                        if (Content is FrameworkElement root)
+                        {
+                            ViewModel.Settings.ApplyTheme(root);
+                        }
+                    }
+                };
+            }
+            catch { }
         }
         catch { }
     }

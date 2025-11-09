@@ -10,6 +10,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="Styles/DetailsStyles.xaml"/>
             
                 <muxc:XamlControlsResources />
                 <!-- Include the new style resource dictionaries -->

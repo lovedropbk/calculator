@@ -116,6 +116,7 @@ public partial class MainViewModel : ObservableValidator
         Export = new ViewModels.Exports.ExportViewModel(
             _exportService,
             getCurrent: () => (ActiveCampaign, _lastScenarioResult),
+            getInputs: () => (DealInput.CustomerNominalRate, DealInput.DealerCommissionResolvedAmt, DealInput.IdcOther),
             setStatus: s => Status = s
         );
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
@@ -399,7 +400,8 @@ public partial class MainViewModel : ObservableValidator
     }
 
     // MARK: Export - CSV (xlsx extension)
-    [RelayCommand]
+    // Removed legacy command; Export is handled by ExportViewModel
+    // [RelayCommand]
     private async Task ExportXlsxAsync()
     {
         try

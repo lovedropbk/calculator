@@ -10,14 +10,17 @@ public partial class ExportViewModel : ObservableObject
 {
     private readonly ExportService _export;
     private readonly Func<(ViewModels.CampaignSummaryViewModel? active, FinancialCalculator.Engine.Models.Facade.ScenarioResult? res)> _getCurrent;
+    private readonly Func<(double rateNominalPct, double commissionAmt, double idcOther)> _getInputs;
     private readonly Action<string> _setStatus;
 
     public ExportViewModel(ExportService export,
                            Func<(ViewModels.CampaignSummaryViewModel? active, FinancialCalculator.Engine.Models.Facade.ScenarioResult? res)> getCurrent,
+                           Func<(double rateNominalPct, double commissionAmt, double idcOther)> getInputs,
                            Action<string> setStatus)
     {
         _export = export;
         _getCurrent = getCurrent;
+        _getInputs = getInputs;
         _setStatus = setStatus;
         ExportXlsxCommand = new AsyncRelayCommand(ExportXlsxAsync);
         ExportPdfCommand = new AsyncRelayCommand(ExportPdfAsync);
@@ -37,7 +40,8 @@ public partial class ExportViewModel : ObservableObject
                 _setStatus("No campaign or results to export.");
                 return;
             }
-            var file = await _export.ExportScenarioAsync(active, res, 0, 0, 0);
+            var (rateNominalPct, commissionAmt, idcOther) = _getInputs();
+            var file = await _export.ExportScenarioAsync(active, res, rateNominalPct, commissionAmt, idcOther);
             _setStatus($"Exported XLSX to {file}");
         }
         catch (Exception ex)

@@ -99,7 +99,14 @@ public partial class App : Application
 
             // Apply theme preference after window exists
             if (window.Content is FrameworkElement fe)
+            {
                 _settings.ApplyTheme(fe);
+            }
+            // Keep MainWindow binding reactive to theme changes (x:Bind above), but also set initial theme:
+            if (window.Content is FrameworkElement fe2)
+            {
+                fe2.RequestedTheme = _settings.AppTheme;
+            }
 
             // Add a visual indicator if window is created but not showing content
             if (window.Content == null)

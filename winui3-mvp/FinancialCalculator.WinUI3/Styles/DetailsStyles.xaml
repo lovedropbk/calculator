@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Shared grid style for label/value details layouts -->
+    <Style TargetType="Grid" x:Key="DetailsGridStyle">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="ColumnSpacing" Value="{StaticResource SpaceS}"/>
+        <Setter Property="Width" Value="{StaticResource DetailsGridStandardWidth}"/>
+    </Style>
+</ResourceDictionary>
