@@ -23,7 +23,7 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        ViewModel = new MainViewModel();
+        ViewModel = new MainViewModel(_settings);
 
         try
         {

@@ -5,7 +5,7 @@ using System.Globalization;
 namespace FinancialCalculator.WinUI3.Converters
 {
     // Format a bound value using a ConverterParameter format string, e.g. "Show breakdown for {0}"
-    public sealed class TextFormatConverter : IValueConverter
+    public sealed partial class TextFormatConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

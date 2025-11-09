@@ -99,7 +99,7 @@ public partial class MainViewModel : ObservableValidator
     public string NotificationMessage { get => Notifications.Message; set { Notifications.Message = value; OnPropertyChanged(nameof(NotificationMessage)); } }
     public Microsoft.UI.Xaml.Controls.InfoBarSeverity NotificationSeverity { get => Notifications.Severity; set { Notifications.Severity = value; OnPropertyChanged(nameof(NotificationSeverity)); } }
 
-    public MainViewModel()
+    public MainViewModel(FinancialCalculator.WinUI3.Services.AppSettingsService? appSettings = null)
     {
         RecalculateCommand = new AsyncRelayCommand(RecalculateAsync);
         InitializeGoalSeekCommands();
@@ -112,7 +112,9 @@ public partial class MainViewModel : ObservableValidator
             getRight: () => IsCampaignDetailsCollapsed,
             setRight: v => IsCampaignDetailsCollapsed = v
         );
-        Settings = new ViewModels.Settings.SettingsViewModel(new Services.AppSettingsService());
+        Settings = new ViewModels.Settings.SettingsViewModel(appSettings ?? new Services.AppSettingsService());
+        Settings.Load();
+        Settings.Service.ApplyDensity();
         Export = new ViewModels.Exports.ExportViewModel(
             _exportService,
             getCurrent: () => (ActiveCampaign, _lastScenarioResult),

@@ -114,21 +114,25 @@ public sealed class AppSettingsService
 
     public void ApplyDensity()
     {
-        var dictionaries = Application.Current.Resources.MergedDictionaries;
-        // Remove any existing density dictionaries
-        for (int i = dictionaries.Count - 1; i >= 0; i--)
+        try
         {
-            var src = dictionaries[i].Source?.ToString() ?? string.Empty;
-            if (src.EndsWith("Styles/Density.Compact.xaml") || src.EndsWith("Styles/Density.Comfortable.xaml"))
+            var dictionaries = Application.Current.Resources.MergedDictionaries;
+            // Remove any existing density dictionaries
+            for (int i = dictionaries.Count - 1; i >= 0; i--)
             {
-                dictionaries.RemoveAt(i);
+                var src = dictionaries[i].Source?.ToString() ?? string.Empty;
+                if (src.EndsWith("Styles/Density.Compact.xaml", StringComparison.OrdinalIgnoreCase) || src.EndsWith("Styles/Density.Comfortable.xaml", StringComparison.OrdinalIgnoreCase))
+                {
+                    dictionaries.RemoveAt(i);
+                }
             }
-        }
 
-        var uri = Density == AppDensity.Comfortable
-            ? new Uri("ms-appx:///Styles/Density.Comfortable.xaml")
-            : new Uri("ms-appx:///Styles/Density.Compact.xaml");
-        dictionaries.Add(new ResourceDictionary { Source = uri });
+            var uri = Density == AppDensity.Comfortable
+                ? new Uri("ms-appx:///Styles/Density.Comfortable.xaml")
+                : new Uri("ms-appx:///Styles/Density.Compact.xaml");
+            dictionaries.Add(new ResourceDictionary { Source = uri });
+        }
+        catch { }
     }
 
     private sealed class SettingsDto

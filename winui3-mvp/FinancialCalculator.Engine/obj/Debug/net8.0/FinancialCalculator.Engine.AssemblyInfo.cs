@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FinancialCalculator.Engine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80c1510f19b6470c2394d862a4f6230c02717606")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+65254be6d62cfa4cd49c1dabb08b3460c241b82f")]
 [assembly: System.Reflection.AssemblyProductAttribute("FinancialCalculator.Engine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FinancialCalculator.Engine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

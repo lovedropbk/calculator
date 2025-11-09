@@ -81,4 +81,10 @@
   <data name="CampaignDesigner_Tile_CampaignPrefix.Text" xml:space="preserve">
     <value>Campaign: </value>
   </data>
+  <data name="PaneToggle_Tooltip_Collapse.Text" xml:space="preserve">
+    <value>Collapse panel</value>
+  </data>
+  <data name="PaneToggle_Tooltip_Expand.Text" xml:space="preserve">
+    <value>Expand panel</value>
+  </data>
 </root>

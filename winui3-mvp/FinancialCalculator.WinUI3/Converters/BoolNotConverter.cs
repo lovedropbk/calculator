@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Data;
 namespace FinancialCalculator.WinUI3.Converters
 {
     // MARK: Inverts a boolean. Useful to disable inputs when a condition is true.
-    public sealed class BoolNotConverter : IValueConverter
+    public sealed partial class BoolNotConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

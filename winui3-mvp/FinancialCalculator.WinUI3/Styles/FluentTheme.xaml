@@ -33,6 +33,9 @@
 
     <!-- Pane/card margins & paddings as tokens (for converters/state triggers) -->
     <!-- Right details card tokens -->
+    <!-- Pane toggle placement tokens -->
+    <Thickness x:Key="PaneToggleButtonLeftMargin">0,18,-12,0</Thickness>
+    <Thickness x:Key="PaneToggleButtonRightMargin">-12,18,0,0</Thickness>
     <Thickness x:Key="DetailsCardMarginCollapsed">0,12,12,12</Thickness>
     <Thickness x:Key="DetailsCardMarginExpanded">0,12,12,12</Thickness>
     <Thickness x:Key="DetailsCardPaddingCollapsed">16,16,16,16</Thickness>
