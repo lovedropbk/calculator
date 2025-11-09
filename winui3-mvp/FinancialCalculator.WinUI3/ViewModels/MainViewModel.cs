@@ -115,7 +115,7 @@ public partial class MainViewModel : ObservableValidator
         Settings = new ViewModels.Settings.SettingsViewModel(new Services.AppSettingsService());
         Export = new ViewModels.Exports.ExportViewModel(
             _exportService,
-            getCurrent: () => (ActiveCampaign, (FinancialCalculator.Engine.Models.Facade.ScenarioResult?)null),
+            getCurrent: () => (ActiveCampaign, _lastScenarioResult),
             setStatus: s => Status = s
         );
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
@@ -274,6 +274,8 @@ public partial class MainViewModel : ObservableValidator
     // MARK: Actions
     private ScenarioRequest? _lastCalculationRequest;
 
+    private FinancialCalculator.Engine.Models.Facade.ScenarioResult? _lastScenarioResult;
+
     private async Task RecalculateAsync()
     {
         try
@@ -290,7 +292,7 @@ public partial class MainViewModel : ObservableValidator
 
             // Always calculate with local C# engine for high-fidelity cashflows and IRR per spec
             var result = _financialFacade.Calculate(request);
-
+            _lastScenarioResult = result;
             // Update key metrics from local engine (monthly, flat rate, financed amount)
             Results.Metrics = new MetricsViewModel
             {

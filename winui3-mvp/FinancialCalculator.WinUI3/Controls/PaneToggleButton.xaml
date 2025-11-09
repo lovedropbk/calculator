@@ -15,20 +15,15 @@
             BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
             BorderThickness="1"
             Canvas.ZIndex="100" Style="{StaticResource IconButtonStyle}"
-            Command="{x:Bind ToggleCommand}">
+            Command="{x:Bind ToggleCommand, Mode=OneWay}">
         <Grid>
             <FontIcon Glyph="&#xE76B;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                      Visibility="{x:Bind IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}" />
+                      Visibility="{x:Bind ShowLeftGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             <FontIcon Glyph="&#xE76C;" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                      Visibility="{x:Bind IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}" />
+                      Visibility="{x:Bind ShowRightGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
         </Grid>
         <ToolTipService.ToolTip>
-            <ToolTip>
-                <StackPanel>
-                    <TextBlock Text="Fold in" Visibility="{x:Bind IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
-                    <TextBlock Text="Fold out" Visibility="{x:Bind IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                </StackPanel>
-            </ToolTip>
+            <ToolTip Content="{x:Bind TooltipText, Mode=OneWay}" />
         </ToolTipService.ToolTip>
     </Button>
 </UserControl>

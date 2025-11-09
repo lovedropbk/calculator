@@ -74,9 +74,29 @@
                                           MinWidth="{Binding ViewModel.IsCampaignDetailsCollapsed, ElementName=Root, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='36|360'}"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Overlay pane toggles: visible only when panes are collapsed -->
+                    <appcontrols:PaneToggleButton Grid.Row="0" Grid.Column="0"
+                                                 HorizontalAlignment="Right"
+                                                 Margin="0,18,4,0"
+                                                 IsRightSide="False"
+                                                 IsCollapsed="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Mode=TwoWay}"
+                                                 ToggleCommand="{Binding DealInput.ToggleDealInputsCollapsedCommand}"
+                                                 Visibility="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Canvas.ZIndex="1000"/>
+
+                    <appcontrols:PaneToggleButton Grid.Row="0" Grid.Column="3"
+                                                 HorizontalAlignment="Left"
+                                                 Margin="4,18,0,0"
+                                                 IsRightSide="True"
+                                                 IsCollapsed="{Binding ViewModel.IsCampaignDetailsCollapsed, ElementName=Root, Mode=TwoWay}"
+                                                 ToggleCommand="{Binding ToggleCampaignDetailsCollapsedCommand}"
+                                                 Visibility="{Binding ViewModel.IsCampaignDetailsCollapsed, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Canvas.ZIndex="1000"/>
+
+
         <!-- MARK: LEFT - Deal Input Mask with Collapse Toggle -->
         <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" RowSpacing="{StaticResource StackedCardSpacing}"
-              Width="{Binding DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='DealInputsCardMaxWidthCollapsed|DealInputsCardMaxWidthExpanded'}">
+              MaxWidth="{Binding ViewModel.DealInput.IsDealInputsCollapsed, ElementName=Root, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='DealInputsCardMaxWidthCollapsed|DealInputsCardMaxWidthExpanded'}">
             <Grid.RowDefinitions>
                 <!-- Top grows to content first (no inner scrolling), bottom fills remainder -->
                 <RowDefinition Height="Auto" MinHeight="{StaticResource DealInputsMinHeight}"/>
@@ -701,8 +721,13 @@
 
             <!-- Collapse Button positioned at top-right of the column -->
             <appcontrols:PaneToggleButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
                     HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
                     Margin="0,18,4,0"
+                    Canvas.ZIndex="1000"
+                    IsRightSide="False"
                     IsCollapsed="{Binding DealInput.IsDealInputsCollapsed, Mode=TwoWay}"
                     ToggleCommand="{Binding DealInput.ToggleDealInputsCollapsedCommand}"/>
         </Grid>
@@ -1143,8 +1168,13 @@
 
             <!-- Collapse Button positioned at top-left of the column -->
             <appcontrols:PaneToggleButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
                     HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
                     Margin="4,18,0,0"
+                    Canvas.ZIndex="1000"
+                    IsRightSide="True"
                     IsCollapsed="{Binding IsCampaignDetailsCollapsed, Mode=TwoWay}"
                     ToggleCommand="{Binding ToggleCampaignDetailsCollapsedCommand}"/>
         </Grid>
