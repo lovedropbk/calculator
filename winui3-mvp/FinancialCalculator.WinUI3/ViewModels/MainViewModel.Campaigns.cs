@@ -12,14 +12,9 @@ namespace FinancialCalculator.WinUI3.ViewModels;
 
 public partial class MainViewModel
 {
-    // Campaign Details panel
+    // Campaign Details panel - keep compatibility for XAML bindings via MainViewModel
     private bool _isCampaignDetailsCollapsed = true;
     public bool IsCampaignDetailsCollapsed { get => _isCampaignDetailsCollapsed; set => SetProperty(ref _isCampaignDetailsCollapsed, value); }
-
-    private void OnIsCampaignDetailsCollapsedChanged(bool value)
-    {
-        // No-op, handled by XAML converter
-    }
 
     [RelayCommand]
     private void ToggleCampaignDetailsCollapsed()
@@ -384,10 +379,6 @@ public partial class MainViewModel
         // Keep My Campaigns table in sync with the Campaign Designer widget
         vm.RoRAC = ((double)res.AcquisitionRoRacPercent).ToString("0.00%");
 
-        _activeFsInsurance = fsIns;
-        _activeFsMbsp = fsMbsp;
-        _activeSubsidyUsed = subsidyUsed;
-        
         // Update DealInput for display if needed, though it might affect main tab if switched back.
         // Keeping it for now as per original logic.
         try
@@ -399,19 +390,17 @@ public partial class MainViewModel
         {
             _suppressRecalculation = false;
         }
-        
-        OnPropertyChanged(nameof(ActiveFsInsuranceText));
-        OnPropertyChanged(nameof(ActiveFsMbspText));
-        OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
-        OnPropertyChanged(nameof(SubsidyRemainingText));
 
-        UpdateBudgetUtilization(
+        CampaignDetails.UpdateBudgetUtilization(
             vm.CashDiscountAmount,
             vm.FSSubDownAmount,
              rateSubsidy,
              fsIns + fsMbsp,
              DealInput.SubsidyBudget - subsidyUsed
         );
+
+       // Sync numbers for right pane metrics
+       CampaignDetails.UpdateActiveAllocations(fsIns, fsMbsp, subsidyUsed);
 
         RefreshProfitabilityDetailsLocal(res.Profitability);
 

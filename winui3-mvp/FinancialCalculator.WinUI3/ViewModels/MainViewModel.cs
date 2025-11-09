@@ -48,6 +48,7 @@ public partial class MainViewModel : ObservableValidator
     public CampaignManagerViewModel CampaignManager { get; } = new();
     public ResultsViewModel Results { get; } = new();
     public ComparisonViewModel Comparison { get; } = new();
+    public CampaignDetailsViewModel CampaignDetails { get; }
     public GoalSeekViewModel GoalSeek { get; private set; } = null!; // Initialized in InitializeAsync due to Facade dependency
     private string _status = "";
     public string Status
@@ -102,6 +103,7 @@ public partial class MainViewModel : ObservableValidator
     
         // Initialize sub-viewmodels
         DealInput = new DealInputViewModel(_vehicleCatalog, _standardRates, _commission);
+        CampaignDetails = new CampaignDetailsViewModel(DealInput);
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
         // Subscribe to input changes to keep UI and calculations in sync
         DealInput.InputsChanged += OnDealInputsChanged;
@@ -290,6 +292,15 @@ public partial class MainViewModel : ObservableValidator
 
             // Populate profitability detail waterfall
             RefreshProfitabilityDetailsLocal(result.Profitability);
+            // Also sync details allocations for right pane when recalculating stand-alone
+            var ac = ActiveCampaign;
+            if (ac != null)
+            {
+                double.TryParse(ac.FSSubInterest, NumberStyles.Any, CultureInfo.InvariantCulture, out var fsIns);
+                double.TryParse(ac.FSFreeMBSP, NumberStyles.Any, CultureInfo.InvariantCulture, out var fsMbsp);
+                double.TryParse(ac.SubsidyUsed, NumberStyles.Any, CultureInfo.InvariantCulture, out var subsidyUsed);
+                CampaignDetails.UpdateActiveAllocations(fsIns, fsMbsp, subsidyUsed);
+            }
 
             Status = "Ready";
 
@@ -347,73 +358,9 @@ public partial class MainViewModel : ObservableValidator
 
     // MARK: Profitability details (local)
     private void RefreshProfitabilityDetailsLocal(FinancialCalculator.Engine.Models.Facade.ProfitabilityDetails p)
-    {
-        _wfCustomerRate = (double)p.CustomerRatePercent;
-        _wfDealIRREffective = (double)p.DealIrrEffectivePercent;
-        _wfDealIRRNominal = (double)p.DealIrrNominalPercent;
-        _wfIDCUpfrontAnnualized = (double)p.IdcUpfrontAnnualizedPercent;
-        _wfSubsidyUpfrontAnnualized = (double)p.SubsidyUpfrontAnnualizedPercent;
-        _wfCostOfDebtMatched = (double)p.CostOfDebtMatchedPercent;
-        _wfMatchedFundedSpread = (double)p.MatchedFundingSpreadPercent;
-        _wfGrossInterestMargin = (double)p.GrossInterestMarginPercent;
-        _wfNetInterestMargin = (double)p.NetInterestMarginPercent;
-        _wfCostOfCreditRisk = (double)p.CostOfCreditRiskPercent;
-        _wfOPEX = (double)p.OpexPercent;
-        _wfCapitalAdvantage = (double)p.CapitalAdvantagePercent;
-        _wfNetEBITMargin = (double)p.NetEbitMarginPercent;
-        _wfEconomicCapital = (double)p.EconomicCapitalPercent;
-        
-        // Map separated IDC/Subsidy values
-        _wfIDCUpfrontCostPct = (double)p.IdcUpfrontAnnualizedPercent;
-        _wfIDCPeriodicCostPct = (double)p.IdcPeriodicPercent;
-        _wfSubsidyUpfrontPct = (double)p.SubsidyUpfrontAnnualizedPercent;
-        _wfSubsidyPeriodicPct = (double)p.SubsidyPeriodicPercent;
-        
-        // Combined net values (IDC - Subsidy)
-        _wfIDCUpfront = (double)(p.IdcUpfrontAnnualizedPercent - p.SubsidyUpfrontAnnualizedPercent);
-        _wfIDCPeriodic = (double)(p.IdcPeriodicPercent - p.SubsidyPeriodicPercent);
+    => CampaignDetails.UpdateFromProfitability(p, ActiveCampaign);
 
-        // Active campaign allocations for bottom summary (use VM numeric fields)
-        if (ActiveCampaign != null)
-        {
-            _activeFsInsurance = Math.Max(0, ActiveCampaign.FSSubInterestAmount);
-            _activeFsMbsp = Math.Max(0, ActiveCampaign.FSFreeMBSPAmount);
-            _activeCashDiscount = Math.Max(0, ActiveCampaign.CashDiscountAmount);
-        }
-        else
-        {
-            _activeFsInsurance = _activeFsMbsp = _activeCashDiscount = 0;
-        }
-
-        // Notify UI
-        OnPropertyChanged(nameof(ActiveFsInsuranceText));
-        OnPropertyChanged(nameof(ActiveFsMbspText));
-        OnPropertyChanged(nameof(ActiveSubsidyUtilizedText));
-        OnPropertyChanged(nameof(SubsidyRemainingText));
-        OnPropertyChanged(nameof(IdcOtherText));
-        OnPropertyChanged(nameof(IdcTotalText));
-
-        OnPropertyChanged(nameof(WfCustomerRateText));
-        OnPropertyChanged(nameof(WfDealIRRText));
-        OnPropertyChanged(nameof(WfDealIRRNominalText));
-        OnPropertyChanged(nameof(WfIDCUpfrontAnnualizedText));
-        OnPropertyChanged(nameof(WfSubsidyUpfrontAnnualizedText));
-        OnPropertyChanged(nameof(WfCostOfDebtMatchedText));
-        OnPropertyChanged(nameof(WfMatchedFundedSpreadText));
-        OnPropertyChanged(nameof(WfGrossInterestMarginText));
-        OnPropertyChanged(nameof(WfNetInterestMarginText));
-        OnPropertyChanged(nameof(WfCostOfCreditRiskText));
-        OnPropertyChanged(nameof(WfOPEXText));
-        OnPropertyChanged(nameof(WfCapitalAdvantageText));
-        OnPropertyChanged(nameof(WfNetEBITMarginText));
-        OnPropertyChanged(nameof(WfEconomicCapitalText));
-        
-        // Notify for new separated IDC/Subsidy fields
-        OnPropertyChanged(nameof(WfIDCUpfrontCostPctText));
-        OnPropertyChanged(nameof(WfIDCPeriodicCostPctText));
-        OnPropertyChanged(nameof(WfSubsidyUpfrontPctText));
-        OnPropertyChanged(nameof(WfSubsidyPeriodicPctText));
-    }
+    // Legacy right-pane implementation removed after refactor; functionality now handled by CampaignDetailsViewModel.
 
     // MARK: View Cashflows
     [RelayCommand]
@@ -635,97 +582,8 @@ public partial class MainViewModel : ObservableValidator
     // MARK: Helpers
 
     // Budget Visualization
-    private BudgetUtilizationViewModel _budgetUtilization = new();
-    public BudgetUtilizationViewModel BudgetUtilization { get => _budgetUtilization; set => SetProperty(ref _budgetUtilization, value); }
-
-    private void UpdateBudgetUtilization(double cashDiscount, double subDown, double rateSubsidy, double idcs, double unallocated)
-    {
-        // Ensure we don't have negative widths for GridLength
-        cashDiscount = Math.Max(0, cashDiscount);
-        subDown = Math.Max(0, subDown);
-        rateSubsidy = Math.Max(0, rateSubsidy);
-        idcs = Math.Max(0, idcs);
-        unallocated = Math.Max(0, unallocated);
-
-        // Prevent all zeros which would collapse grid
-        if (cashDiscount + subDown + rateSubsidy + idcs + unallocated <= 0)
-        {
-            unallocated = 1; // Default to full unallocated if everything is zero
-        }
-
-        BudgetUtilization = new BudgetUtilizationViewModel
-        {
-            CashDiscountPct = new Microsoft.UI.Xaml.GridLength(cashDiscount, Microsoft.UI.Xaml.GridUnitType.Star),
-            SubDownPct = new Microsoft.UI.Xaml.GridLength(subDown, Microsoft.UI.Xaml.GridUnitType.Star),
-            RateSubsidyPct = new Microsoft.UI.Xaml.GridLength(rateSubsidy, Microsoft.UI.Xaml.GridUnitType.Star),
-            IdcPct = new Microsoft.UI.Xaml.GridLength(idcs, Microsoft.UI.Xaml.GridUnitType.Star),
-            UnallocatedPct = new Microsoft.UI.Xaml.GridLength(unallocated, Microsoft.UI.Xaml.GridUnitType.Star)
-        };
-    }
-
-    // MARK: Bottom Summary Bindings for Details/Key Metrics
-    private double _activeFsInsurance;
-    private double _activeFsMbsp;
-    private double _activeCashDiscount;
-
-    public string ActiveFsInsuranceText => _activeFsInsurance.ToString("N0", CultureInfo.InvariantCulture);
-    public string ActiveFsMbspText => _activeFsMbsp.ToString("N0", CultureInfo.InvariantCulture);
-    private double _activeSubsidyUsed;
-    // Show actual utilized and remaining subsidy per active campaign (no longer assume full utilization)
-    public string ActiveSubsidyUtilizedText => _activeSubsidyUsed.ToString("N0", CultureInfo.InvariantCulture);
-    public string SubsidyRemainingText => Math.Max(0, DealInput.SubsidyBudget - _activeSubsidyUsed).ToString("N0", CultureInfo.InvariantCulture);
-    public string IdcOtherText => DealInput.IdcOther.ToString("N0", CultureInfo.InvariantCulture);
-    public string IdcTotalText => (DealInput.DealerCommissionResolvedAmt + DealInput.IdcOther + _activeFsInsurance + _activeFsMbsp).ToString("N0", CultureInfo.InvariantCulture);
-
-    // MARK: Profitability Waterfall (for RoRAC details panel)
-    private double _wfCustomerRate;
-    private double _wfIDCUpfrontAnnualized;
-    private double _wfSubsidyUpfrontAnnualized;
-    private double _wfDealIRREffective; // Keeping internal name for now if it maps to Engine's DealIrrEffective
-    private double _wfCostOfDebtMatched;
-    private double _wfMatchedFundedSpread;
-    private double _wfGrossInterestMargin;
-    private double _wfNetInterestMargin;
-    private double _wfCostOfCreditRisk;
-    private double _wfOPEX;
-    private double _wfCapitalAdvantage;
-    private double _wfNetEBITMargin;
-    private double _wfEconomicCapital;
-    
-    // Additional waterfall fields for separated IDC/Subsidy values
-    private double _wfDealIRRNominal;
-    private double _wfIDCUpfront;  // Combined IDC+Subsidies upfront (net)
-    private double _wfIDCPeriodic; // Combined IDC+Subsidies periodic (net)
-    private double _wfIDCUpfrontCostPct;  // Separated IDC upfront cost %
-    private double _wfIDCPeriodicCostPct; // Separated IDC periodic cost %
-    private double _wfSubsidyUpfrontPct;  // Separated subsidy upfront %
-    private double _wfSubsidyPeriodicPct; // Separated subsidy periodic %
-
-    // Percent formatting helper
-    private static string Pct(double v) => v.ToString("0.00%", CultureInfo.InvariantCulture);
-
-    // Exposed formatted texts
-    public string WfCustomerRateText => Pct(_wfCustomerRate);
-    public string WfIDCUpfrontAnnualizedText => Pct(_wfIDCUpfrontAnnualized);
-    public string WfSubsidyUpfrontAnnualizedText => Pct(_wfSubsidyUpfrontAnnualized);
-    public string WfDealIRRText => Pct(_wfDealIRREffective);
-    public string WfDealIRRNominalText => Pct(_wfDealIRRNominal);
-    public string WfCostOfDebtMatchedText => Pct(_wfCostOfDebtMatched);
-    public string WfMatchedFundedSpreadText => Pct(_wfMatchedFundedSpread);
-    public string WfGrossInterestMarginText => Pct(_wfGrossInterestMargin);
-    public string WfNetInterestMarginText => Pct(_wfNetInterestMargin);
-    public string WfCostOfCreditRiskText => Pct(_wfCostOfCreditRisk);
-    public string WfOPEXText => Pct(_wfOPEX);
-    public string WfCapitalAdvantageText => Pct(_wfCapitalAdvantage);
-    public string WfNetEBITMarginText => Pct(_wfNetEBITMargin);
-    public string WfEconomicCapitalText => Pct(_wfEconomicCapital);
-    
-    // Additional separated IDC/Subsidy properties for UI display
-    // These show the breakdown of upfront/periodic IDC and subsidies
-    public string WfIDCUpfrontCostPctText => Pct(_wfIDCUpfrontCostPct);
-    public string WfIDCPeriodicCostPctText => Pct(_wfIDCPeriodicCostPct);
-    public string WfSubsidyUpfrontPctText => Pct(_wfSubsidyUpfrontPct);
-    public string WfSubsidyPeriodicPctText => Pct(_wfSubsidyPeriodicPct);
+    // Delegate right-pane details to CampaignDetails VM
+    public CampaignDetailsViewModel Details => CampaignDetails;
 }
 
 public partial class MetricsViewModel : ObservableObject

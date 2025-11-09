@@ -937,22 +937,22 @@
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DealInput.SubsidyBudgetText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Subsidy utilized:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ActiveSubsidyUtilizedText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Details.ActiveSubsidyUtilizedText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Subsidy remaining:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SubsidyRemainingText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Details.SubsidyRemainingText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="6" Grid.Column="0" Text="IDC - Dealer Commissions:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                             <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding DealInput.DealerCommissionResolvedAmtText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="7" Grid.Column="0" Text="IDC - Others:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding IdcOtherText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Details.IdcOtherText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="8" Grid.Column="0" Text="IDC - Free Insurance:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ActiveFsInsuranceText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Details.ActiveFsInsuranceText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="9" Grid.Column="0" Text="IDC - Free MBSP:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ActiveFsMbspText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Details.ActiveFsMbspText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <!-- Key Metrics -->
                             <TextBlock Grid.Row="10" Grid.Column="0" Text="Monthly Installment:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
@@ -965,7 +965,7 @@
                             <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding Results.Metrics.FlatRate}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <TextBlock Grid.Row="13" Grid.Column="0" Text="IDC Total:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding IdcTotalText}" HorizontalAlignment="Left" TextAlignment="Left"/>
+                            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding Details.IdcTotalText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                             <!-- MARK: Campaign Designer & Metrics -->
                             <StackPanel Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Spacing="{StaticResource SpaceS}" Margin="0,8,0,0">
@@ -1054,11 +1054,11 @@
                                 <TextBlock Text="Budget Utilization" Style="{StaticResource SectionHeaderTextStyle}" Margin="0,16,0,12"/>
                                 <Grid Height="24" Margin="0,0,0,8">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="{Binding BudgetUtilization.CashDiscountPct}"/>
-                                        <ColumnDefinition Width="{Binding BudgetUtilization.SubDownPct}"/>
-                                        <ColumnDefinition Width="{Binding BudgetUtilization.RateSubsidyPct}"/>
-                                        <ColumnDefinition Width="{Binding BudgetUtilization.IdcPct}"/>
-                                        <ColumnDefinition Width="{Binding BudgetUtilization.UnallocatedPct}"/>
+                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.CashDiscountPct}"/>
+                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.SubDownPct}"/>
+                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.RateSubsidyPct}"/>
+                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.IdcPct}"/>
+                                        <ColumnDefinition Width="{Binding Details.BudgetUtilization.UnallocatedPct}"/>
                                     </Grid.ColumnDefinitions>
                                     <!-- Using rectangles for segments, colors should be defined in resources optimally, using hardcoded for now -->
                                     <Rectangle Grid.Column="0" Fill="{ThemeResource BudgetCashBrush}" ToolTipService.ToolTip="Cash Discount"/>
@@ -1116,46 +1116,46 @@
 
                                         <!-- RoRAC Waterfall -->
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Customer Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding WfCustomerRateText}"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Details.WfCustomerRateText}"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="IDC (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WfIDCUpfrontAnnualizedText}"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Details.WfIDCUpfrontAnnualizedText}"/>
                                         
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Subsidy (annualized):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding WfSubsidyUpfrontAnnualizedText}"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Details.WfSubsidyUpfrontAnnualizedText}"/>
 
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="= Deal IRR (Nominal):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding WfDealIRRNominalText}" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Details.WfDealIRRNominalText}" FontWeight="SemiBold"/>
                                         
                                         <Border Grid.Row="4" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Matched Funded Rate:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding WfCostOfDebtMatchedText}"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Details.WfCostOfDebtMatchedText}"/>
                                         
                                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Matched Funded Spread:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding WfMatchedFundedSpreadText}"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Details.WfMatchedFundedSpreadText}"/>
 
                                         <TextBlock Grid.Row="7" Grid.Column="0" Text="= Net Interest Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding WfNetInterestMarginText}" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Details.WfNetInterestMarginText}" FontWeight="SemiBold"/>
 
                                         <Border Grid.Row="8" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Cost of Credit Risk:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding WfCostOfCreditRiskText}"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Details.WfCostOfCreditRiskText}"/>
                                         
                                         <TextBlock Grid.Row="10" Grid.Column="0" Text="OPEX:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding WfOPEXText}"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding Details.WfOPEXText}"/>
                                         
                                         <TextBlock Grid.Row="11" Grid.Column="0" Text="Capital Advantage:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding WfCapitalAdvantageText}"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Details.WfCapitalAdvantageText}"/>
 
                                         <TextBlock Grid.Row="12" Grid.Column="0" Text="= Net EBIT Margin:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                                        <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding WfNetEBITMarginText}" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding Details.WfNetEBITMarginText}" FontWeight="SemiBold"/>
 
                                         <Border Grid.Row="13" Grid.ColumnSpan="2" Height="1" Background="{ThemeResource ControlStrongStrokeColorDefaultBrush}" Margin="0,4,0,4"/>
 
                                         <TextBlock Grid.Row="14" Grid.Column="0" Text="Economic Capital:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding WfEconomicCapitalText}"/>
+                                        <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding Details.WfEconomicCapitalText}"/>
                                         
                                         <TextBlock Grid.Row="15" Grid.Column="0" Text="= Acquisition RoRAC:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                                         <TextBlock Grid.Row="15" Grid.Column="1" Text="{Binding Results.Metrics.RoRAC}" FontWeight="ExtraBold"/>
