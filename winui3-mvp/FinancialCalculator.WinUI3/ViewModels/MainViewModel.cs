@@ -49,6 +49,9 @@ public partial class MainViewModel : ObservableValidator
     public ResultsViewModel Results { get; } = new();
     public ComparisonViewModel Comparison { get; } = new();
     public CampaignDetailsViewModel CampaignDetails { get; }
+    public ViewModels.Layout.LayoutViewModel Layout { get; }
+    public ViewModels.Settings.SettingsViewModel Settings { get; }
+    public ViewModels.Exports.ExportViewModel Export { get; }
     public GoalSeekViewModel GoalSeek { get; private set; } = null!; // Initialized in InitializeAsync due to Facade dependency
     private string _status = "";
     public string Status
@@ -104,6 +107,17 @@ public partial class MainViewModel : ObservableValidator
         // Initialize sub-viewmodels
         DealInput = new DealInputViewModel(_vehicleCatalog, _standardRates, _commission);
         CampaignDetails = new CampaignDetailsViewModel(DealInput);
+        Layout = new ViewModels.Layout.LayoutViewModel(
+            dealInput: DealInput,
+            getRight: () => IsCampaignDetailsCollapsed,
+            setRight: v => IsCampaignDetailsCollapsed = v
+        );
+        Settings = new ViewModels.Settings.SettingsViewModel(new Services.AppSettingsService());
+        Export = new ViewModels.Exports.ExportViewModel(
+            _exportService,
+            getCurrent: () => (ActiveCampaign, (FinancialCalculator.Engine.Models.Facade.ScenarioResult?)null),
+            setStatus: s => Status = s
+        );
         DealInput.IdcOther = 0; // Default to 0, SubsidyBudget is separate now
         // Subscribe to input changes to keep UI and calculations in sync
         DealInput.InputsChanged += OnDealInputsChanged;

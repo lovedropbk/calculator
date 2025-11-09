@@ -1164,7 +1164,7 @@
                             </Grid>
 
                             <Button Grid.Row="17" Grid.Column="1"
-                                    Command="{Binding ExportXlsxCommand}"
+                                    Command="{Binding Export.ExportXlsxCommand}"
                                     HorizontalAlignment="Right"
                                     Margin="0,8,0,0"
                                     Style="{StaticResource SecondaryButtonStyle}"
@@ -1257,21 +1257,21 @@
                                 <TextBlock Text="Settings"/>
                             </StackPanel>
                             <Button.Flyout>
-                                <MenuFlyout Opening="OnSettingsFlyoutOpening">
+                                <MenuFlyout >
                                     <!-- Behavior group -->
                                     <MenuFlyoutSubItem Text="App behavior">
-                                        <ToggleMenuFlyoutItem x:Name="AutoExpandToggle" Text="Auto expand right when left collapses" Click="OnAutoExpandToggleClicked"/>
+                                        <ToggleMenuFlyoutItem x:Name="AutoExpandToggle" Text="Auto expand right when left collapses" IsChecked="{x:Bind ViewModel.Settings.AutoExpandRightOnLeftCollapse, Mode=TwoWay}"/>
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSeparator/>
                                     <!-- Display group (Fluent v2 radios for exclusive choices) -->
                                     <MenuFlyoutSubItem Text="Theme">
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="System default" Click="OnThemeDefaultClicked"/>
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Light" Click="OnThemeLightClicked"/>
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Dark" Click="OnThemeDarkClicked"/>
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="System default" IsChecked="{x:Bind ViewModel.Settings.IsThemeDefault, Mode=TwoWay}"/>
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Light" IsChecked="{x:Bind ViewModel.Settings.IsThemeLight, Mode=TwoWay}"/>
+                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Dark" IsChecked="{x:Bind ViewModel.Settings.IsThemeDark, Mode=TwoWay}"/>
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem Text="Density">
-                                        <RadioMenuFlyoutItem GroupName="Density" Text="Compact" Click="OnDensityCompactClicked"/>
-                                        <RadioMenuFlyoutItem GroupName="Density" Text="Comfortable" Click="OnDensityComfortableClicked"/>
+                                        <RadioMenuFlyoutItem GroupName="Density" Text="Compact" IsChecked="{x:Bind ViewModel.Settings.IsDensityCompact, Mode=TwoWay}"/>
+                                        <RadioMenuFlyoutItem GroupName="Density" Text="Comfortable" IsChecked="{x:Bind ViewModel.Settings.IsDensityComfortable, Mode=TwoWay}"/>
                                     </MenuFlyoutSubItem>
                                 </MenuFlyout>
                             </Button.Flyout>
@@ -1368,7 +1368,7 @@
                             </muxc:Expander>
                         </StackPanel>
                         <Button Grid.Column="1"
-                                Command="{Binding ExportXlsxCommand}"
+                                Command="{Binding Export.ExportXlsxCommand}"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 AccessKey="E"
