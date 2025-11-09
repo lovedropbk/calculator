@@ -729,7 +729,8 @@
                     Canvas.ZIndex="1000"
                     IsRightSide="False"
                     IsCollapsed="{Binding DealInput.IsDealInputsCollapsed, Mode=TwoWay}"
-                    ToggleCommand="{Binding DealInput.ToggleDealInputsCollapsedCommand}"/>
+                    ToggleCommand="{Binding DealInput.ToggleDealInputsCollapsedCommand}"
+                    Visibility="{Binding DealInput.IsDealInputsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
         </Grid>
 
         <controls:GridSplitter Grid.Column="1" ResizeDirection="Columns" ResizeBehavior="PreviousAndCurrent" Width="{StaticResource SpaceXS}"
@@ -1176,7 +1177,8 @@
                     Canvas.ZIndex="1000"
                     IsRightSide="True"
                     IsCollapsed="{Binding IsCampaignDetailsCollapsed, Mode=TwoWay}"
-                    ToggleCommand="{Binding ToggleCampaignDetailsCollapsedCommand}"/>
+                    ToggleCommand="{Binding ToggleCampaignDetailsCollapsedCommand}"
+                    Visibility="{Binding IsCampaignDetailsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
         </Grid>
                     <!-- MARK: FOOTER -->
          <Border Grid.Row="1" Grid.ColumnSpan="4" Background="Transparent" Padding="12,8" Margin="12,0,12,12">
