@@ -144,7 +144,6 @@
   <data name="CampaignDetails_IDCTotal.Text" xml:space="preserve">
     <value>IDC Total:</value>
   </data>
-
   <data name="BudgetUtilization_Header.Text" xml:space="preserve">
     <value>Budget Utilization</value>
   </data>
@@ -163,7 +162,6 @@
   <data name="BudgetUtilization_Legend_Unallocated.Text" xml:space="preserve">
     <value>Unallocated</value>
   </data>
-
   <data name="RoRAC_Header.Text" xml:space="preserve">
     <value>Acquisition RoRAC:</value>
   </data>
@@ -209,14 +207,12 @@
   <data name="RoRAC_Acquisition.Text" xml:space="preserve">
     <value>= Acquisition RoRAC:</value>
   </data>
-
   <data name="Export_XLSX.Text" xml:space="preserve">
     <value>Export XLSX</value>
   </data>
   <data name="Export_XLSX_Tooltip.Content" xml:space="preserve">
     <value>Export data to Excel file</value>
   </data>
-
   <data name="CampaignDesigner_Header.Text" xml:space="preserve">
     <value>Campaign Designer</value>
   </data>

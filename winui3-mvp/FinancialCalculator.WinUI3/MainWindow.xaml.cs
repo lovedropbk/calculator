@@ -312,4 +312,13 @@ public sealed partial class MainWindow : Window
     }
 
     
+    private void OnLanguageEnglishClicked(object sender, RoutedEventArgs e)
+    {
+        try { ViewModel.Settings.LanguageTag = "en-US"; } catch { }
+    }
+
+    private void OnLanguageThaiClicked(object sender, RoutedEventArgs e)
+    {
+        try { ViewModel.Settings.LanguageTag = "th-TH"; } catch { }
+    }
 }

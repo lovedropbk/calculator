@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PaneToggle_Tooltip_Collapse.Text" xml:space="preserve">
+    <value>ย่อแผง</value>
+  </data>
+  <data name="PaneToggle_Tooltip_Expand.Text" xml:space="preserve">
+    <value>ขยายแผง</value>
+  </data>
+  <data name="AppSettings_Behavior.Text" xml:space="preserve">
+    <value>พฤติกรรมของแอป</value>
+  </data>
+  <data name="AppSettings_Theme.Text" xml:space="preserve">
+    <value>ธีม</value>
+  </data>
+  <data name="AppSettings_Density.Text" xml:space="preserve">
+    <value>ความหนาแน่น</value>
+  </data>
+  <data name="AppSettings_Language.Text" xml:space="preserve">
+    <value>ภาษา</value>
+  </data>
+  <data name="CampaignDetails_Header.Text" xml:space="preserve">
+    <value>รายละเอียดแคมเปญและตัวชี้วัดหลัก</value>
+  </data>
+  <data name="CampaignDetails_Term.Text" xml:space="preserve">
+    <value>ระยะเวลา (เดือน):</value>
+  </data>
+  <data name="CampaignDetails_Name.Text" xml:space="preserve">
+    <value>ชื่อแคมเปญ:</value>
+  </data>
+  <data name="CampaignDetails_FinancedAmount.Text" xml:space="preserve">
+    <value>ยอดเงินกู้:</value>
+  </data>
+  <data name="CampaignDetails_SubsidyBudget.Text" xml:space="preserve">
+    <value>งบอุดหนุน:</value>
+  </data>
+  <data name="CampaignDetails_SubsidyUtilized.Text" xml:space="preserve">
+    <value>อุดหนุนที่ใช้ไป:</value>
+  </data>
+  <data name="CampaignDetails_SubsidyRemaining.Text" xml:space="preserve">
+    <value>อุดหนุนคงเหลือ:</value>
+  </data>
+  <data name="CampaignDetails_IDCDealer.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง - ค่าคอมมิชชั่นดีลเลอร์:</value>
+  </data>
+  <data name="CampaignDetails_IDCOther.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง - อื่น ๆ:</value>
+  </data>
+  <data name="CampaignDetails_IDCInsurance.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง - ฟรีประกัน:</value>
+  </data>
+  <data name="CampaignDetails_IDCMBSP.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง - ฟรี MBSP:</value>
+  </data>
+  <data name="CampaignDetails_MonthlyInstallment.Text" xml:space="preserve">
+    <value>ค่างวดรายเดือน:</value>
+  </data>
+  <data name="CampaignDetails_CustomerRateNominal.Text" xml:space="preserve">
+    <value>อัตราดอกเบี้ยลูกค้า (โนมินัล, %):</value>
+  </data>
+  <data name="CampaignDetails_CustomerRateFlat.Text" xml:space="preserve">
+    <value>อัตราดอกเบี้ยลูกค้า (แฟลต, %):</value>
+  </data>
+  <data name="CampaignDetails_IDCTotal.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรงรวม:</value>
+  </data>
+  <data name="CampaignDesigner_Header.Text" xml:space="preserve">
+    <value>ตัวออกแบบแคมเปญ</value>
+  </data>
+  <data name="CampaignDesigner_TargetRate.Text" xml:space="preserve">
+    <value>อัตราเป้าหมาย (% ต่อปี)</value>
+  </data>
+  <data name="CampaignDesigner_CashDiscount.Text" xml:space="preserve">
+    <value>ส่วนลดเงินสด (บาท)</value>
+  </data>
+  <data name="CampaignDesigner_SubDown.Text" xml:space="preserve">
+    <value>เงินอุดหนุนดาวน์ (บาท)</value>
+  </data>
+  <data name="CampaignDesigner_Insurance.Text" xml:space="preserve">
+    <value>ประกัน (บาท)</value>
+  </data>
+  <data name="CampaignDesigner_MBSPPackage.Text" xml:space="preserve">
+    <value>แพ็กเกจ MBSP</value>
+  </data>
+  <data name="CampaignDesigner_MBSP.Text" xml:space="preserve">
+    <value>MBSP (บาท)</value>
+  </data>
+  <data name="CampaignDesigner_RateSubsidyCalc.Text" xml:space="preserve">
+    <value>อุดหนุนอัตราดอกเบี้ย (คำนวณ) (บาท)</value>
+  </data>
+  <data name="CampaignDesigner_ConsumeAllSubsidy.Text" xml:space="preserve">
+    <value>ใช้วงเงินอุดหนุนทั้งหมด</value>
+  </data>
+  <data name="BudgetUtilization_Header.Text" xml:space="preserve">
+    <value>การใช้วงเงินงบประมาณ</value>
+  </data>
+  <data name="BudgetUtilization_Legend_CashDisc.Text" xml:space="preserve">
+    <value>ส่วนลดเงินสด</value>
+  </data>
+  <data name="BudgetUtilization_Legend_SubDown.Text" xml:space="preserve">
+    <value>อุดหนุนดาวน์</value>
+  </data>
+  <data name="BudgetUtilization_Legend_RateSub.Text" xml:space="preserve">
+    <value>อุดหนุนดอกเบี้ย</value>
+  </data>
+  <data name="BudgetUtilization_Legend_IDCs.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง</value>
+  </data>
+  <data name="BudgetUtilization_Legend_Unallocated.Text" xml:space="preserve">
+    <value>ยังไม่จัดสรร</value>
+  </data>
+  <data name="RoRAC_Header.Text" xml:space="preserve">
+    <value>RoRAC ของการได้มา:</value>
+  </data>
+  <data name="RoRAC_ShowDetails.Text" xml:space="preserve">
+    <value>(แสดงรายละเอียด)</value>
+  </data>
+  <data name="RoRAC_CustomerRate.Text" xml:space="preserve">
+    <value>อัตราดอกเบี้ยลูกค้า:</value>
+  </data>
+  <data name="RoRAC_IDCAnnualized.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางตรง (คิดเป็นรายปี):</value>
+  </data>
+  <data name="RoRAC_SubsidyAnnualized.Text" xml:space="preserve">
+    <value>อุดหนุน (คิดเป็นรายปี):</value>
+  </data>
+  <data name="RoRAC_DealIRRNominal.Text" xml:space="preserve">
+    <value>= IRR ของดีล (โนมินัล):</value>
+  </data>
+  <data name="RoRAC_MatchedFundedRate.Text" xml:space="preserve">
+    <value>อัตราทุนที่จับคู่:</value>
+  </data>
+  <data name="RoRAC_MatchedFundedSpread.Text" xml:space="preserve">
+    <value>ส่วนต่างทุนที่จับคู่:</value>
+  </data>
+  <data name="RoRAC_NetInterestMargin.Text" xml:space="preserve">
+    <value>= ส่วนต่างดอกเบี้ยสุทธิ:</value>
+  </data>
+  <data name="RoRAC_CostOfCreditRisk.Text" xml:space="preserve">
+    <value>ต้นทุนความเสี่ยงเครดิต:</value>
+  </data>
+  <data name="RoRAC_OPEX.Text" xml:space="preserve">
+    <value>ค่าใช้จ่ายในการดำเนินงาน:</value>
+  </data>
+  <data name="RoRAC_CapitalAdvantage.Text" xml:space="preserve">
+    <value>ข้อได้เปรียบด้านทุน:</value>
+  </data>
+  <data name="RoRAC_NetEBITMargin.Text" xml:space="preserve">
+    <value>= กำไรจากการดำเนินงานสุทธิ (EBIT):</value>
+  </data>
+  <data name="RoRAC_EconomicCapital.Text" xml:space="preserve">
+    <value>เงินทุนทางเศรษฐกิจ:</value>
+  </data>
+  <data name="RoRAC_Acquisition.Text" xml:space="preserve">
+    <value>= RoRAC ของการได้มา:</value>
+  </data>
+  <data name="Export_XLSX.Text" xml:space="preserve">
+    <value>ส่งออก XLSX</value>
+  </data>
+  <data name="Export_XLSX_Tooltip.Content" xml:space="preserve">
+    <value>ส่งออกข้อมูลเป็นไฟล์ Excel</value>
+  </data>
+  <data name="CampaignDesigner_Tile_AcqUnitsLabel.Text" xml:space="preserve">
+    <value>จำนวนหน่วยที่ได้มา</value>
+  </data>
+  <data name="CampaignDesigner_Tile_AverageRoRACLabel.Text" xml:space="preserve">
+    <value>ค่า RoRAC เฉลี่ย</value>
+  </data>
+</root>

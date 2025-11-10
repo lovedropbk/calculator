@@ -59,6 +59,19 @@ public partial class SettingsViewModel : ObservableObject
         set { if (value) Theme = ElementTheme.Dark; }
     }
 
+    public string LanguageTag
+    {
+        get => Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride ?? "en-US";
+        set
+        {
+            if (LanguageTag != value && !string.IsNullOrWhiteSpace(value))
+            {
+                Service.SetLanguage(value);
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public AppDensity Density
     {
         get => Service.Density;

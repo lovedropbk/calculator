@@ -6,6 +6,8 @@ using Windows.Storage;
 
 namespace FinancialCalculator.WinUI3.Services;
 
+using Windows.Globalization;
+
 public enum AppDensity
 {
     Compact,
@@ -98,6 +100,17 @@ public sealed class AppSettingsService
     {
         AppTheme = theme;
         Save();
+    }
+
+    public void SetLanguage(string languageTag)
+    {
+        try
+        {
+            // Set the primary language for the app
+            ApplicationLanguages.PrimaryLanguageOverride = languageTag;
+            Save();
+        }
+        catch { }
     }
 
     public void ApplyTheme(FrameworkElement root)

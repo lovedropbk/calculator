@@ -10,8 +10,8 @@ public sealed partial class BudgetUtilizationBar : UserControl
         this.InitializeComponent();
     }
 
-    public FinancialCalculator.WinUI3.ViewModels.MainViewModel ViewModel
+    public FinancialCalculator.WinUI3.ViewModels.MainViewModel? ViewModel
     {
-        get => (FinancialCalculator.WinUI3.ViewModels.MainViewModel)((FrameworkElement)Window.Current.Content).DataContext;
+        get => DataContext as FinancialCalculator.WinUI3.ViewModels.MainViewModel;
     }
 }
