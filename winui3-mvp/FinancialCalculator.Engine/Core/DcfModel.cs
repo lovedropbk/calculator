@@ -61,8 +61,9 @@ public static class DcfModel
             double bal = (double)prevBal;
 
             // --- Component Cashflows for Period t ---
-            // Use nominal customer rate applied on opening balance to stabilize tenor ordering
-            double interestIncome = (double)bal * (double)(deal.Inputs.CustomerRatePercent / 100m) * dt;
+            // Use nominal customer rate on opening balance; but do NOT accrue income during payment holidays
+            bool isHoliday = row.Kind == PaymentKind.Holiday;
+            double interestIncome = isHoliday ? 0.0 : (double)bal * (double)(deal.Inputs.CustomerRatePercent / 100m) * dt;
             
             // Costs derived from Balance
             double fundingCost = -bal * (double)mfrScalar * dt;

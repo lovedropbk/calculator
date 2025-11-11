@@ -12,236 +12,243 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CampaignDesigner_Header_Title.Text" xml:space="preserve">
-    <value>Campaign Designer</value>
+  <data name="App_Title" xml:space="preserve">
+    <value>Financial Calculator Pro</value>
   </data>
-  <data name="CampaignDesigner_Header_ClearAll_Text.Text" xml:space="preserve">
-    <value>Clear All</value>
+  <data name="MainTab_Header.Text" xml:space="preserve">
+    <value>Main Calculator</value>
   </data>
-  <data name="CampaignDesigner_Header_ClearAll_Button.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Clear all designer tiles</value>
+  <data name="DealInputs_Header.Text" xml:space="preserve">
+    <value>Deal Inputs</value>
   </data>
-  <data name="CampaignDesigner_Header_DetailsToggle.OnContent" xml:space="preserve">
-    <value>Detailed</value>
+  <data name="DealInputs_Vehicle.Text" xml:space="preserve">
+    <value>Vehicle</value>
   </data>
-  <data name="CampaignDesigner_Header_DetailsToggle.OffContent" xml:space="preserve">
-    <value>Compact</value>
+  <data name="DealInputs_Vehicle_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>Select Class or Model</value>
   </data>
-  <data name="CampaignDesigner_Summary_Title.Text" xml:space="preserve">
-    <value>Overall Profitability</value>
-  </data>
-  <data name="CampaignDesigner_Summary_Caption.Text" xml:space="preserve">
-    <value>Volume weighted AcqRoRAC</value>
-  </data>
-  <data name="CampaignDesigner_Tile_Toggle.OnContent" xml:space="preserve">
-    <value>Details</value>
-  </data>
-  <data name="CampaignDesigner_Tile_Toggle.OffContent" xml:space="preserve">
-    <value>Compact</value>
-  </data>
-  <data name="CampaignDesigner_Tile_Reset.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Reset to global</value>
-  </data>
-  <data name="CampaignDesigner_Tile_Remove.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Remove campaign</value>
-  </data>
-  <data name="CampaignDesigner_Tile_ProductLabel.Text" xml:space="preserve">
+  <data name="DealInputs_Product.Text" xml:space="preserve">
     <value>Product</value>
   </data>
-  <data name="CampaignDesigner_Tile_AvgRoRACLabel.Text" xml:space="preserve">
-    <value>Avg RoRAC</value>
+  <data name="DealInputs_Product_HP.Text" xml:space="preserve">
+    <value>HP</value>
   </data>
-  <data name="CampaignDesigner_Tile_TermBreakdownTitle.Text" xml:space="preserve">
-    <value>Term Breakdown</value>
+  <data name="DealInputs_Product_mySTAR.Text" xml:space="preserve">
+    <value>mySTAR</value>
   </data>
-  <data name="CampaignDesigner_Tile_TermHeader.Text" xml:space="preserve">
-    <value>Term</value>
+  <data name="DealInputs_Product_FL.Text" xml:space="preserve">
+    <value>FL</value>
   </data>
-  <data name="CampaignDesigner_Tile_RateHeader.Text" xml:space="preserve">
-    <value>Rate (% p.a.)</value>
+  <data name="DealInputs_Product_OL.Text" xml:space="preserve">
+    <value>OL</value>
   </data>
-  <data name="CampaignDesigner_Tile_VolumeHeader.Text" xml:space="preserve">
-    <value>Volume Share (%)</value>
+  <data name="DealInputs_Term.Text" xml:space="preserve">
+    <value>Term (months)</value>
   </data>
-  <data name="CampaignDesigner_Tile_RoRACHeader.Text" xml:space="preserve">
-    <value>RoRAC</value>
+  <data name="DealInputs_Term_Tooltip.Content" xml:space="preserve">
+    <value>Loan term duration in months</value>
   </data>
-  <data name="CampaignDesigner_Tile_AcqUnitsLabel.Text" xml:space="preserve">
-    <value>Acquisition Units</value>
+  <data name="DealInputs_PaymentMode.Text" xml:space="preserve">
+    <value>Payment Mode</value>
   </data>
-  <data name="CampaignDesigner_Tile_VolumeShareLabel.Text" xml:space="preserve">
-    <value>Volume Share (%)</value>
+  <data name="DealInputs_PaymentMode_Arrears.Text" xml:space="preserve">
+    <value>arrears</value>
   </data>
-  <data name="CampaignDesigner_Tile_AverageRoRACLabel.Text" xml:space="preserve">
-    <value>Average RoRAC</value>
+  <data name="DealInputs_PaymentMode_Advance.Text" xml:space="preserve">
+    <value>in advance</value>
   </data>
-  <data name="CampaignDesigner_Tile_ModelPrefix.Text" xml:space="preserve">
-    <value>Model: </value>
+  <data name="DealInputs_MSRP.Text" xml:space="preserve">
+    <value>MSRP</value>
   </data>
-  <data name="CampaignDesigner_Tile_CampaignPrefix.Text" xml:space="preserve">
-    <value>Campaign: </value>
+  <data name="DealInputs_MSRP_Tooltip.Content" xml:space="preserve">
+    <value>Enter the MSRP excluding tax</value>
   </data>
-  <data name="PaneToggle_Tooltip_Collapse.Text" xml:space="preserve">
-    <value>Collapse panel</value>
+  <data name="Notification_InfoBar.Title" xml:space="preserve">
+    <value>Notification</value>
   </data>
-  <data name="PaneToggle_Tooltip_Expand.Text" xml:space="preserve">
-    <value>Expand panel</value>
+  <data name="Footer_ExportPDF.Text" xml:space="preserve">
+    <value>Export PDF</value>
   </data>
-  <data name="AppSettings_Behavior.Text" xml:space="preserve">
-    <value>App behavior</value>
+  <data name="Footer_ExportPDF_Tooltip.Content" xml:space="preserve">
+    <value>Export report as PDF</value>
   </data>
-  <data name="AppSettings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
+  <data name="Footer_SaveScenario.Text" xml:space="preserve">
+    <value>Save Scenario</value>
   </data>
-  <data name="AppSettings_Density.Text" xml:space="preserve">
-    <value>Density</value>
+  <data name="Footer_SaveScenario_Tooltip.Content" xml:space="preserve">
+    <value>Save current scenario for later</value>
   </data>
-  <data name="AppSettings_Language.Text" xml:space="preserve">
+  <data name="Footer_AddToComparison.Text" xml:space="preserve">
+    <value>Add to Comparison</value>
+  </data>
+  <data name="Footer_AddToComparison_Tooltip.Content" xml:space="preserve">
+    <value>Add current deal to comparison tab</value>
+  </data>
+  <data name="Footer_Settings.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Cashflows_Tab_Header.Text" xml:space="preserve">
+    <value>Cashflows</value>
+  </data>
+  <data name="Cashflows_Header.Text" xml:space="preserve">
+    <value>Cashflow Schedule</value>
+  </data>
+  <data name="Cashflows_Adjustments_Header.Header" xml:space="preserve">
+    <value>Cashflow Adjustments (campaign)</value>
+  </data>
+  <data name="Cashflows_Adjustments_PaymentHoliday.Text" xml:space="preserve">
+    <value>Payment holiday (capitalized; unchanged maturity)</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday3.Content" xml:space="preserve">
+    <value>Holiday 3m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday6.Content" xml:space="preserve">
+    <value>Holiday 6m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday9.Content" xml:space="preserve">
+    <value>Holiday 9m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnClear.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Cashflows_Adjustments_From.Text" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Cashflows_Adjustments_Months.Text" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="Cashflows_Adjustments_Apply.Content" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Cashflows_Adjustments_ActiveHolidays.Text" xml:space="preserve">
+    <value>Active Holidays</value>
+  </data>
+  <data name="Cashflows_Adjustments_PeriodsPrefix.Text" xml:space="preserve">
+    <value>Periods </value>
+  </data>
+  <data name="AppSettings_Language_English.Content" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="AppSettings_Language_Thai.Content" xml:space="preserve">
+    <value>ไทย</value>
+  </data>
+  <data name="AppSettings_Behavior_Nav.Content" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
+  <data name="AppSettings_Language_Nav.Content" xml:space="preserve">
     <value>Language</value>
   </data>
-  <data name="CampaignDetails_Header.Text" xml:space="preserve">
-    <value>Campaign Details &amp; Key Metrics</value>
+  <data name="AppSettings_AutoExpandRightOnLeftCollapse.Header" xml:space="preserve">
+    <value>Auto expand right when left collapses</value>
   </data>
-  <data name="CampaignDetails_Name.Text" xml:space="preserve">
-    <value>Campaign Name:</value>
+  <data name="AppSettings_Theme_Default.Content" xml:space="preserve">
+    <value>System default</value>
   </data>
-  <data name="CampaignDetails_Term.Text" xml:space="preserve">
-    <value>Term (months):</value>
+  <data name="AppSettings_Theme_Light.Content" xml:space="preserve">
+    <value>Light</value>
   </data>
-  <data name="CampaignDetails_FinancedAmount.Text" xml:space="preserve">
-    <value>Financed Amount:</value>
+  <data name="AppSettings_Theme_Dark.Content" xml:space="preserve">
+    <value>Dark</value>
   </data>
-  <data name="CampaignDetails_SubsidyBudget.Text" xml:space="preserve">
-    <value>Subsidy budget:</value>
+  <data name="AppSettings_Density_Compact.Content" xml:space="preserve">
+    <value>Compact</value>
   </data>
-  <data name="CampaignDetails_SubsidyUtilized.Text" xml:space="preserve">
-    <value>Subsidy utilized:</value>
+  <data name="AppSettings_Density_Comfortable.Content" xml:space="preserve">
+    <value>Comfortable</value>
   </data>
-  <data name="CampaignDetails_SubsidyRemaining.Text" xml:space="preserve">
-    <value>Subsidy remaining:</value>
+  <data name="App_Loading_Calculating.Text" xml:space="preserve">
+    <value>Calculating...</value>
   </data>
-  <data name="CampaignDetails_IDCDealer.Text" xml:space="preserve">
-    <value>IDC - Dealer Commissions:</value>
+  <data name="DealInputs_RiskSettings_Button.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Customer: Risk Settings</value>
   </data>
-  <data name="CampaignDetails_IDCOther.Text" xml:space="preserve">
-    <value>IDC - Others:</value>
+  <data name="Unit_THB.Text" xml:space="preserve">
+    <value>THB</value>
   </data>
-  <data name="CampaignDetails_IDCInsurance.Text" xml:space="preserve">
-    <value>IDC - Free Insurance:</value>
+  <data name="Unit_Percent.Text" xml:space="preserve">
+    <value>%</value>
   </data>
-  <data name="CampaignDetails_IDCMBSP.Text" xml:space="preserve">
-    <value>IDC - Free MBSP:</value>
+  <data name="DealInputs_MBThDiscount.Text" xml:space="preserve">
+    <value>MBTh Discount</value>
   </data>
-  <data name="CampaignDetails_MonthlyInstallment.Text" xml:space="preserve">
-    <value>Monthly Installment:</value>
+  <data name="DealInputs_TransactionPrice.Text" xml:space="preserve">
+    <value>Transaction Price</value>
   </data>
-  <data name="CampaignDetails_CustomerRateNominal.Text" xml:space="preserve">
-    <value>Customer Rate (nominal, %):</value>
+  <data name="DealInputs_AdditionalItems.Text" xml:space="preserve">
+    <value>Additional Financed Items</value>
   </data>
-  <data name="CampaignDetails_CustomerRateFlat.Text" xml:space="preserve">
-    <value>Customer Rate (flat, %):</value>
+  <data name="DealInputs_DownPayment.Text" xml:space="preserve">
+    <value>Down payment</value>
   </data>
-  <data name="CampaignDetails_IDCTotal.Text" xml:space="preserve">
-    <value>IDC Total:</value>
+  <data name="DealInputs_Balloon.Text" xml:space="preserve">
+    <value>Balloon</value>
   </data>
-
-  <data name="BudgetUtilization_Header.Text" xml:space="preserve">
-    <value>Budget Utilization</value>
+  <data name="DealInputs_SubsidyBudget.Text" xml:space="preserve">
+    <value>Subsidy budget (THB)</value>
   </data>
-  <data name="BudgetUtilization_Legend_CashDisc.Text" xml:space="preserve">
-    <value>Cash Disc.</value>
+  <data name="DealInputs_IDCs_Commission.Text" xml:space="preserve">
+    <value>IDCs – Commission</value>
   </data>
-  <data name="BudgetUtilization_Legend_SubDown.Text" xml:space="preserve">
-    <value>SubDown</value>
+  <data name="DealInputs_IDCs_Other.Text" xml:space="preserve">
+    <value>IDCs – Other (THB)</value>
   </data>
-  <data name="BudgetUtilization_Legend_RateSub.Text" xml:space="preserve">
-    <value>Rate Sub.</value>
+  <data name="DealInputs_IDCs_Other.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Other indirect costs</value>
   </data>
-  <data name="BudgetUtilization_Legend_IDCs.Text" xml:space="preserve">
-    <value>IDCs</value>
+  <data name="DealInputs_CustomerRate.Text" xml:space="preserve">
+    <value>Customer rate (% p.a.)</value>
   </data>
-  <data name="BudgetUtilization_Legend_Unallocated.Text" xml:space="preserve">
-    <value>Unallocated</value>
+  <data name="GoalSeek_SolveForRate.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Rate (to target RoRAC)</value>
   </data>
-
-  <data name="RoRAC_Header.Text" xml:space="preserve">
-    <value>Acquisition RoRAC:</value>
+  <data name="GoalSeek_SolveForSubsidy.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Subsidy (to target RoRAC)</value>
   </data>
-  <data name="RoRAC_ShowDetails.Text" xml:space="preserve">
-    <value>(show details)</value>
+  <data name="GoalSeek_SolveForDownPayment.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Down Payment</value>
   </data>
-  <data name="RoRAC_CustomerRate.Text" xml:space="preserve">
-    <value>Customer Rate:</value>
+  <data name="GoalSeek_SubsidyOverlay_Tooltip.Content" xml:space="preserve">
+    <value>Click to solve for Subsidy Budget to achieve target RoRAC</value>
   </data>
-  <data name="RoRAC_IDCAnnualized.Text" xml:space="preserve">
-    <value>IDC (annualized):</value>
+  <data name="App_Loading_Calculating.Text" xml:space="preserve">
+    <value>Calculating...</value>
   </data>
-  <data name="RoRAC_SubsidyAnnualized.Text" xml:space="preserve">
-    <value>Subsidy (annualized):</value>
+  <data name="RiskSettings_Title" xml:space="preserve">
+    <value>Risk settings</value>
   </data>
-  <data name="RoRAC_DealIRRNominal.Text" xml:space="preserve">
-    <value>= Deal IRR (Nominal):</value>
+  <data name="RiskSettings_Save" xml:space="preserve">
+    <value>Save</value>
   </data>
-  <data name="RoRAC_MatchedFundedRate.Text" xml:space="preserve">
-    <value>Matched Funded Rate:</value>
+  <data name="RiskSettings_Cancel" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="RoRAC_MatchedFundedSpread.Text" xml:space="preserve">
-    <value>Matched Funded Spread:</value>
+  <data name="RiskSettings_CustomerType" xml:space="preserve">
+    <value>Customer Type</value>
   </data>
-  <data name="RoRAC_NetInterestMargin.Text" xml:space="preserve">
-    <value>= Net Interest Margin:</value>
+  <data name="RiskSettings_AssetState" xml:space="preserve">
+    <value>Asset State</value>
   </data>
-  <data name="RoRAC_CostOfCreditRisk.Text" xml:space="preserve">
-    <value>Cost of Credit Risk:</value>
+  <data name="RiskSettings_AssetClass" xml:space="preserve">
+    <value>Asset Class (AVC)</value>
   </data>
-  <data name="RoRAC_OPEX.Text" xml:space="preserve">
-    <value>OPEX:</value>
+  <data name="RiskSettings_CreditRating" xml:space="preserve">
+    <value>Credit Rating</value>
   </data>
-  <data name="RoRAC_CapitalAdvantage.Text" xml:space="preserve">
-    <value>Capital Advantage:</value>
+  <data name="Unit_THB_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>THB</value>
   </data>
-  <data name="RoRAC_NetEBITMargin.Text" xml:space="preserve">
-    <value>= Net EBIT Margin:</value>
+  <data name="Unit_THB_CloseParen.Text" xml:space="preserve">
+    <value> THB)</value>
   </data>
-  <data name="RoRAC_EconomicCapital.Text" xml:space="preserve">
-    <value>Economic Capital:</value>
+  <data name="GoalSeek_TargetInstallment.Text" xml:space="preserve">
+    <value>Target installment (THB)</value>
   </data>
-  <data name="RoRAC_Acquisition.Text" xml:space="preserve">
-    <value>= Acquisition RoRAC:</value>
+  <data name="GoalSeek_TargetRoRac.Text" xml:space="preserve">
+    <value>Target RoRAC (%)</value>
   </data>
-
-  <data name="Export_XLSX.Text" xml:space="preserve">
-    <value>Export XLSX</value>
-  </data>
-  <data name="Export_XLSX_Tooltip.Content" xml:space="preserve">
-    <value>Export data to Excel file</value>
-  </data>
-
-  <data name="CampaignDesigner_Header.Text" xml:space="preserve">
-    <value>Campaign Designer</value>
-  </data>
-  <data name="CampaignDesigner_TargetRate.Text" xml:space="preserve">
-    <value>Target Rate (% p.a.)</value>
-  </data>
-  <data name="CampaignDesigner_CashDiscount.Text" xml:space="preserve">
-    <value>Cash Discount (THB)</value>
-  </data>
-  <data name="CampaignDesigner_SubDown.Text" xml:space="preserve">
-    <value>Subvention (SubDown) (THB)</value>
-  </data>
-  <data name="CampaignDesigner_Insurance.Text" xml:space="preserve">
-    <value>Insurance (THB)</value>
-  </data>
-  <data name="CampaignDesigner_MBSPPackage.Text" xml:space="preserve">
-    <value>MBSP Package</value>
-  </data>
-  <data name="CampaignDesigner_MBSP.Text" xml:space="preserve">
-    <value>MBSP (THB)</value>
-  </data>
-  <data name="CampaignDesigner_RateSubsidyCalc.Text" xml:space="preserve">
-    <value>Rate Subsidy (calc.) (THB)</value>
-  </data>
-  <data name="CampaignDesigner_ConsumeAllSubsidy.Text" xml:space="preserve">
-    <value>Consume entire subsidy</value>
-  </data>
+  <data name="DealInputs_IncludeHoliday_Label.Text" xml:space="preserve"><value>Include Payment Holiday</value></data>
+  <data name="DealInputs_IncludeHoliday_None.Text" xml:space="preserve"><value>None</value></data>
+  <data name="DealInputs_IncludeHoliday_3M.Text" xml:space="preserve"><value>3 months</value></data>
+  <data name="DealInputs_IncludeHoliday_6M.Text" xml:space="preserve"><value>6 months</value></data>
+  <data name="DealInputs_IncludeHoliday_9M.Text" xml:space="preserve"><value>9 months</value></data>
 </root>

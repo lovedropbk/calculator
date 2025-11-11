@@ -23,7 +23,8 @@ public class GoalSeekEngine
     public enum TargetMetric
     {
         MonthlyInstallment,
-        RoRAC
+        RoRAC,
+        FlatRate
     }
 
     public double Seek(DealEngine.DealInput baseInput, GoalVariable variable, TargetMetric targetMetric, double targetValue)
@@ -58,6 +59,7 @@ public class GoalSeekEngine
                 {
                     TargetMetric.MonthlyInstallment => (double)output.Deal.MonthlyRate,
                     TargetMetric.RoRAC => (double)output.Profit.AcquisitionRoRac,
+                    TargetMetric.FlatRate => (double)output.Deal.FlatRatePercentPerAnnum,
                     _ => 0
                 };
                 return currentValue - targetValue;

@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Json;
 using Microsoft.UI.Xaml;
 using Windows.Storage;
+using Windows.ApplicationModel.Resources.Core;
+using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace FinancialCalculator.WinUI3.Services;
 
@@ -19,6 +21,9 @@ public sealed class AppSettingsService
     private const string KeyAutoExpand = "AutoExpandRightOnLeftCollapse";
     private const string KeyTheme = "AppTheme";
     private const string KeyDensity = "AppDensity";
+    private const string KeyLanguage = "AppLanguage";
+
+    public event EventHandler? LanguageChanged;
 
     private static string SettingsFilePath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -28,6 +33,7 @@ public sealed class AppSettingsService
     public bool AutoExpandRightOnLeftCollapse { get; set; } = true;
     public ElementTheme AppTheme { get; private set; } = ElementTheme.Default;
     public AppDensity Density { get; private set; } = AppDensity.Compact;
+    public string LanguageTag { get; private set; } = "en-US";
 
     public void Load()
     {
@@ -41,6 +47,10 @@ public sealed class AppSettingsService
                 AppTheme = theme;
             if (ls.Values.TryGetValue(KeyDensity, out var d) && d is string ds && Enum.TryParse<AppDensity>(ds, out var density))
                 Density = density;
+            if (ls.Values.TryGetValue(KeyLanguage, out var l) && l is string lang && !string.IsNullOrWhiteSpace(lang))
+            {
+                LanguageTag = lang;
+            }
             return;
         }
         catch (InvalidOperationException)
@@ -59,6 +69,7 @@ public sealed class AppSettingsService
                     AutoExpandRightOnLeftCollapse = dto.AutoExpandRightOnLeftCollapse;
                     if (Enum.TryParse<ElementTheme>(dto.AppTheme, out var t2)) AppTheme = t2;
                     if (Enum.TryParse<AppDensity>(dto.AppDensity, out var d2)) Density = d2;
+                    if (!string.IsNullOrWhiteSpace(dto.AppLanguage)) LanguageTag = dto.AppLanguage;
                 }
             }
         }
@@ -74,6 +85,7 @@ public sealed class AppSettingsService
             ls.Values[KeyAutoExpand] = AutoExpandRightOnLeftCollapse;
             ls.Values[KeyTheme] = AppTheme.ToString();
             ls.Values[KeyDensity] = Density.ToString();
+            ls.Values[KeyLanguage] = LanguageTag;
             return;
         }
         catch (InvalidOperationException)
@@ -87,7 +99,8 @@ public sealed class AppSettingsService
             {
                 AutoExpandRightOnLeftCollapse = AutoExpandRightOnLeftCollapse,
                 AppTheme = AppTheme.ToString(),
-                AppDensity = Density.ToString()
+                AppDensity = Density.ToString(),
+                AppLanguage = LanguageTag
             };
             var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions { WriteIndented = true });
             Directory.CreateDirectory(Path.GetDirectoryName(SettingsFilePath)!);
@@ -106,9 +119,15 @@ public sealed class AppSettingsService
     {
         try
         {
-            // Set the primary language for the app
-            ApplicationLanguages.PrimaryLanguageOverride = languageTag;
+            // Persist and set language
+            LanguageTag = languageTag;
             Save();
+
+            // Update resource qualifiers so new XAML resolves to the selected language
+            try { Windows.ApplicationModel.Resources.Core.ResourceContext.SetGlobalQualifierValue("Language", languageTag); } catch { }
+            try { ApplicationLanguages.PrimaryLanguageOverride = languageTag; } catch { }
+
+            LanguageChanged?.Invoke(this, EventArgs.Empty);
         }
         catch { }
     }
@@ -153,5 +172,6 @@ public sealed class AppSettingsService
         public bool AutoExpandRightOnLeftCollapse { get; set; } = true;
         public string AppTheme { get; set; } = "Default";
         public string AppDensity { get; set; } = "Compact";
+        public string AppLanguage { get; set; } = "en-US";
     }
 }

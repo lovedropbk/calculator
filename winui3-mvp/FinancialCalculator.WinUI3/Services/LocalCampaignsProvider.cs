@@ -19,7 +19,7 @@ public sealed class LocalCampaignsProvider
 
     public IReadOnlyList<Campaign> GetStandard()
     {
-        // Default set mirrors catalog.json
+        // Default set mirrors catalog.json, plus payment holiday option
         return new List<Campaign>
         {
             new() { Id="SUBDOWN-5", Type="subdown", SubsidyPercent=0.05 },
@@ -27,6 +27,7 @@ public sealed class LocalCampaignsProvider
             new() { Id="FREE-INS", Type="free_insurance", InsuranceCost=15000 },
             new() { Id="FREE-MBSP", Type="free_mbsp", MbspCost=5000 },
             new() { Id="CASH-DISC-2", Type="cash_discount", DiscountPercent=0.02 },
+            new() { Id="PAYHOL-3-NO-BENEFITS", Type="payment_holiday_3", },
         };
     }
 }

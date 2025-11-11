@@ -21,11 +21,11 @@
             <Rectangle Grid.Column="4" Fill="{ThemeResource BudgetUnallocatedBrush}"/>
         </Grid>
         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceM}" HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetCashBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_CashDisc" Text="Cash Disc." FontSize="11"/></StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetSubDownBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_SubDown" Text="SubDown" FontSize="11"/></StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetRateSubsidyBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_RateSub" Text="Rate Sub." FontSize="11"/></StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetIdcBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_IDCs" Text="IDCs" FontSize="11"/></StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetUnallocatedBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_Unallocated" Text="Unallocated" FontSize="11"/></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetCashBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_CashDisc" FontSize="11"/></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetSubDownBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_SubDown" FontSize="11"/></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetRateSubsidyBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_RateSub" FontSize="11"/></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetIdcBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_IDCs" FontSize="11"/></StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXS}"><Rectangle Width="12" Height="12" Fill="{ThemeResource BudgetUnallocatedBrush}"/><TextBlock x:Uid="BudgetUtilization_Legend_Unallocated" FontSize="11"/></StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>

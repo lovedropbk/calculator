@@ -16,7 +16,7 @@
                       Style="{StaticResource ResponsiveScrollViewer}"
                       Padding="0">
             <StackPanel Spacing="{StaticResource SpaceM}" Padding="{StaticResource SectionPaddingM}">
-                <TextBlock x:Uid="CampaignDetails_Header" Text="Campaign Details &amp; Key Metrics" Style="{StaticResource SectionHeaderTextStyle}"/>
+                <TextBlock x:Uid="CampaignDetails_Header" Style="{StaticResource SectionHeaderTextStyle}"/>
                 <Grid Style="{StaticResource DetailsGridStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{StaticResource DetailsLabelColumnWidth}"/>
@@ -46,41 +46,41 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="CampaignDetails_Name" Text="Campaign Name:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ActiveCampaign.Title}" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="CampaignDetails_Term" Text="Term (months):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="CampaignDetails_Term" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DealInput.TermMonths}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="CampaignDetails_FinancedAmount" Text="Financed Amount:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="CampaignDetails_FinancedAmount" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Results.Metrics.FinancedAmount}" FontWeight="SemiBold" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="CampaignDetails_SubsidyBudget" Text="Subsidy budget:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="CampaignDetails_SubsidyBudget" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DealInput.SubsidyBudgetText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="CampaignDetails_SubsidyUtilized" Text="Subsidy utilized:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="CampaignDetails_SubsidyUtilized" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Details.ActiveSubsidyUtilizedText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="CampaignDetails_SubsidyRemaining" Text="Subsidy remaining:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="CampaignDetails_SubsidyRemaining" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Details.SubsidyRemainingText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="IDC - Dealer Commissions:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="6" Grid.Column="0" x:Uid="CampaignDetails_IDCDealer" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding DealInput.DealerCommissionResolvedAmtText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="IDC - Others:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="7" Grid.Column="0" x:Uid="CampaignDetails_IDCOther" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Details.IdcOtherText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="IDC - Free Insurance:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="8" Grid.Column="0" x:Uid="CampaignDetails_IDCInsurance" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Details.ActiveFsInsuranceText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="IDC - Free MBSP:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="9" Grid.Column="0" x:Uid="CampaignDetails_IDCMBSP" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Details.ActiveFsMbspText}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                     <!-- Key Metrics -->
-                    <TextBlock Grid.Row="10" Grid.Column="0" x:Uid="CampaignDetails_MonthlyInstallment" Text="Monthly Installment:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="10" Grid.Column="0" x:Uid="CampaignDetails_MonthlyInstallment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding Results.Metrics.MonthlyInstallment}" FontWeight="SemiBold" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="11" Grid.Column="0" x:Uid="CampaignDetails_CustomerRateNominal" Text="Customer Rate (nominal, %):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="11" Grid.Column="0" x:Uid="CampaignDetails_CustomerRateNominal" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Results.Metrics.NominalRate}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
-                    <TextBlock Grid.Row="12" Grid.Column="0" x:Uid="CampaignDetails_CustomerRateFlat" Text="Customer Rate (flat, %):" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="12" Grid.Column="0" x:Uid="CampaignDetails_CustomerRateFlat" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding Results.Metrics.FlatRate}" HorizontalAlignment="Left" TextAlignment="Left"/>
 
                     <TextBlock Grid.Row="13" Grid.Column="0" x:Uid="CampaignDetails_IDCTotal" Text="IDC Total:" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left"/>
@@ -88,7 +88,7 @@
 
                     <!-- MARK: Campaign Designer & Metrics -->
                     <StackPanel Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Spacing="{StaticResource SpaceS}" Margin="0,8,0,0">
-                        <TextBlock Text="Campaign Designer" Style="{StaticResource SectionHeaderTextStyle}"/>
+                        <TextBlock x:Uid="CampaignDesigner_Header" Style="{StaticResource SectionHeaderTextStyle}"/>
 
                         <Grid Style="{StaticResource DetailsGridStyle}" RowSpacing="{StaticResource SpaceXXS}">
                             <Grid.RowDefinitions>
@@ -107,25 +107,25 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Target Rate (for subinterest) -->
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Target Rate (% p.a.)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="CampaignDetails_TargetRate" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <muxc:NumberBox Grid.Row="0" Grid.Column="1" Value="{Binding ActiveCampaign.TargetRatePct, Mode=TwoWay}" Style="{StaticResource DenseNumberBoxStyle}"
                                               NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                               IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                             <!-- Cash Discount -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Cash Discount (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="CampaignDetails_CashDiscount" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <muxc:NumberBox Grid.Row="1" Grid.Column="1" Value="{Binding ActiveCampaign.CashDiscountAmount, Mode=TwoWay}" Style="{StaticResource DenseNumberBoxStyle}"
                                               NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                               IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                             <!-- Subvention (SubDown) -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Subvention (SubDown) (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="CampaignDetails_SubDown" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <muxc:NumberBox Grid.Row="2" Grid.Column="1" Value="{Binding ActiveCampaign.FSSubDownAmount, Mode=TwoWay}" Style="{StaticResource DenseNumberBoxStyle}"
                                               NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                               IsEnabled="{Binding IsMyCampaignSelected}" Margin="0"/>
 
                             <!-- Free Insurance Cost -->
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Insurance (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="CampaignDetails_Insurance" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <Grid Grid.Row="3" Grid.Column="1" Margin="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -136,9 +136,8 @@
                                                 NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                 IsEnabled="{Binding IsMyCampaignSelected}"/>
                                 <ToggleSwitch Grid.Column="1"
+                                              x:Uid="CampaignDetails_Insurance_Toggle"
                                               IsOn="{Binding ActiveCampaign.IncludeInsurance, Mode=TwoWay}"
-                                              OffContent="Off"
-                                              OnContent="On"
                                               Margin="8,0,0,0"
                                               IsEnabled="{Binding IsMyCampaignSelected}"/>
                             </Grid>
@@ -152,12 +151,12 @@
                                       HorizontalAlignment="Stretch" Margin="0"/>
 
                             <!-- Free MBSP Cost -->
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="MBSP (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="CampaignDetails_MBSP" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ActiveCampaign.FSFreeMBSP, Mode=OneWay}" Style="{StaticResource DenseTextBoxStyle}"
                                      IsReadOnly="True" Margin="0"/>
 
                             <!-- Subinterest Subsidy (ReadOnly, calculated) -->
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Rate Subsidy (calc.) (THB)" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="6" Grid.Column="0" x:Uid="CampaignDetails_RateSubsidyCalc" Style="{StaticResource LabelTextStyle}" VerticalAlignment="Center"/>
                             <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ActiveCampaign.SubinterestSubsidy}" VerticalAlignment="Center" Margin="0" Opacity="0.8"/>
 
                             <!-- Consume Entire Subsidy Toggle -->
@@ -170,7 +169,7 @@
                         </Grid>
 
                         <!-- Budget Utilization Visualizer -->
-                        <TextBlock Text="Budget Utilization" Style="{StaticResource SectionHeaderTextStyle}" Margin="0,16,0,12"/>
+                        <TextBlock x:Uid="BudgetUtilization_Header" Style="{StaticResource SectionHeaderTextStyle}" Margin="0,16,0,12"/>
                         <controls:BudgetUtilizationBar DataContext="{Binding}" xmlns:controls="using:FinancialCalculator.WinUI3.Controls"/>
                     </StackPanel>
 
@@ -270,10 +269,10 @@
                             AutomationProperties.AcceleratorKey="Alt+E">
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                             <FontIcon Glyph="&#xE8A5;" FontSize="14"/>
-                            <TextBlock Text="Export XLSX"/>
+                            <TextBlock x:Uid="Export_XLSX"/>
                         </StackPanel>
                         <ToolTipService.ToolTip>
-                            <ToolTip Content="Export data to Excel file" Style="{StaticResource InformativeToolTipStyle}"/>
+                            <ToolTip x:Uid="Export_XLSX_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                 </Grid>

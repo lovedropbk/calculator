@@ -1,6 +1,7 @@
 <Window
     x:Class="FinancialCalculator.WinUI3.MainWindow"
     x:Name="Root"
+   
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,10 +10,10 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vm="using:FinancialCalculator.WinUI3.ViewModels"
     xmlns:appcontrols="using:FinancialCalculator.WinUI3.Controls"
-    mc:Ignorable="d"
-    Title="Financial Calculator Pro">
+    xmlns:services="using:FinancialCalculator.WinUI3.Services"
+    mc:Ignorable="d">
 
-    <Grid RequestedTheme="{Binding ViewModel.Settings.Theme, ElementName=Root}">
+    <Grid RequestedTheme="{Binding Settings.Theme}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="Escape" Modifiers="None" Invoked="OnEscapeInvoked"/>
         </Grid.KeyboardAccelerators>
@@ -25,11 +26,11 @@
               Canvas.ZIndex="9999"
               IsHitTestVisible="False">
             <muxc:InfoBar x:Name="NotificationBar"
+                          x:Uid="Notification_InfoBar"
                           MaxWidth="380"
                           IsOpen="{Binding ViewModel.IsNotificationOpen, ElementName=Root, Mode=TwoWay}"
                           IsClosable="True"
                           Severity="{Binding ViewModel.NotificationSeverity, ElementName=Root}"
-                          Title="Notification"
                           Message="{Binding ViewModel.NotificationMessage, ElementName=Root}"
                           Style="{StaticResource NotificationInfoBarStyle}"
                           IsHitTestVisible="True"/>
@@ -51,7 +52,7 @@
                     <TabViewItem.Header>
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceS}">
                             <FontIcon Glyph="&#xE80F;" FontSize="16"/>
-                            <TextBlock Text="Main Calculator" VerticalAlignment="Center"/>
+                            <TextBlock x:Uid="MainTab_Header" VerticalAlignment="Center"/>
                         </StackPanel>
                     </TabViewItem.Header>
                 <Grid x:Name="LayoutRoot" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
@@ -157,14 +158,14 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Deal Inputs" Style="{StaticResource CardHeaderTextStyle}"/>
-                                    <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}" ToolTipService.ToolTip="Customer: Risk Settings" Click="OnRiskSettingsClick">
+                                    <TextBlock x:Uid="DealInputs_Header" Style="{StaticResource CardHeaderTextStyle}"/>
+                                    <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}" x:Uid="DealInputs_RiskSettings_Button" Click="OnRiskSettingsClick">
                                         <FontIcon Glyph="&#xE77B;"/>
                                     </Button>
                                 </Grid>
         
                                 <!-- Vehicle Selection -->
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Vehicle" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="DealInputs_Vehicle" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
@@ -176,28 +177,28 @@
                                               DisplayMemberPath="ModelName"
                                               Style="{StaticResource DenseComboBoxStyle}"
                                               HorizontalAlignment="Stretch"
-                                              PlaceholderText="Select Class or Model"/>
+                                              PlaceholderText="" x:Uid="DealInputs_Vehicle_Placeholder"/>
                                 </Grid>
 
                                 <!-- Product (display HP, mySTAR, FL, OL; map to engine tags) -->
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Product" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="DealInputs_Product" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <ComboBox Grid.Column="1" SelectedValue="{Binding DealInput.Product, Mode=TwoWay}" SelectedValuePath="Tag" Style="{StaticResource DenseComboBoxStyle}" HorizontalAlignment="Stretch">
-                                        <ComboBoxItem Content="HP" Tag="HP"/>
-                                        <ComboBoxItem Content="mySTAR" Tag="mySTAR"/>
-                                        <ComboBoxItem Content="FL" Tag="F-Lease"/>
-                                        <ComboBoxItem Content="OL" Tag="Op-Lease"/>
+                                        <ComboBoxItem Tag="HP"><TextBlock x:Uid="DealInputs_Product_HP"/></ComboBoxItem>
+                                        <ComboBoxItem Tag="mySTAR"><TextBlock x:Uid="DealInputs_Product_mySTAR"/></ComboBoxItem>
+                                        <ComboBoxItem Tag="F-Lease"><TextBlock x:Uid="DealInputs_Product_FL"/></ComboBoxItem>
+                                        <ComboBoxItem Tag="Op-Lease"><TextBlock x:Uid="DealInputs_Product_OL"/></ComboBoxItem>
                                     </ComboBox>
                                 </Grid>
         
                                 <!-- Term with Tooltip -->
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Term (months)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="DealInputs_Term" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <ToolTipService.ToolTip>
-                                        <ToolTip Content="Loan term duration in months" Style="{StaticResource InformativeToolTipStyle}"/>
+                                        <ToolTip x:Uid="DealInputs_Term_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
                                 <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
@@ -217,25 +218,51 @@
                                 </Grid>
         
                                 <!-- Payment Mode (Timing binding) -->
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Payment Mode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="DealInputs_PaymentMode" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <ComboBox Grid.Column="1" SelectedValue="{Binding DealInput.Timing, Mode=TwoWay}" SelectedValuePath="Tag" Style="{StaticResource DenseComboBoxStyle}" HorizontalAlignment="Stretch">
-                                        <ComboBoxItem Content="arrears" Tag="arrears"/>
-                                        <ComboBoxItem Content="in advance" Tag="advance"/>
+                                        <ComboBoxItem Tag="arrears"><TextBlock x:Uid="DealInputs_PaymentMode_Arrears"/></ComboBoxItem>
+                                        <ComboBoxItem Tag="advance"><TextBlock x:Uid="DealInputs_PaymentMode_Advance"/></ComboBoxItem>
                                     </ComboBox>
                                 </Grid>
-        
-                                <!-- MSRP with Tooltip -->
-                                <TextBlock Grid.Row="5" Grid.Column="0" Text="MSRP" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+
+                                <!-- Payment Holiday -->
+                                <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="DealInputs_IncludeHoliday_Label" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
+                                        <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="1" 
+                                              x:Name="PaymentHolidayComboBox"
+                                              Style="{StaticResource DenseComboBoxStyle}" 
+                                              HorizontalAlignment="Stretch"
+                                              SelectionChanged="OnPaymentHolidaySelectionChanged">
+                                        <ComboBoxItem Tag="0">
+                                            <TextBlock x:Uid="DealInputs_IncludeHoliday_None"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem Tag="3">
+                                            <TextBlock x:Uid="DealInputs_IncludeHoliday_3M"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem Tag="6">
+                                            <TextBlock x:Uid="DealInputs_IncludeHoliday_6M"/>
+                                        </ComboBoxItem>
+                                        <ComboBoxItem Tag="9">
+                                            <TextBlock x:Uid="DealInputs_IncludeHoliday_9M"/>
+                                        </ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" x:Uid="DealInputs_MSRP" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <ToolTipService.ToolTip>
-                                        <ToolTip Content="Enter the MSRP excluding tax" Style="{StaticResource InformativeToolTipStyle}"/>
+                                        <ToolTip x:Uid="DealInputs_MSRP_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -246,30 +273,30 @@
                                                         PlaceholderText="{Binding DealInput.PricePlaceholder}"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         />
-                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                     </Grid>
                                 </Grid>
 
                                 <!-- MBTh Discount -->
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="MBTh Discount" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <TextBlock Grid.Row="7" Grid.Column="0" x:Uid="DealInputs_MBThDiscount" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid Grid.Column="1">
                                         <muxc:NumberBox Style="{StaticResource DenseNumberBoxStyle}"
+                                                        x:Uid="Unit_THB_Placeholder"
                                                         Value="{Binding DealInput.MbthDiscount, Mode=TwoWay}"
-                                                        PlaceholderText="THB"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         />
-                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                     </Grid>
                                 </Grid>
 
                                 <!-- Transaction Price (read-only) -->
-                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Transaction Price" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <TextBlock Grid.Row="8" Grid.Column="0" x:Uid="DealInputs_TransactionPrice" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -280,30 +307,30 @@
                                                         IsEnabled="False"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         />
-                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                     </Grid>
                                 </Grid>
 
                                 <!-- Additional Financed Items -->
-                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Additional Financed Items" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <TextBlock Grid.Row="9" Grid.Column="0" x:Uid="DealInputs_AdditionalItems" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid Grid.Column="1">
                                         <muxc:NumberBox Style="{StaticResource DenseNumberBoxStyle}"
+                                                        x:Uid="Unit_THB_Placeholder"
                                                         Value="{Binding DealInput.AdditionalFinancedItems, Mode=TwoWay}"
-                                                        PlaceholderText="THB"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         />
-                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                     </Grid>
                                 </Grid>
          
                                 <!-- Down Payment: dual-entry (%, THB) with instant conversion; unit dropdown removed -->
-                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Down payment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <TextBlock Grid.Row="10" Grid.Column="0" x:Uid="DealInputs_DownPayment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -319,13 +346,13 @@
                                         <Grid Grid.Column="0">
                                             <TextBox
                                                 Text="{x:Bind ViewModel.DealInput.DownPaymentPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                PlaceholderText="%"
+                                                x:Uid="Unit_Percent"
                                                 Style="{StaticResource DenseTextBoxWithSuffixStyle}"
                                                 Margin="0"
                                                 HorizontalAlignment="Stretch"
                                                 TextAlignment="Right"
                                                 InputScope="Number"/>
-                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                                         </Grid>
 
                                         <!-- THB input with persistent suffix -->
@@ -335,12 +362,12 @@
                                                 Margin="2,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 Value="{Binding DealInput.DownPaymentAmtEntry, Mode=TwoWay}"
-                                                PlaceholderText="THB"
+                                                x:Uid="Unit_THB_Placeholder"
                                                 NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                 >
                                                 <muxc:NumberBox.ContextFlyout>
                                                     <MenuFlyout>
-                                                        <MenuFlyoutItem Text="Goal Seek: Solve for Down Payment" Command="{Binding GoalSeekSolveForDownPaymentAutoAsyncCommand}">
+                                                        <MenuFlyoutItem x:Uid="GoalSeek_SolveForDownPayment" Command="{Binding GoalSeekSolveForDownPaymentAutoAsyncCommand}">
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="&#xE71A;" />
                                                             </MenuFlyoutItem.Icon>
@@ -348,14 +375,14 @@
                                                     </MenuFlyout>
                                                 </muxc:NumberBox.ContextFlyout>
                                             </muxc:NumberBox>
-                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                         </Grid>
                                     </Grid>
                                 </Grid>
 
                                 <!-- Balloon: dual-entry (%, THB) with instant conversion; unit dropdown removed -->
-                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Balloon" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
+                                <TextBlock Grid.Row="11" Grid.Column="0" x:Uid="DealInputs_Balloon" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -371,14 +398,14 @@
                                         <Grid Grid.Column="0">
                                             <TextBox
                                                 Text="{x:Bind ViewModel.DealInput.BalloonPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                PlaceholderText="%"
+                                                x:Uid="Unit_Percent"
                                                 Style="{StaticResource DenseTextBoxWithSuffixStyle}"
                                                 Margin="0"
                                                 HorizontalAlignment="Stretch"
                                                 TextAlignment="Right"
                                                 IsEnabled="{Binding DealInput.IsBalloonEnabled}"
                                                 InputScope="Number"/>
-                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                                         </Grid>
 
                                         <!-- THB input with persistent suffix -->
@@ -388,22 +415,22 @@
                                                 Margin="2,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 Value="{Binding DealInput.BalloonAmtEntry, Mode=TwoWay}"
-                                                PlaceholderText="THB"
+                                                x:Uid="Unit_THB_Placeholder"
                                                 NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                 IsEnabled="{Binding DealInput.IsBalloonEnabled}"/>
-                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                         </Grid>
                                     </Grid>
                                 </Grid>
         
                                 <!-- Subsidy budget with Tooltip (label styled like others) -->
-                                <TextBlock Grid.Row="11" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                           Text="Subsidy budget (THB)" Style="{StaticResource LabelTextStyle}">
+                                <TextBlock Grid.Row="12" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           x:Uid="DealInputs_SubsidyBudget" Style="{StaticResource LabelTextStyle}">
                                     <ToolTipService.ToolTip>
                                         <ToolTip Content="Available subsidy budget for this deal. Click to solve for target RoRAC." Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <Grid Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <!-- Create a proper overlay structure aligned like single-field rows -->
                                     <Grid HorizontalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
@@ -411,7 +438,7 @@
                                             <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                         </Grid.ColumnDefinitions>
 <muxc:NumberBox Grid.Column="1" Style="{StaticResource DenseNumberBoxStyle}" Value="{Binding DealInput.SubsidyBudget, Mode=TwoWay}"
-                                                        PlaceholderText="THB"
+                                                        x:Uid="Unit_THB_Placeholder"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         IsEnabled="{Binding DealInput.SubsidyBudgetIsEnabled}"
                                                         IsHitTestVisible="{Binding GoalSeek.IsAnyTargetSet, Converter={StaticResource BoolNotConverter}}"
@@ -420,7 +447,7 @@
                                                         >
                                             <muxc:NumberBox.ContextFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Text="Goal Seek: Solve for Subsidy (to target RoRAC)" Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}">
+                                                    <MenuFlyoutItem x:Uid="GoalSeek_SolveForSubsidy" Command="{Binding GoalSeekSolveForSubsidyAutoAsyncCommand}">
                                                         <MenuFlyoutItem.Icon>
                                                             <FontIcon Glyph="&#xE71A;" />
                                                         </MenuFlyoutItem.Icon>
@@ -429,7 +456,7 @@
                                             </muxc:NumberBox.ContextFlyout>
                                         </muxc:NumberBox>
                                         <TextBlock Grid.Column="1"
-                                                   Text="THB"
+                                                   x:Uid="Unit_THB"
                                                    Style="{StaticResource UnitSuffixTextStyle}"
                                                    Margin="{StaticResource CurrencySuffixMargin}"/>
                                         <!-- Overlay button that covers the entire NumberBox -->
@@ -445,15 +472,15 @@
                                                 </ControlTemplate>
                                             </Button.Template>
                                             <ToolTipService.ToolTip>
-                                                <ToolTip Content="Click to solve for Subsidy Budget to achieve target RoRAC" />
+                                                <ToolTip x:Uid="GoalSeek_SubsidyOverlay_Tooltip" />
                                             </ToolTipService.ToolTip>
                                         </Button>
                                     </Grid>
                                 </Grid>
         
                                 <!-- IDCs - Dealer Commission -->
-                                <TextBlock Grid.Row="12" Grid.Column="0" Text="IDCs – Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <Grid Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
+                                <TextBlock Grid.Row="13" Grid.Column="0" x:Uid="DealInputs_IDCs_Commission" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Grid Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" HorizontalAlignment="Left" Width="{StaticResource ValueAreaWidth}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -472,13 +499,13 @@
                                         <Grid Grid.Column="0">
                                             <TextBox
                                                 Text="{x:Bind ViewModel.DealInput.CommissionPctEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                PlaceholderText="%"
+                                                x:Uid="Unit_Percent"
                                                 Style="{StaticResource DenseTextBoxWithSuffixStyle}"
                                                 Margin="0"
                                                 HorizontalAlignment="Stretch"
                                                 TextAlignment="Right"
                                                 InputScope="Number"/>
-                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                                         </Grid>
 
                                         <!-- THB input with persistent suffix -->
@@ -488,10 +515,10 @@
                                                 Margin="2,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 Value="{Binding DealInput.CommissionAmtEntry, Mode=TwoWay}"
-                                                PlaceholderText="THB"
+                                                x:Uid="Unit_THB_Placeholder"
                                                 NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                 />
-                                            <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                         </Grid>
                                     </Grid>
 
@@ -507,7 +534,7 @@
                                                     <Run Text="{Binding DealInput.DealerCommissionPctText}"/>
                                                     <Run Text="% ("/>
                                                     <Run Text="{Binding DealInput.DealerCommissionResolvedAmtText}"/>
-                                                    <Run Text=" THB)"/>
+                                                    <Run x:Uid="Unit_THB_CloseParen"/>
                                                 </TextBlock>
                                             </StackPanel>
                                             <Button Background="Transparent"
@@ -521,31 +548,31 @@
         
         
                                 <!-- IDCs - Other with Tooltip -->
-                                <TextBlock Grid.Row="14" Grid.Column="0" Text="IDCs – Other (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <TextBlock Grid.Row="15" Grid.Column="0" x:Uid="DealInputs_IDCs_Other" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <ToolTipService.ToolTip>
                                         <ToolTip Content="Other indirect costs" Style="{StaticResource InformativeToolTipStyle}"/>
                                     </ToolTipService.ToolTip>
                                 </TextBlock>
-                                <Grid Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
+                                <Grid Grid.Row="15" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid Grid.Column="1">
                                         <muxc:NumberBox Style="{StaticResource DenseNumberBoxStyle}"
+                                                        x:Uid="Unit_THB_Placeholder"
                                                         Value="{Binding DealInput.IdcOther, Mode=TwoWay}"
-                                                        PlaceholderText="THB"
                                                         NumberFormatter="{StaticResource GroupedZeroFormatter}"
                                                         />
-                                        <TextBlock Text="THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
+                                        <TextBlock x:Uid="Unit_THB" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource CurrencySuffixMargin}"/>
                                     </Grid>
                                 </Grid>
         
                                 <!-- Customer rate -->
-                                <TextBlock Grid.Row="16" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,6,0,0"
-                                           Text="Customer rate (% p.a.)"
+                                <TextBlock Grid.Row="17" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,6,0,0"
+                                           x:Uid="DealInputs_CustomerRate"
                                            Style="{StaticResource LabelTextStyle}"/>
-                                <Grid Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left" Style="{StaticResource DetailsGridStyle}">
+                                <Grid Grid.Row="17" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left" Style="{StaticResource DetailsGridStyle}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
                                         <ColumnDefinition Width="{StaticResource InputColumnWidthValue}"/>
@@ -569,7 +596,7 @@
                                                 IsEnabled="{Binding GoalSeek.IsAnyTargetSet, Converter={StaticResource BoolNotConverter}}">
                                                 <muxc:NumberBox.ContextFlyout>
                                                     <MenuFlyout>
-                                                        <MenuFlyoutItem Text="Goal Seek: Solve for Rate (to target RoRAC)" Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}">
+                                                        <MenuFlyoutItem x:Uid="GoalSeek_SolveForRate" Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}">
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="&#xE71A;" />
                                                             </MenuFlyoutItem.Icon>
@@ -578,7 +605,7 @@
                                                 </muxc:NumberBox.ContextFlyout>
                                             </muxc:NumberBox>
                                             <TextBlock Text="nominal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.7" FontSize="12" IsHitTestVisible="False"/>
-                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                                             <Button Command="{Binding GoalSeekSolveForRateAutoAsyncCommand}"
                                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                      Visibility="{Binding GoalSeek.IsAnyTargetSet, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -603,7 +630,7 @@
                                                 Style="{StaticResource DenseNumberBoxWithLabel40Style}"
                                                 NumberFormatter="{StaticResource GroupedTwoFormatter}"/>
                                             <TextBlock Text="flat" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.7" FontSize="12" IsHitTestVisible="False"/>
-                                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                                         </Grid>
 
                                         <!-- Deviation warning -->
@@ -618,9 +645,9 @@
                                 </Grid>
         
                                 <!-- Target installment (visible if target installment) -->
-                                <TextBlock Grid.Row="18" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                <TextBlock Grid.Row="19" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"
                                            Visibility="{Binding DealInput.IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}"/>
-                                <Grid Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left"
+                                <Grid Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left"
                                       Visibility="{Binding DealInput.IsTargetInstallmentMode, Converter={StaticResource StringEqualsToVisibilityConverter}, ConverterParameter=True}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
@@ -680,7 +707,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Goal Seek" Style="{StaticResource CardHeaderTextStyle}"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Target RoRAC (%)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="GoalSeek_TargetRoRac" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
@@ -695,11 +722,11 @@
                                             LargeChange="1"
                                             PlaceholderText="%"
                                             NumberFormatter="{StaticResource GroupedTwoFormatter}"/>
-                            <TextBlock Text="%" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
+                            <TextBlock x:Uid="Unit_Percent" Style="{StaticResource UnitSuffixTextStyle}" Margin="{StaticResource PercentSuffixMargin}"/>
                         </Grid>
                     </Grid>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Target installment (THB)" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="GoalSeek_TargetInstallment" Style="{StaticResource LabelTextStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="{StaticResource LabelToValueMargin}" Width="{StaticResource ValueAreaWidth}" HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource UnitColumnWidthValue}"/>
@@ -919,58 +946,35 @@
                     <Button Style="{StaticResource SecondaryButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                             <FontIcon Glyph="&#xE8A2;" FontSize="14"/>
-                            <TextBlock Text="Export PDF"/>
+                            <TextBlock x:Uid="Footer_ExportPDF"/>
                         </StackPanel>
                         <ToolTipService.ToolTip>
-                            <ToolTip Content="Export report as PDF" Style="{StaticResource InformativeToolTipStyle}"/>
+                            <ToolTip x:Uid="Footer_ExportPDF_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                     <Button Style="{StaticResource SecondaryButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                             <FontIcon Glyph="&#xE74E;" FontSize="14"/>
-                            <TextBlock Text="Save Scenario"/>
+                            <TextBlock x:Uid="Footer_SaveScenario"/>
                         </StackPanel>
                         <ToolTipService.ToolTip>
-                            <ToolTip Content="Save current scenario for later" Style="{StaticResource InformativeToolTipStyle}"/>
+                            <ToolTip x:Uid="Footer_SaveScenario_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                     <Button Command="{Binding AddToComparisonCommand}" Style="{StaticResource SecondaryButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                             <FontIcon Glyph="&#xE710;" FontSize="14"/>
-                            <TextBlock Text="Add to Comparison"/>
+                            <TextBlock x:Uid="Footer_AddToComparison"/>
                         </StackPanel>
                         <ToolTipService.ToolTip>
-                            <ToolTip Content="Add current deal to comparison tab" Style="{StaticResource InformativeToolTipStyle}"/>
+                            <ToolTip x:Uid="Footer_AddToComparison_Tooltip" Style="{StaticResource InformativeToolTipStyle}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                         <Button x:Name="AppSettingsButtonFooter" Style="{StaticResource SecondaryButtonStyle}" Click="OnAppSettingsClick">
                             <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceXSPlus}">
                                 <FontIcon Glyph="&#xE713;" FontSize="14"/>
-                                <TextBlock Text="Settings"/>
+                                <TextBlock x:Uid="Footer_Settings"/>
                             </StackPanel>
-                            <Button.Flyout>
-                                <MenuFlyout >
-                                    <!-- Behavior group -->
-                                    <MenuFlyoutSubItem x:Uid="AppSettings_Behavior" Text="App behavior">
-                                        <MenuFlyoutSubItem x:Uid="AppSettings_Language" Text="Language">
-                                            <RadioMenuFlyoutItem GroupName="Language" Text="English" IsChecked="{Binding ViewModel.Settings.LanguageTag, ElementName=Root, Converter={StaticResource StringEqualsConverter}, ConverterParameter=en-US}" Click="OnLanguageEnglishClicked"/>
-                                            <RadioMenuFlyoutItem GroupName="Language" Text="ไทย" IsChecked="{Binding ViewModel.Settings.LanguageTag, ElementName=Root, Converter={StaticResource StringEqualsConverter}, ConverterParameter=th-TH}" Click="OnLanguageThaiClicked"/>
-                                        </MenuFlyoutSubItem>
-                                        <ToggleMenuFlyoutItem x:Name="AutoExpandToggle" Text="Auto expand right when left collapses" IsChecked="{Binding ViewModel.Settings.AutoExpandRightOnLeftCollapse, ElementName=Root, Mode=TwoWay}"/>
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSeparator/>
-                                    <!-- Display group (Fluent v2 radios for exclusive choices) -->
-                                    <MenuFlyoutSubItem x:Uid="AppSettings_Theme" Text="Theme">
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="System default" IsChecked="{Binding ViewModel.Settings.IsThemeDefault, ElementName=Root, Mode=TwoWay}"/>
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Light" IsChecked="{Binding ViewModel.Settings.IsThemeLight, ElementName=Root, Mode=TwoWay}"/>
-                                        <RadioMenuFlyoutItem GroupName="Theme" Text="Dark" IsChecked="{Binding ViewModel.Settings.IsThemeDark, ElementName=Root, Mode=TwoWay}"/>
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSubItem x:Uid="AppSettings_Density" Text="Density">
-                                        <RadioMenuFlyoutItem GroupName="Density" Text="Compact" IsChecked="{Binding ViewModel.Settings.IsDensityCompact, ElementName=Root, Mode=TwoWay}"/>
-                                        <RadioMenuFlyoutItem GroupName="Density" Text="Comfortable" IsChecked="{Binding ViewModel.Settings.IsDensityComfortable, ElementName=Root, Mode=TwoWay}"/>
-                                    </MenuFlyoutSubItem>
-                                </MenuFlyout>
-                            </Button.Flyout>
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -984,7 +988,7 @@
                 <TabViewItem.Header>
                     <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceS}">
                         <FontIcon Glyph="&#xE8C8;" FontSize="16"/>
-                        <TextBlock Text="Cashflows" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="Cashflows_Tab_Header" VerticalAlignment="Center"/>
                         <!-- Refresh indicator -->
                         <Border x:Name="CashflowRefreshIndicator"
                                 Background="{ThemeResource WarningBrush}"
@@ -1013,43 +1017,43 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Text="Cashflow Schedule" Style="{StaticResource CardHeaderTextStyle}" FontSize="24"/>
+                            <TextBlock x:Uid="Cashflows_Header" Style="{StaticResource CardHeaderTextStyle}" FontSize="24"/>
                             <TextBlock Text="{Binding Results.CashflowCampaignName}" FontSize="14" Opacity="0.8" Margin="0,4,0,0"/>
 
                             <!-- Campaign-level Cashflow Adjustments -->
-                            <muxc:Expander Header="Cashflow Adjustments (campaign)" IsExpanded="False" Margin="0,8,0,0">
+                            <muxc:Expander x:Uid="Cashflows_Adjustments_Header" IsExpanded="False" Margin="0,8,0,0">
                                 <StackPanel Spacing="{StaticResource SpaceS}">
-                                    <TextBlock Text="Payment holiday (capitalized; unchanged maturity)" Style="{StaticResource LabelTextStyle}"/>
+                                    <TextBlock x:Uid="Cashflows_Adjustments_PaymentHoliday" Style="{StaticResource LabelTextStyle}"/>
 
                                     <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceS}">
-                                        <Button Content="Holiday 3m" Command="{Binding ActiveCampaign.AddHoliday3Command}" Style="{StaticResource SecondaryButtonStyle}" />
-                                        <Button Content="Holiday 6m" Command="{Binding ActiveCampaign.AddHoliday6Command}" Style="{StaticResource SecondaryButtonStyle}" />
-                                        <Button Content="Holiday 9m" Command="{Binding ActiveCampaign.AddHoliday9Command}" Style="{StaticResource SecondaryButtonStyle}" />
-                                        <Button Content="Clear" Command="{Binding ActiveCampaign.ClearHolidaysCommand}" Style="{StaticResource SecondaryButtonStyle}" />
+                                        <Button x:Uid="Cashflows_Adjustments_BtnHoliday3" Command="{Binding ActiveCampaign.AddHoliday3Command}" Style="{StaticResource SecondaryButtonStyle}" />
+                                        <Button x:Uid="Cashflows_Adjustments_BtnHoliday6" Command="{Binding ActiveCampaign.AddHoliday6Command}" Style="{StaticResource SecondaryButtonStyle}" />
+                                        <Button x:Uid="Cashflows_Adjustments_BtnHoliday9" Command="{Binding ActiveCampaign.AddHoliday9Command}" Style="{StaticResource SecondaryButtonStyle}" />
+                                        <Button x:Uid="Cashflows_Adjustments_BtnClear" Command="{Binding ActiveCampaign.ClearHolidaysCommand}" Style="{StaticResource SecondaryButtonStyle}" />
                                     </StackPanel>
 
                                     <!-- Manual selector -->
                                     <StackPanel Orientation="Horizontal" Spacing="{StaticResource SpaceS}">
-                                        <TextBlock Text="From" VerticalAlignment="Center"/>
+                                        <TextBlock x:Uid="Cashflows_Adjustments_From" VerticalAlignment="Center"/>
                                         <muxc:NumberBox Minimum="1" Maximum="600"
                                                         Value="{Binding ActiveCampaign.HolidayStart, Mode=TwoWay}"
                                                         Width="80" Style="{StaticResource DenseNumberBoxStyle}"/>
-                                        <TextBlock Text="Months" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                        <TextBlock x:Uid="Cashflows_Adjustments_Months" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         <muxc:NumberBox Minimum="1" Maximum="600"
                                                         Value="{Binding ActiveCampaign.HolidayMonths, Mode=TwoWay}"
                                                         Width="80" Style="{StaticResource DenseNumberBoxStyle}"/>
-                                        <Button Content="Apply" Command="{Binding ActiveCampaign.AddHolidayCustomCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+                                        <Button x:Uid="Cashflows_Adjustments_Apply" Command="{Binding ActiveCampaign.AddHolidayCustomCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
                                     </StackPanel>
 
                                     <TextBlock Text="{Binding ActiveCampaign.HolidayError}" Foreground="{ThemeResource ErrorBrush}"/>
 
-                                    <TextBlock Text="Active Holidays" Style="{StaticResource LabelTextStyle}" />
+                                    <TextBlock x:Uid="Cashflows_Adjustments_ActiveHolidays" Style="{StaticResource LabelTextStyle}" />
                                     <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
                                         <ItemsControl ItemsSource="{Binding ActiveCampaign.PaymentHolidays}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock>
-                                                        <Run Text="Periods "/>
+                                                        <Run x:Uid="Cashflows_Adjustments_PeriodsPrefix"/>
                                                         <Run Text="{Binding StartPeriod}"/>
                                                         <Run Text="-"/>
                                                         <Run Text="{Binding EndPeriod}"/>

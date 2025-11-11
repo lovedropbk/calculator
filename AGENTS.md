@@ -22,6 +22,37 @@
 - Formatting: keep diffs minimal and consistent. You may run `dotnet format` locally if available.
 
 ## UI Styling (Fluent UI v2)
+
+### Localization & x:Uid guidelines (WinUI 3)
+- All user-visible UI strings must be centralized in resw files. Do not hardcode `Text`, `Content`, `Header`, `Title`, `PlaceholderText`, or tooltips.
+- Use `x:Uid` in XAML to localize strings and map to the correct property in the `.resw` keys based on control type:
+  - `TextBlock` -> `.Text`
+  - `Button` -> `.Content`
+  - `MenuFlyoutItem` -> `.Text`
+  - `Expander` -> `.Header`
+  - `InfoBar` -> `.Title`
+  - `ToolTip` -> `.Content` (or `ToolTipService.ToolTip` on the owning element)
+  - `ToggleSwitch` -> `.OnContent`, `.OffContent`
+- Avoid using `x:Uid` on `Window` to set `Title` (varies across SDK versions). Set AppWindow title programmatically via ResourceLoader.
+- Units and placeholders:
+  - `%` -> `x:Uid="Unit_Percent"`
+  - `THB` suffix -> `x:Uid="Unit_THB"`
+  - `THB` placeholder -> `x:Uid="Unit_THB_Placeholder"`
+- Runtime language switching:
+  - Update qualifier: `Windows.ApplicationModel.Resources.Core.ResourceContext.SetGlobalQualifierValue("Language", tag)`.
+  - Recreate main window on the UI thread (`DispatcherQueue.TryEnqueue`) to re-apply `x:Uid` strings.
+  - Persist: `ApplicationLanguages.PrimaryLanguageOverride = tag`.
+- Programmatic strings: use `Microsoft.Windows.ApplicationModel.Resources.ResourceLoader` via `Services.ResourceHelper.GetString(key)`.
+
+### What we’ve changed (Nov 2025)
+- Fixed startup crashes by deferring WinRT calls to `OnLaunched`, removing static `ResourceLoader`, and lazy-initializing `App.Settings`.
+- Implemented runtime language switching with window recreation and global qualifier update.
+- Centralized large portions of the UI (Deal Inputs, Cashflows, Campaign Details, Budget Utilization, footer, App Settings, loading overlay, Risk dialog).
+- Standardized units and placeholders (Unit_Percent, Unit_THB, Unit_THB_Placeholder) and localized the commission summary " THB)" Run.
+- Removed `x:Uid` on `Window` and `App_MainWindow.Title` keys to prevent XAML loader failures.
+- Added a temporary localization validator under `scripts/tmp_rovodev_validate_localization.ps1` to spot x:Uid/property mismatches before runtime.
+
+
 - Mandatory: adhere to Fluent UI v2 for WinUI 3. Do not hardcode margins, paddings, colors, or radii in views; use shared tokens/styles.
 - Tokens live in `winui3-mvp/FinancialCalculator.WinUI3/Styles/FluentTheme.xaml` (e.g., `SpaceS`, `SpaceM`, `CompactControlHeight`) and styles in `Styles/DefaultStyles.xaml` (e.g., `DenseTextBoxStyle`, `TokenCardStyle`).
 - Use `StaticResource`/`ThemeResource` in XAML and prefer reusable `Style`/`ControlTemplate` over inline setters.

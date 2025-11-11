@@ -177,4 +177,243 @@
   <data name="CampaignDesigner_Tile_AverageRoRACLabel.Text" xml:space="preserve">
     <value>ค่า RoRAC เฉลี่ย</value>
   </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>โปรไฟแนนซ์ คัลคูเลเตอร์ โปร</value>
+  </data>
+  <data name="MainTab_Header.Text" xml:space="preserve">
+    <value>เครื่องคำนวณหลัก</value>
+  </data>
+  <data name="DealInputs_Header.Text" xml:space="preserve">
+    <value>ข้อมูลดีล</value>
+  </data>
+  <data name="DealInputs_Vehicle.Text" xml:space="preserve">
+    <value>รุ่นรถ</value>
+  </data>
+  <data name="DealInputs_Vehicle_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>เลือกคลาสหรือรุ่น</value>
+  </data>
+  <data name="DealInputs_Product.Text" xml:space="preserve">
+    <value>ผลิตภัณฑ์</value>
+  </data>
+  <data name="DealInputs_Product_HP.Text" xml:space="preserve">
+    <value>HP</value>
+  </data>
+  <data name="DealInputs_Product_mySTAR.Text" xml:space="preserve">
+    <value>mySTAR</value>
+  </data>
+  <data name="DealInputs_Product_FL.Text" xml:space="preserve">
+    <value>FL</value>
+  </data>
+  <data name="DealInputs_Product_OL.Text" xml:space="preserve">
+    <value>OL</value>
+  </data>
+  <data name="DealInputs_Term.Text" xml:space="preserve">
+    <value>ระยะเวลา (เดือน)</value>
+  </data>
+  <data name="DealInputs_Term_Tooltip.Content" xml:space="preserve">
+    <value>ระยะเวลาสินเชื่อเป็นเดือน</value>
+  </data>
+  <data name="DealInputs_PaymentMode.Text" xml:space="preserve">
+    <value>วิธีการชำระเงิน</value>
+  </data>
+  <data name="DealInputs_PaymentMode_Arrears.Text" xml:space="preserve">
+    <value>ปลายงวด</value>
+  </data>
+  <data name="DealInputs_PaymentMode_Advance.Text" xml:space="preserve">
+    <value>ต้นงวด</value>
+  </data>
+  <data name="DealInputs_MSRP.Text" xml:space="preserve">
+    <value>MSRP</value>
+  </data>
+  <data name="DealInputs_MSRP_Tooltip.Content" xml:space="preserve">
+    <value>กรอก MSRP ไม่รวมภาษี</value>
+  </data>
+  <data name="Notification_InfoBar.Title" xml:space="preserve">
+    <value>การแจ้งเตือน</value>
+  </data>
+  <data name="Footer_ExportPDF.Text" xml:space="preserve">
+    <value>ส่งออก PDF</value>
+  </data>
+  <data name="Footer_ExportPDF_Tooltip.Content" xml:space="preserve">
+    <value>ส่งออกรายงานเป็น PDF</value>
+  </data>
+  <data name="Footer_SaveScenario.Text" xml:space="preserve">
+    <value>บันทึกสถานการณ์</value>
+  </data>
+  <data name="Footer_SaveScenario_Tooltip.Content" xml:space="preserve">
+    <value>บันทึกสถานการณ์ปัจจุบัน</value>
+  </data>
+  <data name="Footer_AddToComparison.Text" xml:space="preserve">
+    <value>เพิ่มไปยังการเปรียบเทียบ</value>
+  </data>
+  <data name="Footer_AddToComparison_Tooltip.Content" xml:space="preserve">
+    <value>เพิ่มดีลปัจจุบันไปที่แท็บการเปรียบเทียบ</value>
+  </data>
+  <data name="Footer_Settings.Text" xml:space="preserve">
+    <value>การตั้งค่า</value>
+  </data>
+  <data name="Cashflows_Tab_Header.Text" xml:space="preserve">
+    <value>กระแสเงินสด</value>
+  </data>
+  <data name="Cashflows_Header.Text" xml:space="preserve">
+    <value>ตารางกระแสเงินสด</value>
+  </data>
+  <data name="Cashflows_Adjustments_Header.Header" xml:space="preserve">
+    <value>ปรับกระแสเงินสด (แคมเปญ)</value>
+  </data>
+  <data name="Cashflows_Adjustments_PaymentHoliday.Text" xml:space="preserve">
+    <value>ผ่อนหยุด (ทบต้น; ไม่เปลี่ยนอายุสัญญา)</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday3.Content" xml:space="preserve">
+    <value>หยุด 3 เดือน</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday6.Content" xml:space="preserve">
+    <value>หยุด 6 เดือน</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday9.Content" xml:space="preserve">
+    <value>หยุด 9 เดือน</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnClear.Content" xml:space="preserve">
+    <value>ล้าง</value>
+  </data>
+  <data name="Cashflows_Adjustments_From.Text" xml:space="preserve">
+    <value>ตั้งแต่</value>
+  </data>
+  <data name="Cashflows_Adjustments_Months.Text" xml:space="preserve">
+    <value>เดือน</value>
+  </data>
+  <data name="Cashflows_Adjustments_Apply.Content" xml:space="preserve">
+    <value>นำไปใช้</value>
+  </data>
+  <data name="Cashflows_Adjustments_ActiveHolidays.Text" xml:space="preserve">
+    <value>ช่วงหยุดที่ใช้งาน</value>
+  </data>
+  <data name="Cashflows_Adjustments_PeriodsPrefix.Text" xml:space="preserve">
+    <value>งวด </value>
+  </data>
+  <data name="AppSettings_Language_English.Content" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="AppSettings_Language_Thai.Content" xml:space="preserve">
+    <value>ไทย</value>
+  </data>
+  <data name="AppSettings_AutoExpandRightOnLeftCollapse.Header" xml:space="preserve">
+    <value>ขยายด้านขวาอัตโนมัติเมื่อฝั่งซ้ายย่อ</value>
+  </data>
+  <data name="AppSettings_Theme_Default.Content" xml:space="preserve">
+    <value>ค่าเริ่มต้นของระบบ</value>
+  </data>
+  <data name="AppSettings_Theme_Light.Content" xml:space="preserve">
+    <value>สว่าง</value>
+  </data>
+  <data name="AppSettings_Theme_Dark.Content" xml:space="preserve">
+    <value>มืด</value>
+  </data>
+  <data name="AppSettings_Density_Compact.Content" xml:space="preserve">
+    <value>กระชับ</value>
+  </data>
+  <data name="AppSettings_Density_Comfortable.Content" xml:space="preserve">
+    <value>สบาย</value>
+  </data>
+  <data name="App_Loading_Calculating.Text" xml:space="preserve">
+    <value>กำลังคำนวณ...</value>
+  </data>
+  <data name="DealInputs_RiskSettings_Button.ToolTipService.ToolTip" xml:space="preserve">
+    <value>ลูกค้า: การตั้งค่าความเสี่ยง</value>
+  </data>
+  <data name="Unit_THB.Text" xml:space="preserve">
+    <value>บาท</value>
+  </data>
+  <data name="Unit_Percent.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="DealInputs_MBThDiscount.Text" xml:space="preserve">
+    <value>ส่วนลด MBTh</value>
+  </data>
+  <data name="DealInputs_TransactionPrice.Text" xml:space="preserve">
+    <value>ราคาซื้อขาย</value>
+  </data>
+  <data name="DealInputs_AdditionalItems.Text" xml:space="preserve">
+    <value>รายการจัดไฟแนนซ์เพิ่มเติม</value>
+  </data>
+  <data name="DealInputs_DownPayment.Text" xml:space="preserve">
+    <value>เงินดาวน์</value>
+  </data>
+  <data name="DealInputs_Balloon.Text" xml:space="preserve">
+    <value>บอลลูน</value>
+  </data>
+  <data name="DealInputs_SubsidyBudget.Text" xml:space="preserve">
+    <value>งบอุดหนุน (บาท)</value>
+  </data>
+  <data name="DealInputs_IDCs_Commission.Text" xml:space="preserve">
+    <value>IDC – ค่าคอมมิชชั่น</value>
+  </data>
+  <data name="DealInputs_IDCs_Other.Text" xml:space="preserve">
+    <value>IDC – อื่น ๆ (บาท)</value>
+  </data>
+  <data name="DealInputs_IDCs_Other.ToolTipService.ToolTip" xml:space="preserve">
+    <value>ค่าใช้จ่ายทางอ้อมอื่น ๆ</value>
+  </data>
+  <data name="DealInputs_CustomerRate.Text" xml:space="preserve">
+    <value>อัตราดอกเบี้ยลูกค้า (% ต่อปี)</value>
+  </data>
+  <data name="GoalSeek_SolveForRate.Text" xml:space="preserve">
+    <value>คำนวณย้อนกลับ: หาอัตรา (ให้ได้ RoRAC เป้าหมาย)</value>
+  </data>
+  <data name="GoalSeek_SolveForSubsidy.Text" xml:space="preserve">
+    <value>คำนวณย้อนกลับ: หาเงินอุดหนุน (ให้ได้ RoRAC เป้าหมาย)</value>
+  </data>
+  <data name="GoalSeek_SolveForDownPayment.Text" xml:space="preserve">
+    <value>คำนวณย้อนกลับ: หาเงินดาวน์</value>
+  </data>
+  <data name="GoalSeek_SubsidyOverlay_Tooltip.Content" xml:space="preserve">
+    <value>คลิกเพื่อคำนวณงบอุดหนุนให้ได้ RoRAC เป้าหมาย</value>
+  </data>
+  <data name="App_Loading_Calculating.Text" xml:space="preserve">
+    <value>กำลังคำนวณ...</value>
+  </data>
+  <data name="RiskSettings_Title" xml:space="preserve">
+    <value>การตั้งค่าความเสี่ยง</value>
+  </data>
+  <data name="RiskSettings_Save" xml:space="preserve">
+    <value>บันทึก</value>
+  </data>
+  <data name="RiskSettings_Cancel" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="RiskSettings_CustomerType" xml:space="preserve">
+    <value>ประเภทลูกค้า</value>
+  </data>
+  <data name="RiskSettings_AssetState" xml:space="preserve">
+    <value>สภาพสินทรัพย์</value>
+  </data>
+  <data name="RiskSettings_AssetClass" xml:space="preserve">
+    <value>คลาสสินทรัพย์ (AVC)</value>
+  </data>
+  <data name="RiskSettings_CreditRating" xml:space="preserve">
+    <value>อันดับเครดิต</value>
+  </data>
+  <data name="Unit_THB_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>บาท</value>
+  </data>
+  <data name="Unit_THB_CloseParen.Text" xml:space="preserve">
+    <value> บาท)</value>
+  </data>
+  <data name="GoalSeek_TargetInstallment.Text" xml:space="preserve">
+    <value>ค่างวดเป้าหมาย (บาท)</value>
+  </data>
+  <data name="GoalSeek_TargetRoRac.Text" xml:space="preserve">
+    <value>RoRAC เป้าหมาย (%)</value>
+  </data>
+  <data name="DealInputs_IncludeHoliday_Label.Text" xml:space="preserve"><value>รวมระยะเว้นชำระ</value></data>
+  <data name="DealInputs_IncludeHoliday_None.Text" xml:space="preserve"><value>ไม่มี</value></data>
+  <data name="DealInputs_IncludeHoliday_3M.Text" xml:space="preserve"><value>3 เดือน</value></data>
+  <data name="DealInputs_IncludeHoliday_6M.Text" xml:space="preserve"><value>6 เดือน</value></data>
+  <data name="DealInputs_IncludeHoliday_9M.Text" xml:space="preserve"><value>9 เดือน</value></data>
+  <data name="AppSettings_Behavior_Nav.Content" xml:space="preserve">
+    <value>พฤติกรรม</value>
+  </data>
+  <data name="AppSettings_Language_Nav.Content" xml:space="preserve">
+    <value>ภาษา</value>
+  </data>
 </root>

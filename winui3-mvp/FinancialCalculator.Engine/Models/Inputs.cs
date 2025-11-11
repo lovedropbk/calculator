@@ -59,6 +59,6 @@ public sealed record class CalculatorInputs
     public string AssetValuationCurve { get; init; } = "MBPC"; // e.g., MBPC, MBVA
     public string Rating { get; init; } = "4.0";
 
-    // Cashflow rules: Payment holidays with capitalization and unchanged maturity
+    // Cashflow rules: Payment holidays with NO capitalization (no interest charged) and unchanged maturity
     public IReadOnlyList<PaymentHolidayRule> PaymentHolidays { get; init; } = Array.Empty<PaymentHolidayRule>();
 }

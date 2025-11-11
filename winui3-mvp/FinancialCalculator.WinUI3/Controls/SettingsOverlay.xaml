@@ -1,0 +1,72 @@
+<UserControl
+    x:Class="FinancialCalculator.WinUI3.Controls.SettingsOverlay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d">
+
+    <Grid MinWidth="600" MinHeight="380">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left navigation -->
+        <muxc:NavigationView x:Name="Nav" Grid.Column="0" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"
+                              PaneDisplayMode="Left" PaneTitle="Settings" SelectionChanged="OnNavSelectionChanged">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="Display" Tag="display"/>
+                <muxc:NavigationViewItem x:Uid="AppSettings_Behavior_Nav" Content="Behavior" Tag="behavior"/>
+                <muxc:NavigationViewItem x:Uid="AppSettings_Language_Nav" Content="Language" Tag="language"/>
+            </muxc:NavigationView.MenuItems>
+        </muxc:NavigationView>
+
+        <!-- Right content area -->
+        <Grid Grid.Column="1" Padding="16" x:Name="ContentHost">
+            <!-- Display -->
+            <StackPanel x:Name="DisplayPanel" Spacing="12">
+                <TextBlock Text="Display" Style="{StaticResource CardHeaderTextStyle}"/>
+
+                <StackPanel Spacing="8">
+                    <TextBlock x:Uid="AppSettings_Theme" Style="{StaticResource SectionHeaderTextStyle}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <RadioButton GroupName="ThemeGroup" x:Uid="AppSettings_Theme_Default" IsChecked="{Binding Settings.IsThemeDefault, Mode=TwoWay}"/>
+                        <RadioButton GroupName="ThemeGroup" x:Uid="AppSettings_Theme_Light" IsChecked="{Binding Settings.IsThemeLight, Mode=TwoWay}"/>
+                        <RadioButton GroupName="ThemeGroup" x:Uid="AppSettings_Theme_Dark" IsChecked="{Binding Settings.IsThemeDark, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8" Margin="0,12,0,0">
+                    <TextBlock x:Uid="AppSettings_Density" Style="{StaticResource SectionHeaderTextStyle}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <RadioButton GroupName="DensityGroup" x:Uid="AppSettings_Density_Compact" IsChecked="{Binding Settings.IsDensityCompact, Mode=TwoWay}"/>
+                        <RadioButton GroupName="DensityGroup" x:Uid="AppSettings_Density_Comfortable" IsChecked="{Binding Settings.IsDensityComfortable, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Behavior -->
+            <StackPanel x:Name="BehaviorPanel" Spacing="12" Visibility="Collapsed">
+                <TextBlock x:Uid="AppSettings_Behavior" Style="{StaticResource CardHeaderTextStyle}"/>
+                <ToggleSwitch x:Name="AutoExpandToggle" x:Uid="AppSettings_AutoExpandRightOnLeftCollapse"
+                              IsOn="{Binding Settings.AutoExpandRightOnLeftCollapse, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <!-- Language -->
+            <StackPanel x:Name="LanguagePanel" Spacing="12" Visibility="Collapsed">
+                <TextBlock x:Uid="AppSettings_Language" Style="{StaticResource CardHeaderTextStyle}"/>
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <RadioButton x:Uid="AppSettings_Language_English" GroupName="LanguageGroup"
+                                 IsChecked="{Binding Settings.LanguageTag, Converter={StaticResource StringEqualsConverter}, ConverterParameter=en-US}"
+                                 Checked="OnLanguageEnglishChecked"/>
+                    <RadioButton x:Uid="AppSettings_Language_Thai" GroupName="LanguageGroup"
+                                 IsChecked="{Binding Settings.LanguageTag, Converter={StaticResource StringEqualsConverter}, ConverterParameter=th-TH}"
+                                 Checked="OnLanguageThaiChecked"/>
+                </StackPanel>
+                <TextBlock Text="Note: Changing language will restart the window to reload resources." Opacity="0.7" FontSize="12"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

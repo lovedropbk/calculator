@@ -43,8 +43,10 @@ public class CampaignCalculationService
             decimal transactionPrice = vehiclePrice - (decimal)cashDiscount;
             if (transactionPrice < 0) transactionPrice = 0;
 
-            // Ensure campaign-specific holidays are used for all scenario calculations
-            var baseReqWithHolidays = baseRequest with { PaymentHolidays = vm.PaymentHolidays.ToList() };
+            // Merge base-request holidays (from DealInput selection) with campaign-specific holidays (coalesced, non-overlapping)
+            var mergedHolidays = MergeHolidays(baseRequest.PaymentHolidays, vm.PaymentHolidays);
+            var baseReqWithHolidays = baseRequest with { PaymentHolidays = mergedHolidays };
+
 
             // 2) Allocate subsidy to SubDown first (no double counting)
             // Total subsidy available for allocation after cash discount
@@ -255,5 +257,53 @@ public class CampaignCalculationService
             }
         }
         return Math.Round(bestRate, 2);
+    }
+
+    private static System.Collections.Generic.List<FinancialCalculator.Engine.Models.PaymentHolidayRule> MergeHolidays(
+        System.Collections.Generic.IReadOnlyList<FinancialCalculator.Engine.Models.PaymentHolidayRule>? baseRules,
+        System.Collections.ObjectModel.ObservableCollection<FinancialCalculator.Engine.Models.PaymentHolidayRule>? campaignRules)
+    {
+        var intervals = new System.Collections.Generic.List<(int s, int e)>();
+        if (baseRules != null)
+        {
+            foreach (var r in baseRules)
+            {
+                int s = Math.Max(1, r.StartPeriod);
+                int e = Math.Max(s, r.EndPeriod);
+                intervals.Add((s, e));
+            }
+        }
+        if (campaignRules != null)
+        {
+            foreach (var r in campaignRules)
+            {
+                int s = Math.Max(1, r.StartPeriod);
+                int e = Math.Max(s, r.EndPeriod);
+                intervals.Add((s, e));
+            }
+        }
+        if (intervals.Count == 0) return new System.Collections.Generic.List<FinancialCalculator.Engine.Models.PaymentHolidayRule>();
+        intervals.Sort((a, b) => a.s != b.s ? a.s.CompareTo(b.s) : a.e.CompareTo(b.e));
+        var merged = new System.Collections.Generic.List<(int s, int e)>();
+        foreach (var iv in intervals)
+        {
+            if (merged.Count == 0) { merged.Add(iv); continue; }
+            var last = merged[merged.Count - 1];
+            if (iv.s <= last.e + 1)
+            {
+                merged[merged.Count - 1] = (last.s, System.Math.Max(last.e, iv.e));
+            }
+            else
+            {
+                merged.Add(iv);
+            }
+        }
+        var outList = new System.Collections.Generic.List<FinancialCalculator.Engine.Models.PaymentHolidayRule>();
+        int idx = 1;
+        foreach (var m in merged)
+        {
+            outList.Add(new FinancialCalculator.Engine.Models.PaymentHolidayRule { StartPeriod = m.s, EndPeriod = m.e, RuleId = $"HOL-MERGED-CAMPAIGN-{idx++:00}" });
+        }
+        return outList;
     }
 }

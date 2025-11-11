@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FinancialCalculator.Engine.Models;
 
 namespace FinancialCalculator.WinUI3.ViewModels;
 
@@ -10,7 +11,8 @@ public partial class CampaignSummaryViewModel : ObservableObject
     public string CampaignType { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string DealerCommission { get; set; } = string.Empty;
-    public string Monthly { get; set; } = string.Empty;
+    private string _monthly = string.Empty;
+    public string Monthly { get => _monthly; set => SetProperty(ref _monthly, value); }
     public string CustomerNominalRate { get; set; } = string.Empty;
     public string CustomerFlatRate { get; set; } = string.Empty;
     public string Downpayment { get; set; } = string.Empty;
@@ -29,6 +31,7 @@ public partial class CampaignSummaryViewModel : ObservableObject
         set => SetProperty(ref _roRAC, value);
     }
     public string Notes { get; set; } = string.Empty;
+
 
     // New: per-term breakdown (editable by user in Campaign Designer)
     public ObservableCollection<TermBreakdownItemViewModel> TermBreakdown { get; } = new();
@@ -157,6 +160,15 @@ public partial class CampaignSummaryViewModel : ObservableObject
                     RoRAC = tb.RoRAC,
                     DistributionPct = tb.DistributionPct
                 });
+            }
+        }
+
+        // Deep-copy campaign-specific payment holidays
+        if (this.PaymentHolidays != null)
+        {
+            foreach (var h in this.PaymentHolidays)
+            {
+                copy.PaymentHolidays.Add(new PaymentHolidayRule { StartPeriod = h.StartPeriod, EndPeriod = h.EndPeriod, RuleId = h.RuleId });
             }
         }
 

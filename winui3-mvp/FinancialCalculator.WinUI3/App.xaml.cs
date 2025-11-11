@@ -7,7 +7,9 @@ namespace FinancialCalculator.WinUI3;
 
 public partial class App : Application
 {
-    private readonly AppSettingsService _settings = new();
+    private static AppSettingsService? _settings;
+    public static AppSettingsService Settings => _settings ??= new AppSettingsService();
+    private MainWindow? _window;
     public App()
     {
         Logger.Init("ui");
@@ -49,6 +51,7 @@ public partial class App : Application
         
         try
         {
+            // Initialize XAML. Language override will be applied in OnLaunched before creating the main window.
             this.InitializeComponent();
             Logger.Info("App.InitializeComponent loaded resources");
         }
@@ -83,11 +86,15 @@ public partial class App : Application
         try
         {
             // Load settings and apply density before creating window
-            _settings.Load();
-            _settings.ApplyDensity();
+            Settings.Load();
+            // Apply stored language before creating window
+            try { Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = Settings.LanguageTag; } catch { }
+            Settings.ApplyDensity();
             Logger.Info("Creating MainWindow - about to call constructor");
-            var window = new MainWindow();
+            _window = new MainWindow(Settings);
             Logger.Info("MainWindow constructor completed");
+
+            var window = _window;
 
             Logger.Info("Waiting for MainViewModel to initialize...");
             await window.ViewModel.InitializationNotifier;
@@ -97,17 +104,15 @@ public partial class App : Application
             window.Activate();
             Logger.Info("MainWindow activated successfully");
 
-            // Apply theme preference after window exists
-            if (window.Content is FrameworkElement fe)
-            {
-                _settings.ApplyTheme(fe);
-            }
-            // Keep MainWindow binding reactive to theme changes (x:Bind above), but also set initial theme:
-            if (window.Content is FrameworkElement fe2)
-            {
-                fe2.RequestedTheme = _settings.AppTheme;
-            }
+           // Hook language change to recreate window with new resources
+           try
+           {
+               Settings.LanguageChanged -= OnLanguageChanged; // avoid multiple
+               Settings.LanguageChanged += OnLanguageChanged;
+           }
+           catch { }
 
+           // Theme is bound via XAML on the root Grid; avoid setting programmatically to preserve binding
             // Add a visual indicator if window is created but not showing content
             if (window.Content == null)
             {
@@ -141,6 +146,49 @@ public partial class App : Application
         }
     }
     
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        try
+        {
+            Logger.Info($"Language changed to: {Settings.LanguageTag}. Recreating window on UI thread.");
+            var dispatcher = _window?.DispatcherQueue;
+            if (dispatcher is null)
+            {
+                // Fallback if dispatcher is unavailable
+                RecreateWindow();
+                return;
+            }
+            dispatcher.TryEnqueue(() => RecreateWindow());
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to schedule window recreation after language change", ex);
+        }
+    }
+
+    private async void RecreateWindow()
+    {
+        try
+        {
+            Logger.Info("Recreating MainWindow now...");
+            var old = _window;
+            _window = new MainWindow(Settings);
+            
+            // Wait for ViewModel initialization before activating
+            await _window.ViewModel.InitializationNotifier;
+            Logger.Info("New MainWindow ViewModel initialized after language change");
+            
+            _window.Activate();
+            Logger.Info("New MainWindow activated after language change");
+            
+            try { old?.Close(); } catch { }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to recreate window after language change", ex);
+        }
+    }
+
     private void ShowErrorWindow(string message)
     {
         try

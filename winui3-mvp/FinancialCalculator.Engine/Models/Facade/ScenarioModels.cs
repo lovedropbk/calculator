@@ -90,5 +90,6 @@ public enum GoalSeekVariable
 public enum GoalSeekMetric
 {
     MonthlyInstallment,
-    RoRAC
+    RoRAC,
+    FlatRate
 }

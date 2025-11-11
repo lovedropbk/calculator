@@ -200,7 +200,7 @@
                 <Grid Background="{ThemeResource LayerFillColorDefaultBrush}">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="{StaticResource SpaceM}">
                         <ProgressRing IsActive="True" Width="{StaticResource LoaderIndicatorSize}" Height="{StaticResource LoaderIndicatorSize}" />
-                        <TextBlock Text="Calculating..." HorizontalAlignment="Center" />
+                        <TextBlock x:Uid="App_Loading_Calculating" HorizontalAlignment="Center" />
                     </StackPanel>
                 </Grid>
             </DataTemplate>

@@ -90,6 +90,9 @@
   <data name="AppSettings_Behavior.Text" xml:space="preserve">
     <value>App behavior</value>
   </data>
+  <data name="AppSettings_Behavior_Nav.Content" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
   <data name="AppSettings_Theme.Text" xml:space="preserve">
     <value>Theme</value>
   </data>
@@ -239,5 +242,206 @@
   </data>
   <data name="CampaignDesigner_ConsumeAllSubsidy.Text" xml:space="preserve">
     <value>Consume entire subsidy</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Financial Calculator Pro</value>
+  </data>
+  <data name="MainTab_Header.Text" xml:space="preserve">
+    <value>Main Calculator</value>
+  </data>
+  <data name="DealInputs_Header.Text" xml:space="preserve">
+    <value>Deal Inputs</value>
+  </data>
+  <data name="DealInputs_Vehicle.Text" xml:space="preserve">
+    <value>Vehicle</value>
+  </data>
+  <data name="DealInputs_Vehicle_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>Select Class or Model</value>
+  </data>
+  <data name="DealInputs_Product.Text" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="DealInputs_Product_HP.Text" xml:space="preserve">
+    <value>HP</value>
+  </data>
+  <data name="DealInputs_Product_mySTAR.Text" xml:space="preserve">
+    <value>mySTAR</value>
+  </data>
+  <data name="DealInputs_Product_FL.Text" xml:space="preserve">
+    <value>FL</value>
+  </data>
+  <data name="DealInputs_Product_OL.Text" xml:space="preserve">
+    <value>OL</value>
+  </data>
+  <data name="DealInputs_Term.Text" xml:space="preserve">
+    <value>Term (months)</value>
+  </data>
+  <data name="DealInputs_Term_Tooltip.Content" xml:space="preserve">
+    <value>Loan term duration in months</value>
+  </data>
+  <data name="DealInputs_PaymentMode.Text" xml:space="preserve">
+    <value>Payment Mode</value>
+  </data>
+  <data name="DealInputs_PaymentMode_Arrears.Text" xml:space="preserve">
+    <value>arrears</value>
+  </data>
+  <data name="DealInputs_PaymentMode_Advance.Text" xml:space="preserve">
+    <value>in advance</value>
+  </data>
+  <data name="DealInputs_MSRP.Text" xml:space="preserve">
+    <value>MSRP</value>
+  </data>
+  <data name="DealInputs_MSRP_Tooltip.Content" xml:space="preserve">
+    <value>Enter the MSRP excluding tax</value>
+  </data>
+  <data name="Notification_InfoBar.Title" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="Footer_ExportPDF.Text" xml:space="preserve">
+    <value>Export PDF</value>
+  </data>
+  <data name="Footer_ExportPDF_Tooltip.Content" xml:space="preserve">
+    <value>Export report as PDF</value>
+  </data>
+  <data name="Footer_SaveScenario.Text" xml:space="preserve">
+    <value>Save Scenario</value>
+  </data>
+  <data name="Footer_SaveScenario_Tooltip.Content" xml:space="preserve">
+    <value>Save current scenario for later</value>
+  </data>
+  <data name="Footer_AddToComparison.Text" xml:space="preserve">
+    <value>Add to Comparison</value>
+  </data>
+  <data name="Footer_AddToComparison_Tooltip.Content" xml:space="preserve">
+    <value>Add current deal to comparison tab</value>
+  </data>
+  <data name="Footer_Settings.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Cashflows_Tab_Header.Text" xml:space="preserve">
+    <value>Cashflows</value>
+  </data>
+  <data name="Cashflows_Header.Text" xml:space="preserve">
+    <value>Cashflow Schedule</value>
+  </data>
+  <data name="Cashflows_Adjustments_Header.Header" xml:space="preserve">
+    <value>Cashflow Adjustments (campaign)</value>
+  </data>
+  <data name="Cashflows_Adjustments_PaymentHoliday.Text" xml:space="preserve">
+    <value>Payment holiday (capitalized; unchanged maturity)</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday3.Content" xml:space="preserve">
+    <value>Holiday 3m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday6.Content" xml:space="preserve">
+    <value>Holiday 6m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnHoliday9.Content" xml:space="preserve">
+    <value>Holiday 9m</value>
+  </data>
+  <data name="Cashflows_Adjustments_BtnClear.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Cashflows_Adjustments_From.Text" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Cashflows_Adjustments_Months.Text" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="Cashflows_Adjustments_Apply.Content" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Cashflows_Adjustments_ActiveHolidays.Text" xml:space="preserve">
+    <value>Active Holidays</value>
+  </data>
+  <data name="Cashflows_Adjustments_PeriodsPrefix.Text" xml:space="preserve">
+    <value>Periods </value>
+  </data>
+  <data name="DealInputs_RiskSettings_Button.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Customer: Risk Settings</value>
+  </data>
+  <data name="Unit_THB.Text" xml:space="preserve">
+    <value>THB</value>
+  </data>
+  <data name="Unit_Percent.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="DealInputs_MBThDiscount.Text" xml:space="preserve">
+    <value>MBTh Discount</value>
+  </data>
+  <data name="DealInputs_TransactionPrice.Text" xml:space="preserve">
+    <value>Transaction Price</value>
+  </data>
+  <data name="DealInputs_AdditionalItems.Text" xml:space="preserve">
+    <value>Additional Financed Items</value>
+  </data>
+  <data name="DealInputs_DownPayment.Text" xml:space="preserve">
+    <value>Down payment</value>
+  </data>
+  <data name="DealInputs_Balloon.Text" xml:space="preserve">
+    <value>Balloon</value>
+  </data>
+  <data name="DealInputs_SubsidyBudget.Text" xml:space="preserve">
+    <value>Subsidy budget (THB)</value>
+  </data>
+  <data name="DealInputs_IDCs_Commission.Text" xml:space="preserve">
+    <value>IDCs – Commission</value>
+  </data>
+  <data name="DealInputs_IDCs_Other.Text" xml:space="preserve">
+    <value>IDCs – Other (THB)</value>
+  </data>
+  <data name="DealInputs_IDCs_Other.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Other indirect costs</value>
+  </data>
+  <data name="DealInputs_CustomerRate.Text" xml:space="preserve">
+    <value>Customer rate (% p.a.)</value>
+  </data>
+  <data name="GoalSeek_SolveForRate.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Rate (to target RoRAC)</value>
+  </data>
+  <data name="GoalSeek_SolveForSubsidy.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Subsidy (to target RoRAC)</value>
+  </data>
+  <data name="GoalSeek_SolveForDownPayment.Text" xml:space="preserve">
+    <value>Goal Seek: Solve for Down Payment</value>
+  </data>
+  <data name="GoalSeek_SubsidyOverlay_Tooltip.Content" xml:space="preserve">
+    <value>Click to solve for Subsidy Budget to achieve target RoRAC</value>
+  </data>
+  <data name="App_Loading_Calculating.Text" xml:space="preserve">
+    <value>Calculating...</value>
+  </data>
+  <data name="RiskSettings_Title" xml:space="preserve">
+    <value>Risk settings</value>
+  </data>
+  <data name="RiskSettings_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="RiskSettings_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RiskSettings_CustomerType" xml:space="preserve">
+    <value>Customer Type</value>
+  </data>
+  <data name="RiskSettings_AssetState" xml:space="preserve">
+    <value>Asset State</value>
+  </data>
+  <data name="RiskSettings_AssetClass" xml:space="preserve">
+    <value>Asset Class (AVC)</value>
+  </data>
+  <data name="RiskSettings_CreditRating" xml:space="preserve">
+    <value>Credit Rating</value>
+  </data>
+  <data name="Unit_THB_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>THB</value>
+  </data>
+  <data name="Unit_THB_CloseParen.Text" xml:space="preserve">
+    <value> THB)</value>
+  </data>
+  <data name="GoalSeek_TargetInstallment.Text" xml:space="preserve">
+    <value>Target installment (THB)</value>
+  </data>
+  <data name="GoalSeek_TargetRoRac.Text" xml:space="preserve">
+    <value>Target RoRAC (%)</value>
   </data>
 </root>

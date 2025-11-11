@@ -16,13 +16,14 @@ namespace FinancialCalculator.WinUI3;
 
 public sealed partial class MainWindow : Window
 {
+    private readonly AppSettingsService _settings;
     public MainViewModel ViewModel { get; }
 
-    private readonly AppSettingsService _settings = new();
     private readonly LayoutCoordinator _layout = new();
 
-    public MainWindow()
+    public MainWindow(AppSettingsService settings)
     {
+        _settings = settings;
         ViewModel = new MainViewModel(_settings);
 
         try
@@ -49,31 +50,49 @@ public sealed partial class MainWindow : Window
 
         TryApplySystemBackdrop();
         CustomizeTitleBar();
+        
+        // Set initial payment holiday selection after XAML loads
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                var months = ViewModel.DealInput.IncludeHolidayMonths ?? 0;
+                var index = months switch
+                {
+                    0 => 0,
+                    3 => 1,
+                    6 => 2,
+                    9 => 3,
+                    _ => 0
+                };
+                if (PaymentHolidayComboBox != null)
+                {
+                    PaymentHolidayComboBox.SelectedIndex = index;
+                }
+            }
+            catch { }
+        });
 
         try
         {
             _settings.Load();
-            if (Content is FrameworkElement root)
-            {
-                _settings.ApplyTheme(root);
-            }
+
+            // Do not set RequestedTheme programmatically here; it's bound in XAML to ViewModel.Settings.Theme.
+            // Just ensure DataContext is set and layout coordinator attaches.
             _layout.Attach(ViewModel, _settings);
 
-            // React to theme changes from SettingsViewModel to apply immediately to the window
-            try
+            // Theme changes are now handled purely via XAML binding (RequestedTheme on root Grid), no imperative updates needed.
+            // React to language changes to update any non-x:Uid programmatic strings (if any)
+            _settings.LanguageChanged -= (_, __) => { };
+            _settings.LanguageChanged += (_, __) =>
             {
-                ViewModel.Settings.PropertyChanged += (s, e) =>
+                try
                 {
-                    if (e.PropertyName == nameof(ViewModels.Settings.SettingsViewModel.Theme))
-                    {
-                        if (Content is FrameworkElement root)
-                        {
-                            ViewModel.Settings.ApplyTheme(root);
-                        }
-                    }
-                };
-            }
-            catch { }
+                    // If we had programmatically set text, we'd refresh here.
+                    // Most strings use x:Uid so recreating the window (handled in App) will rebind.
+                }
+                catch { }
+            };
         }
         catch { }
     }
@@ -84,7 +103,7 @@ public sealed partial class MainWindow : Window
         {
             if (sender is Button btn && btn.DataContext is CampaignSummaryViewModel row)
             {
-                if (ViewModel.CopyToMyCampaignsCommand.CanExecute(row))
+                if (ViewModel.CopyToMyCampaignsCommand?.CanExecute(row) ?? false)
                 {
                     ViewModel.CopyToMyCampaignsCommand.Execute(row);
                 }
@@ -121,25 +140,25 @@ public sealed partial class MainWindow : Window
             var labelStyle = (Style)Application.Current.Resources["LabelTextStyle"];
             var comboStyle = (Style)Application.Current.Resources["DenseComboBoxStyle"];
 
-            var ctLabel = new TextBlock { Text = "Customer Type", Style = labelStyle };
+            var ctLabel = new TextBlock { Text = Services.ResourceHelper.GetString("RiskSettings_CustomerType"), Style = labelStyle };
             Grid.SetRow(ctLabel, 0); Grid.SetColumn(ctLabel, 0);
             var ctCombo = new ComboBox { ItemsSource = vm.CustomerTypes, SelectedItem = vm.SelectedCustomerType, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
             ctCombo.SelectionChanged += (_, __) => vm.SelectedCustomerType = ctCombo.SelectedItem as string ?? vm.SelectedCustomerType;
             Grid.SetRow(ctCombo, 0); Grid.SetColumn(ctCombo, 2);
 
-            var asLabel = new TextBlock { Text = "Asset State", Style = labelStyle };
+            var asLabel = new TextBlock { Text = Services.ResourceHelper.GetString("RiskSettings_AssetState"), Style = labelStyle };
             Grid.SetRow(asLabel, 1); Grid.SetColumn(asLabel, 0);
             var asCombo = new ComboBox { ItemsSource = vm.AssetStates, SelectedItem = vm.SelectedAssetState, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
             asCombo.SelectionChanged += (_, __) => vm.SelectedAssetState = asCombo.SelectedItem as string ?? vm.SelectedAssetState;
             Grid.SetRow(asCombo, 1); Grid.SetColumn(asCombo, 2);
 
-            var avcLabel = new TextBlock { Text = "Asset Class (AVC)", Style = labelStyle };
+            var avcLabel = new TextBlock { Text = Services.ResourceHelper.GetString("RiskSettings_AssetClass"), Style = labelStyle };
             Grid.SetRow(avcLabel, 2); Grid.SetColumn(avcLabel, 0);
             var avcCombo = new ComboBox { ItemsSource = vm.AssetValuationCurves, SelectedItem = vm.SelectedAssetValuationCurve, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
             avcCombo.SelectionChanged += (_, __) => vm.SelectedAssetValuationCurve = avcCombo.SelectedItem as string ?? vm.SelectedAssetValuationCurve;
             Grid.SetRow(avcCombo, 2); Grid.SetColumn(avcCombo, 2);
 
-            var ratingLabel = new TextBlock { Text = "Credit Rating", Style = labelStyle };
+            var ratingLabel = new TextBlock { Text = Services.ResourceHelper.GetString("RiskSettings_CreditRating"), Style = labelStyle };
             Grid.SetRow(ratingLabel, 3); Grid.SetColumn(ratingLabel, 0);
             var ratingCombo = new ComboBox { ItemsSource = vm.CreditRatings, SelectedItem = vm.SelectedRating, Style = comboStyle, HorizontalAlignment = HorizontalAlignment.Left };
             ratingCombo.SelectionChanged += (_, __) => vm.SelectedRating = ratingCombo.SelectedItem as string ?? vm.SelectedRating;
@@ -161,9 +180,9 @@ public sealed partial class MainWindow : Window
 
             var dlg = new ContentDialog
             {
-                Title = "Risk settings",
-                PrimaryButtonText = "Save",
-                CloseButtonText = "Cancel",
+                Title = Services.ResourceHelper.GetString("RiskSettings_Title"),
+                PrimaryButtonText = Services.ResourceHelper.GetString("RiskSettings_Save"),
+                CloseButtonText = Services.ResourceHelper.GetString("RiskSettings_Cancel"),
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = (this.Content as FrameworkElement)?.XamlRoot,
                 Content = contentGrid
@@ -230,7 +249,7 @@ public sealed partial class MainWindow : Window
 
             vm ??= ViewModel.CampaignManager.SelectedCampaign;
 
-            if (vm != null && ViewModel.CopyToMyCampaignsCommand.CanExecute(vm))
+            if (vm != null && (ViewModel.CopyToMyCampaignsCommand?.CanExecute(vm) ?? false))
             {
                 ViewModel.CopyToMyCampaignsCommand.Execute(vm);
                 e.Handled = true;
@@ -287,7 +306,7 @@ public sealed partial class MainWindow : Window
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                appWindow.Title = "Financial Calculator Pro";
+                appWindow.Title = Services.ResourceHelper.GetString("App_Title");
                 var titleBar = appWindow.TitleBar;
                 titleBar.ExtendsContentIntoTitleBar = true;
                 titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -299,26 +318,51 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void OnAppSettingsClick(object sender, RoutedEventArgs e)
+    private async void OnAppSettingsClick(object sender, RoutedEventArgs e)
     {
         try
         {
-            if (sender is Button btn && btn.Flyout is FlyoutBase fb)
+            var dlg = new ContentDialog
             {
-                fb.ShowAt(btn);
+                Title = "Settings",
+                PrimaryButtonText = "Close",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = (this.Content as FrameworkElement)?.XamlRoot
+            };
+
+            var overlay = new Controls.SettingsOverlay
+            {
+                DataContext = this.ViewModel,
+                HostWindow = this
+            };
+            dlg.Content = overlay;
+
+            await dlg.ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Failed to open settings overlay", ex);
+        }
+    }
+
+    private void OnPaymentHolidaySelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        try
+        {
+            if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item && item.Tag is string tagStr)
+            {
+                if (int.TryParse(tagStr, out int months))
+                {
+                    ViewModel.DealInput.IncludeHolidayMonths = months <= 0 ? null : months;
+                }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error("Payment holiday selection failed", ex);
+        }
     }
 
-    
-    private void OnLanguageEnglishClicked(object sender, RoutedEventArgs e)
-    {
-        try { ViewModel.Settings.LanguageTag = "en-US"; } catch { }
-    }
+    // Language selection handled inside SettingsOverlay
 
-    private void OnLanguageThaiClicked(object sender, RoutedEventArgs e)
-    {
-        try { ViewModel.Settings.LanguageTag = "th-TH"; } catch { }
-    }
 }

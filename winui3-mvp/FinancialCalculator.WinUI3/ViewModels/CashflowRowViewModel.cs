@@ -6,7 +6,7 @@ public partial class CashflowRowViewModel : ObservableObject
 {
     public int Period { get; set; }
     public string PaymentType { get; set; } = "";       // Regular or Holiday
-    public string CapInterest { get; set; } = "";       // Capitalized interest during holiday
+    public string CapInterest { get; set; } = "";       // Interest not charged during holiday (no capitalization)
     public string Principal { get; set; } = "";
     public string Interest { get; set; } = "";
 

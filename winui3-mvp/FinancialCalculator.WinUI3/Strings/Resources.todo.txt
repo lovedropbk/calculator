@@ -1,0 +1,5 @@
+TODO: Add missing resource keys for MainWindow.xaml and CampaignDetailsView.xaml that were converted to x:Uid but not yet present here:
+- CampaignDesigner_Header.Text (duplicated from existing header for consistency)
+- DealInputs labels and tooltips if any missing
+- Cashflows resource keys now added in en-US and th-TH
+- AppSettings_Language_English.Text, AppSettings_Language_Thai.Text, AppSettings_AutoExpandRightOnLeftCollapse.Text, AppSettings_Theme_Default.Text, AppSettings_Theme_Light.Text, AppSettings_Theme_Dark.Text, AppSettings_Density_Compact.Text, AppSettings_Density_Comfortable.Text

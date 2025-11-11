@@ -5,7 +5,7 @@ namespace FinancialCalculator.Engine.Models
     /// <summary>
     /// Identifies the nature of a schedule row for display and export.
     /// Regular rows are standard amortization payments.
-    /// Holiday rows represent zero-payment periods where interest is capitalized into principal.
+    /// Holiday rows represent zero-payment periods where interest is not charged and not capitalized (waived).
     /// </summary>
     public enum PaymentKind
     {

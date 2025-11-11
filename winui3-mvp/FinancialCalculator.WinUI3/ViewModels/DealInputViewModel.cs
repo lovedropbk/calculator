@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FinancialCalculator.Engine.Core;
@@ -253,7 +254,8 @@ public partial class DealInputViewModel : ObservableValidator
         if (!_isUpdatingRate)
         {
             _isUpdatingRate = true;
-            CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode());
+            try { CustomerFlatRate = (double)ComputeEngineFlatForNominal((decimal)CustomerNominalRate); }
+            catch { CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode()); }
             _isUpdatingRate = false;
         }
         NotifyChanged();
@@ -264,7 +266,15 @@ public partial class DealInputViewModel : ObservableValidator
         if (!_isUpdatingRate)
         {
             _isUpdatingRate = true;
-            CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)value, TermMonths, GetPaymentMode());
+            try
+            {
+                var flat = (double)ComputeEngineFlatForNominal((decimal)value);
+                CustomerFlatRate = Math.Round(flat, 6); // engine returns per annum percent
+            }
+            catch
+            {
+                CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)value, TermMonths, GetPaymentMode());
+            }
             _isUpdatingRate = false;
         }
         CheckRateDeviation();
@@ -276,7 +286,44 @@ public partial class DealInputViewModel : ObservableValidator
         if (!_isUpdatingRate)
         {
             _isUpdatingRate = true;
-            CustomerNominalRate = (double)RateConverter.ConvertFlatToNominal((decimal)value, TermMonths, GetPaymentMode());
+            // Solve nominal rate to match the engine's FlatRatePercentPerAnnum including holidays and balloon
+            try
+            {
+                double targetFlat = value; // percent per annum
+                if (targetFlat <= 0)
+                {
+                    CustomerNominalRate = 0;
+                }
+                else
+                {
+                    Func<double, double> flat = r => (double)ComputeEngineFlatForNominal((decimal)r) - targetFlat;
+                    double low = 0.0, high = 30.0;
+                    // Expand high until bracketed or up to 100%
+                    double fLow = flat(low);
+                    double fHigh = flat(high);
+                    int guard = 0;
+                    while (fHigh < 0 && high < 100 && guard++ < 10)
+                    {
+                        high *= 2;
+                        fHigh = flat(high);
+                    }
+                    // Bisection
+                    for (int it = 0; it < 50; it++)
+                    {
+                        double mid = (low + high) / 2.0;
+                        double fMid = flat(mid);
+                        if (Math.Abs(fMid) < 1e-6) { low = high = mid; break; }
+                        if (Math.Sign(fLow) == Math.Sign(fMid)) { low = mid; fLow = fMid; } else { high = mid; }
+                    }
+                    double solved = (low + high) / 2.0;
+                    CustomerNominalRate = Math.Round(solved, 2);
+                }
+            }
+            catch
+            {
+                // Fallback to simple converter if engine goal-seek fails
+                CustomerNominalRate = (double)RateConverter.ConvertFlatToNominal((decimal)value, TermMonths, GetPaymentMode());
+            }
             _isUpdatingRate = false;
         }
         CheckRateDeviation();
@@ -284,6 +331,42 @@ public partial class DealInputViewModel : ObservableValidator
     }
 
     private PaymentMode GetPaymentMode() => string.Equals(Timing, "advance", StringComparison.OrdinalIgnoreCase) ? PaymentMode.InAdvance : PaymentMode.InArrears;
+
+    private decimal ComputeEngineFlatForNominal(decimal nominalRatePercent)
+    {
+        var baseReq = BuildScenarioRequest();
+        // Map ScenarioRequest to CalculatorInputs directly and use FinancialCalculator (no risk dependency)
+        var inputs = new FinancialCalculator.Engine.Models.CalculatorInputs
+        {
+            VehicleSalesPrice = baseReq.VehiclePrice,
+            AdditionalFinancedItems = baseReq.AdditionalFinancedItems,
+            DownpaymentIsPercent = baseReq.DownIsPercent,
+            DownpaymentValue = baseReq.DownValue,
+            TermMonths = baseReq.TermMonths,
+            PaymentMode = string.Equals(baseReq.Timing, "advance", StringComparison.OrdinalIgnoreCase)
+                ? FinancialCalculator.Engine.Models.PaymentMode.InAdvance
+                : FinancialCalculator.Engine.Models.PaymentMode.InArrears,
+            Product = FinancialCalculator.Engine.Models.FinancialProduct.HirePurchase,
+            CustomerRatePercent = nominalRatePercent,
+            BalloonIsPercent = baseReq.BalloonIsPercent,
+            BalloonPercent = baseReq.BalloonIsPercent ? baseReq.BalloonValue : 0,
+            BalloonTHB = baseReq.BalloonIsPercent ? 0 : baseReq.BalloonValue,
+            PeriodicFeeAnnualPercent = 0m,
+            UpfrontSubsidies = baseReq.UpfrontSubsidies,
+            UpfrontCosts = baseReq.UpfrontCosts,
+            SubdownIsPercent = baseReq.SubdownIsPercent,
+            SubdownPercent = baseReq.SubdownIsPercent ? baseReq.SubdownValue : 0,
+            SubdownTHB = baseReq.SubdownIsPercent ? 0 : baseReq.SubdownValue,
+            CustomerType = baseReq.CustomerType,
+            AssetState = baseReq.AssetState,
+            AssetValuationCurve = baseReq.AssetValuationCurve,
+            Rating = baseReq.Rating,
+            PaymentHolidays = baseReq.PaymentHolidays
+        };
+        var calc = new FinancialCalculator.Engine.Core.FinancialCalculator();
+        var output = calc.Calculate(inputs);
+        return output.FlatRatePercentPerAnnum;
+    }
     private void OnSubsidyBudgetChanged(double value) { OnPropertyChanged(nameof(SubsidyBudgetText)); NotifyChanged(); }
     // Let's keep simple inputs here. MainVM can observe SubsidyBudget change.
 
@@ -293,7 +376,8 @@ public partial class DealInputViewModel : ObservableValidator
         if (!_isUpdatingRate)
         {
             _isUpdatingRate = true;
-            CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode());
+            try { CustomerFlatRate = (double)ComputeEngineFlatForNominal((decimal)CustomerNominalRate); }
+            catch { CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode()); }
             _isUpdatingRate = false;
         }
         NotifyChanged();
@@ -408,7 +492,8 @@ public partial class DealInputViewModel : ObservableValidator
                 if (!_isUpdatingRate)
                 {
                     _isUpdatingRate = true;
-                    CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode());
+                    try { CustomerFlatRate = (double)ComputeEngineFlatForNominal((decimal)CustomerNominalRate); }
+                    catch { CustomerFlatRate = (double)RateConverter.ConvertNominalToFlat((decimal)CustomerNominalRate, TermMonths, GetPaymentMode()); }
                     _isUpdatingRate = false;
                 }
             }
@@ -495,7 +580,7 @@ public partial class DealInputViewModel : ObservableValidator
              AssetState = string.Equals(SelectedAssetState, "New", StringComparison.OrdinalIgnoreCase) ? "N" : "U",
              AssetValuationCurve = SelectedAssetValuationCurve,
              Rating = SelectedRating,
-             PaymentHolidays = PaymentHolidays.ToList()
+             PaymentHolidays = BuildMergedHolidays()
         };
     }
 }

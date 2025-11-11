@@ -61,10 +61,10 @@ public partial class SettingsViewModel : ObservableObject
 
     public string LanguageTag
     {
-        get => Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride ?? "en-US";
+        get => Service.LanguageTag;
         set
         {
-            if (LanguageTag != value && !string.IsNullOrWhiteSpace(value))
+            if (Service.LanguageTag != value && !string.IsNullOrWhiteSpace(value))
             {
                 Service.SetLanguage(value);
                 OnPropertyChanged();

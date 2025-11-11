@@ -25,8 +25,8 @@
         <ToolTipService.ToolTip>
             <ToolTip>
                 <StackPanel>
-                    <TextBlock x:Uid="PaneToggle_Tooltip_Collapse" Text="Collapse panel" Visibility="{x:Bind ShowLeftGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <TextBlock x:Uid="PaneToggle_Tooltip_Expand" Text="Expand panel" Visibility="{x:Bind ShowRightGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock x:Uid="PaneToggle_Tooltip_Collapse" Visibility="{x:Bind ShowLeftGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock x:Uid="PaneToggle_Tooltip_Expand" Visibility="{x:Bind ShowRightGlyph, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
             </ToolTip>
         </ToolTipService.ToolTip>

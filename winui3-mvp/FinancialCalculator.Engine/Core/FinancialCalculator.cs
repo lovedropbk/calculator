@@ -12,7 +12,14 @@ public sealed class FinancialCalculator
     {
         var financed = ComputeFinancedAmount(input);
         var schedule = BuildSchedule(input, financed);
-        var monthly = schedule.Count > 0 ? schedule[0].Cashflow : 0m;
+        // Monthly installment for display: use the first regular (non-holiday) period's cashflow before final balloon
+        var monthly = 0m;
+        if (schedule.Count > 0)
+        {
+            var n = schedule.Count;
+            var firstRegular = schedule.FirstOrDefault(r => r.Kind == PaymentKind.Regular && r.Cashflow > 0m && r.Period < n);
+            monthly = firstRegular?.Cashflow ?? schedule.FirstOrDefault(r => r.Kind == PaymentKind.Regular && r.Cashflow > 0m)?.Cashflow ?? 0m;
+        }
 
         var dealIrr = ComputeIrrAnnualPercent(input, financed, schedule);
         var dealIrrNoUpfrontIncomes = ComputeIrrAnnualPercent(input with { UpfrontSubsidies = 0 }, financed, schedule);
@@ -223,20 +230,19 @@ public sealed class FinancialCalculator
 
     private static void AddHolidayRow(List<ScheduleRow> rows, int period, ref decimal bal, decimal i_m, string? ruleId)
     {
-        var interest = Decimal.Round(bal * i_m, 10);
-        var newBalRaw = bal + interest;
+        // Payment holiday: do NOT charge or capitalize interest. Balance remains unchanged.
         rows.Add(new ScheduleRow
         {
             Period = period,
             Principal = 0m,
             Interest = 0m,
-            Balance = Decimal.Round(newBalRaw, 2),
+            Balance = Decimal.Round(bal, 2),
             Cashflow = 0m,
             Kind = PaymentKind.Holiday,
-            CapitalizedInterest = Decimal.Round(interest, 2),
+            CapitalizedInterest = 0m,
             RuleId = ruleId
         });
-        bal = newBalRaw;
+        // Balance is unchanged during holiday
     }
 
     private static decimal ReAmortizeIfEnd(bool isEnd, int n, int period, decimal bal, decimal balloon, decimal i_m, Func<decimal, decimal, int, decimal, decimal> payment, decimal currentPmt)

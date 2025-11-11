@@ -429,6 +429,9 @@ public partial class MainViewModel
 
             bool mbspUnavailable = false;
 
+            // If user selected a global Include Payment Holiday, hide the Payment Holiday-only campaign from the standards
+            bool hideHolidayCampaign = DealInput.IncludeHolidayMonths.HasValue && DealInput.IncludeHolidayMonths.Value > 0;
+
             // Baseline (no campaign) via Service
             var baselineVm = new CampaignSummaryViewModel
             {
@@ -438,6 +441,13 @@ public partial class MainViewModel
                 Notes = "Baseline scenario without campaigns"
             };
             baselineVm.ConsumeAllSubsidy = true;
+            
+            // If IncludeHolidayMonths is set, add a base-level holiday for baseline too
+            if (DealInput.IncludeHolidayMonths.HasValue && DealInput.IncludeHolidayMonths.Value > 0)
+            {
+                baselineVm.PaymentHolidays.Clear();
+                baselineVm.PaymentHolidays.Add(new FinancialCalculator.Engine.Models.PaymentHolidayRule { StartPeriod = 1, EndPeriod = DealInput.IncludeHolidayMonths.Value, RuleId = "BASE-HOL" });
+            }
             
             await _campaignService.CalculateCampaignAsync(baselineVm, DealInput.BuildScenarioRequest(), DealInput.SubsidyBudget, DealInput, true);
             CampaignManager.StandardCampaigns.Add(baselineVm);
@@ -456,6 +466,13 @@ public partial class MainViewModel
                         Notes = string.Empty
                     };
                     vm.ConsumeAllSubsidy = true;
+                    
+                    // If user selected a global Include Payment Holiday, apply it to all standard campaigns
+                    if (DealInput.IncludeHolidayMonths.HasValue && DealInput.IncludeHolidayMonths.Value > 0)
+                    {
+                        vm.PaymentHolidays.Clear();
+                        vm.PaymentHolidays.Add(new FinancialCalculator.Engine.Models.PaymentHolidayRule { StartPeriod = 1, EndPeriod = DealInput.IncludeHolidayMonths.Value, RuleId = "INC-HOL" });
+                    }
                     
                     // Map raw definition to unified VM inputs
                     decimal vehiclePrice = (decimal)DealInput.PriceExTax;
@@ -564,6 +581,22 @@ public partial class MainViewModel
                         case "subinterest":
                             if (c.TargetRate.HasValue) vm.TargetRatePct = c.TargetRate.Value * 100.0;
                             break;
+                        case "payment_holiday_3":
+                            // If global IncludeHoliday is set, omit this option; otherwise add campaign-specific holiday
+                            if (!(DealInput.IncludeHolidayMonths.HasValue && DealInput.IncludeHolidayMonths.Value > 0))
+                            {
+                                vm.Title = "3M Payment Holiday (No Benefits)";
+                                vm.PaymentHolidays.Clear();
+                                // Add a 3-month holiday starting from next available period
+                                try { vm.AddHoliday3Command.Execute(null); } catch { vm.PaymentHolidays.Add(new FinancialCalculator.Engine.Models.PaymentHolidayRule { StartPeriod = 1, EndPeriod = 3, RuleId = "STD-3M" }); }
+                                vm.ConsumeAllSubsidy = false;
+                            }
+                            else
+                            {
+                                // Skip adding this campaign entirely if global include is active
+                                continue;
+                            }
+                            break;
                     }
 
                     // Calculate using unified method, with auto-clamping for standard campaigns
@@ -582,7 +615,7 @@ public partial class MainViewModel
                 }
             }
 
-            foreach (var (vm, _, _) in temp.OrderBy(t => t.monthly).ThenBy(t => t.eff))
+            foreach (var (vm, _, _) in temp.Where(t => !(hideHolidayCampaign && t.vm.CampaignType == "payment_holiday_3")).OrderBy(t => t.monthly).ThenBy(t => t.eff))
             {
                 CampaignManager.StandardCampaigns.Add(vm);
                 // CampaignSummaries.Add(vm);
